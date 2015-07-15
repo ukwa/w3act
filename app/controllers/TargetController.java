@@ -707,7 +707,7 @@ public class TargetController extends AbstractController {
      * @param url The target identifier URL
      */
     public static Result edit(Long id) {
-		Logger.debug("Targets.edit() id: " + id);
+		Logger.debug("Targets.edit() id::::: " + id);
 		Target target = Target.findById(id);
 		
 		// Make sure scope checks are up to date:
@@ -739,6 +739,14 @@ public class TargetController extends AbstractController {
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
 		target.fieldUrl = target.fieldUrl();
+		DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+		formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+		try {
+			Date date = formatter.parse(target.getCrawlEndDateText());
+			filledForm.get().crawlEndDate = date;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		Logger.debug("collections: " + target.collections.size());
 		return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
