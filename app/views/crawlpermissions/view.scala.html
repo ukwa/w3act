@@ -25,7 +25,7 @@
 			<div class="form-group">
 				<label for="inputCreatorUser" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 			    <div class="col-sm-6">
-					@permission.name
+					@TargetController.getTitle(permission.target.id)
 				</div>
 			</div>
 		</div>

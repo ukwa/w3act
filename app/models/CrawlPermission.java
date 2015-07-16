@@ -105,11 +105,6 @@ public class CrawlPermission extends ActModel {
     public Boolean requestFollowup;
     
     /**
-     * The number of requests that were sent.
-     */
-    public Long numberRequests;
-    
-    /**
      * This is a checkbox defining whether any content on this web site subject 
      * to copyright and/or the database right held by another party.
      */
@@ -160,7 +155,12 @@ public class CrawlPermission extends ActModel {
     	return res;
     }          
     
-    public static CrawlPermission findByToken(String token) {
+    /**
+	 * The number of requests that were sent.
+	 */
+	public Long numberRequests;
+
+	public static CrawlPermission findByToken(String token) {
     	CrawlPermission res = find.where().eq("token", token).findUnique();
     	return res;
     }          

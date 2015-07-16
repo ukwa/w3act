@@ -133,7 +133,7 @@ public class CrawlPermissionController extends AbstractController {
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
     	crawlPermission.license = License.findByName(Const.OPEN_UKWA_LICENSE);
     	crawlPermissionForm.data().put("license_id", ""+crawlPermission.license.id);
-      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options()));
+      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options(),crawlPermission));
     }
     
     public static Result view(Long id) {
@@ -323,8 +323,9 @@ public class CrawlPermissionController extends AbstractController {
     public static Result info(Form<CrawlPermission> form, Long id, String contactName) {
     	User user = User.findByEmail(request().username());
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
+    	CrawlPermission crawlPermission = CrawlPermission.findById(id);
 		Logger.debug("Info contactPerson: " + form.get().contactPerson.name);
-		return badRequest(edit.render(form, user, id, crawlPermissionStatuses, contactName, License.options()));
+		return badRequest(edit.render(form, user, id, crawlPermissionStatuses, contactName, License.options(),crawlPermission));
     }
     
 	public static Result newInfo(Form<CrawlPermission> form, Long targetId, String contactName) {

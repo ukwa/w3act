@@ -167,9 +167,9 @@
 						<td>
 							<label class="checkbox-inline">
 								@if(sel.equals("selectall")) {
-				                	<input type="checkbox" name="permissionsList" value="@permission.id" checked /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
+				                	<input type="checkbox" name="permissionsList" value="@permission.id" checked /> <a href="@routes.CrawlPermissionController.view(permission.id)">@TargetController.getTitle(permission.target.id)</a>
 					            } else { 
-					            	<input type="checkbox" name="permissionsList" value="@permission.id" /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
+					            	<input type="checkbox" name="permissionsList" value="@permission.id" /> <a href="@routes.CrawlPermissionController.view(permission.id)">@TargetController.getTitle(permission.target.id)</a>
 					            } 
 							</label>
 						</td>
@@ -205,7 +205,7 @@
 							@permission.toUpdatedAtString
 						</td>						
 					</tr>
-				}
+				}aaa
 				</tbody>
 			</table>
 		</div>
