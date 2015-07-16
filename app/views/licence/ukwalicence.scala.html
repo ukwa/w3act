@@ -78,7 +78,7 @@
 						<div class="form-group">
 							<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@cp.name" type="text" @disabler>
+				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@TargetController.getTitle(cp.target.id)" type="text" @disabler>
 							</div>
 						</div>
 					</div>

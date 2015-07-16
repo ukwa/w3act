@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import models.Collection;
+import models.CrawlPermission;
 import models.FieldUrl;
 import models.Flag;
 import models.License;
@@ -208,6 +209,15 @@ public class TargetController extends AbstractController {
 	    	organisations,
 	    	crawlFrequencies, flags)
 		);
+    }
+    
+    public static String getTitle(Long id) {
+    	Target target = Target.findById(id);
+    	if( target != null) {
+    		return target.title;
+    	} else {
+    		return "Blank Target";
+    	}
     }
     
     public static Result view(Long id) {
