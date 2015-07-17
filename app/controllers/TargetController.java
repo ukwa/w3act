@@ -687,6 +687,7 @@ public class TargetController extends AbstractController {
         
     	target.authorUser = user;
     	target.organisation = user.organisation;
+    	target.language = Const.TargetLanguage.EN.toString();
     	
 		Logger.debug("add target with url: " + target.url);
 		Logger.debug("target title: " + target.title);
@@ -730,6 +731,7 @@ public class TargetController extends AbstractController {
 		if (target.watchedTarget != null)
 			filledForm.data().putAll(FastSubjects.getFormData(target.watchedTarget.fastSubjects));
 		User user = User.findByEmail(request().username());
+		target.language = Const.TargetLanguage.EN.toString();
 		JsonNode collectionData = getCollectionsData(target.collections);
 		JsonNode subjectData = getSubjectsData(target.subjects);
 
