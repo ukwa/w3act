@@ -547,19 +547,6 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@textarea(field = targetForm("justification"),
-				 				args = 'rows -> 1, 'cols -> 100,
-								'_label -> "Justification:",
-								'id -> "inputJustification",
-								'class -> "form-control"
-							)(FieldConstructor(genericInput.f), lang)	
-						</div>
-					</div>
-		     	</div>	
-
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
 							@select(
                					targetForm("selectionType"), 
 					                options(selectionTypes), 
