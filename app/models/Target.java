@@ -530,7 +530,10 @@ public class Target extends UrlModel {
 
 	public static List<Target> filterActiveUrl(String url) {
 		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> ll = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true).contains("fieldUrls.url", url);
+		ExpressionList<Target> ll = find.fetch("fieldUrls").where()
+										.eq(Const.ACTIVE, true)
+										.add(Expr.or(Expr.icontains("fieldUrls.url", url), Expr.icontains("t0.title", url)));
+									
 		res = ll.findList();
 		return res;
 	}
