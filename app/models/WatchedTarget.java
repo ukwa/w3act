@@ -18,6 +18,7 @@ import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -58,16 +59,18 @@ public class WatchedTarget extends Model {
 		
 		if (userId != null) {
 			if (children) {
-				List<Target> ownedTargets = Target.find.where().eq(Const.ACTIVE, true).eq("author_id", userId).findList();
+				List<Target> ownedTargets = Target.find.where().eq(Const.ACTIVE, true).eq("author_id", userId).findList();						
 				Expression expr = Expr.eq("target.authorUser.id", userId);
 				for (Target ownedTarget : ownedTargets) {
+					if(ownedTarget.fieldUrls.size()>0){
 					String[] urlParts = ownedTarget.fieldUrls.get(0).url.split("//", 2);
 					String urlWithoutProtocol = urlParts.length == 2 ?
 							ownedTarget.fieldUrls.get(0).url.split("//", 2)[1] :
 							ownedTarget.fieldUrls.get(0).url;
 					expr = Expr.or(Expr.icontains("target.fieldUrls.url", urlWithoutProtocol), expr);
+					}
 				}
-				el = el.add(expr);
+				el = el.add(expr);			
 			} else {
 				el = el.eq("target.authorUser.id", userId);
 			}
