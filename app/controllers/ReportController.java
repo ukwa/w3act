@@ -358,7 +358,7 @@ public class ReportController extends AbstractController {
      * @param tld The top level domain setting for filtering
      */
     public static Result targets(int pageNo, String sortBy, String order, Long curatorId,
-    		Long organisationId, String startDate, String endDate, String grantedFromDate, String grantedToDate, String npld, String crawlFrequency, String tld) throws ActException {
+    		Long organisationId, String startDate, String endDate, String npld, String crawlFrequency, String tld) throws ActException {
     	Logger.debug("ReportsCreation.targets()");
     	
     	User user = User.findByEmail(request().username());
@@ -452,7 +452,7 @@ public class ReportController extends AbstractController {
     	        return ok(file);
     		} else if (action.equals("search")) {
     	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
-    	    			startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequencyName, tld));
+    	    			startDate, endDate, npld, crawlFrequencyName, tld));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -464,7 +464,7 @@ public class ReportController extends AbstractController {
      */
     public static Result indexCreation() {
     	return redirect(routes.ReportController.targets(0, "createdAt", "desc", -1l, -1l, 
-    			"", "", "", "", "", "", "either"));
+    			"", "", "", "", "either"));
     }
 
     
