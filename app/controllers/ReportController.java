@@ -363,7 +363,7 @@ public class ReportController extends AbstractController {
     	
     	User user = User.findByEmail(request().username());
     	Page<Target> pages = Target.pageReportsCreation(pageNo, 10, sortBy, order, curatorId, organisationId, 
-				startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequency, tld);
+				startDate, endDate, npld, crawlFrequency, tld);
     	
 
 		List<User> users = User.findAll();
@@ -439,11 +439,11 @@ public class ReportController extends AbstractController {
     	} else {
     		if (action.equals("export")) {
     			List<Target> exportTargets = new ArrayList<Target>();
-    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequencyName, tld);
+    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
     	    	
     			int rowCount = page.getTotalRowCount();
     			
-    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequencyName, tld);
+    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
     			exportTargets.addAll(pageAll.getList());
 				Logger.debug("export report creation size: " + exportTargets.size());
     			String file = export(exportTargets);

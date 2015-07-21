@@ -707,6 +707,7 @@ public final class Const {
 	}
 	
 	public enum NpldType {
+		NONE("None"),
 		UK_HOSTING("UK Hosting"),
 		UK_TOP_LEVEL_DOMAIN("UK Top Level Domain"),
 		UK_REGISTRATION("UK Registration"),

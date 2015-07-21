@@ -152,8 +152,7 @@
 									<div class="form-group">
 										<label for="npld" class="col-sm-6 control-label">Filter by NPLD</label>
 									    <div class="col-sm-6">
-											<select name="npld" id="npld" class="form-control">
-												<option value="">None</option>
+											<select name="npld" id="npld" class="form-control">												
 								                @for(npldType <- nplds) {
 									                @if(npldType.name().equals(npld)) {
 									                	<option value="@npldType.name" selected>@npldType.getValue</option>

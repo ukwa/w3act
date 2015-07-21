@@ -1047,14 +1047,13 @@ public class Target extends UrlModel {
 	 */
 	public static Page<Target> pageReportsCreation(int page, int pageSize,
 			String sortBy, String order, Long curatorId,
-			Long organisationId, String startDate, String endDate, String grantedFromDate,
-			String grantedToDate, String npld, String crawlFrequencyName, String tld) throws ActException {
+			Long organisationId, String startDate, String endDate, String npld, String crawlFrequencyName, String tld) throws ActException {
 
 		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").fetch("flags").fetch("licenses").fetch("subjects").fetch("collections").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
 		
-		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + grantedFromDate + ", " + grantedToDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
+		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
 		if (curatorId != -1) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
@@ -1075,15 +1074,15 @@ public class Target extends UrlModel {
 				exp = exp.le("createdAt", date);
 			}
 			
-			if (StringUtils.isNotEmpty(grantedFromDate)) {
-				Date date = Utils.INSTANCE.convertDate(grantedFromDate);
-				exp = exp.eq("updatedAt", date);
-			}
-			
-			if (StringUtils.isNotEmpty(grantedToDate)) {
-				Date date = Utils.INSTANCE.convertDate(grantedToDate);
-				exp = exp.eq("updatedAt", date);
-			}
+//			if (StringUtils.isNotEmpty(grantedFromDate)) {
+//				Date date = Utils.INSTANCE.convertDate(grantedFromDate);
+//				exp = exp.eq("updatedAt", date);
+//			}
+//			
+//			if (StringUtils.isNotEmpty(grantedToDate)) {
+//				Date date = Utils.INSTANCE.convertDate(grantedToDate);
+//				exp = exp.eq("updatedAt", date);
+//			}
 		} catch (ParseException e) {
 			throw new ActException(e);
 		}
@@ -1111,13 +1110,13 @@ public class Target extends UrlModel {
 			exp = exp.eq("noLdCriteriaMet", true);
 		} else if (npld.equals(Const.NpldType.PROFESSIONAL_JUDGEMENT.name())) {
 			exp = exp.eq("professionalJudgement", true);
-		} else if (npld.equals(Const.NONE)) {
+		} else if (npld.equals(Const.NpldType.NONE.name())) {
 			exp = exp.eq("ukPostalAddress", false);
 			exp = exp.eq("viaCorrespondence", false);
 			exp = exp.eq("noLdCriteriaMet", false);
+			exp = exp.eq("professionalJudgement", false);
 			exp = exp.eq("isUkHosting", false);
-			exp = exp.eq("isUkRegistration", false);
-			exp = exp.eq("viaCorrespondence", false);
+			exp = exp.eq("isUkRegistration", false);			
 			exp = exp.add(Expr.raw(notdomexp));
 		} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 			exp = exp.add(Expr.raw(domexp));
