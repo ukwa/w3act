@@ -2,6 +2,7 @@ package models;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -123,6 +124,9 @@ public class User extends ActModel {
     public Long feed_nid;
     
     public boolean ddhaptUser;
+    
+    @Column(name ="last_login")
+    public Timestamp lastLogin;
     
     @Transient
     @JsonIgnore

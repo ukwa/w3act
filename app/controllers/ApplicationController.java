@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -89,7 +90,7 @@ public class ApplicationController extends Controller {
     	// If user is already logged in, redirect to the homepage:
     	String email = session().get("email");
     	User user = User.findByEmail(email);
-    	if (user != null) { 
+    	if (user != null) {    		
             return redirect( routes.ApplicationController.index() );    		
     	}
 		// Redirect to login page (embedding the flash scope url to redirect to afterwards):
@@ -114,6 +115,11 @@ public class ApplicationController extends Controller {
         } else {
             session("email", loginForm.get().email.toLowerCase());
             Logger.debug("url: " + url);
+            User user = User.findByEmail(session().get("email"));
+            if (user != null) { 
+            user.lastLogin = Utils.INSTANCE.getCurrentTimeStamp();
+    		Ebean.update(user);
+            }
             if( StringUtils.isBlank(url) ) url = routes.ApplicationController.home().url();            
             return redirect( url );
         }
@@ -138,7 +144,7 @@ public class ApplicationController extends Controller {
     	Logger.debug("Lookup up email: "+email);
     	User user = User.findByEmail(email);
     	Logger.debug("user: " + user + " - " + email);
-    	if (user != null) {
+    	if (user != null) {    		
     		return ok(about.render("About", user));
     	}
     	return redirect(routes.ApplicationController.login());
