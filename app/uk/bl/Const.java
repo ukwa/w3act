@@ -251,7 +251,6 @@ public final class Const {
 	public static final String CREATOR_USER       = "creatorUser";
 	public static final String TEMPLATE           = "template";
 	public static final String REQUEST_FOLLOW_UP  = "requestFollowup";
-	public static final String LICENSE_DATE       = "licenseDate";
 	
 	public static final String DEFAULT_CRAWL_PERMISSION_STATUS = "QUEUED";
 	

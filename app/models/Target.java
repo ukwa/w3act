@@ -470,6 +470,7 @@ public class Target extends UrlModel {
 	public Target() {
 	}
 	
+	
 	public void setDefaultValues() {
 		// Defaults:
 		this.scope = Const.ScopeType.root.name();
@@ -1034,8 +1035,6 @@ public class Target extends UrlModel {
 	 *            The start date for filtering
 	 * @param endDate
 	 *            The end date for filtering
-	 * @param grantedDate
-	 *            The granted date for filtering
 	 * @param npld
 	 *            The selection of NPLD scope rule for filtering
 	 * @param crawlFrequency
@@ -1074,15 +1073,6 @@ public class Target extends UrlModel {
 				exp = exp.le("createdAt", date);
 			}
 			
-//			if (StringUtils.isNotEmpty(grantedFromDate)) {
-//				Date date = Utils.INSTANCE.convertDate(grantedFromDate);
-//				exp = exp.eq("updatedAt", date);
-//			}
-//			
-//			if (StringUtils.isNotEmpty(grantedToDate)) {
-//				Date date = Utils.INSTANCE.convertDate(grantedToDate);
-//				exp = exp.eq("updatedAt", date);
-//			}
 		} catch (ParseException e) {
 			throw new ActException(e);
 		}

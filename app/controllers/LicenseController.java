@@ -31,6 +31,8 @@ import views.html.licence.ukwalicence;
 import views.html.licence.ukwalicenceresult;
 //import views.html.licence.view;
 
+
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -283,6 +285,8 @@ public class LicenseController extends AbstractController {
 	                if (isAgreed) {
 	//                        if (isAgreed && noThirdPartyContent && mayPublish) {
 	                	permission.status = Const.CrawlPermissionStatus.GRANTED.name();
+	                	permission.grantedAt=Utils.INSTANCE.getCurrentTimeStamp();
+	                	 Logger.debug("granted date: " + permission.grantedAt);
 	                } else {
 	                	permission.status = Const.CrawlPermissionStatus.REFUSED.name();
 	                }
@@ -344,6 +348,7 @@ public class LicenseController extends AbstractController {
 	                }
 	                Logger.debug("About to update crawl permission: "+permission);
 	                permission.update();
+	                Ebean.update(permission);
 	    	        Logger.debug("updated crawl permission.");
 			        res = redirect(routes.LicenseController.result());
 		        }

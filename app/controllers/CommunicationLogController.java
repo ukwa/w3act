@@ -61,7 +61,7 @@ public class CommunicationLogController extends AbstractController {
     
     public static Result view(Long id) {
     	CommunicationLog log = new CommunicationLog();
-    	Logger.debug("VIEW:::"+log.crawlPermission.name);
+    	Logger.debug("VIEW:::"+log.crawlPermission);
         return ok(
                 view.render(
                 		models.CommunicationLog.findById(id), User.findByEmail(request().username())
@@ -267,7 +267,6 @@ public class CommunicationLogController extends AbstractController {
      */
     public static Result showLogs(String permission) {
     	Result res = null;
-    	Logger.debug("VALUE:::::::::::::::::::::::::::::::::"+permission.toString());
         List<CommunicationLog> resList = processFilterCommunicationLogs("", permission);
         res = ok(
         		logs.render(

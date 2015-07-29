@@ -125,7 +125,7 @@
 								<div class="row">
 									<div class="col-md-6">
 											<div class="form-group">
-												<label class="col-sm-6 control-label">Filter by time period from </label>
+												<label class="col-sm-6 control-label">Filter by requested date from </label>
 											    <div class="col-sm-6">
 											    	<div class="input-group">
 							 							<input type="text" name="startDate" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
@@ -171,7 +171,7 @@
 								<div class="row" id="data">
 									<div class="col-md-6">
 											<div class="form-group">
-												<label class="col-sm-6 control-label">Filter by granted date period from </label>
+												<label class="col-sm-6 control-label">Filter by granted date from </label>
 											    <div class="col-sm-6">
 											    	<div class="input-group">
 							 							<input type="text" name="grantedFromDate" value="@grantedFromDate" size="30" maxlength="2048" class="form-control  target-form-control" id="granted-from-date"/>
@@ -238,8 +238,8 @@
 					                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
 					                	}					                
 									</td>
-									@if(target.url != null && target.createdAt != null) {
-										<td>@target.createdAt</td>
+									@if(target.url != null && target.getLatestCrawlPermission.requestedAt != null) {
+										<td>@target.getLatestCrawlPermission.requestedAt</td>
 									} else {
 										<td></td>
 									}	
@@ -277,13 +277,13 @@
 					                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
 					                	}									
 									</td>
-									@if(target.url != null && target.createdAt != null) {
-										<td>@target.createdAt</td>
+									@if(target.url != null && target.getLatestCrawlPermission.requestedAt != null) {
+										<td>@target.getLatestCrawlPermission.requestedAt</td>
 									} else {
 										<td></td>
 									}		
-									@if(target.url != null && target.updatedAt != null) {
-										<td>@target.updatedAt</td>
+									@if(target.url != null && target.getLatestCrawlPermission.grantedAt != null) {
+										<td>@target.getLatestCrawlPermission.grantedAt</td>
 									} else {
 										<td></td>
 									}		                  
@@ -319,8 +319,8 @@
 					                		<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
 					                	}					                
 									</td>
-									@if(target.url != null && target.createdAt != null) {
-										<td>@target.createdAt</td>
+									@if(target.url != null && target.getLatestCrawlPermission.requestedAt != null) {
+										<td>@target.getLatestCrawlPermission.requestedAt</td>
 									} else {
 										<td></td>
 									}	

@@ -1,6 +1,8 @@
 package models;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +122,19 @@ public class CrawlPermission extends ActModel {
      * This is a checkbox defining whether owner agrees to archive web site.
      */
     public Boolean agree;
+    
+    /**
+     * This is a string which captures the date on which the licence is requested.
+     */
+    @Column(name="requested_at")
+    public Timestamp requestedAt;
+    
+    /**
+     * This is a readonly field which captures the date on which the licence is agreed.
+     */
+    @Column(name="granted_at")
+    public Timestamp grantedAt;
+    
     
     public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
 
@@ -445,6 +460,7 @@ public class CrawlPermission extends ActModel {
 				+ user + ", status=" + status + ", license=" + license
 				+ ", requestFollowup=" + requestFollowup + ", numberRequests="
 				+ numberRequests + ", thirdPartyContent=" + thirdPartyContent
-				+ ", publish=" + publish + ", agree=" + agree + ", token=" + token + "]";
+				+ ", publish=" + publish + ", agree=" + agree + ", requestedAt=" + requestedAt
+				+ ", grantedAt=" + grantedAt + ", token=" + token + "]";
 	}  
 }

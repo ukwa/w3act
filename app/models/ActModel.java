@@ -33,7 +33,7 @@ abstract class ActModel extends Model {
 
     @Version
     public Timestamp updatedAt;
-
+   
     @Override
     @Transactional
 	public void save() {

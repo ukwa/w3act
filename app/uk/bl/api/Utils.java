@@ -158,6 +158,33 @@ public enum Utils {
     }
     
     /**
+     * This method generates current date in timestamp
+     * @return
+     */
+    public Timestamp getCurrentTimeStamp() {
+    	java.util.Date date= new java.util.Date();
+   	 	return new Timestamp(date.getTime());
+    }
+    
+    /**
+     * This method adds 1 more day to the given date
+     * @return
+     */
+    public String getaddDayToDate(String date) {
+    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Calendar c = Calendar.getInstance();
+		try {
+			c.setTime(sdf.parse(date));
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		c.add(Calendar.DATE, 1);  // number of days to add
+		String modDate = sdf.format(c.getTime());
+   	 	return modDate;
+    }
+    
+    /**
      * This method performs a conversion of date in string format 'dd-MM-yyyy' to unix date.
      * @param curDate
      * @return long value of the unix date in string format

@@ -89,15 +89,15 @@ public class ReportController extends AbstractController {
 //    			&& !request_name.toLowerCase().equals(Const.ALL)) {
 //   			request = request_name;
 //    	} 
-        String startDate = requestData.get("startDate");
-        String endDate = requestData.get("endDate");
+        String requestedFromDate = requestData.get("startDate");
+        String requestedToDate = requestData.get("endDate");
         String grantedFromDate = requestData.get("grantedFromDate");
         String grantedToDate = requestData.get("grantedToDate");
-    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + grantedFromDate + ", " + grantedToDate);
+    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + requestedFromDate + ", " + requestedToDate + ", " + grantedFromDate + ", " + grantedToDate);
 
-        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
-        List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
-        List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
+        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, requestedFromDate, requestedToDate, grantedFromDate, grantedToDate);
+        List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, requestedFromDate, requestedToDate, grantedFromDate, grantedToDate);
+        List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, requestedFromDate, requestedToDate, grantedFromDate, grantedToDate);
 
         Logger.debug("resListRequest: " + resListRequest);
         Logger.debug("resListRequest");
@@ -120,7 +120,7 @@ public class ReportController extends AbstractController {
     			return ok(
                 		reports.render(
                             "Reports", user, resListRequest, resListGranted,
-                            resListRefused, curatorId, organisationId, startDate, endDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
+                            resListRefused, curatorId, organisationId, requestedFromDate, requestedToDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
                         )
                     );
 		    } else if (action.equals("export")) {
@@ -153,7 +153,7 @@ public class ReportController extends AbstractController {
         			return ok(
                     		reports.render(
                                 "Reports", user, resListRequest, resListGranted,
-                                resListRefused, curatorId, organisationId, startDate, endDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
+                                resListRefused, curatorId, organisationId, requestedFromDate, requestedToDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
                             )
                         );
         		}
@@ -220,17 +220,18 @@ public class ReportController extends AbstractController {
      * @throws ActException 
      */
     public static List<Target> processFilterReports(Long curatorId, Long organisationId, 
-    		String crawlPermissionsStatus, String request, String startDate, String endDate, String grantedFromDate, String grantedToDate) throws ActException {
+    		String crawlPermissionsStatus, String request, String requestedFromDate, String requestedToDate, String grantedFromDate, String grantedToDate) throws ActException {
 //    	boolean isProcessed = false;
-		ExpressionList<Target> exp = Target.find.fetch("crawlPermissions").where();
+		ExpressionList<Target> exp = Target.find.where();
 		exp = exp.eq("active", true);
+		
 		
 		Logger.debug("curatorId: " + curatorId);
 		Logger.debug("organisationId: " + organisationId);
 		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
 		Logger.debug("request: " + request);
-		Logger.debug("startDate: " + startDate);
-		Logger.debug("endDate: " + endDate);
+		Logger.debug("requestedFromDate: " + requestedFromDate);
+		Logger.debug("requestedToDate: " + requestedToDate);
 		Logger.debug("grantedFromDate: " + grantedFromDate);
 		Logger.debug("grantedToDate: " + grantedToDate);
 		
@@ -244,19 +245,20 @@ public class ReportController extends AbstractController {
 			exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);
 		}
 
-    	if (StringUtils.isNotEmpty(startDate)) {
+    	if (StringUtils.isNotEmpty(requestedFromDate)) {
     		try {
-	    		Date date = Utils.INSTANCE.convertDate(startDate);
-	    		exp = exp.ge(Const.CREATED_AT, date);
+	    		Date date = Utils.INSTANCE.convertDate(requestedFromDate);
+	    		exp = exp.ge("crawlPermissions.requestedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
     	}
 
-    	if (StringUtils.isNotEmpty(endDate)) {
+    	if (StringUtils.isNotEmpty(requestedToDate)) {
 			try {
-	    		Date date = Utils.INSTANCE.convertDate(endDate);
-	    		exp = exp.le(Const.CREATED_AT, date);
+				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(requestedToDate);		        
+	    		Date date = Utils.INSTANCE.convertDate(modRequestedToDate);
+	    		exp = exp.le("crawlPermissions.requestedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
@@ -265,7 +267,7 @@ public class ReportController extends AbstractController {
     	if (StringUtils.isNotEmpty(grantedFromDate)) {
 			try {
 	    		Date date = Utils.INSTANCE.convertDate(grantedFromDate);
-	    		exp = exp.eq(Const.UPDATED_AT, date);
+	    		exp = exp.ge("crawlPermissions.grantedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
@@ -273,13 +275,16 @@ public class ReportController extends AbstractController {
     	
     	if (StringUtils.isNotEmpty(grantedToDate)) {
 			try {
-	    		Date date = Utils.INSTANCE.convertDate(grantedToDate);
-	    		exp = exp.eq(Const.UPDATED_AT, date);
+				String modGrantedToDate = Utils.INSTANCE.getaddDayToDate(grantedToDate);
+	    		Date date = Utils.INSTANCE.convertDate(modGrantedToDate);
+	    		exp = exp.le("crawlPermissions.grantedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
     	}
 
+    	Logger.debug("exp: " + exp.toString());
+    	
     	List<Target> res = exp.query().findList();
     	
     	Logger.debug("res size: " + res.size());
@@ -351,8 +356,6 @@ public class ReportController extends AbstractController {
      * @param organisation The author's organisation
      * @param startDate The start date for filtering
      * @param endDate The end date for filtering
-     * @param grantedFromDate The granted from date for filtering
-     * @param grantedToDate The granted to date for filtering
      * @param npld The selection of NPLD scope rule for filtering
      * @param crawlFrequency The crawl frequency value for filtering
      * @param tld The top level domain setting for filtering
@@ -382,8 +385,6 @@ public class ReportController extends AbstractController {
                 	organisationId, 
                 	startDate, 
                 	endDate,
-          //      	grantedFromDate,
-          //      	grantedToDate,
                 	npld, 
                 	crawlFrequency, 
                 	tld,
@@ -416,8 +417,6 @@ public class ReportController extends AbstractController {
         Logger.debug("startDate: " + startDate);
 
         String endDate = requestData.get("endDate");
-        String grantedFromDate = requestData.get("grantedFromDate");
-        String grantedToDate = requestData.get("grantedToDate");
 
     	String npld = requestData.get("npld");
 

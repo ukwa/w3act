@@ -187,12 +187,12 @@
 		@pagination
 	   
 		<table class="table table-hover">
-			<thead>
+			<thead>			
 				<tr>
 					@header("title", "Target Name")
 					@header("fieldUrls.url", "URL")
 					<th>Instances to date</th>
-					<th>Most Recent</th>
+					@header("createdAt", "Most Recent")
 					<th>QA Status</th>
 				</tr>
 			</thead>
@@ -217,7 +217,7 @@
 							@if(target.findLastInstance != null) {
 								@if(target.findLastInstance.qaIssue == null) {
 									Unknown
-								} else {
+								} else {																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																
 									@target.findLastInstance.qaIssue.name
 								}
 							}
