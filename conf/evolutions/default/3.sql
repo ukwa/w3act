@@ -1,8 +1,8 @@
 # --- !Ups
 
-alter table crawl_permission add granted_at timestamp without time zone;
-alter table crawl_permission add requested_at timestamp without time zone;
-alter table creator add last_login timestamp without time zone;
+alter table crawl_permission add granted_at timestamp;
+alter table crawl_permission add requested_at timestamp;
+alter table creator add last_login timestamp;
 
 # --- !Downs
 
