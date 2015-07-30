@@ -1345,6 +1345,13 @@ public class TargetController extends AbstractController {
 		            return info(filledForm, id);
 		        }
 		        
+		        //Updating licence status
+		        if (licenseValues != null) {
+		        filledForm.get().getLatestCrawlPermission().status = filledForm.get().licenseStatus;
+		        if( filledForm.get().getLatestCrawlPermission().status.equalsIgnoreCase(Const.CrawlPermissionStatus.GRANTED.getValue()))
+		        	filledForm.get().getLatestCrawlPermission().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
+    	        filledForm.get().getLatestCrawlPermission().update();
+		    	}
 
 				filledForm.get().update(id);
 				

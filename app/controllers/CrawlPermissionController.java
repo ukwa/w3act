@@ -414,8 +414,14 @@ public class CrawlPermissionController extends AbstractController {
 		    	
                	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + filledForm.get().status, filledForm.get(), filledForm.get().user, Const.UPDATE);
                	log.save();
-
+               	
     	        updateAllByTarget(filledForm.get().id, filledForm.get().target.id, filledForm.get().status);
+    	        
+    	        //Update granted Date
+    	        if(filledForm.get().status.equalsIgnoreCase(Const.CrawlPermissionStatus.GRANTED.getValue())){
+               		filledForm.get().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
+               		filledForm.get().update(id);
+    	        }
     	        
     	        filledForm.get().target.licenseStatus = filledForm.get().status;
     	        filledForm.get().target.update();

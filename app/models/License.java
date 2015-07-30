@@ -51,11 +51,11 @@ public class License extends Taxonomy {
 	}
 		
 	public enum LicenseStatus {
-
-		GRANTED("Granted"),
+		
 		NOT_INITIATED("Not Initiated"),
 		QUEUED("Queued"),
 		PENDING("Pending"),
+		GRANTED("Granted"),				
 		REFUSED("Refused"),
 		EMAIL_REJECTED("Email Rejected"),
 		SUPERSEDED("Superseded");
