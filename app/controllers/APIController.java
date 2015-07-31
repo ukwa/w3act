@@ -280,8 +280,9 @@ public class APIController extends Controller {
         			
         			FieldUrl existingFieldUrl = FieldUrl.findByUrl(trimmed);
 					if (existingFieldUrl != null) {
-						Logger.debug("CONFLICT existingFieldUrl Url: " + existingFieldUrl.url);
-						return status(Http.Status.CONFLICT);
+						String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + existingFieldUrl.target.id;
+			            Logger.debug("CONFLICT existingFieldUrl Url: " + existingFieldUrl.url);
+						return status(Http.Status.CONFLICT,"Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
 					}
 
 	            	FieldUrl fieldUrl = new FieldUrl(extFormUrl.trim());
