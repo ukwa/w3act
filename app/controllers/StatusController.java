@@ -6,6 +6,7 @@ import java.net.URL;
 
 import models.FastSubject;
 import models.User;
+import play.Logger;
 import play.Play;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -51,9 +52,13 @@ public class StatusController extends AbstractController {
 	}
 	
 	public static boolean isPiiResponding() {
+		
 		String arkRequest = Play.application().configuration().getString("pii_url");
+		if(arkRequest != null){
 		String statusRequest = arkRequest.substring(0, arkRequest.lastIndexOf('/') + 1) + "status";
 		return isSiteResponding(statusRequest);
+		}else
+			return false;
 	}
 	
 	public static boolean isSiteResponding(String url) {
