@@ -256,11 +256,11 @@
   <mets:structMap TYPE="LOGICAL">
     <mets:div ADMID="amd0002-rights01" CONTENTIDS="@document.ark"
         DMDID="dmd0001" ID="log0001"
-      @if(document.isJournalIssue) {
-        TYPE="Issue">
-      } else {
-        TYPE="@if(document.isWholeBook) {Monograph} else {Article}">
-      }
+        TYPE="@{
+          if(document.isWholeBook) "Monograph"
+          else if(document.isJournalIssue) "Issue"
+          else "Article"
+        }">
       <mets:fptr FILEID="file0001"/>
     </mets:div>
   </mets:structMap>
