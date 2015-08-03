@@ -197,7 +197,11 @@
 				  }
 				}		        
 		    </a></li>
+		    @if(user.id == Long.valueOf(targetForm("authorUser.id").value)){
 		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
+		    }else{
+		    <li><a href="#">Watched Target</a></li>
+		    }
 	  	</ul>
 	</div>
 	
