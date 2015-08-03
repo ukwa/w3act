@@ -1682,6 +1682,7 @@ public class TargetController extends AbstractController {
     	if (watched) {
     		Target target = filledForm.get();
     		target.watchedTarget.target = target;
+    		target.archivistNotesWatchedTarget = filledForm.get().archivistNotesWatchedTarget;
     		target.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
     		Ebean.save(target.watchedTarget);
     	}

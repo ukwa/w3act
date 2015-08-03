@@ -128,6 +128,16 @@
 			targetDateTime();
 
 		});		
+		
+		function display() {
+		var div = document.getElementById('division');
+    	if(document.getElementById('watched').checked){    	
+    		div.style.display = 'block';
+    		}else{   	
+    		div.style.display = 'none';
+    		}
+    	
+		}
 	</script>
 }
 
@@ -927,10 +937,11 @@
 					</div>
 		   		</div>
 		</div>
-		
+			
+			
 			<div class="tab-pane fade" id="watchedTarget">
 				@if(user.hasExpertUserRights) {
-					@templates.checkbox(targetForm("watched"), true, '_label -> "watched")(
+					@templates.checkbox(targetForm("watched"), true, '_label -> "watched", '_id -> "watched", 'onclick -> "javascript:display();")(
 						helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 					)
 				} else {
@@ -938,9 +949,30 @@
 						helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 					)
 				}
+				 <div id="division"> 
 				@templates.inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")(
 					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 				)
+				<div class="row padding-10">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Journal Titles</label>
+						    <div class="col-sm-6">
+		 						
+								@if(user.hasExpertUserRights()) {									
+										<a class="btn btn-success" disabled>New Journal Title</a>
+								}
+							</div>
+						</div>
+					</div>
+					</div>
+					
+			<div class="padding-20">
+				<div class="alert alert-info">
+					Before you can create a new Journal Title, you need to tick the watched checkbox and save the target record.										
+				</div>
+			</div>
+				
 				@helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
 					<div class="scroll-box">
 						@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
@@ -952,8 +984,43 @@
 				}(
 					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f), new Lang("en")
 				)
-	        </div>
-	                    
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Login Credentials</label>
+						    <div class="col-sm-6">
+								
+								@if(user.hasArchivistRights()) {								   
+					 				 <a class="btn btn-success" disabled>Login Credentials</a>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div> 
+		     	
+		     <div class="padding-20">
+				<div class="alert alert-info">
+					Before you can add new Login Credentials, you need to tick the watched checkbox and save the target record.										
+				</div>
+			</div>
+			
+			 <div id="archivistArea" class="revision">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@textarea(field = targetForm("archivistNotesWatchedTarget"),
+							'_label -> "Archivist Notes (This field should include any information provided by curators justifying the creation of the record. This field is NOT public.):",
+							'_id -> "archivistNotesWatchedTarget",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)					    
+					</div>
+				</div>
+	     	</div>
+		</div>
+	  </div>
+	</div>
+	               
 		</div>
 		
         <div id="revisionArea" class="revision">
