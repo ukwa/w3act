@@ -856,6 +856,8 @@
 					</div>
 		     	</div>
 		     @if(target.watchedTarget != null) {
+     	
+		     	
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -873,20 +875,12 @@
 						    <div class="col-sm-6">
 		 						<table>
 									@for(journalTitle <- target.watchedTarget.journalTitles) {
-										<tr>
-											@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {
-												<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
-											} else {
-												@journalTitle.title
-											}
+										<tr>										
+												<td>@journalTitle.title</td>																					
 										</tr>
 									}
 								</table>
-								@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {
-									<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">
-										New Journal Title
-									</a>
-								}
+								
 							</div>
 						</div>
 					</div>
@@ -915,16 +909,23 @@
 								} else {
 									no
 								}
-								<br>
-								@if(user.id.equals(target.authorUser.id) || user.hasArchivistRights()) {
-									<a class="btn btn-success" href="@routes.LoginCredentialsController.edit(target.watchedTarget.id)">
-										@if(target.watchedTarget.secretId == null) {Add} else {Change} Login Credentials
-									</a>
-								}
+								
 							</div>
 						</div>
 					</div>
 		     	</div>
+		     	 <div id="archivistArea" class="revision">
+			   		<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Archivist Notes</label>
+							    <div class="col-sm-6">
+					            	@target.archivistNotesWatchedTarget
+								</div>
+							</div>
+						</div>
+			     	</div>	
+				</div>
 			}
 		</div>
 	</div>

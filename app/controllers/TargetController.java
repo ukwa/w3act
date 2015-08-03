@@ -1367,6 +1367,7 @@ public class TargetController extends AbstractController {
 		    		Ebean.save(filledForm.get().watchedTarget);
 		    	} else if (watched && target.isWatched()) {
 		    		target.watchedTarget.documentUrlScheme = filledForm.get().watchedTarget.documentUrlScheme;
+		    		target.archivistNotesWatchedTarget = filledForm.get().archivistNotesWatchedTarget;
 		    		target.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
 		    		Ebean.update(target.watchedTarget);
 		    	}

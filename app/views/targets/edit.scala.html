@@ -132,6 +132,19 @@
 			wayBackLoader();
 		});		
 		
+	function display() {
+		var div = document.getElementById('division');
+	//	document.getElementById('watched').onchange = function() {
+    //	div.style.display = this.checked ? 'block' : 'none';
+    	if(document.getElementById('watched').checked){
+    	//	@Target.findById(id).watchedTarget != null;
+    		div.style.display = 'block';
+    		}else{
+    	//	@Target.findById(id).watchedTarget = null;
+    		div.style.display = 'none';
+    		}
+    	//	};
+		}
 		
 	</script>
 }
@@ -1045,16 +1058,66 @@
 		     	}
 		     	
 			</div>
-	        
-	    @defining(Target.find.byId(id)) { target =>
+	    
+	   	 @defining(Target.find.byId(id)) { target =>
 			<div class="tab-pane fade" id="watchedTarget">
 				@if(!target.hasDocuments && user.hasExpertUserRights &&
 						(user.id.equals(target.authorUser.id) || user.hasArchivistRights)) {
-					@checkbox(targetForm("watched"), true, '_label -> "watched")
+					@checkbox(targetForm("watched"), true, '_label -> "watched", '_id -> "watched", 'onclick -> "javascript:display();")
 				} else {
-					@checkbox(targetForm("watched"), false, '_label -> "watched")
+					@checkbox(targetForm("watched"), false, '_label -> "watched", '_id -> "watched")
 				}
-				@inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
+			<div id="division">             
+			@inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
+				
+		  @if(Target.findById(id).watchedTarget != null) { 
+		  <div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Journal Titles</label>
+						    <div class="col-sm-6">
+		 						<table>
+									@for(journalTitle <- target.watchedTarget.journalTitles) {
+										<tr>
+											@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {
+												<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
+											} else {
+												@journalTitle.title
+											}
+										</tr>
+									}
+								</table>
+								@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {
+									<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">
+										New Journal Title
+									</a>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>  
+			} else {
+				<div class="row padding-10">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Journal Titles</label>
+						    <div class="col-sm-6">
+		 						
+								@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {									
+										<a class="btn btn-success" disabled>New Journal Title</a>
+								}
+							</div>
+						</div>
+					</div>
+					</div>
+					
+			<div class="padding-20">
+				<div class="alert alert-info">
+					Before you can create a new Journal Title, you need to tick the watched checkbox and save the target record.										
+				</div>
+			</div>
+			}			
+		     	
 				@helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
 					<div class="scroll-box">
 						@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
@@ -1064,24 +1127,71 @@
 						}
 					</div>
 				}
-	        </div>
-	    }
-	        
-		</div>
-                        
-        <div id="archivistArea" class="revision">
+				
+				  @if(Target.findById(id).watchedTarget != null) {
+				  	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Login Credentials</label>
+						    <div class="col-sm-6">
+								@if(target.watchedTarget.secretId != null) {
+									yes
+								} else {
+									no
+								}
+								<br>
+								@if(user.id.equals(target.authorUser.id) || user.hasArchivistRights()) {
+									<a class="btn btn-success" href="@routes.LoginCredentialsController.edit(target.watchedTarget.id)">
+										@if(target.watchedTarget.secretId == null) {Add} else {Change} Login Credentials
+									</a>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>    
+				  } else {
+				  	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Login Credentials</label>
+						    <div class="col-sm-6">
+								
+								@if(user.id.equals(target.authorUser.id) || user.hasArchivistRights()) {								   
+					 				 <a class="btn btn-success" disabled>Login Credentials</a>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div> 
+		     	
+		     <div class="padding-20">
+				<div class="alert alert-info">
+					Before you can add new Login Credentials, you need to tick the watched checkbox and save the target record.										
+				</div>
+			</div>
+				  }
+				
+		     	 <div id="archivistArea" class="revision">
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-					    <div class="col-sm-6">
-			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@targetForm("archivist_notes").value">@targetForm("archivist_notes").value</textarea>
-						</div>
+						@textarea(field = targetForm("archivistNotesWatchedTarget"),
+							'_label -> "Archivist Notes (This field should include any information provided by curators justifying the creation of the record. This field is NOT public.):",
+							'_id -> "archivistNotesWatchedTarget",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)					    
 					</div>
 				</div>
 	     	</div>
 		</div>
-		      
+		</div>	
+		  	
+		  }    
+		     	
+	        </div>	    	        
+		</div>
+                        
+       
 	    <div id="revisionArea" class="revision">
 	  		<div class="row padding-10">
 	    		<div class="col-md-12 col-xs-12 col-sm-12">
