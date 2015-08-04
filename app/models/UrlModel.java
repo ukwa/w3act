@@ -40,6 +40,8 @@ abstract class UrlModel extends ActModel {
 	public String title;
 	
 	public String language;
+	
+	public String secondLanguage;
 
 	@Column(columnDefinition = "text")
 	public String revision;

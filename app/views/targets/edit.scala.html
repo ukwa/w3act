@@ -544,6 +544,22 @@
 					</div>
 		     	</div>		   
 		     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@select(
+               					targetForm("secondLanguage"), 
+					                options(languages), 
+					                args = 
+					                'class -> "form-control",
+					                '_label -> "Second Language (The second language in which the page is written):",
+				                	'_default -> "-- None --",
+					                '_showConstraints -> false
+				            )(FieldConstructor(genericInput.f), lang)	
+						</div>
+					</div>
+		     	</div>		   
+		     	
 				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
 		    		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
