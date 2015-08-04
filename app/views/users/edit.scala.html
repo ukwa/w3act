@@ -131,9 +131,11 @@
 				</div>
 	     	</div>
 	     	
+	     	@if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || admin.hasRole("expert_user") && admin.isLDLMember()) {
 			@templates.checkbox(userForm("ddhaptUser"), true, '_label -> "show DDHAPT start page")(
 				helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 			)
+			}
 	     	
 	        <div id="revisionArea" class="revision">
 	    		<div class="row padding-10">
