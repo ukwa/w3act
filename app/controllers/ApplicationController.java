@@ -90,7 +90,7 @@ public class ApplicationController extends Controller {
     	// If user is already logged in, redirect to the homepage:
     	String email = session().get("email");
     	User user = User.findByEmail(email);
-    	if (user != null) {    		
+    	if (user != null) {
             return redirect( routes.ApplicationController.index() );    		
     	}
 		// Redirect to login page (embedding the flash scope url to redirect to afterwards):
@@ -114,7 +114,7 @@ public class ApplicationController extends Controller {
             return badRequest(login.render(loginForm));
         } else {
             session("email", loginForm.get().email.toLowerCase());
-            Logger.debug("url: " + url);
+            Logger.debug("The redirectToUrl is: " + url);
             User user = User.findByEmail(session().get("email"));
             if (user != null) { 
             user.lastLogin = Utils.INSTANCE.getCurrentTimeStamp();
@@ -139,6 +139,7 @@ public class ApplicationController extends Controller {
     /**
      * Display the About tab.
      */
+	@Security.Authenticated(SecuredController.class)
     public static Result index() {
     	String email = session().get("email");
     	Logger.debug("Lookup up email: "+email);
@@ -210,6 +211,7 @@ public class ApplicationController extends Controller {
         );
     }
     
+	@Security.Authenticated(SecuredController.class)
     public static Result home() {
 		String email = session().get("email");
 		User user = User.findByEmail(email);
