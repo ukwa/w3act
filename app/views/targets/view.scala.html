@@ -689,7 +689,7 @@
 			                @if(target.scope != null && target.scope.length > 0) {             
 								@uk.bl.Const.ScopeType.getScopeType(target.scope).getValue
 			                } else {
-				                None
+				                All URLs that start like this.
 			                }
 						</div>
 					</div>
@@ -704,7 +704,7 @@
 			                @if(target.depth != null && target.depth.length > 0) {             
 				                @uk.bl.Const.DepthType.getDepthType(target.depth).getValue
 			                } else {
-				                None
+				                Capped (small - 500MB)
 			                }
 						</div>
 					</div>
@@ -734,7 +734,7 @@
 					    	@if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
 	 							@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
 	 						} else {
-	 							None
+	 							Domain Crawl Only
 	 						}
 						</div>
 					</div>
