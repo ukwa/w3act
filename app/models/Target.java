@@ -391,8 +391,6 @@ public class Target extends UrlModel {
 		return isWatched() && !watchedTarget.documents.isEmpty();
 	}
 	
-	@Column(columnDefinition = "text")
-	public String archivistNotesWatchedTarget;
 	
 //	  "title": "Your Thurrock" - fine
 //	  "field_subject": ["24"],
@@ -2192,8 +2190,7 @@ public class Target extends UrlModel {
 				+ ", field_notes=" + field_notes + ", title=" + title
 				+ ", edit_url=" + edit_url + ", language=" + language
 				+ ", revision=" + revision + ", id=" + id
-				+ ", url=" + url 
-				+ ", archivistNotesWatchedTarget=" + archivistNotesWatchedTarget + "]";
+				+ ", url=" + url + "]";
 	}
 	
 	

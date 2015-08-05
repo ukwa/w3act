@@ -1367,7 +1367,7 @@ public class TargetController extends AbstractController {
 		    		Ebean.save(filledForm.get().watchedTarget);
 		    	} else if (watched && target.isWatched()) {
 		    		target.watchedTarget.documentUrlScheme = filledForm.get().watchedTarget.documentUrlScheme;
-		    		target.archivistNotesWatchedTarget = filledForm.get().archivistNotesWatchedTarget;
+		    		target.watchedTarget.archivistNotesWT = filledForm.get().watchedTarget.archivistNotesWT;
 		    		target.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
 		    		Ebean.update(target.watchedTarget);
 		    	}
@@ -1682,7 +1682,7 @@ public class TargetController extends AbstractController {
     	if (watched) {
     		Target target = filledForm.get();
     		target.watchedTarget.target = target;
-    		target.archivistNotesWatchedTarget = filledForm.get().archivistNotesWatchedTarget;
+    		target.watchedTarget.archivistNotesWT = filledForm.get().watchedTarget.archivistNotesWT;
     		target.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
     		Ebean.save(target.watchedTarget);
     	}

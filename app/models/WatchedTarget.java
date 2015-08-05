@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,6 +40,10 @@ public class WatchedTarget extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
 	public List<FastSubject> fastSubjects = new ArrayList<>();
 	public String documentUrlScheme;
+	
+	@Column(columnDefinition = "text")
+	public String archivistNotesWT;
+	
 	public String waybackTimestamp;
 	public String loginPageUrl;
 	public String logoutUrl;

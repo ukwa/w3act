@@ -5,7 +5,7 @@ ALTER TABLE crawl_permission ADD requested_at timestamp;
 ALTER TABLE creator ADD last_login timestamp;
 ALTER TABLE contact_person ALTER COLUMN email SET DATA TYPE varchar(255);
 ALTER TABLE contact_person ADD CONSTRAINT uq_contact_person_email UNIQUE (email);
-ALTER TABLE target ADD archivist_notes_watched_target text;
+ALTER TABLE watched_target ADD archivist_notes_wt text;
 ALTER TABLE target ADD second_language varchar(255);
 ALTER TABLE instance ADD second_language varchar(255);
 
@@ -20,7 +20,7 @@ ALTER TABLE crawl_permission DROP requested_at;
 ALTER TABLE creator DROP last_login;
 ALTER TABLE contact_person DROP CONSTRAINT uq_contact_person_email;
 ALTER TABLE contact_person ALTER COLUMN email SET DATA TYPE text;
-ALTER TABLE target DROP archivist_notes_watched_target;
+ALTER TABLE watched_target DROP archivist_notes_wt;
 ALTER TABLE target DROP second_language;
 ALTER TABLE instance DROP second_language;
 
