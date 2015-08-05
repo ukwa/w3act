@@ -43,7 +43,7 @@ public class Tag extends Taxonomy {
     
     public static final Model.Finder<Long, Tag> find = new Model.Finder<Long, Tag>(Long.class, Tag.class);
 
-    public static Tag findByName(String name) {
+    public static Tag findTagByName(String name) {
     	return find.where().eq("name", name).findUnique();
     }
 
@@ -52,7 +52,7 @@ public class Tag extends Taxonomy {
      * @param nid
      * @return object 
      */
-    public static Tag findById(Long id) {
+    public static Tag findTagById(Long id) {
     	Tag res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
@@ -62,7 +62,7 @@ public class Tag extends Taxonomy {
      * @param url
      * @return permission refusal name
      */
-    public static Tag findByUrl(String url) {
+    public static Tag findTagByUrl(String url) {
     	Tag res = new Tag();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
@@ -103,7 +103,7 @@ public class Tag extends Taxonomy {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
 		    	Logger.debug("+++ Tag convertUrlsToObjects() part: " + part);
-	    		Tag tag = findByUrl(part);
+	    		Tag tag = findTagByUrl(part);
 	    		if (tag != null && tag.name != null && tag.name.length() > 0) {
 			    	Logger.debug("tag name: " + tag.name);
 	    			res.add(tag);
@@ -121,41 +121,6 @@ public class Tag extends Taxonomy {
         return options;		
 	}
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Tag other = (Tag) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
-    	
-    public String toString() {
-        return "Tag(" + name + ")" + ", id:" + id;
-    }
-    
     /**
      * Return a page of User
      *
@@ -174,7 +139,7 @@ public class Tag extends Taxonomy {
         		.getPage(page);
     }    
 
-    public static Map<String, Boolean> options(List<Tag> myTags) {
+    public static Map<String, Boolean> toOptions(List<Tag> myTags) {
     	if (myTags == null) myTags = new ArrayList<Tag>();
         Map<String, Boolean> tagsMap = new HashMap<String, Boolean>();
         for (Tag tag : Tag.findAllTags()) {

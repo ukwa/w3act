@@ -203,6 +203,7 @@ public class Documents extends AbstractController {
 
 		Promise<List<AssignableArk>> arksPromise = holder.post("").map(
 				new Function<WSResponse, List<AssignableArk>>() {
+					@Override
 					public List<AssignableArk> apply(WSResponse response) {
 						Logger.debug("PII XML-Response: " + response.getBody());
 						List<AssignableArk> arks = new ArrayList<>();
@@ -297,6 +298,7 @@ public class Documents extends AbstractController {
 			this.documents = documents;
 		}
 		
+		@Override
 		public Boolean apply() {
 			for (Document document : filterNew(documents)) {
 				Crawler crawler = new Crawler(true);
@@ -473,6 +475,7 @@ public class Documents extends AbstractController {
 		Ebean.execute(su);
 		
 		Promise.promise(new Function0<Boolean>() {
+			@Override
 			public Boolean apply() {
 				List<Document> documents = Document.find.where().eq("status", Document.Status.DELETED.ordinal()).findList();
 				for (Document document : documents)

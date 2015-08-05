@@ -300,6 +300,8 @@ public class ContactPerson extends ActModel {
     	return res;
     }          
 	    
+    
+	@Override
     public String toString() {
         return "ContactPerson(" + name + ")" + ", id:" + id;
     }

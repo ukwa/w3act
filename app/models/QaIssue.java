@@ -77,6 +77,7 @@ public class QaIssue extends Taxonomy {
 		return true;
 	}
 	
+	@Override
     public String toString() {
         return "QaIssue(" + name + ")" + ", id:" + id;
     }

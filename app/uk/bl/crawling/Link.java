@@ -9,6 +9,7 @@ public class Link {
 		target = t;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Link)
 			return target.equals(((Link) o).target);
@@ -16,6 +17,7 @@ public class Link {
 			return false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return target.hashCode();
 	}

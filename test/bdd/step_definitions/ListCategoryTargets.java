@@ -33,6 +33,7 @@ public class ListCategoryTargets {
 	@When("^I choose to see to get the targets$")
 	public void i_choose_to_see_to_get_the_targets() throws Throwable {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			@Override
 			@SuppressWarnings("unchecked")
 			public void run() {
 				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("targets.yml");		

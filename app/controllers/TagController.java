@@ -44,7 +44,7 @@ public class TagController extends AbstractController {
     public static Result view(Long id) {
         return ok(
                 view.render(
-                		models.Tag.findById(id), User.findByEmail(request().username())
+                		models.Tag.findTagById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -59,7 +59,7 @@ public class TagController extends AbstractController {
 
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
-    	Tag tag = Tag.findById(id);
+    	Tag tag = Tag.findTagById(id);
 		Form<Tag> tagForm = Form.form(Tag.class);
 		tagForm = tagForm.fill(tag);
         return ok(edit.render(tagForm, user, id));
@@ -119,7 +119,7 @@ public class TagController extends AbstractController {
 		        flash("message", "Tag " + filledForm.get().name + " has been updated");
 		        return redirect(routes.TagController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
-        		Tag tag = Tag.findById(id);
+        		Tag tag = Tag.findTagById(id);
 		        flash("message", "Tag " + filledForm.get().name + " has been deleted");
             	tag.delete();
             	

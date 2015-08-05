@@ -27,6 +27,7 @@ public class ExportTargetsSteps {
 	public void i_have_a_list_of_Target_result_on_view() throws Throwable {
 
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			@Override
 			public void run() {
 				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("targets.yml");		
 				targets = allTargets.get("targets");

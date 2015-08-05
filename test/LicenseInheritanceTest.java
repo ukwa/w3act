@@ -69,7 +69,8 @@ public class LicenseInheritanceTest {
 	        	}
 
 	        	
-	            public void run() {
+	            @Override
+				public void run() {
 	            	
 	            	/***************** Add some test data ******************/
 	            	

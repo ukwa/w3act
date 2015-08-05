@@ -36,6 +36,7 @@ public class ListTargetCategoriesSteps extends WithApplication {
 	@When("^I choose to see the collection categories$")
 	public void i_choose_to_see_the_collection_categories() throws Throwable {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			@Override
 			@SuppressWarnings("unchecked")
 			public void run() {
 				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("targets.yml");		

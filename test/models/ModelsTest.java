@@ -23,7 +23,8 @@ public class ModelsTest extends WithApplication {
 	private final String TEST_PASSWORD = "secret2";
 
 	
-    protected FakeApplication provideFakeApplication() {
+    @Override
+	protected FakeApplication provideFakeApplication() {
         return Helpers.fakeApplication(inMemoryDatabase());
     }
     

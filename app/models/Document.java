@@ -32,7 +32,11 @@ import play.db.ebean.Model;
 @Entity
 public class Document extends Model {
 	
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4697602797902508209L;
+	@Id
     public Long id;
 	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_watched_target")
@@ -201,6 +205,7 @@ public class Document extends Model {
     		this.name = name;
     	}
     	
+    	@Override
     	public String toString() {
     		return name;
     	}

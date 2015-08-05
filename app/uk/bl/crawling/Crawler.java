@@ -58,6 +58,7 @@ public class Crawler {
 		public CaptureRequestFunction(String waybackTimestamp) {
 			this.waybackTimestamp = waybackTimestamp;
 		}
+		@Override
 		public List<String> apply(WSResponse response) {
 			List<String> timestamps = new ArrayList<>();
 			try {

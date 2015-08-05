@@ -160,6 +160,7 @@ public class CommunicationLog extends ActModel {
        	return log;
     }
     
+	@Override
     public String toString() {
         return "CommunicationLog(" + name + ")" + ", id:" + id;
     }

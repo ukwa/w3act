@@ -48,9 +48,6 @@ public class TaxonomyType extends ActModel {
     @Transient 
     public Long term_count;
 
-    @Transient
-    private String url;
-    
     //	{"vid":"5","name":"Web Archive Collections","machine_name":"collections","description":"Taxonomy for structuring collections.","term_count":"160"},
     
     public TaxonomyType() {
@@ -142,6 +139,7 @@ public class TaxonomyType extends ActModel {
 		this.term_count = term_count;
 	}
 
+	@Override
 	public String toString() {
         return "Taxonomy vocabulary (" + id + ") with name: " + name;
     }

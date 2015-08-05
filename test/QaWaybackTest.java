@@ -59,6 +59,7 @@ public class QaWaybackTest {
 	@Test
 	public void runInBrowser() {
 		running(testServer(3333, fakeApplication()), HTMLUNIT, new Callback<TestBrowser>() {
+			@Override
 			public void invoke(TestBrowser browser) {
 				String testPath = "/wayback/*/"+testURL;
 				String fullTestUrl = "http://localhost:3333/act"+testPath;

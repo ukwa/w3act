@@ -18,7 +18,8 @@ import static play.mvc.Results.*;
 
 public class Global extends GlobalSettings {
     
-    public void onStart(Application app) {
+    @Override
+	public void onStart(Application app) {
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
     	Boolean omitInstances = play.Play.application().configuration().getBoolean("application.data.omit_instances");

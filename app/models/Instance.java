@@ -1,6 +1,7 @@
 package models;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -9,22 +10,25 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
+
+import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
+import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
-import uk.bl.exception.WhoisException;
-import uk.bl.scope.Scope;
-
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.QueryIterator;
+import com.avaje.ebean.annotation.Transactional;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -34,14 +38,82 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @Entity 
 @Table(name = "instance")
-public class Instance extends UrlModel {
+public class Instance extends Model {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4285620218930401425L;
 
-    public String qaIssueCategory;
+	@Id
+    public Long id;
+	
+	@JsonProperty
+	@Column(unique=true)
+	public String url;
+
+    public Date createdAt;
+
+    @Version
+    public Timestamp updatedAt;
+    
+    @Constraints.Required(message="Title Required")
+	public String title;
+	
+	public String language;
+	
+	public String secondLanguage;
+
+	@Column(columnDefinition = "text")
+	public String revision;
+
+	@JsonProperty
+	public String edit_url;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "qaissue_id")
+	public QaIssue qaIssue;
+
+	@JsonIgnore
+	@Column(columnDefinition = "text")
+	public String notes;
+	
+	@JsonIgnore
+	public String format;
+
+
+	public String getEdit_url() {
+		return edit_url;
+	}
+
+	public void setEdit_url(String edit_url) {
+		this.edit_url = edit_url;
+	}
+	    
+    @Override
+    @Transactional
+	public void save() {
+    	// need to save to get the ID
+    	super.save();
+    	if (StringUtils.isEmpty(this.url)) {
+    		this.url = Const.ACT_URL + this.id;
+    	}
+    	if (createdAt == null) {
+    		this.createdAt = new Date();
+    	}
+    	super.save();
+    }
+    
+	public String toCreatedAtString() {
+		return Utils.INSTANCE.convertToDateString(createdAt);
+	}
+	
+	public String toUpdatedAtString() {
+		return Utils.INSTANCE.convertToDateTime(updatedAt);
+	}
+	
+	public String qaIssueCategory;
     
 //  Description of QA Issues (Andy's ACT) > QA Notes (w3ACT)
     @Column(columnDefinition = "text")

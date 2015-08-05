@@ -18,7 +18,11 @@ import play.db.ebean.Model;
 @Entity
 public class JournalTitle extends Model {
 	
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8473513530309441234L;
+	@Id
     public Long id;
 	@ManyToOne
 	@JoinColumn(name="id_watched_target")
@@ -67,6 +71,7 @@ public class JournalTitle extends Model {
                 this.value = value;
         }
         
+        @Override
         public String toString() {
         	return value;
         }

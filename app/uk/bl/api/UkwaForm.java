@@ -790,6 +790,7 @@ public class UkwaForm<T> {
 				fieldValue);
 	}
 
+	@Override
 	public String toString() {
 		return "Form(of=" + backedType + ", data=" + data + ", value=" + value
 				+ ", errors=" + errors + ")";
@@ -937,6 +938,7 @@ public class UkwaForm<T> {
 			return form.field(subKey);
 		}
 
+		@Override
 		public String toString() {
 			return "Form.Field(" + name + ")";
 		}

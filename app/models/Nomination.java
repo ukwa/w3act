@@ -183,6 +183,7 @@ public class Nomination extends ActModel {
 		return null;
 	}
 	
+	@Override
     public String toString() {
         return "Nomination(" + name + ")" + " id:" + id;
     }

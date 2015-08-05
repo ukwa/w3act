@@ -38,6 +38,7 @@ public class UrlCheckSteps {
 	@When("^I check to see if it exists in the DB$")
 	public void i_check_to_see_if_it_exists_in_the_DB() throws Throwable {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			@Override
 			@SuppressWarnings("unchecked")
 			public void run() {
 				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("targets.yml");		

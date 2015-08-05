@@ -145,6 +145,7 @@ public class LookupEntry extends ActModel {
         return find.all();
     }
     
+    @Override
     public String toString() {
         return "LookupEntry(" + url + ")" + ", id:" + id + ", scopevalue: " + scopevalue;
     }

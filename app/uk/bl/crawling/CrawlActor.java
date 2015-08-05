@@ -35,6 +35,7 @@ public class CrawlActor extends UntypedActor {
 			this.watchedTarget = watchedTarget;
 		}
 		
+		@Override
 		public List<Document> apply() {
 			Logger.info("Crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
@@ -125,6 +126,7 @@ public class CrawlActor extends UntypedActor {
 		}
 	}
 	
+	@Override
 	public void onReceive(Object message) throws Exception {
 		if (message instanceof CrawlMessage) {
 			Logger.info("Starting crawl");

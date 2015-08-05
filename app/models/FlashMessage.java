@@ -28,6 +28,7 @@ public class FlashMessage {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return messageType + ": " + text;
 	}
@@ -53,6 +54,7 @@ public class FlashMessage {
 			return value;
 		}
 	
+		@Override
 		public String toString() {
 			return value;
 		}

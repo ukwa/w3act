@@ -28,7 +28,8 @@ public class IntegrationTest {
 //    @Test
     public void test() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), HTMLUNIT, new Callback<TestBrowser>() {
-            public void invoke(TestBrowser browser) {
+            @Override
+			public void invoke(TestBrowser browser) {
                 browser.goTo("http://localhost:3333");
                 assertThat(browser.pageSource()).contains("W3ACT");
             }
@@ -64,7 +65,8 @@ public class IntegrationTest {
 //    @Test
     public void runInBrowser() {
         running(testServer(9000), FIREFOX, new Callback<TestBrowser>() {
-            public void invoke(TestBrowser browser) {
+            @Override
+			public void invoke(TestBrowser browser) {
                WebDriver webDriver = browser.getDriver();
                BasicTestPage basicTestPage = new BasicTestPage(webDriver, 9000);
                browser.manage().window().maximize();

@@ -125,7 +125,8 @@ public class Flag extends Taxonomy {
         return options;		
 	}
     	
-   public String toString() {
+	@Override
+	public String toString() {
         return "Flag(" + name + ")" + ", id:" + id;
     }
     

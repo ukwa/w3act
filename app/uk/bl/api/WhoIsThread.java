@@ -20,7 +20,8 @@ public class WhoIsThread implements Runnable  {
         this.number = number;
     }
 	
-    public void run() {
+    @Override
+	public void run() {
     	synchronized (target) {
 	        try {
 				boolean res = Scope.INSTANCE.checkWhoisThread(number);

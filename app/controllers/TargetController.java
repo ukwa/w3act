@@ -1229,7 +1229,7 @@ public class TargetController extends AbstractController {
 		        if (tagValues != null) {
 		            for(String tagValue: tagValues) {
 		            	Long tagId = Long.valueOf(tagValue);
-		            	Tag tag = Tag.findById(tagId);
+		            	Tag tag = Tag.findTagById(tagId);
 		            	newTags.add(tag);
 		            }
 		            filledForm.get().tags = newTags;
@@ -1584,7 +1584,7 @@ public class TargetController extends AbstractController {
         if (tagValues != null) {
             for(String tagValue: tagValues) {
             	Long tagId = Long.valueOf(tagValue);
-            	Tag tag = Tag.findById(tagId);
+            	Tag tag = Tag.findTagById(tagId);
             	newTags.add(tag);
             }
             filledForm.get().tags = newTags;

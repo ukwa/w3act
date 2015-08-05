@@ -1,15 +1,16 @@
 package models;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.TimeZone;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -28,6 +30,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import models.License.LicenseStatus;
 
@@ -36,11 +39,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
+import play.data.validation.Constraints;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
-import uk.bl.api.FormHelper;
 import uk.bl.api.OverallLicenseStatus;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
@@ -52,6 +55,7 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.Query;
+import com.avaje.ebean.annotation.Transactional;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -60,13 +64,81 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @Entity
 @Table(name = "target")
-public class Target extends UrlModel {
+public class Target extends Model {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8283372689443804260L;
 
+	@Id
+    public Long id;
+	
+	@JsonProperty
+	@Column(unique=true)
+	public String url;
+
+    public Date createdAt;
+
+    @Version
+    public Timestamp updatedAt;
+   
+    @Override
+    @Transactional
+	public void save() {
+    	// need to save to get the ID
+    	super.save();
+    	if (StringUtils.isEmpty(this.url)) {
+    		this.url = Const.ACT_URL + this.id;
+    	}
+    	if (createdAt == null) {
+    		this.createdAt = new Date();
+    	}
+    	super.save();
+    }
+    
+	public String toCreatedAtString() {
+		return Utils.INSTANCE.convertToDateString(createdAt);
+	}
+	
+	public String toUpdatedAtString() {
+		return Utils.INSTANCE.convertToDateTime(updatedAt);
+	}
+	
+    @Constraints.Required(message="Title Required")
+	public String title;
+	
+	public String language;
+	
+	public String secondLanguage;
+
+	@Column(columnDefinition = "text")
+	public String revision;
+
+	@JsonProperty
+	public String edit_url;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "qaissue_id")
+	public QaIssue qaIssue;
+
+	@JsonIgnore
+	@Column(columnDefinition = "text")
+	public String notes;
+	
+	@JsonIgnore
+	public String format;
+
+
+	public String getEdit_url() {
+		return edit_url;
+	}
+
+	public void setEdit_url(String edit_url) {
+		this.edit_url = edit_url;
+	}
+	
 	//@JsonIgnore
 	@JsonProperty("originating_organisation")
 	@Column(columnDefinition = "text")
@@ -1901,6 +1973,7 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	@JsonIgnore
+	@Transient
 	public OverallLicenseStatus getOverallLicenseStatus() {
 		return new OverallLicenseStatus(this);
 	}
@@ -2075,6 +2148,7 @@ public class Target extends UrlModel {
     }
     
     @JsonIgnore
+    @Transient
     public List<Collection> getCollectionCategories() {
     	List<Collection> categories = new ArrayList<Collection>();
     	for (Collection collection : this.collections) {

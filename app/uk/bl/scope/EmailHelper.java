@@ -53,7 +53,8 @@ public class EmailHelper {
 		        props.put("mail.smtp.auth", Const.TRUE);
 		        session = Session.getInstance(props,
 			      new javax.mail.Authenticator() {
-			        public PasswordAuthentication getPasswordAuthentication() {
+			        @Override
+					public PasswordAuthentication getPasswordAuthentication() {
 			            return new PasswordAuthentication(user, password);
 			        }
 			      });

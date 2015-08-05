@@ -194,6 +194,7 @@ public class MailTemplate extends ActModel {
     	return text;
     }
     
+    @Override
     public String toString() {
         return "MailTemplate(" + name + ")" + ", id:" + id;
     }

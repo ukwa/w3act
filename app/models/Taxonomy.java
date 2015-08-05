@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -36,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="ttype")
-public class Taxonomy extends MappedSuperClass {
+public class Taxonomy extends ActModelMappedSuperClass { 
      
 	public final static String TAXONOMY_TERM = "taxonomy_term";
     public static final String TAXONOMY_PARENTS  	 = "taxonomy_parents"; 
@@ -75,49 +76,16 @@ public class Taxonomy extends MappedSuperClass {
 	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
 	public List<Taxonomy> parentsAllList;
 	
-    @Transient
-    @JsonProperty
-    private String tid;
-    
-    @Transient
-    @JsonIgnore
-    public Long node_count;
-    
-    @Transient
-    @JsonProperty(value="vocabulary")
-    private FieldModel vocabularyValue;
-    
-    @Transient
-    @JsonProperty(value="parent")
-    private List<FieldModel> parentFieldList;
-    
-    @Transient
-    @JsonProperty(value="parents_all")
-    private List<FieldModel> parents_all;
-    
-    @Transient
-    @JsonIgnore
-    public Long feed_nid;
-    
-    @Transient
-    @JsonIgnore
-    public Long weight;
+	@Column(name="start_date")
+	protected Timestamp startDate;
+	
+	@Column(name="end_date")
+	protected Timestamp endDate;
 
-    @Transient
-    @JsonProperty
-    private List<FieldModel> field_owner;
-    
-    @Transient
-    @JsonProperty
-    private Object field_dates;
-    
+	// Used during import:
     @Transient
     public String parentName;
-    
-//    {"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-//    "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
-//    "field_publish":true,"tid":"250","name":"European Parliament Elections 2014","description":"","weight":"0","node_count":10,"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250","vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},"parent":[],"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-
+	
     public Taxonomy() {}
 
     public Taxonomy(String name) {
@@ -131,20 +99,20 @@ public class Taxonomy extends MappedSuperClass {
     
     // -- Queries
     
-	public static Model.Finder<Long,Taxonomy> find = new Model.Finder<>(Long.class, Taxonomy.class);
+	public static Model.Finder<Long,Taxonomy> findTaxonomy = new Model.Finder<>(Long.class, Taxonomy.class);
     
     /**
      * Retrieve Taxonomy for user
      */
     public static List<Taxonomy> findInvolving() {
-        return find.all();
+        return findTaxonomy.all();
     }
     
     /**
      * Retrieve all Taxonomies
      */
     public static List<Taxonomy> findAll() {
-        return find.all();
+        return findTaxonomy.all();
     }
     
     /**
@@ -153,7 +121,7 @@ public class Taxonomy extends MappedSuperClass {
      * @return object 
      */
     public static Taxonomy findById(Long id) {
-    	Taxonomy res = find.where().eq(Const.ID, id).findUnique();
+    	Taxonomy res = findTaxonomy.where().eq(Const.ID, id).findUnique();
     	return res;
     }
     
@@ -163,11 +131,11 @@ public class Taxonomy extends MappedSuperClass {
      * @return taxonomy object
      */
     public static Taxonomy findByName(String name) {
-    	return find.where().eq("name", name).findUnique();
+    	return findTaxonomy.where().eq("name", name).findUnique();
     }
 
     public static Taxonomy findByNameAndType(String name, String type) {
-    	return find.where().eq("name", name).eq("ttype", type).findUnique();
+    	return findTaxonomy.where().eq("name", name).eq("ttype", type).findUnique();
     }
 
     /**
@@ -184,7 +152,7 @@ public class Taxonomy extends MappedSuperClass {
      * Rename a Taxonomy
      */
     public static String rename(Long TaxonomyId, String newName) {
-        Taxonomy Taxonomy = (Taxonomy) find.ref(TaxonomyId);
+        Taxonomy Taxonomy = (Taxonomy) findTaxonomy.ref(TaxonomyId);
         Taxonomy.name = newName;
         Taxonomy.update();
         return newName;
@@ -199,7 +167,7 @@ public class Taxonomy extends MappedSuperClass {
 //    	Logger.debug("taxonomy findByUrl: " + url);
     	Taxonomy res = new Taxonomy();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
-    		res = find.where().eq(Const.URL, url).findUnique();
+    		res = findTaxonomy.where().eq(Const.URL, url).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
@@ -212,7 +180,7 @@ public class Taxonomy extends MappedSuperClass {
      * @return taxonomy object
      */
     public static Taxonomy findByUrl(String url) {
-    	Taxonomy taxonomy = find.where().eq(Const.URL, url).findUnique();
+    	Taxonomy taxonomy = findTaxonomy.where().eq(Const.URL, url).findUnique();
     	return taxonomy;
     }          
     
@@ -229,7 +197,7 @@ public class Taxonomy extends MappedSuperClass {
 		    	String[] parts = url.split(Const.LIST_DELIMITER);
 		    	for (String part: parts)
 		        {
-			        Taxonomy taxonomy = find.where().eq(Const.URL, part).findUnique();
+			        Taxonomy taxonomy = findTaxonomy.where().eq(Const.URL, part).findUnique();
 			        if (taxonomy != null) {
 			        	if (res.equals(Const.NONE)) {
 			        		res = taxonomy.name;
@@ -239,7 +207,7 @@ public class Taxonomy extends MappedSuperClass {
 			        }
 		        }
     		} else {
-		        Taxonomy taxonomy = find.where().eq(Const.URL, url).findUnique();
+		        Taxonomy taxonomy = findTaxonomy.where().eq(Const.URL, url).findUnique();
 		        if (taxonomy != null) {
 		        	res = taxonomy.name;
 		        }
@@ -256,7 +224,7 @@ public class Taxonomy extends MappedSuperClass {
     public static Taxonomy findQaIssueByName(String name) {
     	Taxonomy res = new Taxonomy();
         if (name != null && name.length() > 0 && !name.contains(Const.COMMA)) {
-	        Taxonomy res2 = find.where().eq(Const.NAME, name).findUnique();
+	        Taxonomy res2 = findTaxonomy.where().eq(Const.NAME, name).findUnique();
 	        if (res2 == null) {
 	        	res.name = Const.NONE;
 	        } else {
@@ -342,7 +310,7 @@ public class Taxonomy extends MappedSuperClass {
     public static Taxonomy getByUrl(String url) {
     	Taxonomy res = new Taxonomy();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
-    		res = find.where().eq(Const.URL, url).findUnique();
+    		res = findTaxonomy.where().eq(Const.URL, url).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
@@ -407,7 +375,7 @@ public class Taxonomy extends MappedSuperClass {
     		if (name.contains(Const.COMMA)) {
     			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
-    		res = find.where()
+    		res = findTaxonomy.where()
     				.eq(Const.NAME, name)
     				.not(Expr.icontains(Const.PARENT, Const.ACT_URL))
 //                Expr.icontains(Const.FIELD_URL_NODE, filter),
@@ -436,7 +404,7 @@ public class Taxonomy extends MappedSuperClass {
     		if (name.contains(Const.COMMA)) {
     			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
-	        ExpressionList<Taxonomy> ll = find.where().eq(Const.NAME, name);
+	        ExpressionList<Taxonomy> ll = findTaxonomy.where().eq(Const.NAME, name);
 	    	List<Taxonomy> taxonomyList = ll.findList(); 
 	    	if (taxonomyList.size() > 0) {
 	    		res = taxonomyList.get(0);
@@ -491,7 +459,7 @@ public class Taxonomy extends MappedSuperClass {
     	Taxonomy res = new Taxonomy();
     	Logger.debug("findByFullName: " + name);
     	if (name != null && name.length() > 0) {
-    		res = find.where().eq(Const.NAME, name).findUnique();
+    		res = findTaxonomy.where().eq(Const.NAME, name).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
@@ -508,7 +476,7 @@ public class Taxonomy extends MappedSuperClass {
     	Taxonomy res = new Taxonomy();
 //    	Logger.debug("findByFullNameExt: " + name);
     	if (name != null && name.length() > 0) {
-    		res = find.where().eq(Const.NAME, name).eq(Const.TTYPE, ttype).findUnique();
+    		res = findTaxonomy.where().eq(Const.NAME, name).eq(Const.TTYPE, ttype).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
@@ -523,7 +491,7 @@ public class Taxonomy extends MappedSuperClass {
 	 */
 	public static List<Taxonomy> findByType(String type) {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
-        ExpressionList<Taxonomy> ll = find.where().eq(Const.TTYPE, type);
+        ExpressionList<Taxonomy> ll = findTaxonomy.where().eq(Const.TTYPE, type);
     	res = ll.findList();
 		return res;
 	}       
@@ -536,7 +504,7 @@ public class Taxonomy extends MappedSuperClass {
 	public static List<Taxonomy> findListByType(String type) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (type != null && type.length() > 0) {
-	        ExpressionList<Taxonomy> ll = find.where().eq(Const.TTYPE, type);
+	        ExpressionList<Taxonomy> ll = findTaxonomy.where().eq(Const.TTYPE, type);
 	    	res = ll.findList(); 
         }
     	return res;
@@ -548,7 +516,7 @@ public class Taxonomy extends MappedSuperClass {
 	 */
 	public static List<Taxonomy> getChildLevelSubjects(String url) {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
-        ExpressionList<Taxonomy> ll = find.where().eq(Const.PARENT, url);
+        ExpressionList<Taxonomy> ll = findTaxonomy.where().eq(Const.PARENT, url);
     	res = ll.findList();
 		return res;
 	}       
@@ -559,7 +527,7 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static List<Taxonomy> findListByTypeSorted(String type) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	Page<Taxonomy> page = pageByType(0, find.all().size(), Const.NAME, Const.ASC, "", type);
+    	Page<Taxonomy> page = pageByType(0, findTaxonomy.all().size(), Const.NAME, Const.ASC, "", type);
     	res = page.getList();
         return res;
     }
@@ -570,7 +538,7 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static List<Taxonomy> findListByTypeSortedAll() {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	Page<Taxonomy> page = pageByTypeAll(0, find.all().size(), Const.NAME, Const.ASC, "");
+    	Page<Taxonomy> page = pageByTypeAll(0, findTaxonomy.all().size(), Const.NAME, Const.ASC, "");
     	res = page.getList();
     	Logger.debug("findListByTypeSortedAll() subjects list size: " + res.size());
         return res;
@@ -582,7 +550,7 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static List<Taxonomy> findListByTypeSortedExt(String type, String value) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	Page<Taxonomy> page = pageByTypeAndValue(0, find.all().size(), Const.NAME, Const.ASC, "", type, value);
+    	Page<Taxonomy> page = pageByTypeAndValue(0, findTaxonomy.all().size(), Const.NAME, Const.ASC, "", type, value);
     	res = page.getList();
         return res;
     }
@@ -593,7 +561,7 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static List<Taxonomy> findListByTypeAndParentSorted(String type, String parent) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	Page<Taxonomy> page = pageByTypeAndParent(0, find.all().size(), Const.NAME, Const.ASC, "", type, parent);
+    	Page<Taxonomy> page = pageByTypeAndParent(0, findTaxonomy.all().size(), Const.NAME, Const.ASC, "", type, parent);
     	res = page.getList();
         return res;
     }
@@ -608,7 +576,7 @@ public class Taxonomy extends MappedSuperClass {
     	if (parent != null && parent.length() > 0) {
 //    		Logger.debug("findSubSubjectsList() parent: " + parent);
     		parent = formatDbComma(parent);
-	        ExpressionList<Taxonomy> ll = find.where()
+	        ExpressionList<Taxonomy> ll = findTaxonomy.where()
 	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBSUBJECT.name().toLowerCase())
 	        		.eq(Const.PARENT, parent);
 	    	res = ll.findList(); 
@@ -625,7 +593,7 @@ public class Taxonomy extends MappedSuperClass {
 	public static Taxonomy findByParent(String parent) {
     	Taxonomy res = null;
     	if (parent != null && parent.length() > 0) {
-	        res = find.where().eq(Const.PARENT, parent).findUnique();
+	        res = findTaxonomy.where().eq(Const.PARENT, parent).findUnique();
         }
     	return res;
     }
@@ -657,7 +625,7 @@ public class Taxonomy extends MappedSuperClass {
 	 */
 	public static List<Taxonomy> filterByName(String name) {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
-        ExpressionList<Taxonomy> ll = find.where().icontains(Const.NAME, name);
+        ExpressionList<Taxonomy> ll = findTaxonomy.where().icontains(Const.NAME, name);
     	res = ll.findList();
 		return res;
 	}
@@ -670,7 +638,7 @@ public class Taxonomy extends MappedSuperClass {
 	 */
 	public static List<Taxonomy> filterSubjectsByName(String name) {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
-        ExpressionList<Taxonomy> ll = find.where().icontains(Const.NAME, name)
+        ExpressionList<Taxonomy> ll = findTaxonomy.where().icontains(Const.NAME, name)
     			.add(Expr.or(
     	                Expr.eq(Const.TTYPE, Const.SUBJECT),
     	                Expr.eq(Const.TTYPE, Const.SUBSUBJECT)
@@ -691,7 +659,7 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static Page<Taxonomy> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().icontains(Const.NAME, filter)
+        return findTaxonomy.where().icontains(Const.NAME, filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
@@ -711,7 +679,7 @@ public class Taxonomy extends MappedSuperClass {
     public static Page<Taxonomy> pageByType(int page, int pageSize, String sortBy, String order, 
     		String filter, String type) {
 
-        return find.where().icontains(Const.NAME, filter)
+        return findTaxonomy.where().icontains(Const.NAME, filter)
         		.eq(Const.TTYPE, type)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
@@ -732,7 +700,7 @@ public class Taxonomy extends MappedSuperClass {
     public static Page<Taxonomy> pageByTypeAll(int page, int pageSize, String sortBy, String order, 
     		String filter) {
 
-        return find.where()
+        return findTaxonomy.where()
         		.icontains(Const.NAME, filter)
 	        	.add(Expr.or(
 		                Expr.icontains(Const.TTYPE, Const.SUBJECT),
@@ -765,7 +733,7 @@ public class Taxonomy extends MappedSuperClass {
 //                Expr.icontains(Const.TITLE, filter)
 //             ))
 
-        return find.where()
+        return findTaxonomy.where()
         		.icontains(Const.NAME, filter)
         		.eq(Const.TTYPE, type)
         		.orderBy(sortBy + " " + order)
@@ -787,7 +755,7 @@ public class Taxonomy extends MappedSuperClass {
     public static Page<Taxonomy> pageByTypeAndParent(int page, int pageSize, String sortBy, String order, 
     		String filter, String type, String parent) {
 
-        return find.where().icontains(Const.NAME, filter)
+        return findTaxonomy.where().icontains(Const.NAME, filter)
         		.eq(Const.TTYPE, type)
         		.eq(Const.PARENT, parent)
         		.orderBy(sortBy + " " + order)
@@ -1116,105 +1084,9 @@ public class Taxonomy extends MappedSuperClass {
 	}      
     	
     public static Taxonomy findByTypeAndUrl(String type, String url) {
-        Taxonomy taxonomy = find.where().eq(Const.TTYPE, type).eq(Const.URL, url).findUnique();
+        Taxonomy taxonomy = findTaxonomy.where().eq(Const.TTYPE, type).eq(Const.URL, url).findUnique();
     	return taxonomy;
     }
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Long getWeight() {
-		return weight;
-	}
-
-	public void setWeight(Long weight) {
-		this.weight = weight;
-	}
-
-	public String getTid() {
-		return tid;
-	}
-
-	public void setTid(String tid) {
-		this.tid = tid;
-	}
-
-	public Long getNode_count() {
-		return node_count;
-	}
-
-	public void setNode_count(Long node_count) {
-		this.node_count = node_count;
-	}
-
-	public FieldModel getVocabularyValue() {
-		return vocabularyValue;
-	}
-
-	public void setVocabularyValue(FieldModel vocabularyValue) {
-		this.vocabularyValue = vocabularyValue;
-	}
-
-	public List<FieldModel> getParentFieldList() {
-		return parentFieldList;
-	}
-
-	public void setParentFieldList(List<FieldModel> parentFieldList) {
-		this.parentFieldList = parentFieldList;
-	}
-
-	public List<FieldModel> getParents_all() {
-		return parents_all;
-	}
-
-	public void setParents_all(List<FieldModel> parents_all) {
-		this.parents_all = parents_all;
-	}
-
-	public Long getFeed_nid() {
-		return feed_nid;
-	}
-
-	public void setFeed_nid(Long feed_nid) {
-		this.feed_nid = feed_nid;
-	}
-
-	public List<FieldModel> getField_owner() {
-		return field_owner;
-	}
-
-	public void setField_owner(List<FieldModel> field_owner) {
-		this.field_owner = field_owner;
-	}
-
-	public Object getField_dates() {
-		return field_dates;
-	}
-
-	public void setField_dates(Object field_dates) {
-		this.field_dates = field_dates;
-	}
-
-	public Boolean getPublish() {
-		return publish;
-	}
-
-	public void setPublish(Boolean publish) {
-		this.publish = publish;
-	}
 
 	public List<User> getOwnerUsers() {
 		return ownerUsers;
@@ -1240,7 +1112,23 @@ public class Taxonomy extends MappedSuperClass {
 		this.ttype = ttype;
 	}
 	
-    @Override
+    public Timestamp getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Timestamp startDate) {
+		this.startDate = startDate;
+	}
+
+	public Timestamp getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Timestamp endDate) {
+		this.endDate = endDate;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
@@ -1268,11 +1156,8 @@ public class Taxonomy extends MappedSuperClass {
 	@Override
 	public String toString() {
 		return "Taxonomy [name=" + name + ", description="
-				+ description + ", tid=" + tid + ", ttype=" + ttype + " node_count=" + node_count
-				+ ", vocabularyList=" + vocabularyValue + ", parentList="
-				+ parentFieldList + ", parents_all=" + parents_all + ", feed_nid="
-				+ feed_nid + ", weight=" + weight + ", field_owner="
-				+ field_owner + ", field_dates=" + field_dates
+				+ description + ", ttype=" + ttype + ", startDate="
+				+ startDate + ", endDate=" + endDate
 				+ ", publish=" + publish + "]";
 	}
 }

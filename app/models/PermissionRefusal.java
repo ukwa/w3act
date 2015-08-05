@@ -107,6 +107,7 @@ public class PermissionRefusal extends ActModel {
         return find.all();
     }
     
+    @Override
     public String toString() {
         return "PermissionRefusal(" + name + ")" + ", id:" + id;
     }    

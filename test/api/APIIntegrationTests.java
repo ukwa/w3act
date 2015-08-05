@@ -50,6 +50,7 @@ public class APIIntegrationTests {
     @Test
     public void testInServer() {
         running(testServer(3333, fakeApplication()), new Runnable() {
+			@Override
 			public void run() {
         		String host = "http://localhost:3333/act";
         		Logger.info("STEP Getting the homepage...");

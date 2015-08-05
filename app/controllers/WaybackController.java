@@ -1,20 +1,15 @@
 package controllers;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import models.User;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import play.Logger;
 import play.Play;
 import play.libs.F;
@@ -64,6 +59,7 @@ public class WaybackController extends Controller {
 
 				new Function<WSResponse, Result>() {
 
+					@Override
 					public Result apply(WSResponse response) {
 
 						Logger.debug(wayback + " (" + response.getStatusText() + " " + response.getStatus() + ") " + response.getUri());
