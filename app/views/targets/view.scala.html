@@ -406,6 +406,21 @@
 							</div>
 						</div>
 					</div>
+		     	</div>		  
+		     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="status" class="col-sm-6 control-label">Second Language <small class="text-center">(the second language in which the page is written)</small></label>
+						    <div class="col-sm-6">
+						        @if(target.secondLanguage != null && target.secondLanguage.length > 0) {
+  									@uk.bl.Const.TargetLanguage.getLanguage(target.secondLanguage).getValue
+  								} else {
+  								    None
+  								}
+							</div>
+						</div>
+					</div>
 		     	</div>		   
 		     	
 	    		<div class="row padding-10">

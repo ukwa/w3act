@@ -174,7 +174,11 @@
 							}
 						</td>
 						<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
+						@if(document.documentUrl.length()>=40){
+						<td><a href="@document.documentUrl" target="_blank">@document.documentUrl.substring(0,40)...</a></td>
+						}else{
 						<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
+						}
 						<td>@WatchedTargets.prettyDateString(document.waybackTimestamp)</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<td>
