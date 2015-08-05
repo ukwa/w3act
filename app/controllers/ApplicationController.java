@@ -141,14 +141,9 @@ public class ApplicationController extends Controller {
      */
 	@Security.Authenticated(SecuredController.class)
     public static Result index() {
-    	String email = session().get("email");
-    	Logger.debug("Lookup up email: "+email);
-    	User user = User.findByEmail(email);
-    	Logger.debug("user: " + user + " - " + email);
-    	if (user != null) {    		
-    		return ok(about.render("About", user));
-    	}
-    	return redirect(routes.ApplicationController.login());
+		String email = session().get("email");
+		User user = User.findByEmail(email);
+		return ok(about.render("About", user));
     }
     
     public static String getVersion() {
@@ -215,8 +210,6 @@ public class ApplicationController extends Controller {
     public static Result home() {
 		String email = session().get("email");
 		User user = User.findByEmail(email);
-		if (user == null)
-    		return redirect(routes.ApplicationController.login());
 		if (user.ddhaptUser)
 			return redirect(routes.WatchedTargets.overview(0, "target.title", "asc"));
 		else
