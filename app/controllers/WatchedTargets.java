@@ -1,5 +1,8 @@
 package controllers;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +134,33 @@ public class WatchedTargets extends AbstractController {
     	String hour = waybackTimestamp.substring(8, 10);
     	String minute = waybackTimestamp.substring(10, 12);
     	return day + "-" + month + "-" + year + " " + hour + ":" + minute;
+    }
+    
+    public static String dayCount(String waybackTimestamp) {
+    	if (waybackTimestamp == null || waybackTimestamp.length() < 12) return waybackTimestamp;
+    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+		Calendar c = Calendar.getInstance();
+		
+		Date d1 = null;
+		Date d2 = null;
+		long diffDays = 0;
+
+		try {
+			
+			d1 = sdf.parse(sdf.format(c.getTime()));
+			d2 = sdf.parse(waybackTimestamp);
+			
+			//in milliseconds
+			long diff = d1.getTime() - d2.getTime();
+
+			diffDays = diff / (24 * 60 * 60 * 1000);			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+		return Long.toString(diffDays);
     }
     
     public static Result filterByJson(String title) {

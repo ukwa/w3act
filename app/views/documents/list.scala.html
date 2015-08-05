@@ -179,7 +179,7 @@
 						}else{
 						<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
 						}
-						<td>@WatchedTargets.prettyDateString(document.waybackTimestamp)</td>
+						<td>@WatchedTargets.dayCount(document.waybackTimestamp) days ago</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<td>
 								@if(document.isEditableFor(user)) {

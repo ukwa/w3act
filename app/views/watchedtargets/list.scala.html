@@ -121,7 +121,7 @@
 					</td>
 					<td><a href="@routes.UserController.view(watchedTarget.target.authorUser.id)">@watchedTarget.target.authorUser.name</a></td>
 					<td><a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(watchedTarget.id))">@watchedTarget.documents.size</a></td>
-					<td>@WatchedTargets.prettyDateString(watchedTarget.waybackTimestamp)</td>
+					<td>@WatchedTargets.dayCount(watchedTarget.waybackTimestamp) days ago</td>
 					<td>
 						@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
 							<input type="hidden" name="watchedtarget" value="@watchedTarget.id">
