@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
+
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.QueryIterator;
@@ -142,6 +144,16 @@ public class Instance extends Model {
     public String summary;
     
     public Date fieldDate;
+    
+    /** Crawl metadata */
+    public String crawl_seeds;
+    public Date crawl_scheduled_start_date;
+    public Date crawl_actual_start_date;
+    public Long crawl_duration_millis;
+    public Long crawl_bytes_downloaded;
+    public Long crawl_urls_downloaded;
+    public Long crawl_urls_failed;   
+    public String crawl_additional_information;
     
 	@Transient
 	@JsonProperty

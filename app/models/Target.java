@@ -188,6 +188,13 @@ public class Target extends Model {
 
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<FieldUrl> fieldUrls;
+	
+	@Column(name="target_start_date")
+	protected Timestamp targetStartDate;
+	
+	@Column(name="target_end_date")
+	protected Timestamp targetEndDate;
+
 
 	@Column(columnDefinition = "text")
 	public String description;

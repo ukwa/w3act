@@ -10,6 +10,17 @@ ALTER TABLE target ADD second_language varchar(255);
 ALTER TABLE instance ADD second_language varchar(255);
 ALTER TABLE taxonomy ADD start_date timestamp;
 ALTER TABLE taxonomy ADD end_date timestamp;
+ALTER TABLE target ADD target_start_date timestamp;
+ALTER TABLE target ADD target_end_date timestamp;
+ALTER TABLE instance ADD crawl_seeds text;
+ALTER TABLE instance ADD crawl_scheduled_start_date timestamp;
+ALTER TABLE instance ADD crawl_actual_start_date timestamp;
+ALTER TABLE instance ADD crawl_duration_millis bigint;
+ALTER TABLE instance ADD crawl_bytes_downloaded bigint;
+ALTER TABLE instance ADD crawl_urls_downloaded bigint;
+ALTER TABLE instance ADD crawl_urls_failed bigint;
+ALTER TABLE instance ADD crawl_additional_information text;
+
 
 INSERT INTO taxonomy (ttype, id, url, created_at, name, description, updated_at)
     VALUES ('flags', 369, 'act-369', '2015-07-31 10:29:13.714', 'Video Content to add', 'This flag marks video content to add', '2015-07-31 10:29:13.714');
@@ -27,5 +38,15 @@ ALTER TABLE target DROP second_language;
 ALTER TABLE instance DROP second_language;
 ALTER TABLE taxonomy DROP start_date;
 ALTER TABLE taxonomy DROP end_date;
+ALTER TABLE target DROP target_start_date;
+ALTER TABLE target DROP target_end_date;
+ALTER TABLE instance DROP crawl_seeds text;
+ALTER TABLE instance DROP crawl_scheduled_start_date;
+ALTER TABLE instance DROP crawl_actual_start_date;
+ALTER TABLE instance DROP crawl_duration_millis;
+ALTER TABLE instance DROP crawl_bytes_downloaded;
+ALTER TABLE instance DROP crawl_urls_downloaded;
+ALTER TABLE instance DROP crawl_urls_failed;
+ALTER TABLE instance DROP crawl_additional_information;
 
 DELETE FROM taxonomy WHERE ttype = 'flags' AND name = 'Video Content to add';
