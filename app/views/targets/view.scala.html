@@ -79,8 +79,8 @@
 	
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#">View</a></li>
-		@if(user.hasArchivistRights ||
-				(user.hasUserRights && target.authorUser != null && user.id == target.authorUser.id)) {
+		@if(user.hasArchivistRights || user.hasExpertUserRights ||
+				(user.isUser && target.authorUser != null && user.id == target.authorUser.id)) {
 			<li><a onclick="switchPage(); return false;" href="id">Edit</a></li>
 		}
 	</ul>
