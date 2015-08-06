@@ -111,9 +111,26 @@ public class TargetController extends AbstractController {
     public static Result lookup(int pageNo, String sortBy, String order, String filter) {
     	Logger.debug("TargetController.lookup()");
     	
+    	String url = filter;
+    	if (url.startsWith("http://")) {
+    		url = url.replace("http://", "");
+    	}
+    	if (url.startsWith("https://")) {
+    		url = url.replace("https://", "");
+    	}
+    	
+    	if (url.startsWith("www.")) {
+    		url = url.replace("www.", "");
+    	}
+    	
+    	if (url.endsWith("/")) {
+    		url = url.replace("/", "");
+    	}
+    	
+    	Logger.debug("After processing Filter::"+url);
     	Page<Target> pages = Target.find.fetch("fieldUrls").where()
 			.eq(Const.ACTIVE, true)
-			.add(Expr.or(Expr.icontains("fieldUrls.url", filter), Expr.icontains("t0.title", filter)))
+			.add(Expr.or(Expr.icontains("fieldUrls.url", url), Expr.icontains("t0.title", url)))
 			.orderBy("t0.title" + " " + order)
 			.findPagingList(10)
 			.setFetchAhead(false).getPage(pageNo);
@@ -151,9 +168,27 @@ public class TargetController extends AbstractController {
     public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
     		String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
     	
-    	Logger.debug("Pre Targets.list(): " + pageNo + " - " + filter + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);
+    	String url = filter;
+    	if (url.startsWith("http://")) {
+    		url = url.replace("http://", "");
+    	}
+    	if (url.startsWith("https://")) {
+    		url = url.replace("https://", "");
+    	}
+    	
+    	if (url.startsWith("www.")) {
+    		url = url.replace("www.", "");
+    	}
+    	
+    	if (url.endsWith("/")) {
+    		url = url.replace("/", "");
+    	}
+    	
+    	Logger.debug("After processing Filter::"+url);
+    	
+    	Logger.debug("Pre Targets.list(): " + pageNo + " - " + url + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);
 
-    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curatorId, organisationId, subject, crawlFrequencyName, depthName, collection, licenseId, flagId);
+    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, url, curatorId, organisationId, subject, crawlFrequencyName, depthName, collection, licenseId, flagId);
     	
     	
 		User user = User.findByEmail(request().username());
@@ -257,6 +292,10 @@ public class TargetController extends AbstractController {
     	
     	if (url.startsWith("www.")) {
     		url = url.replace("www.", "");
+    	}
+    	
+    	if (url.endsWith("/")) {
+    		url = url.replace("/", "");
     	}
 
     	Logger.debug("after prefix: " + url);
