@@ -278,7 +278,7 @@ public class APIController extends Controller {
 					URL uri = new URI(trimmed).normalize().toURL();
         			String extFormUrl = uri.toExternalForm();
         			
-        			FieldUrl existingFieldUrl = FieldUrl.findByUrl(trimmed);
+        			FieldUrl existingFieldUrl = FieldUrl.hasDuplicate(trimmed);
 					if (existingFieldUrl != null) {
 						String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + existingFieldUrl.target.id;
 			            Logger.debug("CONFLICT existingFieldUrl Url: " + existingFieldUrl.url);

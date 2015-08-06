@@ -214,6 +214,11 @@ public class Target extends Model {
 	@Required(message="Author Required")
 	public User authorUser;
 
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "document_owner_id")
+	public User documentOwner;
+
 	@Column(columnDefinition = "text")
 	public String flagNotes;
 	/**

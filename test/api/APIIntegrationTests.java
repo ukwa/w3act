@@ -86,9 +86,13 @@ public class APIIntegrationTests {
     	WSResponse response = result.get(timeout_ms);
     	Logger.info("populate GOT "+response.getStatus()+" "+response.getStatusText());
     	assertThat(response.getStatus()).isEqualTo(expected);
-    	String loc = response.getHeader(LOCATION);
-    	Long id = Long.parseLong(loc.substring(loc.lastIndexOf('/')+1));
+    	if( response.getAllHeaders().containsKey(LOCATION)) {
+        	String loc = response.getHeader(LOCATION);
+        	Long id = Long.parseLong(loc.substring(loc.lastIndexOf('/')+1));
     	return id;
+    	} else {
+    		return null;
+    	}
     }
     
     private static void sendTestData(String host) throws JsonParseException, JsonMappingException, IOException {
@@ -105,6 +109,8 @@ public class APIIntegrationTests {
     	// Push and entry in:
 		Logger.info("STEP API New Target...");
     	Long oid = populate(host, defaultUser, defaultPw, "anjackson.net", "http://anjackson.net/","root", "", 201 );
+    	Logger.info("STEP Check target is not easily duplicated (without a slash)...");
+    	Long noid = populate(host, defaultUser, defaultPw, "anjackson.net noslash", "http://anjackson.net","root", "", 409 );
 
     	// Get it back:
 		Logger.info("STEP API Get Target...");
