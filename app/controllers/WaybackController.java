@@ -48,9 +48,7 @@ public class WaybackController extends Controller {
 
 		// Build up URL and copy over query parameters:
 		WSRequestHolder holder = WS.url(wayback).setFollowRedirects(false);
-		for( String key : request().queryString().keySet() ) {
-			holder.setQueryParameter(key, request().getQueryString(key));
-		}
+		holder.setQueryString( ctx()._requestHeader().rawQueryString() );
 
 		// GET
 		Promise<WSResponse> responsePromise = holder.get();
