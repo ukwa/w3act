@@ -68,5 +68,8 @@ pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"
 
 ehcacheplugin=disabled
 
+#DDHAPT
+enableDDHAPT=false
+
 use.accounts=false
 admin.default.email="wa-sysadm@bl.uk"

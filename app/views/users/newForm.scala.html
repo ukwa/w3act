@@ -96,7 +96,7 @@
 				</div>
 	     	</div>
 	     	
-	     	@if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || admin.hasRole("expert_user") && admin.isLDLMember()) {
+	     	@if((admin.hasRole("sys_admin") || admin.hasRole("archivist") || admin.hasRole("expert_user")) && admin.isLDLMember() && ApplicationController.getDDHAPTStatus()) {
 	     	@templates.checkbox(userForm("ddhaptUser"), true, '_label -> "show DDHAPT start page")(
 				helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 			)

@@ -210,10 +210,16 @@ public class ApplicationController extends Controller {
     public static Result home() {
 		String email = session().get("email");
 		User user = User.findByEmail(email);
-		if (user.ddhaptUser)
+		if (user.ddhaptUser && getDDHAPTStatus())
 			return redirect(routes.WatchedTargets.overview(0, "target.title", "asc"));
 		else
 			return redirect(routes.ApplicationController.index());
+	}
+	
+	public static boolean getDDHAPTStatus(){
+		
+		Boolean ddhaptStatus = Play.application().configuration().getBoolean("enableDDHAPT");		
+		return ddhaptStatus;		
 	}
 
 }
