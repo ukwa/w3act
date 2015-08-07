@@ -81,6 +81,16 @@ public class Instance extends Model {
 	@Column(columnDefinition = "text")
 	public String notes;
 	
+	 /** Crawl metadata */
+    public String crawlSeeds;
+    public Date crawlScheduledStartDate;
+    public Date crawlActualStartDate;
+    public Long crawlDurationMillis;
+    public Long crawlBytesDownloaded;
+    public Long crawlURLsDownloaded;
+    public Long crawlURLsFailed;   
+    public String crawlAdditionalInformation;
+	
 	@JsonIgnore
 	public String format;
 

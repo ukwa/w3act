@@ -122,7 +122,7 @@
 				@for(instance <- currentPage.getList) {
 				<tr>
 					<td>
-						<a class="brand" href="@routes.InstanceController.edit(instance.id)">@instance.title</a><br>					
+						<a class="brand" href="@routes.InstanceController.view(instance.id)">@instance.title</a><br>					
 						@if(instance.target.fieldUrls != null) {
 							@for(fieldUrl <- instance.target.fieldUrls) {						
 								<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a><br />

@@ -119,7 +119,7 @@
 					                options(authors), 
 					                args = 
 					                'class -> "form-control",
-					                '_label -> "Author:",
+					                '_label -> "User:",
 				                	'_default -> "-- None --",
 					                '_showConstraints -> true
 				            )(FieldConstructor(genericInput.f), lang)						
@@ -147,6 +147,118 @@
 				 				args = 'rows -> 1, 'cols -> 100,
 								'_label -> "Technical Notes",
 							    'id -> "quality_notes",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlSeeds"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Crawl Seeds",
+							    'id -> "crawlSeeds",
+							    'readonly -> "",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlScheduledStartDate"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Scheduled Start Date",
+							    'id -> "crawlScheduledStartDate",
+							    'readonly ->"",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlActualStartDate"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Actual Start Date",
+							    'id -> "crawlActualStartDate",
+							    'readonly -> "",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlDurationMillis"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Duration",
+							    'id -> "crawlDurationMillis",
+							    'readonly -> "",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlBytesDownloaded"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Bytes Downloaded",
+							    'id -> "crawlBytesDownloaded",
+							    'readonly -> "",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlURLsDownloaded"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "URLs Downloaded",
+							    'id -> "crawlURLsDownloaded",
+							    'readonly -> "",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlURLsFailed"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "URLs Failed",
+							    'id -> "crawlURLsFailed",
+							    'readonly -> "",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+			         	</div>
+					</div>
+				</div>
+				
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(instanceForm("crawlAdditionalInformation"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Additional Information",
+							    'id -> "crawlAdditionalInformation",
+							    'readonly -> "",
 							    'class -> "form-control"
 							)(FieldConstructor(genericInput.f), lang)	
 			         	</div>
