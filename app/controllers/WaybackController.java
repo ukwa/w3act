@@ -1,15 +1,25 @@
 package controllers;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import models.User;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import play.Logger;
 import play.Play;
 import play.libs.F;
@@ -32,57 +42,47 @@ public class WaybackController extends Controller {
 	private static int statusCode = 0;
 
 	@Security.Authenticated(SecuredController.class)
-	public static Promise<Result> wayback(String url) throws ActException {
+	public static Result wayback(String url) throws ActException, ClientProtocolException, IOException {
 		
 		User user = User.findByEmail(session().get("email"));
 		if( ! user.isLDLMember() ) {
-			return F.Promise.pure((Result) unauthorized(
-					"unauthorized - you must be a member of a Legal Deposit library organisation to view the crawled resources")
-			);
+			return unauthorized(
+					"unauthorized - you must be a member of a Legal Deposit library organisation to view the crawled resources"
+					);
 		}
 				
 		String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 		
 		// Build up the wayback query:
-		final String wayback = wayBackUrl + "/" + url;
+		String waybackBuilder = wayBackUrl + "/" + url;
+		String q = ctx()._requestHeader().rawQueryString();
+		if( q != null && q.length() > 0 ) {
+			Logger.info("Passing through raw Query String: "+q);
+			waybackBuilder += "?"+q;
+		}
+		final String wayback = waybackBuilder;
+		Logger.info("Using URL: "+wayback);
 
-		// Build up URL and copy over query parameters:
-		WSRequestHolder holder = WS.url(wayback).setFollowRedirects(false);
-		holder.setQueryString( ctx()._requestHeader().rawQueryString() );
-
-		// GET
-		Promise<WSResponse> responsePromise = holder.get();
-
-		final Promise<Result> resultPromise = responsePromise.map(
-
-				new Function<WSResponse, Result>() {
-
-					@Override
-					public Result apply(WSResponse response) {
-
-						Logger.debug(wayback + " (" + response.getStatusText() + " " + response.getStatus() + ") " + response.getUri());
-
-						Logger.debug("WS.Response: "+response);
-						// TODO Copy all headers over?
-						if ( response.getHeader(LOCATION) != null ) {
-							Logger.debug("Copying over Location header: "+response.getHeader(LOCATION));
-							response().setHeader(LOCATION, response.getHeader(LOCATION));
-							return status(response.getStatus());
-						}
-						String contentType = response.getHeader(CONTENT_TYPE);
-						Logger.debug("content type: " + contentType);
-						return status(response.getStatus(), response.getBodyAsStream()).as(contentType);
-				
-					}
-
-				}
-				);
-
-		                    
-		return resultPromise;
+		// Build up URL and copy over query parameters:		
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		
+		HttpGet httpGet = new HttpGet(wayback);
+		CloseableHttpResponse response = httpclient.execute(httpGet);
+		HttpEntity entity = response.getEntity();
+		System.out.println(response.getStatusLine());
+		   // do something useful with the response body
+	    // and ensure it is fully consumed
+		if ( response.getFirstHeader(LOCATION) != null ) {
+			Logger.debug("Copying over Location header: "+response.getFirstHeader(LOCATION));
+			response().setHeader(LOCATION, response.getFirstHeader(LOCATION).getValue());
+			return status(response.getStatusLine().getStatusCode());
+		}
+		String contentType = response.getFirstHeader(CONTENT_TYPE).getValue();
+		Logger.debug("content type: " + contentType);
+		return status(response.getStatusLine().getStatusCode(), entity.getContent()).as(contentType);
 	}
 	
-	public static Promise<Result> waybackRoot() throws ActException {
+	public static Result waybackRoot() throws ActException, ClientProtocolException, IOException {
 		return wayback("");
 	}
 
