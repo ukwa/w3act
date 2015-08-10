@@ -224,13 +224,15 @@ public class CollectionController extends AbstractController {
 		        }
 		        
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-	            Logger.debug("collectionSelect: " + collectionSelect);
+	            Logger.debug("collectionSelect:save: " + collectionSelect);
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(", ");
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 		            	Collection collection = Collection.findById(collectionId);
 	                	filledForm.get().parent = collection;
+	              //  	collection.startDate = filledForm.get().startDate;
+	             //   	collection.endDate = filledForm.get().endDate;
 	                	Logger.debug("looking good");
 	                }
 	                else if (collections.length > 1) {
@@ -267,7 +269,8 @@ public class CollectionController extends AbstractController {
 		        }
 		        
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-	            Logger.debug("collectionSelect: " + collectionSelect);
+	            Logger.debug("collectionSelect:update: " + collectionSelect);
+	            Logger.debug("collectionSelect:dates: " + filledForm.get().startDate);
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(", ");
 	                if (collections.length == 1) {
@@ -278,8 +281,11 @@ public class CollectionController extends AbstractController {
 	        	            filledForm.reject(e);
 	        	  			return info(filledForm, id);
 	                	} else {
+	                		Logger.debug("I'm in else::::"+filledForm.get().startDate+"----"+filledForm.get().endDate);
 			            	Collection collection = Collection.findById(collectionId);
 		                	filledForm.get().parent = collection;
+		              //  	collection.startDate = filledForm.get().startDate;
+		              //  	collection.endDate = filledForm.get().endDate;
 		                	Logger.debug("looking good");
 	                	}
 	                }

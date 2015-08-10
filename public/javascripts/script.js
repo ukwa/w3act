@@ -6,6 +6,8 @@ $(function () {
 	$("#granted-to-date").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#date_of_publication").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#publicationDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
+	$("#inputStartDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
+	$("#inputEndDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$('a[rel="external"]').attr('target', '_blank');
 });
 

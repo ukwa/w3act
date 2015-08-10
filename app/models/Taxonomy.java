@@ -77,10 +77,10 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	public List<Taxonomy> parentsAllList;
 	
 	@Column(name="start_date")
-	protected Timestamp startDate;
+	public Timestamp startDate;
 	
 	@Column(name="end_date")
-	protected Timestamp endDate;
+	public Timestamp endDate;
 
 	// Used during import:
     @Transient
