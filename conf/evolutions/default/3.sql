@@ -22,6 +22,21 @@ ALTER TABLE instance ADD crawl_urls_downloaded bigint;
 ALTER TABLE instance ADD crawl_urls_failed bigint;
 ALTER TABLE instance ADD crawl_additional_information text;
 
+CREATE TABLE highlight (
+  id				bigint primary key,
+  taxonomy_id		bigint not null references taxonomy (id),
+  url				varchar(255),
+  start_date		timestamp,
+  end_date			timestamp
+);
+
+CREATE TABLE collection_instance (
+  collection_id                      bigint not null,
+  instance_id                        bigint not null,
+  constraint pk_collection_instance primary key (collection_id, instance_id)
+);
+
+
 INSERT INTO taxonomy (ttype, id, url, created_at, name, description, updated_at)
     VALUES ('flags', 369, 'act-369', '2015-07-31 10:29:13.714', 'Video Content to add', 'This flag marks video content to add', '2015-07-31 10:29:13.714');
 
@@ -57,6 +72,9 @@ ALTER TABLE instance DROP crawl_bytes_downloaded;
 ALTER TABLE instance DROP crawl_urls_downloaded;
 ALTER TABLE instance DROP crawl_urls_failed;
 ALTER TABLE instance DROP crawl_additional_information;
+
+DROP TABLE IF EXISTS highlight;
+DROP TABLE IF EXISTS collection_instance;
 
 DELETE FROM taxonomy WHERE ttype = 'flags' AND name = 'Video Content to add';
 

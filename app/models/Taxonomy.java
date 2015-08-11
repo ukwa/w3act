@@ -23,13 +23,10 @@ import play.Logger;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
-import uk.bl.api.models.FieldModel;
-
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Taxonomy entity managed by Ebean
@@ -81,6 +78,9 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	
 	@Column(name="end_date")
 	public Timestamp endDate;
+	
+    @OneToMany(mappedBy="taxonomy")
+    public List<Highlight> highlights;
 
 	// Used during import:
     @Transient
