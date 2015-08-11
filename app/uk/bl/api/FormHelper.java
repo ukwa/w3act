@@ -22,6 +22,7 @@ public enum FormHelper {
 
 	public boolean isInScopeAllWithoutLicense(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.isInScopeAllOrInheritedWithoutLicense();
 	}
 	
@@ -31,18 +32,23 @@ public enum FormHelper {
 //		this.crawlPermissions;
 //		this.qaIssue;
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 
 		return target.indicateLicenses();
 	}
 
     public boolean indicateNpldStatus(Long targetId) throws ActException {
     	Target target = Target.findById(targetId);
+		if( target == null ) return false;
+		
     	return target.indicateNpldStatus();
     }
     
 	// to helper
 	public Set<Target> getUkwaLicenceStatusList(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return null;
+
 		return target.getUkwaLicenceStatusList();
 	}
 	
@@ -54,6 +60,7 @@ public enum FormHelper {
 	 */
 	public boolean licensingUnderway(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		OverallLicenseStatus ols = target.getOverallLicenseStatus();
 		if( ols.pendingIncludingInherited ) return true;
 		return false;
@@ -66,6 +73,7 @@ public enum FormHelper {
 	 */
 	public boolean inheritedLicenceUnderwayOrGranted(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		OverallLicenseStatus ols = target.getOverallLicenseStatus();
 		if( ols.inheritedLicensePending || ols.inheritedLicense ) return true;
 		return false;
@@ -78,6 +86,7 @@ public enum FormHelper {
 	 */
 	public boolean indicateUkwaLicenceStatus(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.indicateLicenses();
 	}
 
@@ -146,54 +155,64 @@ public enum FormHelper {
 	// to helper
 	public boolean indicateLicenses(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.indicateLicenses();
 	}
 	
 	public CrawlPermission getLatestCrawlPermission(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return null;
 		return target.getLatestCrawlPermission();
 	}
 	
 	public boolean hasLicenseAndCrawlPermission(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.indicateLicenses() || (target.crawlPermissions != null && target.crawlPermissions.size() > 0);
 	}
 	
 	public boolean enableLicenseCreation(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.enableLicenseCreation();
 	}
 	
 	public boolean hasInvalidLicenses(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.hasInvalidLicenses();
 	}
 	
 	@JsonIgnore
 	public boolean isUkHosting(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.isUkHosting;
 	}
 	
 	@JsonIgnore
 	public boolean isTopLevelDomain(Long targetId) throws WhoisException, MalformedURLException, URISyntaxException {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.isTopLevelDomain;
 	}
 	
 	public boolean isUkRegistration(Long targetId) throws WhoisException {
 		Target target = Target.findById(targetId);
+		if( target == null ) return false;
 		return target.isUkRegistration;
 	}
 
 	public Set<Target> getNpldStatusList(Long targetId) throws ActException {
 		Target target = Target.findById(targetId);
+		if( target == null ) return null;
 		return target.getNpldStatusList();
 	}
 	
 	// to helper
 	public List<FieldUrl> fieldUrls(Long targetId) {
 		Target target = Target.findById(targetId);
+		if( target == null ) return null;
 		return target.fieldUrls;
 	}
 	

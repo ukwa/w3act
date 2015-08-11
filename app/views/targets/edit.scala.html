@@ -10,7 +10,19 @@
 @implicitField = @{ helper.FieldConstructor(templates.ratio6to6FieldConstructor.f) }
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
-	Html(data.toString)
+	if( data == null ) {
+		"";
+	} else {
+		Html(data.toString);
+	}
+}
+
+@targetEndpoint(id: Long) = @{
+	if( id != null ) {
+		routes.TargetController.update(id);
+	} else {
+		routes.TargetController.save();
+	}
 }
 
 @scripts = {
@@ -164,7 +176,9 @@
 	</div>  
 	
 	<ul class="nav nav-tabs">
-		<li><a onclick="switchPage(); return false;" href="@routes.TargetController.view(id)">View</a></li>
+	    @if( id != null ) {
+		    <li><a onclick="switchPage(); return false;" href="@routes.TargetController.view(id)">View</a></li>
+		}
 	   	@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) 
 	   		|| (user.hasRole("user") && targetForm("authorUser.id").value != null 
 	   		&& user.id == Long.valueOf(targetForm("authorUser.id").value))) {
@@ -220,7 +234,7 @@
 		</div>
 	}
 	
-	@helper.form(routes.TargetController.update(id)) {
+	@helper.form(targetEndpoint(id)) {
 	
 		<input type="hidden" id="tabstatus" name="tabstatus" value="@tabStatus">
 		<input type="hidden" id="id" name="id" value="@id">
@@ -229,12 +243,12 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-				    @if((user.hasRole("user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))) { 
+				    @if( (user.hasRole("user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))) { 
 						<button type="submit" class="btn btn-primary" name="action" id="edit-save" value="save" disabled>Save</button>
 						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 					} else {
 						<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
-						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" @if( id == null ){disabled}>Delete</button>
 					}
 		       </div>
 			</div>
@@ -261,21 +275,6 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@helper.inputText(targetForm("id"),
-								'_label -> "ID:",
-							    'id -> "id",
-							    'class -> "form-control",
-							    'placeholder -> "",
-							    'readonly -> "",
-							    '_error -> targetForm("id").error.map(_.withMessage("Enter ID"))
-							)(FieldConstructor(genericMandatoryInput.f), lang)
-						</div>
-					</div>
-		     	</div>
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
 							@helper.inputText(targetForm("formUrl"),
 								'_label -> "Seed URLs: 'One or more URLs, separated by commas, including the http://",
 							    'id -> "fieldUrls",
@@ -285,8 +284,19 @@
 							)(FieldConstructor(genericMandatoryInput.f), lang)						
 						</div>
 					</div>
-		     	</div>	 
+		     	</div>
 		     	    	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@helper.inputText(targetForm("synonyms"),
+								'_label -> "Synonyms: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)									
+						</div>
+					</div>
+		     	</div>
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -433,16 +443,6 @@
 					</div>
 		     	</div>		   
 	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							@helper.inputText(targetForm("synonyms"),
-								'_label -> "Synonyms: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com",
-							    'class -> "form-control"
-							)(FieldConstructor(genericInput.f), lang)									
-						</div>
-					</div>
-		     	</div>
 			</div>
 			
 		    <div class="tab-pane fade" id="metadata">
@@ -581,7 +581,7 @@
 								<div class="col-sm-6">
 		  							@for((flag, index) <- flags.zipWithIndex) {
 		  								<label class="checkbox-inline">
-						                	<input type="checkbox" name="flagsList" value="@flag.id" @if(targetFlags.contains(flag)) {checked} />
+						                	<input type="checkbox" name="flagsList" value="@flag.id" @if(targetFlags != null && targetFlags.contains(flag)) {checked} />
 								                 @flag.name
 						                </label>
 						            }
@@ -1064,7 +1064,7 @@
 										</div>
 									</div>
 								}
-								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+								@if(id != null && (user.hasRole("sys_admin") || user.hasRole("archivist"))) {
 							   		<a href="@routes.CrawlPermissionController.showCrawlPermissions(id)">Crawl Permissions</a>
 							   	}
 							</div>
@@ -1074,7 +1074,8 @@
 		     	}
 		     	
 			</div>
-	    
+
+		 @if( id != null ){
 	   	 @defining(Target.find.byId(id)) { target =>
 			<div class="tab-pane fade" id="watchedTarget">
 				@if(!target.hasDocuments && user.hasExpertUserRights &&
@@ -1202,11 +1203,14 @@
 		</div>
 		</div>	
 		  	
-		  }    
+		  }
+		  }
 		     	
 	        </div>	    	        
 		</div>
                         
+
+		 @if( id != null ){
        
 	    <div id="revisionArea" class="revision">
 	  		<div class="row padding-10">
@@ -1269,6 +1273,8 @@
 			</div>
 		</div>
 		
+		}
+		
 			<div class="row padding-10 pull-right">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="btn-group">
@@ -1277,7 +1283,7 @@
 							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 						} else {
 							<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
-							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete"  @if( id == null ){disabled}>Delete</button>
 						}
 			       </div>
 				</div>

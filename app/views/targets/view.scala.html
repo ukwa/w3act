@@ -62,7 +62,7 @@
     
 @main("Target %s".format(target.title), user, script, style) {
    	<div class="page-header">
-	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @target.title</h1>
+	    <h1><a href="@routes.TargetController.index()">Targets > </a>@target.title</h1>
 	</div>
 
 	@if(target.active != null && !target.active) {    	
@@ -154,6 +154,17 @@
 					</div>
 		     	</div>	 
 
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="Aliases" class="col-sm-6 control-label">Aliases: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com</label>
+						    <div class="col-sm-6">
+		 				  		@target.synonyms
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -298,16 +309,6 @@
 					</div>
 		     	</div>		   
 
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="Synonyms" class="col-sm-6 control-label">Synonyms: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com</label>
-						    <div class="col-sm-6">
-		 				  		@target.synonyms
-							</div>
-						</div>
-					</div>
-		     	</div>			
 		</div>
 		
 		<div class="tab-pane fade padding-20" id="metadata">
