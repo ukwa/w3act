@@ -1,6 +1,6 @@
 #### Production values
 application.name=w3act
-application.context="/act-ddhapt"
+application.context="/act"
 application.langs="en"
 
 # Secret key
@@ -26,7 +26,7 @@ applyDownEvolutions.default=false
 # Logger
 logger.root=WARN
 logger.play=WARN
-logger.application=INFO
+logger.application=WARN
 
 # SMTP connection for email sending
 host=juno.bl.uk
@@ -64,7 +64,7 @@ exchange_name=w3actexchange
 wayback_url="http://opera.bl.uk:8080/wayback/"
 
 #Pii endpoint
-pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"
+#pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"
 
 ehcacheplugin=disabled
 
