@@ -231,8 +231,8 @@ public class CollectionController extends AbstractController {
 	                	Long collectionId = Long.valueOf(collections[0]);
 		            	Collection collection = Collection.findById(collectionId);
 	                	filledForm.get().parent = collection;
-	              //  	collection.startDate = filledForm.get().startDate;
-	             //   	collection.endDate = filledForm.get().endDate;
+	                	filledForm.get().startDate = collection.getStartDate();
+	                	 filledForm.get().endDate = collection.getEndDate();
 	                	Logger.debug("looking good");
 	                }
 	                else if (collections.length > 1) {
