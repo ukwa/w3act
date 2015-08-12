@@ -132,17 +132,6 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
-						    <div class="col-sm-6">
-								@target.id
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
 								Seed URL(s) <font color="red">*</font>
 							</label>
@@ -161,7 +150,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="Aliases" class="col-sm-6 control-label">Aliases: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com</label>
+			              	<label for="Aliases" class="col-sm-6 control-label">Aliases:</label>
 						    <div class="col-sm-6">
 		 				  		@target.synonyms
 							</div>
@@ -172,15 +161,11 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Hosting (automated check)
+							<label for="" class="col-sm-6 control-label">
+							  Record creation date:
 							</label>
 						    <div class="col-sm-6">
-								@if(Boolean.TRUE.equals(target.isUkHosting)) {
-					            	<font id="isInScope" style="color: green">yes</font>
-								} else {
-									<font id="isInScope" style="color: red">no</font>
-								}
+						    @target.toCreatedAtString
 							</div>
 						</div>
 					</div>
@@ -190,14 +175,10 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
+								Record last updated at:
 							</label>
 						    <div class="col-sm-6">
-								@if(Boolean.TRUE.equals(target.isTopLevelDomain)) {
-					            	<font id="isInScope" style="color: green">yes</font>
-								} else {
-									<font id="isInScope" style="color: red">no</font>
-								}
+						        @target.toUpdatedAtString
 							</div>
 						</div>
 					</div>
@@ -207,14 +188,14 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Registration (automated check)
+								Owned by:
 							</label>
 						    <div class="col-sm-6">
-								@if(Boolean.TRUE.equals(target.isUkRegistration)) {
-					            	<font id="isInScope" style="color: green">yes</font>
-								} else {
-									<font id="isInScope" style="color: red">no</font>
-								}
+				  @if(target.authorUser != null) {
+  					<a href="@routes.UserController.view(target.authorUser.id)">@target.authorUser.name</a>
+  				  } else {
+  					Target has no owner
+  				  }
 							</div>
 						</div>
 					</div>
