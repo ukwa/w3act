@@ -3,7 +3,7 @@ sudo: false
 language: scala
 
 scala:
-  - 2.11.2
+  - 2.11.7
 
 sbt_args: -XX:+CMSClassUnloadingEnabled -XX:PermSize=512M -XX:MaxPermSize=1024M
 
