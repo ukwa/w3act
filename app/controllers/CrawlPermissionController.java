@@ -42,12 +42,18 @@ import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Manage permissions.
  */
 @Security.Authenticated(SecuredController.class)
 public class CrawlPermissionController extends AbstractController {
     //final static Form<CrawlPermission> crawlPermissionForm = new Form<CrawlPermission>(CrawlPermission.class);
+	
+	public static String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"; 
 
     /**
      * Display the crawl permissions.
@@ -370,6 +376,15 @@ public class CrawlPermissionController extends AbstractController {
 		            return info(filledForm, id, null);
 		        }
 		        
+		        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+	            Matcher matcher = pattern.matcher(contactPersonEmail);
+	            
+	        if (StringUtils.isNotBlank(contactPersonEmail) && !matcher.matches()) {
+	            ValidationError ve = new ValidationError("contactPerson.email", "Invalid email");
+	            filledForm.reject(ve);
+	            return info(filledForm, id, null);
+	        }
+		        
 		    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail.trim());
 		    	
 		    	if (existingContact != null) {
@@ -475,6 +490,17 @@ public class CrawlPermissionController extends AbstractController {
         
         if (StringUtils.isBlank(contactPersonEmail)) {
             ValidationError ve = new ValidationError("contactPerson.email", "Email is required");
+            filledForm.reject(ve);
+            return newInfo(filledForm, targetId, null);
+        }
+                	
+        	
+    
+            Pattern pattern = Pattern.compile(EMAIL_REGEX);
+            Matcher matcher = pattern.matcher(contactPersonEmail);
+            
+        if (StringUtils.isNotBlank(contactPersonEmail) && !matcher.matches()) {
+            ValidationError ve = new ValidationError("contactPerson.email", "Invalid email");
             filledForm.reject(ve);
             return newInfo(filledForm, targetId, null);
         }
