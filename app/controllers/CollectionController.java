@@ -2,10 +2,16 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import models.Collection;
+import models.Taxonomy;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +34,7 @@ import views.html.collections.list;
 import views.html.collections.view;
 import views.html.collections.newForm;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -230,9 +237,8 @@ public class CollectionController extends AbstractController {
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 		            	Collection collection = Collection.findById(collectionId);
-	                	filledForm.get().parent = collection;
-	                	filledForm.get().startDate = collection.getStartDate();
-	                	 filledForm.get().endDate = collection.getEndDate();
+	                	filledForm.get().parent = collection;	                		                	
+	                	
 	                	Logger.debug("looking good");
 	                }
 	                else if (collections.length > 1) {
@@ -240,7 +246,32 @@ public class CollectionController extends AbstractController {
 	    	  			flash("message", "Please select only one parent.");
 	    	  			return newInfo(filledForm);
 	                }
-	            }		        
+	            }		
+	            
+	            String startDate = requestData.get("startDateText");
+            	if (StringUtils.isNotEmpty(startDate)) {
+        			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        			try {
+        				Date date = formatter.parse(startDate);
+        				filledForm.get().startDate = date;
+        			} catch (ParseException e) {
+        				e.printStackTrace();
+        	            return newInfo(filledForm);
+        			}
+            	}
+            	String endDate = requestData.get("endDateText");
+            	if (StringUtils.isNotEmpty(endDate)) {
+        			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        			try {
+        				Date date = formatter.parse(endDate);
+        				filledForm.get().endDate = date;
+        			} catch (ParseException e) {
+        				e.printStackTrace();
+        	            return newInfo(filledForm);
+        			}
+            	}
 		        
 		        filledForm.get().save();
 		        flash("message", "Collection " + filledForm.get().name + " has been created");
@@ -267,10 +298,9 @@ public class CollectionController extends AbstractController {
 		        	Logger.debug("hasErrors: " + filledForm.errors());
 		            return info(filledForm, id);
 		        }
-		        
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
 	            Logger.debug("collectionSelect:update: " + collectionSelect);
-	            Logger.debug("collectionSelect:dates: " + filledForm.get().startDate);
+	           
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(", ");
 	                if (collections.length == 1) {
@@ -281,11 +311,8 @@ public class CollectionController extends AbstractController {
 	        	            filledForm.reject(e);
 	        	  			return info(filledForm, id);
 	                	} else {
-	                		Logger.debug("I'm in else::::"+filledForm.get().startDate+"----"+filledForm.get().endDate);
 			            	Collection collection = Collection.findById(collectionId);
-		                	filledForm.get().parent = collection;
-		              //  	collection.startDate = filledForm.get().startDate;
-		              //  	collection.endDate = filledForm.get().endDate;
+		                	filledForm.get().parent = collection;		 		                	
 		                	Logger.debug("looking good");
 	                	}
 	                }
@@ -295,6 +322,39 @@ public class CollectionController extends AbstractController {
 	    	  			return info(filledForm, id);
 	                }
 	            }
+	            String startDate = requestData.get("startDateText");
+            	if (StringUtils.isNotEmpty(startDate)) {
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+					try {						
+						Date date = formatter.parse(startDate);
+						filledForm.get().startDate = date;
+						 Logger.debug("startDate in date:::::::: " + date);
+					} catch (ParseException e) {
+						e.printStackTrace();
+			            return info(filledForm, id);
+					}
+		    	}else{
+		    		  Ebean.createUpdate(Taxonomy.class, "update taxonomy SET start_date=null where id=:id")
+                      .setParameter("id", id).execute();
+		    	}
+            	
+            	String endDate = requestData.get("endDateText");
+            	if (StringUtils.isNotEmpty(endDate)) {
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+					try {						
+						Date date = formatter.parse(endDate);
+						filledForm.get().endDate = date;
+						 Logger.debug("endDate in date:::::::: " + date);
+					} catch (ParseException e) {
+						e.printStackTrace();
+			            return info(filledForm, id);
+					}
+		    	}else{
+		    		  Ebean.createUpdate(Taxonomy.class, "update taxonomy SET end_date=null where id=:id")
+                      .setParameter("id", id).execute();
+		    	}
 	            
 	            // Check if the 'publish' field is empty, which corresponds to 'false':
 	            if( filledForm.get().publish == null ) {

@@ -48,8 +48,8 @@
 				<div class="form-group">
 					<label for="inputStartDate" class="col-sm-6 control-label">Start Date</label>
 				    <div class="col-sm-6">
-						@collection.startDate
-
+						@collection.getStartDateText()
+ 						
 					</div>
 				</div>
 			</div>
@@ -59,8 +59,7 @@
 				<div class="form-group">
 					<label for="inputEndDate" class="col-sm-6 control-label">End Date</label>
 				    <div class="col-sm-6">
-						@collection.endDate
-
+						@collection.getEndDateText()
 					</div>
 				</div>
 			</div>

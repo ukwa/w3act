@@ -3,6 +3,7 @@ package models;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import play.Logger;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.Expr;
@@ -77,10 +79,16 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	public List<Taxonomy> parentsAllList;
 	
 	@Column(name="start_date")
-	public Timestamp startDate;
+	public Date startDate;
 	
 	@Column(name="end_date")
-	public Timestamp endDate;
+	public Date endDate;
+	
+	@Transient
+	public String startDateText;
+
+	@Transient
+	public String endDateText;
 
 	// Used during import:
     @Transient
@@ -1112,20 +1120,23 @@ public class Taxonomy extends ActModelMappedSuperClass {
 		this.ttype = ttype;
 	}
 	
-    public Timestamp getStartDate() {
-		return startDate;
+	public String getStartDateText() {
+		if (startDate != null) {
+			startDateText = Utils.INSTANCE.convertToDateString(startDate);
+		}else{
+			
+			startDateText = "";
+		}
+		return startDateText;
 	}
-
-	public void setStartDate(Timestamp startDate) {
-		this.startDate = startDate;
-	}
-
-	public Timestamp getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Timestamp endDate) {
-		this.endDate = endDate;
+	
+	public String getEndDateText() {
+		if (endDate != null) {
+			endDateText = Utils.INSTANCE.convertToDateString(endDate);
+		}else{
+			endDateText = "";
+		}
+		return endDateText;
 	}
 
 	@Override
