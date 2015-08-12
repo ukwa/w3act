@@ -145,10 +145,14 @@
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
 								Seed URL(s) <font color="red">*</font>
-								<small class="text-center">(One or more URLs, separated by comma)</small>
 							</label>
 						    <div class="col-sm-6">
-								@target.fieldUrl()
+								@for((fieldUrl,index) <- target.fieldUrls.zipWithIndex) {
+									@if( index == 0 ) {<strong>}
+									<a href="@fieldUrl.url">@fieldUrl.url</a>
+									@if( index == 0 ) {</strong>}@if( index == 0 && target.fieldUrls.size > 1 ){&nbsp;(primary seed)}
+									<br/>
+								}
 							</div>
 						</div>
 					</div>
