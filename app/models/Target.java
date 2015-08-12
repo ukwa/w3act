@@ -225,6 +225,7 @@ public class Target extends Model {
 	 * This field comprises the current tab name for view and edit pages.
 	 */
 	
+    /* This field is apparently the viaCorrespondenceExp field! */
 	@Column(columnDefinition = "text")
 	@JsonProperty
 	public String value;
@@ -298,6 +299,11 @@ public class Target extends Model {
 	
 	@JsonProperty("field_via_correspondence")
 	public Boolean viaCorrespondence;
+	
+	/*
+	@JsonProperty("field_via_correspondence_exp")
+	public String viaCorrespondenceExp;
+	*/
 	
 	@JsonProperty("field_professional_judgement")
 	public Boolean professionalJudgement;

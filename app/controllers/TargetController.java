@@ -1131,24 +1131,6 @@ public class TargetController extends AbstractController {
         }
         
 
-        if (  ( Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
-        		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
-        		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
-        		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
-        		Boolean.TRUE.equals(filledForm.get().viaCorrespondence) || 
-        		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
-        		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
-        		) {
-            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
-            filledForm.reject(ve);
-            return info(filledForm,id);
-        }        
-        
-        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
-        if (filledForm.get().noLdCriteriaMet == null) {
-        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
-        }
-        
         List<License> newLicenses = new ArrayList<License>();
         String[] licenseValues = formParams.get("licensesList");
         
@@ -1346,7 +1328,50 @@ public class TargetController extends AbstractController {
 	            return info(filledForm, id);
 			}
     	}
-        
+    	
+    	// Perform NPLD field consistency checks...
+    	// ---
+    	// UK Postal Address
+		if( StringUtils.isEmpty(filledForm.get().ukPostalAddressUrl)) {
+			if( Boolean.TRUE.equals(filledForm.get().ukPostalAddress) ) {
+	            ValidationError ve = new ValidationError("ukPostalAddressUrl", "A URL indicating the UK Postal Address must be provided!");
+	            filledForm.reject(ve);
+	            return info(filledForm, id);
+    		} else {
+        		filledForm.get().ukPostalAddress = false;
+    		}
+    	} else {
+    		// Auto-tick the checkbox
+    		filledForm.get().ukPostalAddress = true;
+    	}	
+    	// via correspondence (which is apparently stored in the 'value' field!)
+		if( StringUtils.isEmpty(filledForm.get().value)) {
+			if( Boolean.TRUE.equals(filledForm.get().viaCorrespondence) ) {
+	            ValidationError ve = new ValidationError("value", "A description of the correspondence must be provided!");
+	            filledForm.reject(ve);
+	            return info(filledForm, id);
+			} else {
+	    		filledForm.get().viaCorrespondence = false;
+    		}
+    	} else {
+    		// Auto-tick the checkbox
+    		filledForm.get().viaCorrespondence = true;
+    	}
+    	// professional judgement
+		if( StringUtils.isEmpty(filledForm.get().professionalJudgementExp)) {
+			if( Boolean.TRUE.equals(filledForm.get().professionalJudgement) ) {
+	            ValidationError ve = new ValidationError("professionalJudgementExp", "An outline of your professional judgement must be provided!");
+	            filledForm.reject(ve);
+	            return info(filledForm, id);
+			} else {
+	    		filledForm.get().professionalJudgement = true;
+    		}
+    	} else {
+    		// Auto-tick the checkbox
+    		filledForm.get().professionalJudgement = true;
+    	}
+    	
+		
     	
     	// Ensure items NOT edited herein are re-attached:
     	if( original != null ) {
@@ -1360,7 +1385,7 @@ public class TargetController extends AbstractController {
         filledForm.get().runChecks();
 
         // Check if those checks invalidate the noLDmet:
-        if ( (  Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
+        if (  ( Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
         		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
         		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
         		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
@@ -1368,9 +1393,14 @@ public class TargetController extends AbstractController {
         		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
         		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
         		) {
-            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
+            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);
-            return info(filledForm, id);
+            return info(filledForm,id);
+        }        
+        
+        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
+        if (filledForm.get().noLdCriteriaMet == null) {
+        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
         
         //Updating licence status
