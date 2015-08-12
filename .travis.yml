@@ -5,7 +5,10 @@ language: scala
 scala:
   - 2.11.7
 
-sbt_args: -XX:+CMSClassUnloadingEnabled -XX:PermSize=512M -XX:MaxPermSize=1024M
+jdk:
+  - oraclejdk8
+
+sbt_args: -XX:+CMSClassUnloadingEnabled
 
 script:
 - sbt -Dconfig.file=conf/dev.conf test
