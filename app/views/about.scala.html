@@ -5,7 +5,8 @@
 	<div class="row row-offcanvas row-offcanvas-right">
 		<div class="col-xs-12 col-sm-8 col-md-8" role="main">
 			<h1>About</h1>
-			<p>This is a prototype web archive curation and annotation interface</p>
+			<p>This is the <a href="http://www.webarchive.org.uk/">UK Web Archive</a>'s collaborative web archiving annotation and curation tool, W3ACT.</p>
+			<p>For more information, see <a href="https://github.com/ukwa/w3act/wiki/W3ACT-User-Guide">the W3ACT Wiki</a></p>
 			<p>Version: @ApplicationController.getVersion</p>
 		</div>
 	</div>
@@ -13,18 +14,24 @@
 		<div class="col-md-12">
 			<div class="col-xs-12 col-sm-6 col-md-6" role="navigation">
 				<div class="list-group">
-					<a class="list-group-item active front-page" href="@routes.ApplicationController.addContent()">Add Content</a>
-					<a class="list-group-item front-page-link" href="@routes.CollectionController.index()"> Collection</a>
-					<a class="list-group-item front-page-link" href="@routes.TargetController.lookup()"> Target</a>
+					<a class="list-group-item front-page-link" href="@routes.TargetController.lookup()"> Lookup &amp Add a Target</a>
+					<a class="list-group-item front-page-link" href="@routes.TargetController.list()"> Browse Targets</a>
+					<a class="list-group-item front-page-link" href="@routes.CollectionController.index()"> Browse Collections</a>
 				</div>
 			</div>
+			
 			<div class="col-xs-12 col-sm-6 col-md-6" role="navigation">
+       			<div class="well">
+					To install the W3ACT look-up service in your browser as a <a href="https://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a>, drag this link to your bookmarks bar:
+					<a href="javascript:void(location.href='@{play.api.Play.current.configuration.getString("server_name")}@{routes.TargetController.lookup()}?f='+escape(location.href)+'&referrer='+escape(document.referrer))">Lookup in W3ACT</a>
+       			</div>
+				@if(user.hasRole("sys_admin")) {
 				<div class="list-group">
-					<a class="list-group-item active front-page" href="@routes.ApplicationController.findContent()">Find Content</a>
-					<a class="list-group-item front-page-link" href="@routes.CollectionController.index()"> Browse Collections</a>
-					<a class="list-group-item front-page-link" href="@routes.TargetController.lookup()"> Browse Targets</a>
+					<a class="list-group-item front-page-link" href="@routes.StatusController.status"> System status</a>
 				</div>
+				}
 			</div>
 		</div>
 	</div>
+	
 }

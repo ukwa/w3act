@@ -77,7 +77,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 
 import views.html.targets.blank;
-import views.html.targets.newForm;
 import views.html.targets.edit;
 import views.html.targets.list;
 import views.html.targets.lookup;
@@ -376,9 +375,6 @@ public class TargetController extends AbstractController {
 //    	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
     		} 
     		else if (action.equals("search") || action.equals("apply")) {
-    			if (StringUtils.isBlank(filter)) {
-    	  			flash("message", "Please enter in the search field.");
-    			}
     	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
 		    } else {
 		    	return badRequest("This action is not allowed");
