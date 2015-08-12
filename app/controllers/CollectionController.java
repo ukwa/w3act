@@ -321,7 +321,12 @@ public class CollectionController extends AbstractController {
 	    	  			flash("message", "Please select only one parent.");
 	    	  			return info(filledForm, id);
 	                }
+	            }else{
+	            	 Ebean.createUpdate(Taxonomy.class, "update taxonomy SET parent_id=null where id=:id")
+                     .setParameter("id", id).execute(); 
 	            }
+	            
+	            
 	            String startDate = requestData.get("startDateText");
             	if (StringUtils.isNotEmpty(startDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
