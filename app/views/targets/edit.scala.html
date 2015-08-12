@@ -442,7 +442,7 @@
 							<div class="col-sm-6">
 	  							@for((tag, index) <- tags.zipWithIndex) {
 	  								<label class="checkbox-inline">
-				                	<input type="checkbox" name="tagsList" value="@tag.id" @if(targetTags.contains(tag)) {checked} />
+				                	<input type="checkbox" name="tagsList" value="@tag.id" @if(targetTags != null && targetTags.contains(tag)) {checked} />
 						                 @tag.name
 					                </label>
 					            }
@@ -1007,19 +1007,19 @@
 									<select name="licensesList" id="license" class="form-control" multiple>
 									    <option value="">-- None--</option>
 										@for(license <- licenses) {
-											<option value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
+											<option value="@license.id" @if(targetLicenses != null && targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
 									</select>
 								} else {
 									<select name="licensesList" id="license" class="form-control" multiple>
 									    <option disabled value="">-- None--</option>
 										@for(license <- licenses) {
-											<option disabled value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
+											<option disabled value="@license.id" @if(targetLicenses != null && targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
 									</select>
 								}
 								@for(license <- licenses) {
-									@if(license.name == "Open UKWA Licence (2014-)" && targetLicenses.contains(license)) {
+									@if(license.name == "Open UKWA Licence (2014-)" && targetLicenses != null && targetLicenses.contains(license)) {
 										<input type="hidden" id="openUkwaLicense" name="openUkwaLicense" value="@license.name">
 									}
 								}
