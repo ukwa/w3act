@@ -368,8 +368,9 @@ public class Collection extends Taxonomy {
 		return "Collection [targets=" + targets + ", children=" + children
 				+ ", ttype=" + ttype + ", name=" + name + ", parent=" + parent
 			    + ", description="
-						+ description + ", ttype=" + ttype +", startDate="
-						+ startDate + ", endDate=" + endDate
+						+ description + ", ttype=" + ttype +", start_Date="
+						+ start_Date + ", end_Date="
+						+ end_Date + ", endDate=" + endDate
 						+ ", publish=" + publish + "]";
 	}
 
