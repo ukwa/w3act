@@ -564,8 +564,8 @@ public final class Const {
     }
     
 	public enum SelectionType {
-		NOMINATION("Nomination"), // when created from UKWA
-		SELECTION("Selection");
+		SELECTION("Selection"),
+		NOMINATION("Nomination"); // when created from UKWA
 		
         private String value;
 
