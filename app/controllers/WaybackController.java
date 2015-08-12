@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import models.User;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -68,17 +69,19 @@ public class WaybackController extends Controller {
 		
 		HttpGet httpGet = new HttpGet(wayback);
 		CloseableHttpResponse response = httpclient.execute(httpGet);
-		HttpEntity entity = response.getEntity();
-		System.out.println(response.getStatusLine());
-		   // do something useful with the response body
-	    // and ensure it is fully consumed
+		// If this looks like a redirect, return that:
 		if ( response.getFirstHeader(LOCATION) != null ) {
-			Logger.debug("Copying over Location header: "+response.getFirstHeader(LOCATION));
-			response().setHeader(LOCATION, response.getFirstHeader(LOCATION).getValue());
-			return status(response.getStatusLine().getStatusCode());
+			// Issue the redirect directly...
+			return redirect(response.getFirstHeader(LOCATION).getValue());
 		}
+		// Otherwise, return the body, copying over the headers:
+		// Except this does not work, because doing this here overrides/breaks the Play frameworks reponse handling.
+		//for( Header h : response.getAllHeaders() ) {
+		//	response().setHeader(h.getName(), h.getValue());
+		//}
 		String contentType = response.getFirstHeader(CONTENT_TYPE).getValue();
 		Logger.debug("content type: " + contentType);
+		HttpEntity entity = response.getEntity();
 		return status(response.getStatusLine().getStatusCode(), entity.getContent()).as(contentType);
 	}
 	
