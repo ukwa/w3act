@@ -79,18 +79,16 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	public List<Taxonomy> parentsAllList;
 	
 	@Column(name="start_date")
-	public Date start_Date;
+	public Date startDate;
 	
 	@Column(name="end_date")
-	public Date end_Date;
+	public Date endDate;
 	
 	@Transient
 	public String startDateText;
 
 	@Transient
 	public String endDateText;
-
-	public Timestamp endDate;
 	
     @OneToMany(mappedBy="taxonomy")
     public List<Highlight> highlights;
@@ -1126,8 +1124,8 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	}
 	
 	public String getStartDateText() {
-		if (start_Date != null) {
-			startDateText = Utils.INSTANCE.convertToDateString(start_Date);
+		if (startDate != null) {
+			startDateText = Utils.INSTANCE.convertToDateString(startDate);
 		}else{
 			
 			startDateText = "";
@@ -1136,8 +1134,8 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	}
 	
 	public String getEndDateText() {
-		if (end_Date != null) {
-			endDateText = Utils.INSTANCE.convertToDateString(end_Date);
+		if (endDate != null) {
+			endDateText = Utils.INSTANCE.convertToDateString(endDate);
 		}else{
 			endDateText = "";
 		}
@@ -1172,10 +1170,9 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	@Override
 	public String toString() {
 		return "Taxonomy [name=" + name + ", description="
-				+ description + ", ttype=" + ttype + ", start_Date="
-				+ start_Date + ", end_Date="
-				+ end_Date + ", endDate=" + endDate
-				+ ", publish=" + publish + "]";
+				+ description + ", ttype=" + ttype + ", startDate="
+				+ startDate + ", endDate="
+				+ endDate + ", publish=" + publish + "]";
 	}
 }
 
