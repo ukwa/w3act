@@ -24,6 +24,7 @@ import play.Logger;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
+
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
 
@@ -31,7 +32,6 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Taxonomy entity managed by Ebean
@@ -79,16 +79,21 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	public List<Taxonomy> parentsAllList;
 	
 	@Column(name="start_date")
-	public Date startDate;
+	public Date start_Date;
 	
 	@Column(name="end_date")
-	public Date endDate;
+	public Date end_Date;
 	
 	@Transient
 	public String startDateText;
 
 	@Transient
 	public String endDateText;
+
+	public Timestamp endDate;
+	
+    @OneToMany(mappedBy="taxonomy")
+    public List<Highlight> highlights;
 
 	// Used during import:
     @Transient
@@ -1121,8 +1126,8 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	}
 	
 	public String getStartDateText() {
-		if (startDate != null) {
-			startDateText = Utils.INSTANCE.convertToDateString(startDate);
+		if (start_Date != null) {
+			startDateText = Utils.INSTANCE.convertToDateString(start_Date);
 		}else{
 			
 			startDateText = "";
@@ -1131,8 +1136,8 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	}
 	
 	public String getEndDateText() {
-		if (endDate != null) {
-			endDateText = Utils.INSTANCE.convertToDateString(endDate);
+		if (end_Date != null) {
+			endDateText = Utils.INSTANCE.convertToDateString(end_Date);
 		}else{
 			endDateText = "";
 		}
@@ -1167,8 +1172,9 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	@Override
 	public String toString() {
 		return "Taxonomy [name=" + name + ", description="
-				+ description + ", ttype=" + ttype + ", startDate="
-				+ startDate + ", endDate=" + endDate
+				+ description + ", ttype=" + ttype + ", start_Date="
+				+ start_Date + ", end_Date="
+				+ end_Date + ", endDate=" + endDate
 				+ ", publish=" + publish + "]";
 	}
 }

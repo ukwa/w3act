@@ -254,7 +254,7 @@ public class CollectionController extends AbstractController {
         			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         			try {
         				Date date = formatter.parse(startDate);
-        				filledForm.get().startDate = date;
+        				filledForm.get().start_Date = date;
         			} catch (ParseException e) {
         				e.printStackTrace();
         	            return newInfo(filledForm);
@@ -266,7 +266,7 @@ public class CollectionController extends AbstractController {
         			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         			try {
         				Date date = formatter.parse(endDate);
-        				filledForm.get().endDate = date;
+        				filledForm.get().end_Date = date;
         			} catch (ParseException e) {
         				e.printStackTrace();
         	            return newInfo(filledForm);
@@ -328,7 +328,7 @@ public class CollectionController extends AbstractController {
 					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {						
 						Date date = formatter.parse(startDate);
-						filledForm.get().startDate = date;
+						filledForm.get().start_Date = date;
 						 Logger.debug("startDate in date:::::::: " + date);
 					} catch (ParseException e) {
 						e.printStackTrace();
@@ -345,7 +345,7 @@ public class CollectionController extends AbstractController {
 					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {						
 						Date date = formatter.parse(endDate);
-						filledForm.get().endDate = date;
+						filledForm.get().end_Date = date;
 						 Logger.debug("endDate in date:::::::: " + date);
 					} catch (ParseException e) {
 						e.printStackTrace();

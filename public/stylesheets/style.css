@@ -64,10 +64,12 @@ header {
 }
 
 /* navigation tree */
-.well {
+
+/*.well {
 	max-width: 180px;
 	background: none repeat scroll 0 0 #E1E7EC;
 }
+*/
 
 .subnav {
 	line-height: 90%;

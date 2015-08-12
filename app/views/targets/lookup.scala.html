@@ -87,9 +87,9 @@
     
     <article class="lookup">
     
+		@helper.form(action=routes.TargetController.search, 'class -> "form-inline") {
 		<div id="forms">
 			@warningmessage(flash)
-			@helper.form(action=routes.TargetController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
    					<input type="hidden" name="s" value="@currentSortBy">
@@ -99,12 +99,8 @@
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
 						}
-						@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && filter != null && filter.length() > 0) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="add" title="Add new url">Add Target</button>
-						}
 					</span>
 				</div>
-			}
 		</div>
 		
 	@if(filter.toString() != null && filter.length() > 0) {		   
@@ -210,17 +206,16 @@
 			No targets found.
 			</p>
 		}
+		
+        @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && filter != null && filter.length() > 0) {
+        	<div class="text-center">
+				<button type="submit" class="btn btn-primary btn-lg" id="addentry" name="action" value="add" title="Add new url">Add Target for @filter...</button>
+			</div>
+		}
+		
+	}
 
    </article>
 
-	<div class="row padding-10">
-	  <div class="col-md-12 col-xs-12 col-sm-12">
-       <div class="well">
-	To install the W3ACT look-up service in your browser as a <a href="https://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a>, drag this link to your bookmarks bar:
-	<a href="javascript:void(location.href='@{play.api.Play.current.configuration.getString("server_name")}@{routes.TargetController.lookup()}?f='+escape(location.href)+'&referrer='+escape(document.referrer))">  Find W3ACT</a>	
-       </div>
-      </div>
-    </div>
-    
 }
 

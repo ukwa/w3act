@@ -147,34 +147,11 @@ public class ApplicationController extends Controller {
     }
     
     public static String getVersion() {
-    	String res = "";
-    	try {
-    		BufferedReader br = new BufferedReader(new FileReader(Const.VERSION_FILE));
-    		try {
-    			StringBuilder sb = new StringBuilder();
-    			String line = br.readLine();
-
-    			while (line != null) {
-    				sb.append(line);
-    				sb.append('\n');
-    				line = br.readLine();
-    			}
-    			res = sb.toString();
-    		} finally {
-    			br.close();
-    		}
-//    		row = Utils.buildWebRequestByUrl(Const.GITHUB, Const.LAST_COMMIT);
-//        	Logger.debug("row: " + row);
-//	    	if (row != null && row.length() > 0) {
-//		    	int start = row.indexOf(Const.LAST_COMMIT) + Const.LAST_COMMIT.length();
-//		    	row = row.substring(start, start + 40);
-//	    	}
-    	} catch (Exception e) {
-    		Logger.debug("Error occured by last commit hash calculation: " + e);
+    	if( Play.isProd() ) {
+        	return ApplicationController.class.getPackage().getImplementationVersion();
+    	} else {
+    		return Play.application().configuration().getString("application.version");
     	}
-    	Logger.debug("last commit hash: " + res);
-
-    	return res;
     }
     
     public static Result addContent() {
