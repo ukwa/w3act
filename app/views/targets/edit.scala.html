@@ -25,6 +25,14 @@
 	}
 }
 
+@pageTitle(targetTitle: String) = @{
+  if( targetTitle == null ) {
+    "Editing new target";
+  } else {
+  	"Editing %s".format(targetTitle);
+  }
+} 
+
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/time-picker.js")" type="text/javascript"></script>
@@ -169,7 +177,7 @@
     </style>
 }
 
-@main("Editing %s".format(targetForm("title").value), user, scripts, styles) {
+@main(pageTitle(targetForm("title").value), user, scripts, styles) {
     
    	<div class="page-header">
 	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @targetForm("title").value</h1>
