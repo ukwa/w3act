@@ -84,6 +84,7 @@ public class FieldUrl extends Model {
 		
 		// filter this list
 		for (FieldUrl fieldUrl : fieldUrls) {
+			Logger.info("Comparing with "+fieldUrl.url);
 			String dbUrl = Utils.INSTANCE.getPath(fieldUrl.url);
 			String dbUrlSlash = dbUrl.endsWith("/") ? StringUtils.stripEnd(dbUrl, "/") :  StringUtils.appendIfMissing(dbUrl, "/");
 			Logger.debug("url: " + url);

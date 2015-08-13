@@ -136,9 +136,19 @@ public class TargetController extends AbstractController {
     	
     	Logger.debug("Total: " + pages.getTotalRowCount());
     	
+    	// Also check for clear match:
+    	Target matchTarget = null;
+    	try {
+			FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(filter.trim());
+			matchTarget = isExistingFieldUrl.target;
+		} catch (Exception e) {
+			Logger.error("Problem looking up duplicate URLs.",e);
+		}
+    	
         return ok(
         	lookup.render(
         			"Lookup "+filter, 
+        			matchTarget,
         			User.findByEmail(request().username()), 
         			filter, 
         			pages, 
@@ -1062,8 +1072,6 @@ public class TargetController extends AbstractController {
 	  	
         String fieldUrl = requestData.get("formUrl");
         
-        String originalUrl = requestData.get("currentUrls");
-        
         Logger.debug("fieldUrl: " + fieldUrl);
         if (StringUtils.isNotEmpty(fieldUrl)) {
             String[] urls = fieldUrl.split(",");
@@ -1073,8 +1081,6 @@ public class TargetController extends AbstractController {
             	
             	String trimmed = url.trim();
             	
-            	if (StringUtils.isNotEmpty(originalUrl) && (!urlNoTrailingSlash(trimmed).equalsIgnoreCase(urlNoTrailingSlash(originalUrl)))) {
-            		
             		Logger.debug("trimmed " + trimmed);
             		
             		boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
@@ -1099,23 +1105,13 @@ public class TargetController extends AbstractController {
 	    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
 			            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with another Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
 			            filledForm.reject(ve);
-			            filledForm.get().fieldUrl = originalUrl;
 			            return info(filledForm, id);
 	            	}
-            	
-            	} 
-            	 URL uri;
+	            	URL uri;
 					try {
 		            	Logger.debug("url: " + trimmed);
 						uri = new URI(trimmed).normalize().toURL();
 	        			String extFormUrl = uri.toExternalForm();
-	        			
-	        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
-	        			Logger.debug("valid? " + isValidUrl);
-	        			if (!isValidUrl) {
-	        				throw new ActException("Invalid URL");
-	        				
-	        			}
 	        			
 		            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
 		            	Logger.debug("extFormUrl: " + extFormUrl);
