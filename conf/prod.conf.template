@@ -23,11 +23,6 @@ evolutionplugin=disabled
 applyEvolutions.default=false
 applyDownEvolutions.default=false
 
-# Logger
-logger.root=WARN
-logger.play=WARN
-logger.application=WARN
-
 # SMTP connection for email sending
 host=juno.bl.uk
 mail.user=""
