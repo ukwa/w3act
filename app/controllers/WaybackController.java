@@ -75,12 +75,12 @@ public class WaybackController extends Controller {
 			return redirect(response.getFirstHeader(LOCATION).getValue());
 		}
 		// Otherwise, return the body, copying over the headers:
-		// Except this does not work, because doing this here overrides/breaks the Play frameworks reponse handling.
+		// Except this does not work, because doing this here overrides/breaks the Play frameworks response handling.
 		//for( Header h : response.getAllHeaders() ) {
 		//	response().setHeader(h.getName(), h.getValue());
 		//}
 		String contentType = response.getFirstHeader(CONTENT_TYPE).getValue();
-		Logger.debug("content type: " + contentType);
+		Logger.debug("Response content type: " + contentType);
 		HttpEntity entity = response.getEntity();
 		return status(response.getStatusLine().getStatusCode(), entity.getContent()).as(contentType);
 	}
