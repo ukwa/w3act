@@ -1012,7 +1012,7 @@ public class TargetController extends AbstractController {
 	 * @param id
 	 * @return
 	 */
-	public static Result validateForm(DynamicForm requestData, Long id) throws ActException {
+	private static Result validateForm(DynamicForm requestData, Long id) throws ActException {
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
 		User currentUser = User.findByEmail(request().username());
@@ -1365,7 +1365,7 @@ public class TargetController extends AbstractController {
 	            filledForm.reject(ve);
 	            return info(filledForm, id);
 			} else {
-	    		filledForm.get().professionalJudgement = true;
+	    		filledForm.get().professionalJudgement = false;
     		}
     	} else {
     		// Auto-tick the checkbox
