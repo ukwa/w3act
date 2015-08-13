@@ -219,10 +219,12 @@
 				  }
 				}		        
 		    </a></li>
+		    @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.isLDLMember() && ApplicationController.getDDHAPTStatus()) {
 		    @if(user.id == Long.valueOf(targetForm("authorUser.id").value)){
 		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
 		    }else{
-		    <li><a href="#">Watched Target</a></li>
+		  		  <li><a href="#">Watched Target</a></li>
+		   		 }
 		    }
 	  	</ul>
 	</div>

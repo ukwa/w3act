@@ -111,7 +111,9 @@
 				  }
 				}		        
 		    </a></li>
+		    @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.isLDLMember() && ApplicationController.getDDHAPTStatus()) {
 		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
+		    }
       	</ul>
 	</div>
 	
