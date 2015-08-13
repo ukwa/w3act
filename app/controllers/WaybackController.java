@@ -15,7 +15,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -65,14 +68,19 @@ public class WaybackController extends Controller {
 		Logger.info("Using URL: "+wayback);
 
 		// Build up URL and copy over query parameters:		
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		
+		CloseableHttpClient httpclient = HttpClientBuilder.create()
+			    .disableRedirectHandling()
+			    .build();
+		//
 		HttpGet httpGet = new HttpGet(wayback);
 		CloseableHttpResponse response = httpclient.execute(httpGet);
 		// If this looks like a redirect, return that:
 		if ( response.getFirstHeader(LOCATION) != null ) {
+			String location = response.getFirstHeader(LOCATION).getValue();
+			response.close();
+			Logger.info("Got LOCATION: "+location);
 			// Issue the redirect directly...
-			return redirect(response.getFirstHeader(LOCATION).getValue());
+			return redirect(location);
 		}
 		// Otherwise, return the body, copying over the headers:
 		// Except this does not work, because doing this here overrides/breaks the Play frameworks response handling.
