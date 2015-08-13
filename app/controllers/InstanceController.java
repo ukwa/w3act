@@ -281,7 +281,7 @@ public class InstanceController extends AbstractController {
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> qaIssueCategories = QAIssueCategory.options();
 		Map<String,String> authors = User.options();
-		return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, null));
+		return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors,null));
     }
     
     public static Result newWithTarget(Long targetId, String title) throws ActException {
