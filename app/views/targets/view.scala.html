@@ -139,9 +139,9 @@
 							</label>
 						    <div class="col-sm-6">
 								@for((fieldUrl,index) <- target.fieldUrls.zipWithIndex) {
-									@if( index == 0 ) {<strong>}
+									@if( index == 0 && false ) {<strong>}
 									<a href="@fieldUrl.url">@fieldUrl.url</a>
-									@if( index == 0 ) {</strong>}@if( index == 0 && target.fieldUrls.size > 1 ){&nbsp;(primary seed)}
+									@if( index == 0 && false ) {</strong>}@if( index == 0 && target.fieldUrls.size > 1 && false ){&nbsp;(primary seed)}
 									<br/>
 								}
 							</div>
