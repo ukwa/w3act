@@ -1088,8 +1088,8 @@
 		 @if( id != null ){
 	   	 @defining(Target.find.byId(id)) { target =>
 			<div class="tab-pane fade" id="watchedTarget">
-				@if(!target.hasDocuments && user.hasExpertUserRights &&
-						(user.id.equals(target.authorUser.id) || user.hasArchivistRights)) {
+				@if(!target.hasDocuments() && user.hasExpertUserRights() && target.authorUser != null &&
+						(target.authorUser.id.equals(user.id) || user.hasArchivistRights())) {
 					@checkbox(targetForm("watched"), true, '_label -> "watched", '_id -> "watched", 'onclick -> "javascript:display();")
 				} else {
 					@checkbox(targetForm("watched"), false, '_label -> "watched", '_id -> "watched")
@@ -1106,7 +1106,7 @@
 		 						<table>
 									@for(journalTitle <- target.watchedTarget.journalTitles) {
 										<tr>
-											@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {
+											@if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasExpertUserRights())) {
 												<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
 											} else {
 												@journalTitle.title
@@ -1114,7 +1114,7 @@
 										</tr>
 									}
 								</table>
-								@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {
+								@if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasExpertUserRights())) {
 									<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">
 										New Journal Title
 									</a>
@@ -1130,7 +1130,7 @@
 							<label class="col-sm-6 control-label">Journal Titles</label>
 						    <div class="col-sm-6">
 		 						
-								@if(user.id.equals(target.authorUser.id) || user.hasExpertUserRights()) {									
+								@if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasExpertUserRights())) {									
 										<a class="btn btn-success" disabled>New Journal Title</a>
 								}
 							</div>
@@ -1167,7 +1167,7 @@
 									no
 								}
 								<br>
-								@if(user.id.equals(target.authorUser.id) || user.hasArchivistRights()) {
+								@if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasArchivistRights())) {
 									<a class="btn btn-success" href="@routes.LoginCredentialsController.edit(target.watchedTarget.id)">
 										@if(target.watchedTarget.secretId == null) {Add} else {Change} Login Credentials
 									</a>
@@ -1183,7 +1183,7 @@
 							<label class="col-sm-6 control-label">Login Credentials</label>
 						    <div class="col-sm-6">
 								
-								@if(user.id.equals(target.authorUser.id) || user.hasArchivistRights()) {								   
+								@if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasArchivistRights())) {								   
 					 				 <a class="btn btn-success" disabled>Login Credentials</a>
 								}
 							</div>
