@@ -60,7 +60,7 @@
 											<select name="permissions" id="permissions" class="form-control">
 												<option>None</option>
 								                @for(permission <- CrawlPermission.findAll()) {
-									                @if(permission.url.equals(cur_permission)) {
+									                @if(permission.url != null && permission.url.equals(cur_permission)) {
 									                	<option selected>@permission.name</option>
 									                } else {
 									                	<option>@permission.name</option>
