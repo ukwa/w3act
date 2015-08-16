@@ -986,7 +986,6 @@ public class TargetController extends AbstractController {
 		
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
-        String currentUrls = requestData.get("currentUrls");
 
 		JsonNode collectionData = null;
 		JsonNode subjectData = null;
@@ -1003,7 +1002,6 @@ public class TargetController extends AbstractController {
 			targetFlags = target.flags;
 			targetLicenses = target.licenses;
 	        
-	        target.fieldUrl = currentUrls;
 		}
         
         return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus, targetTags, targetFlags, targetLicenses));
@@ -1072,16 +1070,29 @@ public class TargetController extends AbstractController {
 	  	
         String fieldUrl = requestData.get("formUrl");
         
-        Logger.debug("fieldUrl: " + fieldUrl);
+        Logger.debug("\n\nfieldUrl: " + fieldUrl);
         if (StringUtils.isNotEmpty(fieldUrl)) {
             String[] urls = fieldUrl.split(",");
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+            
+            long position = 0;
             
             for (String url : urls) {
             	
             	String trimmed = url.trim();
             	
             		Logger.debug("trimmed " + trimmed);
+            		URL uri;
+					try {
+		            	uri = new URI(trimmed).normalize().toURL();
+					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e ) {
+			            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+			            filledForm.reject(ve);
+			            return info(filledForm, id);
+			        }
+        			String extFormUrl = uri.toExternalForm();
+        			
+	            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
             		
             		boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
         			Logger.debug("valid? " + isValidUrl);
@@ -1100,27 +1111,22 @@ public class TargetController extends AbstractController {
 	            	Logger.debug("Found existing FieldUrl "+isExistingFieldUrl);
 	            	Logger.debug("Got filledForm.get().id: "+filledForm.get().id);
 	            	
-	            	if (isExistingFieldUrl != null && !isExistingFieldUrl.target.id.equals(id)) {
-		            	Logger.debug("Found existing FieldUrl.target "+isExistingFieldUrl.target);
-	    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
-			            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with another Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
-			            filledForm.reject(ve);
-			            return info(filledForm, id);
+	            	if (isExistingFieldUrl != null ) {
+	            		if( !isExistingFieldUrl.target.id.equals(id) ) {
+			            	Logger.debug("Found existing FieldUrl.target "+isExistingFieldUrl.target);
+		    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
+				            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with another Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
+				            filledForm.reject(ve);
+				            return info(filledForm, id); 
+	            		} else {
+	            			fu = isExistingFieldUrl;
+	            		}
 	            	}
-	            	URL uri;
-					try {
-		            	Logger.debug("url: " + trimmed);
-						uri = new URI(trimmed).normalize().toURL();
-	        			String extFormUrl = uri.toExternalForm();
-	        			
-		            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
-		            	Logger.debug("extFormUrl: " + extFormUrl);
-		            	fieldUrls.add(fu);
-					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
-			            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
-			            filledForm.reject(ve);
-			            return info(filledForm, id);
-			        }
+	            	Logger.debug("Adding url: " + trimmed + " at position " + position);
+	            	fu.position = position;
+	            	position++;
+	            	Logger.debug("extFormUrl: " + extFormUrl);
+	            	fieldUrls.add(fu);
 
             }
             filledForm.get().fieldUrls = fieldUrls;

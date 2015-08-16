@@ -21,6 +21,7 @@ ALTER TABLE instance ADD crawl_bytes_downloaded bigint;
 ALTER TABLE instance ADD crawl_urls_downloaded bigint;
 ALTER TABLE instance ADD crawl_urls_failed bigint;
 ALTER TABLE instance ADD crawl_additional_information text;
+ALTER TABLE field_url ADD position int;
 
 
 CREATE TABLE highlight (
@@ -62,6 +63,7 @@ ALTER TABLE instance DROP crawl_bytes_downloaded;
 ALTER TABLE instance DROP crawl_urls_downloaded;
 ALTER TABLE instance DROP crawl_urls_failed;
 ALTER TABLE instance DROP crawl_additional_information;
+ALTER TABLE field_url DROP position;
 
 
 DROP TABLE IF EXISTS highlight;

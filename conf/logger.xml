@@ -12,6 +12,10 @@
 			<pattern>%date %coloredLevel %logger{15} - %message%n%xException{5}</pattern>
 		</encoder>
 	</appender>
+	
+	<logger name="com.jolbox.bonecp" level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </logger>
                     
 	<logger name="play" level="INFO" />
 	<logger name="application" level="DEBUG" />

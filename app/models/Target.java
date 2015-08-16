@@ -1,9 +1,7 @@
 package models;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -19,6 +17,7 @@ import java.util.TimeZone;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -26,6 +25,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -186,7 +186,9 @@ public class Target extends Model {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<LookupEntry> lookupEntries;
 
-	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@JoinColumn(name = "target_id")
+	@OrderBy("position ASC")
 	public List<FieldUrl> fieldUrls;
 	
 	@Column(name="target_start_date")
@@ -663,7 +665,7 @@ public class Target extends Model {
 	}
 
 	public static Target findById(Long id) {
-		Target target = find.where().eq("id", id).findUnique();
+		Target target = find.fetch("fieldUrls").where().eq("id", id).findUnique();
 		if( target != null ) {
 			target.formUrl = target.fieldUrl();
 		}
@@ -1787,7 +1789,21 @@ public class Target extends Model {
 	@JsonIgnore
 	public String fieldUrl() {
 		List<String> urls = new ArrayList<String>();
-		for (FieldUrl fieldUrl : this.fieldUrls) {
+		//
+		/*
+		Collections.sort(fieldUrls, new Comparator<FieldUrl>(){
+		     @Override
+			public int compare(FieldUrl o1, FieldUrl o2){
+		         if(o1.position == o2.position)
+		             return 0;
+		         return o1.position < o2.position ? -1 : 1;
+		     }
+		});
+		*/
+		new Exception("WHERE?").printStackTrace();
+		// Build up the field string:
+		for (FieldUrl fieldUrl : fieldUrls) {
+			Logger.info("Adding URL to string: "+fieldUrl.id+":"+fieldUrl.url+" "+fieldUrl.position);
 			urls.add(fieldUrl.url);
 		}
 		return StringUtils.join(urls, ", ");

@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -49,19 +51,20 @@ public class FieldUrl extends Model {
 
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "target_id")
 	public Target target;
-
+	
+	public Long position;
+	
 	@Column(columnDefinition = "text")
 	public String domain;
 	
 	
 	public static Model.Finder<Long, FieldUrl> find = new Finder<Long, FieldUrl>(Long.class, FieldUrl.class);
-
+	
 	public FieldUrl(String url) throws ActException {
 		super();
 		this.url = url.trim();
-		this.domain = Scope.INSTANCE.getDomainFromUrl(this.url);
+		this.domain = Scope.getDomainFromUrl(this.url);
 	}
 
 	public static FieldUrl findByUrl(String url) {
@@ -145,4 +148,5 @@ public class FieldUrl extends Model {
 			return false;
 		return true;
 	}
+
 }
