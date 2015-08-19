@@ -1373,7 +1373,15 @@ public class TargetController extends AbstractController {
     		// Auto-tick the checkbox
     		filledForm.get().professionalJudgement = true;
     	}
-    	
+		
+		//Hidden flag
+		if (filledForm.get().hidden == null) {
+			filledForm.get().hidden = Boolean.FALSE;
+		}
+		//Key Site flag
+		if (filledForm.get().keySite == null) {
+			filledForm.get().keySite = Boolean.FALSE;
+		}
 		
     	
     	// Ensure items NOT edited herein are re-attached:

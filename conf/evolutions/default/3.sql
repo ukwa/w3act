@@ -22,8 +22,8 @@ ALTER TABLE instance ADD crawl_urls_downloaded bigint;
 ALTER TABLE instance ADD crawl_urls_failed bigint;
 ALTER TABLE instance ADD crawl_additional_information text;
 ALTER TABLE field_url ADD position int;
-ALTER TABLE target ADD hidden boolean not null default false;
-ALTER TABLE instance ADD hidden boolean not null default false;
+ALTER TABLE target ADD hidden boolean default false;
+ALTER TABLE instance ADD hidden boolean default false;
 
 CREATE TABLE highlight (
   id				bigint primary key,

@@ -484,7 +484,11 @@ public class InstanceController extends AbstractController {
 	                if (filledForm.hasErrors()) {
 	                	Logger.debug("hasErrors: " + filledForm.errors());
 	                    return info(filledForm, id);
-	                }		                		
+	                }		  
+	                //Hidden flag
+	        		if (filledForm.get().hidden == null) {
+	        			filledForm.get().hidden = Boolean.FALSE;
+	        		}
 			        filledForm.get().update(id);
 			        flash("message", "Instance " + filledForm.get().title + " has been updated");
 			        return redirect(routes.InstanceController.view(filledForm.get().id));
@@ -523,6 +527,10 @@ public class InstanceController extends AbstractController {
 	        		Logger.debug("errors: " + filledForm.errors());
 		            return newInfo(filledForm, targetId);
 		        }
+		        //Hidden flag
+				if (filledForm.get().hidden == null) {
+					filledForm.get().hidden = Boolean.FALSE;
+				}
 		        filledForm.get().save();
 		        flash("message", "Instance " + filledForm.get().title + " has been created");
 		        return redirect(routes.InstanceController.view(filledForm.get().id));
