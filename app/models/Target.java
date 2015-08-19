@@ -251,6 +251,9 @@ public class Target extends Model {
 	@JsonProperty("field_live_site_status")
 	public String liveSiteStatus;
 
+	@JsonProperty("field_hidden")
+	public Boolean hidden;
+	
 	@JsonProperty("field_key_site")
 	public Boolean keySite;
 
@@ -572,6 +575,7 @@ public class Target extends Model {
 		this.isTopLevelDomain = Boolean.FALSE;
 		this.isUkRegistration = Boolean.FALSE;
 		this.liveSiteStatus = Const.SiteStatus.LIVE.name();
+		this.hidden = Boolean.FALSE;
 		this.keySite = Boolean.FALSE;
 		this.ukPostalAddress = Boolean.FALSE;
 		this.viaCorrespondence = Boolean.FALSE;
@@ -1736,6 +1740,14 @@ public class Target extends Model {
 		this.keySite = keySite;
 	}
 
+	public Boolean getHidden() {
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
+	}
+
 	public String getField_uk_geoip() {
 		return field_uk_geoip;
 	}
@@ -2274,7 +2286,7 @@ public class Target extends Model {
 				+ specialDispensation + ", specialDispensationReason="
 				+ specialDispensationReason + ", liveSiteStatus="
 				+ liveSiteStatus + ", wctId=" + wctId + ", sptId=" + sptId
-				+ ", noLdCriteriaMet=" + noLdCriteriaMet + ", keySite="
+				+ ", noLdCriteriaMet=" + noLdCriteriaMet + ", hidden="+ hidden + ",keySite="
 				+ keySite + ", professionalJudgement=" + professionalJudgement
 				+ ", professionalJudgementExp=" + professionalJudgementExp
 				+ ", ignoreRobotsTxt=" + ignoreRobotsTxt + ", format=" + format

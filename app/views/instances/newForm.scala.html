@@ -117,7 +117,20 @@
 				            )(FieldConstructor(genericMandatoryInput.f), lang)						
 			         	</div>
 					</div>
-				</div>			
+				</div>		
+				
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@helper.checkbox(instanceForm("hidden"), 
+								args = 
+								'_label -> "Hidden (Is this instance hidden from public):" 
+							)(FieldConstructor(genericInput.f), lang)
+						</div>
+					</div>
+		     	</div>	     
+				}	
 				
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">

@@ -135,6 +135,8 @@ public class Instance extends Model {
 	@JoinColumn(name = "author_id")
 	public User authorUser;
 	
+	public Boolean hidden;
+	
     public Date fieldTimestamp;
 	
     @Column(columnDefinition = "text")
@@ -1006,7 +1008,8 @@ public class Instance extends Model {
 	public String toString() {
 		return "Instance [qaIssueCategory=" + qaIssueCategory + ", qaNotes="
 				+ qaNotes + ", target=" + target + ", fieldTimestamp="
-				+ fieldTimestamp + ", value=" + value + ", summary=" + summary
+				+ fieldTimestamp + ", value=" + value + ", summary=" 
+				+ summary + ", hidden=" + hidden
 				+ ", fieldDate=" + fieldDate + "]";
 	}
 	

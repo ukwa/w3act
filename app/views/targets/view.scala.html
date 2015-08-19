@@ -237,6 +237,21 @@
 					</div>
 		     	</div>	     
 		     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Hidden <small class="text-center">(Is this target hidden from public)</small></label>
+						    <div class="col-sm-6">
+				                @if(target.hidden != null && target.hidden) {  
+				                   yes           
+				                } else {
+				                   no
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
