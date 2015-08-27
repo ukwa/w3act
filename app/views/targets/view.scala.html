@@ -100,7 +100,7 @@
 					<font color="red">(-)</font>
 				}		        
 			</a></li>
-		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
+		    <li><a href="#licensing" data-toggle="tab">UKWA Licencing
 		    	@if(target.indicateLicenses()) {
 					<font color="green">(+)</font>
 				} else {
@@ -835,7 +835,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site is archived and made available)</small></label>
+							<label for="edit-field-license-und" class="col-sm-6 control-label">Licence <small class="text-center">(The licence terms under which this site is archived and made available)</small></label>
 			              	<div class="col-sm-6">
 								@target.licensesAsString
 			              	</div>
@@ -846,7 +846,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
+							<label class="col-sm-6 control-label">Open UKWA licence requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open Licence Request' button)</small></label>
 						    <div class="col-sm-6">
 						    	@if(target.licenseStatus != null && target.licenseStatus.length > 0) {
 						    		@License.LicenseStatus.getLicenseStatus(target.licenseStatus).getValue

@@ -97,6 +97,7 @@ public class TargetController extends AbstractController {
      */
     public static Result index() {
         return GO_HOME;
+    	
     }
 
     /**
