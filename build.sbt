@@ -25,10 +25,10 @@ libraryDependencies ++= Seq(
   "info.cukes" % "cucumber-java" % "1.2.2",
   "info.cukes" % "cucumber-junit" % "1.2.2",
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15",
-  "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2"
+  "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" intransitive()
 )
 
-resolvers += "rubygems-releases" at "http://rubygems-proxy.torquebox.org/releases/"
+resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
 
 javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProperties).map{ case (key,value) => "-D" + key + "=" +value }.toSeq
 
