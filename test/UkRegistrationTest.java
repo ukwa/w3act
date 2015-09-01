@@ -45,29 +45,26 @@ public class UkRegistrationTest extends WithApplication {
 //		}
 	}
 
-	public boolean checkWhois(String url) {
+	public boolean checkWhois(String url) throws URISyntaxException {
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
     	
-		try {
-			URI uri = new URI(url);
-			String domain = uri.getHost();
-			if (StringUtils.isNotEmpty(domain)) {
-				domain = domain.startsWith("www.") ? domain.substring(4) : domain;
-			}
-	    	System.out.println("checkWhois: " + whoIs + " " + domain);
-	    	WhoisResult whoIsRes = whoIs.lookup(domain);
-	    	res = Scope.isUKRegistrant(whoIsRes);
-	    	System.out.println("isUKRegistrant: " + res);
-	    	res = Scope.isUKRegistrant(whoIsRes);
-		} catch (org.jruby.embed.EvalFailedException | URISyntaxException  e) {
-//			e.printStackTrace();
+		URI uri = new URI(url);
+		String domain = uri.getHost();
+		if (StringUtils.isNotEmpty(domain)) {
+			domain = domain.startsWith("www.") ? domain.substring(4) : domain;
 		}
+    	System.out.println("checkWhois: " + whoIs + " " + domain);
+    	WhoisResult whoIsRes = whoIs.lookup(domain);
+    	res = Scope.isUKRegistrant(whoIsRes);
+    	System.out.println("isUKRegistrant: " + res);
+    	res = Scope.isUKRegistrant(whoIsRes);
+    	
     	System.out.println("isUKRegistrant?: " + res);
         return res;
 	}
 	
-	public boolean isUkRegistration(Target target) throws WhoisException {
+	public boolean isUkRegistration(Target target) throws WhoisException, URISyntaxException {
         for (FieldUrl fieldUrl : target.fieldUrls) {
         	if (!checkWhois(fieldUrl.url)) return false;
         }
