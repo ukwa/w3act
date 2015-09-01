@@ -270,7 +270,7 @@
 	   
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
+						<div class="form-group" spellcheck="true">
 							@helper.inputText(targetForm("title"),
 								'_label -> "Title:",
 							    'id -> "inputTitle",
@@ -985,10 +985,12 @@
 							<div class="form-group">
 								<label class="col-sm-6 control-label"></label>
 							    <div class="col-sm-6">
-									<button disabled type="submit" name="archive" class="btn btn-success">Archive this now</button>
+									<a class="btn btn-success" role="button" href="@routes.TargetController.archive(id)">
+				    					Archive this now
+									</a>
 									<div class="padding-20">
 										<div class="alert alert-info">
-											Before you can archive this target, you need to save the target record.
+											Please save the record before hitting 'Archive this now' otherwise your data may be lost.
 										</div>
 									</div>
 								</div>
@@ -1095,7 +1097,31 @@
 					</div>
 		     	</div>
 		     	}
-		     	
+		     			      
+	  		<div class="row padding-10">
+	    		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@textarea(field = targetForm("webFormInfo"),
+							'_label -> "Web form information",
+							'_id -> "webFormInfo",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)					
+					</div>
+		    	</div>
+	    	</div>
+	    	
+	    	<div class="row padding-10">
+	    		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@helper.inputText(targetForm("webFormDateText"),
+							'_label -> "Web form date",
+							'_id -> "webFormDate",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)					
+					</div>
+		    	</div>
+	    	</div>
+			     	
 			</div>
 
 		 @if( id != null ){

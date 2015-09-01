@@ -111,11 +111,17 @@ public class Target extends Model {
 	public String language;
 	
 	public String secondLanguage;
+	
+	@Column(name="web_form_info")
+	public String webFormInfo;
+	
+	@Column(name="web_form_date")
+	public Date webFormDate;
 
 	@Column(columnDefinition = "text")
 	public String revision;
 
-	@JsonProperty
+	@JsonProperty  
 	public String edit_url;
 
 	@JsonIgnore
@@ -437,6 +443,9 @@ public class Target extends Model {
 
 	@Transient
 	public String crawlEndDateISO;
+	
+	@Transient
+	public String webFormDateText;
 
 	
 	@Transient
@@ -1933,6 +1942,17 @@ public class Target extends Model {
 		return dateOfPublicationText;
 	}
 
+	public String getWebFormDateText() {
+		if (webFormDate != null) {
+			webFormDateText = Utils.INSTANCE.convertToDateString(webFormDate);
+		}else{
+			
+			webFormDateText = "";
+		}
+		return webFormDateText;
+	}
+
+	
 	public String getCrawlStartDateText() {
 		if (crawlStartDate != null) {
 			crawlStartDateText = Utils.INSTANCE.convertToDateTime(crawlStartDate);

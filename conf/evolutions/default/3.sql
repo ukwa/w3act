@@ -24,6 +24,8 @@ ALTER TABLE instance ADD crawl_additional_information text;
 ALTER TABLE field_url ADD position int;
 ALTER TABLE target ADD hidden boolean default false;
 ALTER TABLE instance ADD hidden boolean default false;
+ALTER TABLE target ADD web_form_info text;
+ALTER TABLE target ADD web_form_date timestamp;
 
 CREATE TABLE highlight (
   id				bigint primary key,
@@ -67,6 +69,8 @@ ALTER TABLE instance DROP crawl_additional_information;
 ALTER TABLE field_url DROP position;
 ALTER TABLE target DROP hidden;
 ALTER TABLE instance DROP hidden;
+ALTER TABLE target DROP web_form_info;
+ALTER TABLE target DROP web_form_date;
 
 DROP TABLE IF EXISTS highlight;
 DROP TABLE IF EXISTS collection_instance;

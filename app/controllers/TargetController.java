@@ -1160,6 +1160,25 @@ public class TargetController extends AbstractController {
             filledForm.get().licenses = newLicenses;
         }
         
+        String webFormDate = requestData.get("webFormDateText");
+    	if (StringUtils.isNotEmpty(webFormDate)) {
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+			try {
+				Date date = formatter.parse(webFormDate);
+				filledForm.get().webFormDate = date;
+				 Logger.debug("webFormDate:::::::: " + date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+	            return info(filledForm, id);
+			}
+    	}else{
+    		if( id != null ) {
+    		 Ebean.createUpdate(Target.class, "update target SET web_form_date=null where id=:id")
+             .setParameter("id", id).execute();
+    		}
+    	}
+        
         String crawlStartDate = requestData.get("crawlStartDateText");
     	if (StringUtils.isNotEmpty(crawlStartDate)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");

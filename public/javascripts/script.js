@@ -8,6 +8,7 @@ $(function () {
 	$("#publicationDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#inputStartDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#inputEndDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
+	$("#webFormDateText").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$('a[rel="external"]').attr('target', '_blank');
 });
 
