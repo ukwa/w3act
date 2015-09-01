@@ -118,7 +118,7 @@
 	   </ul>
 	</div>
 		}
-		
+		@if( filter != null && filter.length() > 0) {
 		@if( currentPage.getTotalRowCount > 0 ) {
 		
 		
@@ -205,6 +205,7 @@
 			<p>
 			No targets found.
 			</p>
+		}
 		}
 		
         @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && filter != null && filter.length() > 0) {
