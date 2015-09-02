@@ -169,7 +169,7 @@ public class CrawlPermissionController extends AbstractController {
 
     	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
     	List<MailTemplate> templates = MailTemplate.findByType(MailTemplate.TemplateType.PERMISSION_REQUEST.name());
-
+    	
         return ok(
             	list.render(
             			"CrawlPermissions", 
@@ -437,7 +437,7 @@ public class CrawlPermissionController extends AbstractController {
                		filledForm.get().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
                		filledForm.get().update(id);
     	        }
-    	        
+    	      
     	        filledForm.get().target.licenseStatus = filledForm.get().status;
     	        filledForm.get().target.update();
 //    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
@@ -765,7 +765,7 @@ public class CrawlPermissionController extends AbstractController {
             	messageBody = mailTemplate.readTemplate();
             	String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
         		Logger.debug("setPendingSelectedCrawlPermissions permission.target: " + permission.target.title);
-        		
+        		Logger.debug("target id: " + permission.target.id);
         		String licenseUrl = routes.LicenseController.form(permission.token).absoluteURL(request()).toString();
         		Logger.debug("setPendingSelectedCrawlPermissions current: " + licenseUrl);
         		
@@ -786,9 +786,13 @@ public class CrawlPermissionController extends AbstractController {
                 EmailHelper.sendMessage(email, messageSubject, messageBody);
 //                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
             	permission.status = Const.CrawlPermissionStatus.PENDING.name();
+            	Target target = Target.findById(permission.target.id);
+            	target.licenseStatus = Const.CrawlPermissionStatus.PENDING.name(); //updating target page
             	permission.requestedAt=Utils.INSTANCE.getCurrentTimeStamp();        //new code to update requested date
-            	Logger.debug("new permission staus: " + permission.status);
+            	Logger.debug("new permission status:>> " + permission.status +" Permission status in target page "+target.licenseStatus);
                	Ebean.update(permission);
+               	Ebean.update(target);
+               	
     	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE + "\nSubject: " + messageSubject + "\n" + messageBody);
     	        Ebean.save(log);
             	Logger.debug("updated permission name: " + permission.name + ", status: " + permission.status + ", requestedDate: " + permission.requestedAt);
@@ -824,7 +828,7 @@ public class CrawlPermissionController extends AbstractController {
 	        
 	        String status = requestData.get("statusValue");
 	    	Logger.debug("status: " + status);
-
+	    	
 //	    	String toMails = evaluateToEmails();
 //	    	Logger.debug("toMails: " + toMails);
 	
