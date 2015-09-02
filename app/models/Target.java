@@ -1821,7 +1821,6 @@ public class Target extends Model {
 		     }
 		});
 		*/
-		new Exception("WHERE?").printStackTrace();
 		// Build up the field string:
 		for (FieldUrl fieldUrl : fieldUrls) {
 			Logger.info("Adding URL to string: "+fieldUrl.id+":"+fieldUrl.url+" "+fieldUrl.position);
