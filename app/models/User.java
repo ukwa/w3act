@@ -236,7 +236,9 @@ public class User extends ActModel {
      * Retrieve all users.
      */
     public static List<User> findAll() {
-        return find.all();
+    	List<User> users = find.where().orderBy("name asc").findList();
+        return users;
+     
     }
     
     public boolean isSysAdmin() { return hasRole("sys_admin"); }
