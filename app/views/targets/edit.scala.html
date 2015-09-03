@@ -986,6 +986,8 @@
 							<div class="form-group">
 								<label class="col-sm-6 control-label"></label>
 							    <div class="col-sm-6">
+							    @{
+							    if(id != null){
 									<a class="btn btn-success" role="button" href="@routes.TargetController.archive(id)">
 				    					Archive this now
 									</a>
@@ -994,6 +996,12 @@
 											Please save the record before hitting 'Archive this now' otherwise your data may be lost.
 										</div>
 									</div>
+									}else{
+									<a class="btn btn-success" role="button" href="@routes.TargetController.archive(id)" disabled="disabled">
+				    					Archive this now
+									</a>
+									}
+									}
 								</div>
 							</div>
 						</div>
