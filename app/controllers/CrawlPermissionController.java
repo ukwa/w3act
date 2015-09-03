@@ -437,6 +437,11 @@ public class CrawlPermissionController extends AbstractController {
                		filledForm.get().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
                		filledForm.get().update(id);
     	        }
+    	        //Update requested Date
+    	        if(filledForm.get().status.equalsIgnoreCase(Const.CrawlPermissionStatus.PENDING.getValue())){
+               		filledForm.get().requestedAt = Utils.INSTANCE.getCurrentTimeStamp();
+               		filledForm.get().update(id);
+    	        }
     	      
     	        filledForm.get().target.licenseStatus = filledForm.get().status;
     	        filledForm.get().target.update();

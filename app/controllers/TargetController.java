@@ -1366,6 +1366,7 @@ public class TargetController extends AbstractController {
     	} else {
     		// Auto-tick the checkbox
     		filledForm.get().ukPostalAddress = true;
+    		 
     	}	
     	// via correspondence (which is apparently stored in the 'value' field!)
 		if( StringUtils.isEmpty(filledForm.get().value)) {
@@ -1435,10 +1436,13 @@ public class TargetController extends AbstractController {
         }
         
         //Updating licence status
-        if (licenseValues != null && filledForm.get().getLatestCrawlPermission() != null) {
+        if (filledForm.get().getLatestCrawlPermission() != null) {
         filledForm.get().getLatestCrawlPermission().status = filledForm.get().licenseStatus;
         if( filledForm.get().getLatestCrawlPermission().status.equalsIgnoreCase(Const.CrawlPermissionStatus.GRANTED.getValue())){
         	filledForm.get().getLatestCrawlPermission().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
+        }
+        if( filledForm.get().getLatestCrawlPermission().status.equalsIgnoreCase(Const.CrawlPermissionStatus.PENDING.getValue())){
+        	filledForm.get().getLatestCrawlPermission().requestedAt = Utils.INSTANCE.getCurrentTimeStamp();
         }
         filledForm.get().getLatestCrawlPermission().update();
     	}

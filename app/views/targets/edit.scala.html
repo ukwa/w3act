@@ -270,13 +270,14 @@
 	   
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group" spellcheck="true">
+						<div class="form-group">
 							@helper.inputText(targetForm("title"),
 								'_label -> "Title:",
 							    'id -> "inputTitle",
 							    'class -> "form-control",
 							    'placeholder -> "Title",
 							    'spellcheck -> "true",
+							    'contenteditable -> "true",
 							    '_error -> targetForm("name").error.map(_.withMessage("Enter Title"))
 							)(FieldConstructor(genericMandatoryInput.f), lang)
 						</div>
