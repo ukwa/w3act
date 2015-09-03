@@ -269,7 +269,7 @@ public class Instance extends Model {
      */
     public static List<Instance> findAllforOrganisation(String url) {
     	List<Instance> res = new ArrayList<Instance>();
-        ExpressionList<Instance> ll = find.where().eq("fieldNominatingOrganisation", url);
+        ExpressionList<Instance> ll = find.where().eq("target.originatingOrganisation", url);
         res = ll.findList();
         return res;
 	}
@@ -374,7 +374,7 @@ public class Instance extends Model {
 	 */
 	public static int getInstanceNumberByOrganisationUrl(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("fieldNominatingOrganisation", url);
+        ExpressionList<Instance> ll = find.where().eq("target.originatingOrganisation", url);
         res = ll.findRowCount();
 		return res;
 	}
