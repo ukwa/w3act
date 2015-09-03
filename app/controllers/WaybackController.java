@@ -9,29 +9,18 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import models.User;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import play.Logger;
 import play.Play;
-import play.libs.F;
-import play.libs.ws.WS;
-import play.libs.F.Function;
-import play.libs.F.Promise;
-import play.libs.ws.WSResponse;
-import play.libs.ws.WSRequestHolder;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;

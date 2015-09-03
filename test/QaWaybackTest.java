@@ -4,21 +4,13 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
 import static play.test.Helpers.testServer;
 
-import java.io.File;
-
-import models.User;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import play.Configuration;
 import play.Logger;
 import play.libs.F.Callback;
 import play.test.TestBrowser;
 import uk.bl.exception.ActException;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 
 
 
