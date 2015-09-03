@@ -39,11 +39,7 @@ import uk.bl.exception.ActException;
 
 public class WaybackController extends Controller {
 	
-	private static DocumentBuilder db = null;
-	private static Document doc = null;
-	private static HttpURLConnection http;
 	private static URL wayback_url;
-	private static int statusCode = 0;
 
 	@Security.Authenticated(SecuredController.class)
 	public static Result wayback(String url) throws ActException, ClientProtocolException, IOException {
@@ -104,24 +100,24 @@ public class WaybackController extends Controller {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
-			db = dbf.newDocumentBuilder();
+			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			/***Check the http status code***/
 
 			wayback_url = new URL(wayBackUrl+"/xmlquery.jsp?type=prefixquery&url="+url);
 
-			http = (HttpURLConnection)wayback_url.openConnection();
+			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
 			http.connect();
 
-			statusCode = http.getResponseCode();
+			int statusCode = http.getResponseCode();
 			Logger.debug("getTotalCrawledUrls statusCode:"+ statusCode);
 
 			/********************************/
 
 			if(statusCode==200){
 				Logger.debug("getTotalCrawledUrls parsing XML...");
-				doc = db.parse(http.getInputStream());
+				Document doc = db.parse(http.getInputStream());
 
 				Logger.debug("getTotalCrawledUrls getting values from XML...");
 				NodeList nl = doc.getElementsByTagName("request");
@@ -144,23 +140,23 @@ public class WaybackController extends Controller {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
-			db = dbf.newDocumentBuilder();
+			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			/***Check the http status code***/
 
 			wayback_url = new URL(wayBackUrl + "/xmlquery.jsp?type=urlquery&url=" + url);
 
-			http = (HttpURLConnection)wayback_url.openConnection();
+			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
 			http.connect();
 
-			statusCode = http.getResponseCode();
+			int statusCode = http.getResponseCode();
 			Logger.debug("getTotalCrawledInstances statusCode:"+ statusCode);
 
 			/********************************/
 
 			if(statusCode==200){
-				doc = db.parse(http.getInputStream());
+				Document doc = db.parse(http.getInputStream());
 
 				NodeList nl = doc.getElementsByTagName("request");
 				Node n = nl.item(0).getChildNodes().item(9);  

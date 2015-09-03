@@ -22,10 +22,11 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.3",
   "com.rabbitmq" % "amqp-client" % "3.3.1",
   "org.jsoup" % "jsoup" % "1.8.1",
-  "info.cukes" % "cucumber-java" % "1.2.2",
-  "info.cukes" % "cucumber-junit" % "1.2.2",
-  "net.sourceforge.htmlunit" % "htmlunit" % "2.15",
-  "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" intransitive()
+  "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" intransitive(),
+  "org.apache.httpcomponents" % "httpclient" % "4.5",
+  "info.cukes" % "cucumber-java" % "1.2.2" % "test",
+  "info.cukes" % "cucumber-junit" % "1.2.2" % "test",
+  "net.sourceforge.htmlunit" % "htmlunit" % "2.15" % "test"
 )
 
 resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
@@ -33,4 +34,3 @@ resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases
 javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProperties).map{ case (key,value) => "-D" + key + "=" +value }.toSeq
 
 parallelExecution in Test := false
-
