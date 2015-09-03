@@ -22,15 +22,19 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.3",
   "com.rabbitmq" % "amqp-client" % "3.3.1",
   "org.jsoup" % "jsoup" % "1.8.1",
-  "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" intransitive(),
-  "org.apache.httpcomponents" % "httpclient" % "4.5",
+  "org.apache.httpcomponents" % "httpclient" % "4.3.6",
+  "org.apache.httpcomponents" % "httpcore" % "4.3.3",
   "info.cukes" % "cucumber-java" % "1.2.2" % "test",
   "info.cukes" % "cucumber-junit" % "1.2.2" % "test",
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15" % "test"
 )
+
+libraryDependencies += "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" notTransitive()
 
 resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
 
 javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProperties).map{ case (key,value) => "-D" + key + "=" +value }.toSeq
 
 parallelExecution in Test := false
+
+net.virtualvoid.sbt.graph.Plugin.graphSettings

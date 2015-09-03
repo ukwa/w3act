@@ -7,6 +7,9 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 // For Eclipse (under Play 2.4.x)
 //addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
 
+// Dependencies
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.5")
+
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.10")
 
