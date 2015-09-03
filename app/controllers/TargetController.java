@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.commons.validator.routines.UrlValidator;
 
 import models.Collection;
 import models.CrawlPermission;
@@ -1091,6 +1092,16 @@ public class TargetController extends AbstractController {
 			            filledForm.reject(ve);
 			            return info(filledForm, id);
 			        }
+					
+					UrlValidator urlValidator = new UrlValidator();
+					if(!urlValidator.isValid(trimmed)){
+						
+						  ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+				            filledForm.reject(ve);
+				            return info(filledForm, id);				
+					}
+					
+					
         			String extFormUrl = uri.toExternalForm();
         			
 	            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
