@@ -1131,7 +1131,9 @@ public class TargetController extends AbstractController {
 				            filledForm.reject(ve);
 				            return info(filledForm, id); 
 	            		} else {
-	            			fu = isExistingFieldUrl;
+	            			if( isExistingFieldUrl.url.equals(trimmed) ) {
+	            				fu = isExistingFieldUrl;
+	            			}
 	            		}
 	            	}
 	            	Logger.debug("Adding url: " + trimmed + " at position " + position);
@@ -1449,10 +1451,10 @@ public class TargetController extends AbstractController {
         //Updating licence status
         if (filledForm.get().getLatestCrawlPermission() != null) {
         filledForm.get().getLatestCrawlPermission().status = filledForm.get().licenseStatus;
-        if( filledForm.get().getLatestCrawlPermission().status.equalsIgnoreCase(Const.CrawlPermissionStatus.GRANTED.getValue())){
+        if( Const.CrawlPermissionStatus.GRANTED.getValue().equalsIgnoreCase(filledForm.get().getLatestCrawlPermission().status)){
         	filledForm.get().getLatestCrawlPermission().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
         }
-        if( filledForm.get().getLatestCrawlPermission().status.equalsIgnoreCase(Const.CrawlPermissionStatus.PENDING.getValue())){
+        if( Const.CrawlPermissionStatus.PENDING.getValue().equalsIgnoreCase(filledForm.get().getLatestCrawlPermission().status)){
         	filledForm.get().getLatestCrawlPermission().requestedAt = Utils.INSTANCE.getCurrentTimeStamp();
         }
         filledForm.get().getLatestCrawlPermission().update();
