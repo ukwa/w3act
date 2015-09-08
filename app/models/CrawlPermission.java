@@ -18,12 +18,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -135,8 +137,28 @@ public class CrawlPermission extends ActModel {
     @Column(name="granted_at")
     public Timestamp grantedAt;
     
+    @Transient
+	public String requestedAtISO;
+
+	@Transient
+	public String grantedAtISO;
     
-    public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
+    
+	public String getRequestedAtISO() {
+		if (requestedAt != null) {
+			requestedAtISO = Utils.INSTANCE.convertToDateTimeISO(requestedAt);
+		}
+		return requestedAtISO;
+	}
+
+	public String getGrantedAtISO() {
+		if (grantedAt != null) {
+			grantedAtISO = Utils.INSTANCE.convertToDateTimeISO(grantedAt);
+		}
+		return grantedAtISO;
+	}
+
+	public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
 
     public CrawlPermission() {
     	this(null, null, null);
