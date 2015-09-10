@@ -192,7 +192,7 @@ public class TargetController extends AbstractController {
     	}
     	
     	if (url.endsWith("/")) {
-    		url = url.replace("/", "");
+    		url = url.substring(0, url.length()-1);
     	}
     	
     	Logger.debug("After processing Filter::"+url);
@@ -306,7 +306,7 @@ public class TargetController extends AbstractController {
     	}
     	
     	if (url.endsWith("/")) {
-    		url = url.replace("/", "");
+    		url = url.substring(0, url.length()-1);
     	}
 
     	Logger.debug("after prefix: " + url);
