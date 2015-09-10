@@ -332,7 +332,7 @@ public class LicenseController extends AbstractController {
 	                	if( license == null ) {
 	                		Logger.error("No suitable license found - inventing one");
 	                		license = new License();
-	                		license.name = "INVENTED LICENSE";
+	                		license.name = "INVENTED LICENCE";
 	                	}
 	                	permission.license = license;
 	                	
@@ -363,7 +363,7 @@ public class LicenseController extends AbstractController {
     }	   
 	
     /**
-     * Display the result of th licence form submission.
+     * Display the result of the licence form submission.
      */
     public static Result result() {
 		return ok(
