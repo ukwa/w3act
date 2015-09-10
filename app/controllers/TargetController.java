@@ -104,7 +104,7 @@ public class TargetController extends AbstractController {
     /**
      * Display the paginated list of targets.
      *
-     * @param page Current page number (starts from 0)
+     * @param page Current page number (starts from 0) 
      * @param sortBy Column to be sorted
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
@@ -125,7 +125,7 @@ public class TargetController extends AbstractController {
     	}
     	
     	if (url.endsWith("/")) {
-    		url = url.replace("/", "");
+    		url = url.substring(0, url.length()-1);
     	}
     	
     	Logger.debug("After processing Filter::"+url);
@@ -419,10 +419,19 @@ public class TargetController extends AbstractController {
 			
 			Logger.debug("valid? " + isValidUrl);
 			if (!isValidUrl) {
-	            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+	            ValidationError ve = new ValidationError("formUrl", "Invalid URL");
 	            form.reject(ve);
-	  			flash("message", "Invalid URL.");
+	  			flash("message", "The URL entered is not valid. Please check and correct it, and click Search again");
     	    	return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
+			}
+			
+			UrlValidator urlValidator = new UrlValidator();
+			if(!urlValidator.isValid(query)){
+				
+				  ValidationError ve = new ValidationError("formUrl", "Invalid URL");
+		            form.reject(ve);
+		            flash("message", "The URL entered is not valid. Please check and correct it, and click Search again");
+		            return redirect(routes.TargetController.lookup(pageNo, sort, order, query));				
 			}
     		
     		if (action.equals("add")) {
@@ -1438,7 +1447,7 @@ public class TargetController extends AbstractController {
         		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
         		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
         		) {
-            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
+            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and click Save again");
             filledForm.reject(ve);
             return info(filledForm,id);
         }        
