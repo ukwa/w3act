@@ -228,6 +228,17 @@ public class Taxonomy extends ActModelMappedSuperClass {
     }          
     
     /**
+     * Retrieve an object by Id (tid).
+     * @param nid
+     * @return QA status name 
+     */
+    public static String findQAStatusById(String id) {
+    	Taxonomy taxonomy = findTaxonomy.where().eq(Const.ID, id).findUnique();
+    	String res = taxonomy.name;
+    	return res;
+    }
+    
+    /**
      * Retrieve a Taxonomy by name.
      * @param QA status name
      * @return taxonomy object

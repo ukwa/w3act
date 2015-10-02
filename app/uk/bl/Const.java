@@ -600,7 +600,7 @@ public final class Const {
 		resource("Just this URL."), 
 		plus1("This URL plus any directly linked resources."),
 		root("All URLs that start like this."),
-		subdomains("All URLs that match match this host or any subdomains.");
+		subdomains("All URLs that match this host or any subdomains.");
 		
         private String value;
 
@@ -663,6 +663,8 @@ public final class Const {
     		
     	}        	
     }
+	
+	
     	
 	/**
 	 * The QA status types.

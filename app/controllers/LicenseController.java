@@ -342,9 +342,7 @@ public class LicenseController extends AbstractController {
 	                		target.licenses.add(license);
 	                	target.licenseStatus = permission.status;
 	                	Logger.debug("Updating Target "+target.id);
-	                	target.update();
-	
-	                    	
+	                	target.update();	                    	
 	                }
 	                Logger.debug("About to update crawl permission: "+permission);
 	                permission.update();

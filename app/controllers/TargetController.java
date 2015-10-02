@@ -1276,7 +1276,8 @@ public class TargetController extends AbstractController {
 //        	QaIssue qaIssue = QaIssue.findById(qaId);
 //        	filledForm.get().qaIssue = qaIssue;
 //        }
-        	            
+    	
+    
         List<Tag> newTags = new ArrayList<Tag>();
         String[] tagValues = formParams.get("tagsList");
 
