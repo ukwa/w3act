@@ -1,0 +1,53 @@
+update target set scope='root' where scope='plus1';
+update target set scope='root' where scope='resource';
+update target set scope='root' where scope IS NULL;
+
+w3act=# select id from taxonomy where name='INVENTED LICENCE';
+ id
+-----
+ 490
+ 492
+ 493
+ 494
+ 495
+ 496
+ 497
+ 498
+(8 rows)
+
+w3act=# select id from taxonomy where name='INVENTED LICENSE';
+ id
+-----
+ 500
+ 501
+ 515
+ 516
+ 517
+ 518
+ 519
+ 529
+ 533
+ 534
+ 535
+ 536
+ 537
+ 538
+(14 rows)
+
+w3act=# update license_target set license_id=295 where license_id IN (490,492,493,494,495,496,497,498);
+UPDATE 8
+w3act=# update license_target set license_id=295 where license_id IN (500,501,515,516,517,518,519,529,533,534,535,536,537,538);
+UPDATE 14
+w3act=# update crawl_permission set license_id=295 where license_id IN (490,492,493,494,495,496,497,498,500,501,515,516,517,518,519,529,533,534,535,536,537,538);
+UPDATE 22
+w3act=# delete from taxonomy where name='INVENTED LICENCE';
+DELETE 8
+w3act=# delete from taxonomy where name='INVENTED LICENSE';
+DELETE 14
+
+
+update target set license_status='NOT_INITIATED' where license_status IS NULL;
+UPDATE 24849
+
+update target set license_status='NOT_INITIATED' where license_status='';
+UPDATE 2385
