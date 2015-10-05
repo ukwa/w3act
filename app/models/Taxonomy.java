@@ -232,7 +232,7 @@ public class Taxonomy extends ActModelMappedSuperClass {
      * @param nid
      * @return QA status name 
      */
-    public static String findQAStatusById(String id) {
+    public static String findQAStatusById(Long id) {
     	Taxonomy taxonomy = findTaxonomy.where().eq(Const.ID, id).findUnique();
     	String res = taxonomy.name;
     	return res;

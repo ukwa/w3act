@@ -1270,7 +1270,7 @@ public class TargetController extends AbstractController {
     		}
     	}
         
-//        String qaIssueId = requestData.get("qaIssueId");
+//        String qaIssueId = requestData.get("qaIssue.id");
 //        if (StringUtils.isNotEmpty(qaIssueId)) {
 //        	Long qaId = Long.valueOf(qaIssueId);
 //        	QaIssue qaIssue = QaIssue.findById(qaId);

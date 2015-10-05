@@ -209,7 +209,7 @@
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 						        @if(target.qaIssue != null) {
-						  			@target.qaIssue.name
+						  			@Taxonomy.findQAStatusById(target.qaIssue.id)
 						        } else {
 						        	none
 								}
