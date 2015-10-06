@@ -138,7 +138,7 @@
 							}
 						}
 					</td>
-					<td>@if(instance.qaIssue != null) { @instance.qaIssue.name } else { Unknown }</td>
+					<td>@if(instance.qaIssue != null) { @Taxonomy.findQAStatusById(instance.qaIssue.id) } else { None }</td>
 					<td>@instance.toCreatedAtString</td>
 					<td>
 						@if(instance.target.fieldUrls != null) {

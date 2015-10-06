@@ -161,7 +161,7 @@
 						</td>
 						<td>
 							@if(instance.qaIssue != null) {
-								@instance.qaIssue.name
+								@Taxonomy.findQAStatusById(instance.qaIssue.id)
 							}
 						</td>
 						<td>

@@ -71,12 +71,12 @@
 						<td>
 							@if(instance.authorUser != null) {
 								<a class="brand" href="@routes.UserController.edit(instance.authorUser.id)">@instance.authorUser.name</a>
-							}
+							}else { None }
 						</td>
 						<td>
 							@if(instance.qaIssue != null) {
-								@instance.qaIssue.name
-							}
+								@Taxonomy.findQAStatusById(instance.qaIssue.id)
+							}else { None }
 						</td>
 						<td>
 							@if(instance.target.fieldUrls != null) {
