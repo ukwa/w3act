@@ -42,8 +42,8 @@
 					<div class="form-group">
 		            	<label for="qa_status" class="col-sm-6 control-label">QA Status</label>
 		            	<div class="col-sm-6">
-					        @if(instance.qaIssue != null && instance.qaIssue.name.length() > 0) {
-								@instance.qaIssue.name
+					        @if(instance.qaIssue != null) {
+								@Taxonomy.findQAStatusById(instance.qaIssue.id)
 							} else {
 							    None
 							}
