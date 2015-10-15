@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für Permission complex type.
+ * <p>Java class for Permission complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="Permission">
@@ -48,7 +48,7 @@ public class Permission {
     protected boolean owner;
 
     /**
-     * Ruft den Wert der userOrGroup-Eigenschaft ab.
+     * Gets the value of the userOrGroup property.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ public class Permission {
     }
 
     /**
-     * Legt den Wert der userOrGroup-Eigenschaft fest.
+     * Sets the value of the userOrGroup property.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ public class Permission {
     }
 
     /**
-     * Ruft den Wert der view-Eigenschaft ab.
+     * Gets the value of the view property.
      * 
      */
     public boolean isView() {
@@ -80,7 +80,7 @@ public class Permission {
     }
 
     /**
-     * Legt den Wert der view-Eigenschaft fest.
+     * Sets the value of the view property.
      * 
      */
     public void setView(boolean value) {
@@ -88,7 +88,7 @@ public class Permission {
     }
 
     /**
-     * Ruft den Wert der edit-Eigenschaft ab.
+     * Gets the value of the edit property.
      * 
      */
     public boolean isEdit() {
@@ -96,7 +96,7 @@ public class Permission {
     }
 
     /**
-     * Legt den Wert der edit-Eigenschaft fest.
+     * Sets the value of the edit property.
      * 
      */
     public void setEdit(boolean value) {
@@ -104,7 +104,7 @@ public class Permission {
     }
 
     /**
-     * Ruft den Wert der owner-Eigenschaft ab.
+     * Gets the value of the owner property.
      * 
      */
     public boolean isOwner() {
@@ -112,7 +112,7 @@ public class Permission {
     }
 
     /**
-     * Legt den Wert der owner-Eigenschaft fest.
+     * Sets the value of the owner property.
      * 
      */
     public void setOwner(boolean value) {

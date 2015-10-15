@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -38,7 +38,7 @@ public class GetUserResponse {
     protected GetUserResult getUserResult;
 
     /**
-     * Ruft den Wert der getUserResult-Eigenschaft ab.
+     * Gets the value of the getUserResult property.
      * 
      * @return
      *     possible object is
@@ -50,7 +50,7 @@ public class GetUserResponse {
     }
 
     /**
-     * Legt den Wert der getUserResult-Eigenschaft fest.
+     * Sets the value of the getUserResult property.
      * 
      * @param value
      *     allowed object is

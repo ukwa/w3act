@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -47,7 +47,7 @@ public class GetSecret {
     protected ArrayOfCodeResponse codeResponses;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -59,7 +59,7 @@ public class GetSecret {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -71,7 +71,7 @@ public class GetSecret {
     }
 
     /**
-     * Ruft den Wert der secretId-Eigenschaft ab.
+     * Gets the value of the secretId property.
      * 
      */
     public int getSecretId() {
@@ -79,7 +79,7 @@ public class GetSecret {
     }
 
     /**
-     * Legt den Wert der secretId-Eigenschaft fest.
+     * Sets the value of the secretId property.
      * 
      */
     public void setSecretId(int value) {
@@ -87,7 +87,7 @@ public class GetSecret {
     }
 
     /**
-     * Ruft den Wert der loadSettingsAndPermissions-Eigenschaft ab.
+     * Gets the value of the loadSettingsAndPermissions property.
      * 
      * @return
      *     possible object is
@@ -99,7 +99,7 @@ public class GetSecret {
     }
 
     /**
-     * Legt den Wert der loadSettingsAndPermissions-Eigenschaft fest.
+     * Sets the value of the loadSettingsAndPermissions property.
      * 
      * @param value
      *     allowed object is
@@ -111,7 +111,7 @@ public class GetSecret {
     }
 
     /**
-     * Ruft den Wert der codeResponses-Eigenschaft ab.
+     * Gets the value of the codeResponses property.
      * 
      * @return
      *     possible object is
@@ -123,7 +123,7 @@ public class GetSecret {
     }
 
     /**
-     * Legt den Wert der codeResponses-Eigenschaft fest.
+     * Sets the value of the codeResponses property.
      * 
      * @param value
      *     allowed object is

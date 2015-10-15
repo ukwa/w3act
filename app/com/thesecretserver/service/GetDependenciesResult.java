@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für GetDependenciesResult complex type.
+ * <p>Java class for GetDependenciesResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="GetDependenciesResult">
@@ -44,7 +44,7 @@ public class GetDependenciesResult {
     protected boolean success;
 
     /**
-     * Ruft den Wert der dependencies-Eigenschaft ab.
+     * Gets the value of the dependencies property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class GetDependenciesResult {
     }
 
     /**
-     * Legt den Wert der dependencies-Eigenschaft fest.
+     * Sets the value of the dependencies property.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ public class GetDependenciesResult {
     }
 
     /**
-     * Ruft den Wert der errors-Eigenschaft ab.
+     * Gets the value of the errors property.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ public class GetDependenciesResult {
     }
 
     /**
-     * Legt den Wert der errors-Eigenschaft fest.
+     * Sets the value of the errors property.
      * 
      * @param value
      *     allowed object is
@@ -92,7 +92,7 @@ public class GetDependenciesResult {
     }
 
     /**
-     * Ruft den Wert der success-Eigenschaft ab.
+     * Gets the value of the success property.
      * 
      */
     public boolean isSuccess() {
@@ -100,7 +100,7 @@ public class GetDependenciesResult {
     }
 
     /**
-     * Legt den Wert der success-Eigenschaft fest.
+     * Sets the value of the success property.
      * 
      */
     public void setSuccess(boolean value) {

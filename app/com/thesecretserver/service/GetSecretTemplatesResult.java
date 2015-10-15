@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für GetSecretTemplatesResult complex type.
+ * <p>Java class for GetSecretTemplatesResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="GetSecretTemplatesResult">
@@ -40,7 +40,7 @@ public class GetSecretTemplatesResult {
     protected ArrayOfSecretTemplate secretTemplates;
 
     /**
-     * Ruft den Wert der errors-Eigenschaft ab.
+     * Gets the value of the errors property.
      * 
      * @return
      *     possible object is
@@ -52,7 +52,7 @@ public class GetSecretTemplatesResult {
     }
 
     /**
-     * Legt den Wert der errors-Eigenschaft fest.
+     * Sets the value of the errors property.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +64,7 @@ public class GetSecretTemplatesResult {
     }
 
     /**
-     * Ruft den Wert der secretTemplates-Eigenschaft ab.
+     * Gets the value of the secretTemplates property.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class GetSecretTemplatesResult {
     }
 
     /**
-     * Legt den Wert der secretTemplates-Eigenschaft fest.
+     * Sets the value of the secretTemplates property.
      * 
      * @param value
      *     allowed object is

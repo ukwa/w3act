@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für GetFoldersResult complex type.
+ * <p>Java class for GetFoldersResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="GetFoldersResult">
@@ -44,7 +44,7 @@ public class GetFoldersResult {
     protected boolean success;
 
     /**
-     * Ruft den Wert der folders-Eigenschaft ab.
+     * Gets the value of the folders property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class GetFoldersResult {
     }
 
     /**
-     * Legt den Wert der folders-Eigenschaft fest.
+     * Sets the value of the folders property.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ public class GetFoldersResult {
     }
 
     /**
-     * Ruft den Wert der errors-Eigenschaft ab.
+     * Gets the value of the errors property.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ public class GetFoldersResult {
     }
 
     /**
-     * Legt den Wert der errors-Eigenschaft fest.
+     * Sets the value of the errors property.
      * 
      * @param value
      *     allowed object is
@@ -92,7 +92,7 @@ public class GetFoldersResult {
     }
 
     /**
-     * Ruft den Wert der success-Eigenschaft ab.
+     * Gets the value of the success property.
      * 
      */
     public boolean isSuccess() {
@@ -100,7 +100,7 @@ public class GetFoldersResult {
     }
 
     /**
-     * Legt den Wert der success-Eigenschaft fest.
+     * Sets the value of the success property.
      * 
      */
     public void setSuccess(boolean value) {

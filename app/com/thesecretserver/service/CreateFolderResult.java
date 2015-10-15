@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für CreateFolderResult complex type.
+ * <p>Java class for CreateFolderResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="CreateFolderResult">
@@ -38,7 +38,7 @@ public class CreateFolderResult
     protected int folderId;
 
     /**
-     * Ruft den Wert der folderId-Eigenschaft ab.
+     * Gets the value of the folderId property.
      * 
      */
     public int getFolderId() {
@@ -46,7 +46,7 @@ public class CreateFolderResult
     }
 
     /**
-     * Legt den Wert der folderId-Eigenschaft fest.
+     * Sets the value of the folderId property.
      * 
      */
     public void setFolderId(int value) {

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -45,7 +45,7 @@ public class Authenticate {
     protected String domain;
 
     /**
-     * Ruft den Wert der username-Eigenschaft ab.
+     * Gets the value of the username property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class Authenticate {
     }
 
     /**
-     * Legt den Wert der username-Eigenschaft fest.
+     * Sets the value of the username property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class Authenticate {
     }
 
     /**
-     * Ruft den Wert der password-Eigenschaft ab.
+     * Gets the value of the password property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class Authenticate {
     }
 
     /**
-     * Legt den Wert der password-Eigenschaft fest.
+     * Sets the value of the password property.
      * 
      * @param value
      *     allowed object is
@@ -93,7 +93,7 @@ public class Authenticate {
     }
 
     /**
-     * Ruft den Wert der organization-Eigenschaft ab.
+     * Gets the value of the organization property.
      * 
      * @return
      *     possible object is
@@ -105,7 +105,7 @@ public class Authenticate {
     }
 
     /**
-     * Legt den Wert der organization-Eigenschaft fest.
+     * Sets the value of the organization property.
      * 
      * @param value
      *     allowed object is
@@ -117,7 +117,7 @@ public class Authenticate {
     }
 
     /**
-     * Ruft den Wert der domain-Eigenschaft ab.
+     * Gets the value of the domain property.
      * 
      * @return
      *     possible object is
@@ -129,7 +129,7 @@ public class Authenticate {
     }
 
     /**
-     * Legt den Wert der domain-Eigenschaft fest.
+     * Sets the value of the domain property.
      * 
      * @param value
      *     allowed object is

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -39,7 +39,7 @@ public class DenySecretAccessRequest {
     protected boolean userOverride;
 
     /**
-     * Ruft den Wert der approvalId-Eigenschaft ab.
+     * Gets the value of the approvalId property.
      * 
      * @return
      *     possible object is
@@ -51,7 +51,7 @@ public class DenySecretAccessRequest {
     }
 
     /**
-     * Legt den Wert der approvalId-Eigenschaft fest.
+     * Sets the value of the approvalId property.
      * 
      * @param value
      *     allowed object is
@@ -63,7 +63,7 @@ public class DenySecretAccessRequest {
     }
 
     /**
-     * Ruft den Wert der userOverride-Eigenschaft ab.
+     * Gets the value of the userOverride property.
      * 
      */
     public boolean isUserOverride() {
@@ -71,7 +71,7 @@ public class DenySecretAccessRequest {
     }
 
     /**
-     * Legt den Wert der userOverride-Eigenschaft fest.
+     * Sets the value of the userOverride property.
      * 
      */
     public void setUserOverride(boolean value) {

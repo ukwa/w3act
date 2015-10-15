@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für SecretSettings complex type.
+ * <p>Java class for SecretSettings complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="SecretSettings">
@@ -68,7 +68,7 @@ public class SecretSettings {
     protected boolean isChangeToSettings;
 
     /**
-     * Ruft den Wert der autoChangeEnabled-Eigenschaft ab.
+     * Gets the value of the autoChangeEnabled property.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der autoChangeEnabled-Eigenschaft fest.
+     * Sets the value of the autoChangeEnabled property.
      * 
      * @param value
      *     allowed object is
@@ -92,7 +92,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der requiresApprovalForAccess-Eigenschaft ab.
+     * Gets the value of the requiresApprovalForAccess property.
      * 
      * @return
      *     possible object is
@@ -104,7 +104,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der requiresApprovalForAccess-Eigenschaft fest.
+     * Sets the value of the requiresApprovalForAccess property.
      * 
      * @param value
      *     allowed object is
@@ -116,7 +116,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der requiresComment-Eigenschaft ab.
+     * Gets the value of the requiresComment property.
      * 
      * @return
      *     possible object is
@@ -128,7 +128,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der requiresComment-Eigenschaft fest.
+     * Sets the value of the requiresComment property.
      * 
      * @param value
      *     allowed object is
@@ -140,7 +140,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der checkOutEnabled-Eigenschaft ab.
+     * Gets the value of the checkOutEnabled property.
      * 
      * @return
      *     possible object is
@@ -152,7 +152,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der checkOutEnabled-Eigenschaft fest.
+     * Sets the value of the checkOutEnabled property.
      * 
      * @param value
      *     allowed object is
@@ -164,7 +164,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der checkOutChangePasswordEnabled-Eigenschaft ab.
+     * Gets the value of the checkOutChangePasswordEnabled property.
      * 
      * @return
      *     possible object is
@@ -176,7 +176,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der checkOutChangePasswordEnabled-Eigenschaft fest.
+     * Sets the value of the checkOutChangePasswordEnabled property.
      * 
      * @param value
      *     allowed object is
@@ -188,7 +188,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der privilegedSecretId-Eigenschaft ab.
+     * Gets the value of the privilegedSecretId property.
      * 
      * @return
      *     possible object is
@@ -200,7 +200,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der privilegedSecretId-Eigenschaft fest.
+     * Sets the value of the privilegedSecretId property.
      * 
      * @param value
      *     allowed object is
@@ -212,7 +212,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der associatedSecretIds-Eigenschaft ab.
+     * Gets the value of the associatedSecretIds property.
      * 
      * @return
      *     possible object is
@@ -224,7 +224,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der associatedSecretIds-Eigenschaft fest.
+     * Sets the value of the associatedSecretIds property.
      * 
      * @param value
      *     allowed object is
@@ -236,7 +236,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der approvers-Eigenschaft ab.
+     * Gets the value of the approvers property.
      * 
      * @return
      *     possible object is
@@ -248,7 +248,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der approvers-Eigenschaft fest.
+     * Sets the value of the approvers property.
      * 
      * @param value
      *     allowed object is
@@ -260,7 +260,7 @@ public class SecretSettings {
     }
 
     /**
-     * Ruft den Wert der isChangeToSettings-Eigenschaft ab.
+     * Gets the value of the isChangeToSettings property.
      * 
      */
     public boolean isIsChangeToSettings() {
@@ -268,7 +268,7 @@ public class SecretSettings {
     }
 
     /**
-     * Legt den Wert der isChangeToSettings-Eigenschaft fest.
+     * Sets the value of the isChangeToSettings property.
      * 
      */
     public void setIsChangeToSettings(boolean value) {

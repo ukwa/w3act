@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für CodeResponse complex type.
+ * <p>Java class for CodeResponse complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="CodeResponse">
@@ -44,7 +44,7 @@ public class CodeResponse {
     protected String additionalComment;
 
     /**
-     * Ruft den Wert der errorCode-Eigenschaft ab.
+     * Gets the value of the errorCode property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class CodeResponse {
     }
 
     /**
-     * Legt den Wert der errorCode-Eigenschaft fest.
+     * Sets the value of the errorCode property.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ public class CodeResponse {
     }
 
     /**
-     * Ruft den Wert der comment-Eigenschaft ab.
+     * Gets the value of the comment property.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ public class CodeResponse {
     }
 
     /**
-     * Legt den Wert der comment-Eigenschaft fest.
+     * Sets the value of the comment property.
      * 
      * @param value
      *     allowed object is
@@ -92,7 +92,7 @@ public class CodeResponse {
     }
 
     /**
-     * Ruft den Wert der additionalComment-Eigenschaft ab.
+     * Gets the value of the additionalComment property.
      * 
      * @return
      *     possible object is
@@ -104,7 +104,7 @@ public class CodeResponse {
     }
 
     /**
-     * Legt den Wert der additionalComment-Eigenschaft fest.
+     * Sets the value of the additionalComment property.
      * 
      * @param value
      *     allowed object is

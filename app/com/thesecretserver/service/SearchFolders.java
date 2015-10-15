@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -39,7 +39,7 @@ public class SearchFolders {
     protected String folderName;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -51,7 +51,7 @@ public class SearchFolders {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -63,7 +63,7 @@ public class SearchFolders {
     }
 
     /**
-     * Ruft den Wert der folderName-Eigenschaft ab.
+     * Gets the value of the folderName property.
      * 
      * @return
      *     possible object is
@@ -75,7 +75,7 @@ public class SearchFolders {
     }
 
     /**
-     * Legt den Wert der folderName-Eigenschaft fest.
+     * Sets the value of the folderName property.
      * 
      * @param value
      *     allowed object is

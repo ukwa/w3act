@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für GroupOrUserRecord complex type.
+ * <p>Java class for GroupOrUserRecord complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="GroupOrUserRecord">
@@ -52,7 +52,7 @@ public class GroupOrUserRecord {
     protected Integer userId;
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -64,7 +64,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -76,7 +76,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Ruft den Wert der domainName-Eigenschaft ab.
+     * Gets the value of the domainName property.
      * 
      * @return
      *     possible object is
@@ -88,7 +88,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Legt den Wert der domainName-Eigenschaft fest.
+     * Sets the value of the domainName property.
      * 
      * @param value
      *     allowed object is
@@ -100,7 +100,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Ruft den Wert der isUser-Eigenschaft ab.
+     * Gets the value of the isUser property.
      * 
      */
     public boolean isIsUser() {
@@ -108,7 +108,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Legt den Wert der isUser-Eigenschaft fest.
+     * Sets the value of the isUser property.
      * 
      */
     public void setIsUser(boolean value) {
@@ -116,7 +116,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Ruft den Wert der groupId-Eigenschaft ab.
+     * Gets the value of the groupId property.
      * 
      * @return
      *     possible object is
@@ -128,7 +128,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Legt den Wert der groupId-Eigenschaft fest.
+     * Sets the value of the groupId property.
      * 
      * @param value
      *     allowed object is
@@ -140,7 +140,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Ruft den Wert der userId-Eigenschaft ab.
+     * Gets the value of the userId property.
      * 
      * @return
      *     possible object is
@@ -152,7 +152,7 @@ public class GroupOrUserRecord {
     }
 
     /**
-     * Legt den Wert der userId-Eigenschaft fest.
+     * Sets the value of the userId property.
      * 
      * @param value
      *     allowed object is

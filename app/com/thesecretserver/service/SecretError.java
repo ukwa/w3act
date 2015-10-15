@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für SecretError complex type.
+ * <p>Java class for SecretError complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="SecretError">
@@ -52,7 +52,7 @@ public class SecretError {
     protected String additionalCommentTitle;
 
     /**
-     * Ruft den Wert der errorCode-Eigenschaft ab.
+     * Gets the value of the errorCode property.
      * 
      * @return
      *     possible object is
@@ -64,7 +64,7 @@ public class SecretError {
     }
 
     /**
-     * Legt den Wert der errorCode-Eigenschaft fest.
+     * Sets the value of the errorCode property.
      * 
      * @param value
      *     allowed object is
@@ -76,7 +76,7 @@ public class SecretError {
     }
 
     /**
-     * Ruft den Wert der errorMessage-Eigenschaft ab.
+     * Gets the value of the errorMessage property.
      * 
      * @return
      *     possible object is
@@ -88,7 +88,7 @@ public class SecretError {
     }
 
     /**
-     * Legt den Wert der errorMessage-Eigenschaft fest.
+     * Sets the value of the errorMessage property.
      * 
      * @param value
      *     allowed object is
@@ -100,7 +100,7 @@ public class SecretError {
     }
 
     /**
-     * Ruft den Wert der allowsResponse-Eigenschaft ab.
+     * Gets the value of the allowsResponse property.
      * 
      */
     public boolean isAllowsResponse() {
@@ -108,7 +108,7 @@ public class SecretError {
     }
 
     /**
-     * Legt den Wert der allowsResponse-Eigenschaft fest.
+     * Sets the value of the allowsResponse property.
      * 
      */
     public void setAllowsResponse(boolean value) {
@@ -116,7 +116,7 @@ public class SecretError {
     }
 
     /**
-     * Ruft den Wert der commentTitle-Eigenschaft ab.
+     * Gets the value of the commentTitle property.
      * 
      * @return
      *     possible object is
@@ -128,7 +128,7 @@ public class SecretError {
     }
 
     /**
-     * Legt den Wert der commentTitle-Eigenschaft fest.
+     * Sets the value of the commentTitle property.
      * 
      * @param value
      *     allowed object is
@@ -140,7 +140,7 @@ public class SecretError {
     }
 
     /**
-     * Ruft den Wert der additionalCommentTitle-Eigenschaft ab.
+     * Gets the value of the additionalCommentTitle property.
      * 
      * @return
      *     possible object is
@@ -152,7 +152,7 @@ public class SecretError {
     }
 
     /**
-     * Legt den Wert der additionalCommentTitle-Eigenschaft fest.
+     * Sets the value of the additionalCommentTitle property.
      * 
      * @param value
      *     allowed object is

@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für GenericResult complex type.
+ * <p>Java class for GenericResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="GenericResult">
@@ -40,7 +40,7 @@ public class GenericResult {
     protected String errorMessage;
 
     /**
-     * Ruft den Wert der errorMessage-Eigenschaft ab.
+     * Gets the value of the errorMessage property.
      * 
      * @return
      *     possible object is
@@ -52,7 +52,7 @@ public class GenericResult {
     }
 
     /**
-     * Legt den Wert der errorMessage-Eigenschaft fest.
+     * Sets the value of the errorMessage property.
      * 
      * @param value
      *     allowed object is

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für TokenIsValidResult complex type.
+ * <p>Java class for TokenIsValidResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="TokenIsValidResult">
@@ -44,7 +44,7 @@ public class TokenIsValidResult {
     protected String version;
 
     /**
-     * Ruft den Wert der errors-Eigenschaft ab.
+     * Gets the value of the errors property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Legt den Wert der errors-Eigenschaft fest.
+     * Sets the value of the errors property.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Ruft den Wert der maxOfflineSeconds-Eigenschaft ab.
+     * Gets the value of the maxOfflineSeconds property.
      * 
      */
     public int getMaxOfflineSeconds() {
@@ -76,7 +76,7 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Legt den Wert der maxOfflineSeconds-Eigenschaft fest.
+     * Sets the value of the maxOfflineSeconds property.
      * 
      */
     public void setMaxOfflineSeconds(int value) {
@@ -84,7 +84,7 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Ruft den Wert der version-Eigenschaft ab.
+     * Gets the value of the version property.
      * 
      * @return
      *     possible object is
@@ -96,7 +96,7 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Legt den Wert der version-Eigenschaft fest.
+     * Sets the value of the version property.
      * 
      * @param value
      *     allowed object is

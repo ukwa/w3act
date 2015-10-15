@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für SecretSummary complex type.
+ * <p>Java class for SecretSummary complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="SecretSummary">
@@ -56,7 +56,7 @@ public class SecretSummary {
     protected boolean isRestricted;
 
     /**
-     * Ruft den Wert der secretId-Eigenschaft ab.
+     * Gets the value of the secretId property.
      * 
      */
     public int getSecretId() {
@@ -64,7 +64,7 @@ public class SecretSummary {
     }
 
     /**
-     * Legt den Wert der secretId-Eigenschaft fest.
+     * Sets the value of the secretId property.
      * 
      */
     public void setSecretId(int value) {
@@ -72,7 +72,7 @@ public class SecretSummary {
     }
 
     /**
-     * Ruft den Wert der secretName-Eigenschaft ab.
+     * Gets the value of the secretName property.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ public class SecretSummary {
     }
 
     /**
-     * Legt den Wert der secretName-Eigenschaft fest.
+     * Sets the value of the secretName property.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ public class SecretSummary {
     }
 
     /**
-     * Ruft den Wert der secretTypeName-Eigenschaft ab.
+     * Gets the value of the secretTypeName property.
      * 
      * @return
      *     possible object is
@@ -108,7 +108,7 @@ public class SecretSummary {
     }
 
     /**
-     * Legt den Wert der secretTypeName-Eigenschaft fest.
+     * Sets the value of the secretTypeName property.
      * 
      * @param value
      *     allowed object is
@@ -120,7 +120,7 @@ public class SecretSummary {
     }
 
     /**
-     * Ruft den Wert der secretTypeId-Eigenschaft ab.
+     * Gets the value of the secretTypeId property.
      * 
      */
     public int getSecretTypeId() {
@@ -128,7 +128,7 @@ public class SecretSummary {
     }
 
     /**
-     * Legt den Wert der secretTypeId-Eigenschaft fest.
+     * Sets the value of the secretTypeId property.
      * 
      */
     public void setSecretTypeId(int value) {
@@ -136,7 +136,7 @@ public class SecretSummary {
     }
 
     /**
-     * Ruft den Wert der folderId-Eigenschaft ab.
+     * Gets the value of the folderId property.
      * 
      */
     public int getFolderId() {
@@ -144,7 +144,7 @@ public class SecretSummary {
     }
 
     /**
-     * Legt den Wert der folderId-Eigenschaft fest.
+     * Sets the value of the folderId property.
      * 
      */
     public void setFolderId(int value) {
@@ -152,7 +152,7 @@ public class SecretSummary {
     }
 
     /**
-     * Ruft den Wert der isRestricted-Eigenschaft ab.
+     * Gets the value of the isRestricted property.
      * 
      */
     public boolean isIsRestricted() {
@@ -160,7 +160,7 @@ public class SecretSummary {
     }
 
     /**
-     * Legt den Wert der isRestricted-Eigenschaft fest.
+     * Sets the value of the isRestricted property.
      * 
      */
     public void setIsRestricted(boolean value) {

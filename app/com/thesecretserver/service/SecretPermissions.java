@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für SecretPermissions complex type.
+ * <p>Java class for SecretPermissions complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="SecretPermissions">
@@ -56,7 +56,7 @@ public class SecretPermissions {
     protected ArrayOfPermission permissions;
 
     /**
-     * Ruft den Wert der currentUserHasView-Eigenschaft ab.
+     * Gets the value of the currentUserHasView property.
      * 
      */
     public boolean isCurrentUserHasView() {
@@ -64,7 +64,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Legt den Wert der currentUserHasView-Eigenschaft fest.
+     * Sets the value of the currentUserHasView property.
      * 
      */
     public void setCurrentUserHasView(boolean value) {
@@ -72,7 +72,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Ruft den Wert der currentUserHasEdit-Eigenschaft ab.
+     * Gets the value of the currentUserHasEdit property.
      * 
      */
     public boolean isCurrentUserHasEdit() {
@@ -80,7 +80,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Legt den Wert der currentUserHasEdit-Eigenschaft fest.
+     * Sets the value of the currentUserHasEdit property.
      * 
      */
     public void setCurrentUserHasEdit(boolean value) {
@@ -88,7 +88,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Ruft den Wert der currentUserHasOwner-Eigenschaft ab.
+     * Gets the value of the currentUserHasOwner property.
      * 
      */
     public boolean isCurrentUserHasOwner() {
@@ -96,7 +96,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Legt den Wert der currentUserHasOwner-Eigenschaft fest.
+     * Sets the value of the currentUserHasOwner property.
      * 
      */
     public void setCurrentUserHasOwner(boolean value) {
@@ -104,7 +104,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Ruft den Wert der inheritPermissionsEnabled-Eigenschaft ab.
+     * Gets the value of the inheritPermissionsEnabled property.
      * 
      * @return
      *     possible object is
@@ -116,7 +116,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Legt den Wert der inheritPermissionsEnabled-Eigenschaft fest.
+     * Sets the value of the inheritPermissionsEnabled property.
      * 
      * @param value
      *     allowed object is
@@ -128,7 +128,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Ruft den Wert der isChangeToPermissions-Eigenschaft ab.
+     * Gets the value of the isChangeToPermissions property.
      * 
      */
     public boolean isIsChangeToPermissions() {
@@ -136,7 +136,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Legt den Wert der isChangeToPermissions-Eigenschaft fest.
+     * Sets the value of the isChangeToPermissions property.
      * 
      */
     public void setIsChangeToPermissions(boolean value) {
@@ -144,7 +144,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Ruft den Wert der permissions-Eigenschaft ab.
+     * Gets the value of the permissions property.
      * 
      * @return
      *     possible object is
@@ -156,7 +156,7 @@ public class SecretPermissions {
     }
 
     /**
-     * Legt den Wert der permissions-Eigenschaft fest.
+     * Sets the value of the permissions property.
      * 
      * @param value
      *     allowed object is

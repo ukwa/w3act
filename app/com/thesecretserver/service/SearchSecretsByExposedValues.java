@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -48,7 +48,7 @@ public class SearchSecretsByExposedValues {
     protected boolean showPartialMatches;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Ruft den Wert der searchTerm-Eigenschaft ab.
+     * Gets the value of the searchTerm property.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Legt den Wert der searchTerm-Eigenschaft fest.
+     * Sets the value of the searchTerm property.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Ruft den Wert der showDeleted-Eigenschaft ab.
+     * Gets the value of the showDeleted property.
      * 
      */
     public boolean isShowDeleted() {
@@ -104,7 +104,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Legt den Wert der showDeleted-Eigenschaft fest.
+     * Sets the value of the showDeleted property.
      * 
      */
     public void setShowDeleted(boolean value) {
@@ -112,7 +112,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Ruft den Wert der showRestricted-Eigenschaft ab.
+     * Gets the value of the showRestricted property.
      * 
      */
     public boolean isShowRestricted() {
@@ -120,7 +120,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Legt den Wert der showRestricted-Eigenschaft fest.
+     * Sets the value of the showRestricted property.
      * 
      */
     public void setShowRestricted(boolean value) {
@@ -128,7 +128,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Ruft den Wert der showPartialMatches-Eigenschaft ab.
+     * Gets the value of the showPartialMatches property.
      * 
      */
     public boolean isShowPartialMatches() {
@@ -136,7 +136,7 @@ public class SearchSecretsByExposedValues {
     }
 
     /**
-     * Legt den Wert der showPartialMatches-Eigenschaft fest.
+     * Sets the value of the showPartialMatches property.
      * 
      */
     public void setShowPartialMatches(boolean value) {

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für FileDownloadResult complex type.
+ * <p>Java class for FileDownloadResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="FileDownloadResult">
@@ -42,7 +42,7 @@ public class FileDownloadResult
     protected String fileName;
 
     /**
-     * Ruft den Wert der fileAttachment-Eigenschaft ab.
+     * Gets the value of the fileAttachment property.
      * 
      * @return
      *     possible object is
@@ -53,7 +53,7 @@ public class FileDownloadResult
     }
 
     /**
-     * Legt den Wert der fileAttachment-Eigenschaft fest.
+     * Sets the value of the fileAttachment property.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +64,7 @@ public class FileDownloadResult
     }
 
     /**
-     * Ruft den Wert der fileName-Eigenschaft ab.
+     * Gets the value of the fileName property.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class FileDownloadResult
     }
 
     /**
-     * Legt den Wert der fileName-Eigenschaft fest.
+     * Sets the value of the fileName property.
      * 
      * @param value
      *     allowed object is

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für UserInfoResult complex type.
+ * <p>Java class for UserInfoResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="UserInfoResult">
@@ -60,7 +60,7 @@ public class UserInfoResult {
     protected String domainName;
 
     /**
-     * Ruft den Wert der errors-Eigenschaft ab.
+     * Gets the value of the errors property.
      * 
      * @return
      *     possible object is
@@ -72,7 +72,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Legt den Wert der errors-Eigenschaft fest.
+     * Sets the value of the errors property.
      * 
      * @param value
      *     allowed object is
@@ -84,7 +84,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Ruft den Wert der displayName-Eigenschaft ab.
+     * Gets the value of the displayName property.
      * 
      * @return
      *     possible object is
@@ -96,7 +96,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Legt den Wert der displayName-Eigenschaft fest.
+     * Sets the value of the displayName property.
      * 
      * @param value
      *     allowed object is
@@ -108,7 +108,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Ruft den Wert der userName-Eigenschaft ab.
+     * Gets the value of the userName property.
      * 
      * @return
      *     possible object is
@@ -120,7 +120,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Legt den Wert der userName-Eigenschaft fest.
+     * Sets the value of the userName property.
      * 
      * @param value
      *     allowed object is
@@ -132,7 +132,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Ruft den Wert der knownAs-Eigenschaft ab.
+     * Gets the value of the knownAs property.
      * 
      * @return
      *     possible object is
@@ -144,7 +144,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Legt den Wert der knownAs-Eigenschaft fest.
+     * Sets the value of the knownAs property.
      * 
      * @param value
      *     allowed object is
@@ -156,7 +156,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Ruft den Wert der userId-Eigenschaft ab.
+     * Gets the value of the userId property.
      * 
      */
     public int getUserId() {
@@ -164,7 +164,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Legt den Wert der userId-Eigenschaft fest.
+     * Sets the value of the userId property.
      * 
      */
     public void setUserId(int value) {
@@ -172,7 +172,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Ruft den Wert der domainId-Eigenschaft ab.
+     * Gets the value of the domainId property.
      * 
      */
     public int getDomainId() {
@@ -180,7 +180,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Legt den Wert der domainId-Eigenschaft fest.
+     * Sets the value of the domainId property.
      * 
      */
     public void setDomainId(int value) {
@@ -188,7 +188,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Ruft den Wert der domainName-Eigenschaft ab.
+     * Gets the value of the domainName property.
      * 
      * @return
      *     possible object is
@@ -200,7 +200,7 @@ public class UserInfoResult {
     }
 
     /**
-     * Legt den Wert der domainName-Eigenschaft fest.
+     * Sets the value of the domainName property.
      * 
      * @param value
      *     allowed object is

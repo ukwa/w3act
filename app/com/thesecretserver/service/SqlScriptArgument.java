@@ -4,14 +4,13 @@ package com.thesecretserver.service;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für SqlScriptArgument complex type.
+ * <p>Java class for SqlScriptArgument complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="SqlScriptArgument">
@@ -42,11 +41,10 @@ public class SqlScriptArgument {
     @XmlElement(name = "Value")
     protected Object value;
     @XmlElement(name = "DbType", required = true)
-    @XmlSchemaType(name = "string")
     protected DbType dbType;
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -58,7 +56,7 @@ public class SqlScriptArgument {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -70,7 +68,7 @@ public class SqlScriptArgument {
     }
 
     /**
-     * Ruft den Wert der value-Eigenschaft ab.
+     * Gets the value of the value property.
      * 
      * @return
      *     possible object is
@@ -82,7 +80,7 @@ public class SqlScriptArgument {
     }
 
     /**
-     * Legt den Wert der value-Eigenschaft fest.
+     * Sets the value of the value property.
      * 
      * @param value
      *     allowed object is
@@ -94,7 +92,7 @@ public class SqlScriptArgument {
     }
 
     /**
-     * Ruft den Wert der dbType-Eigenschaft ab.
+     * Gets the value of the dbType property.
      * 
      * @return
      *     possible object is
@@ -106,7 +104,7 @@ public class SqlScriptArgument {
     }
 
     /**
-     * Legt den Wert der dbType-Eigenschaft fest.
+     * Sets the value of the dbType property.
      * 
      * @param value
      *     allowed object is

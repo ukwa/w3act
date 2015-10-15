@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für Dependency complex type.
+ * <p>Java class for Dependency complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="Dependency">
@@ -80,7 +80,7 @@ public class Dependency {
     protected int secretDependencyId;
 
     /**
-     * Ruft den Wert der secretId-Eigenschaft ab.
+     * Gets the value of the secretId property.
      * 
      */
     public int getSecretId() {
@@ -88,7 +88,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der secretId-Eigenschaft fest.
+     * Sets the value of the secretId property.
      * 
      */
     public void setSecretId(int value) {
@@ -96,7 +96,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der secretDependencyTypeId-Eigenschaft ab.
+     * Gets the value of the secretDependencyTypeId property.
      * 
      */
     public int getSecretDependencyTypeId() {
@@ -104,7 +104,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der secretDependencyTypeId-Eigenschaft fest.
+     * Sets the value of the secretDependencyTypeId property.
      * 
      */
     public void setSecretDependencyTypeId(int value) {
@@ -112,7 +112,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der machineName-Eigenschaft ab.
+     * Gets the value of the machineName property.
      * 
      * @return
      *     possible object is
@@ -124,7 +124,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der machineName-Eigenschaft fest.
+     * Sets the value of the machineName property.
      * 
      * @param value
      *     allowed object is
@@ -136,7 +136,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der serviceName-Eigenschaft ab.
+     * Gets the value of the serviceName property.
      * 
      * @return
      *     possible object is
@@ -148,7 +148,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der serviceName-Eigenschaft fest.
+     * Sets the value of the serviceName property.
      * 
      * @param value
      *     allowed object is
@@ -160,7 +160,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der privilegedAccountSecretId-Eigenschaft ab.
+     * Gets the value of the privilegedAccountSecretId property.
      * 
      */
     public int getPrivilegedAccountSecretId() {
@@ -168,7 +168,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der privilegedAccountSecretId-Eigenschaft fest.
+     * Sets the value of the privilegedAccountSecretId property.
      * 
      */
     public void setPrivilegedAccountSecretId(int value) {
@@ -176,7 +176,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der active-Eigenschaft ab.
+     * Gets the value of the active property.
      * 
      */
     public boolean isActive() {
@@ -184,7 +184,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der active-Eigenschaft fest.
+     * Sets the value of the active property.
      * 
      */
     public void setActive(boolean value) {
@@ -192,7 +192,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der restartOnPasswordChange-Eigenschaft ab.
+     * Gets the value of the restartOnPasswordChange property.
      * 
      */
     public boolean isRestartOnPasswordChange() {
@@ -200,7 +200,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der restartOnPasswordChange-Eigenschaft fest.
+     * Sets the value of the restartOnPasswordChange property.
      * 
      */
     public void setRestartOnPasswordChange(boolean value) {
@@ -208,7 +208,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der waitBeforeSeconds-Eigenschaft ab.
+     * Gets the value of the waitBeforeSeconds property.
      * 
      */
     public int getWaitBeforeSeconds() {
@@ -216,7 +216,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der waitBeforeSeconds-Eigenschaft fest.
+     * Sets the value of the waitBeforeSeconds property.
      * 
      */
     public void setWaitBeforeSeconds(int value) {
@@ -224,7 +224,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der additionalInfo-Eigenschaft ab.
+     * Gets the value of the additionalInfo property.
      * 
      * @return
      *     possible object is
@@ -236,7 +236,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der additionalInfo-Eigenschaft fest.
+     * Sets the value of the additionalInfo property.
      * 
      * @param value
      *     allowed object is
@@ -248,7 +248,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der description-Eigenschaft ab.
+     * Gets the value of the description property.
      * 
      * @return
      *     possible object is
@@ -260,7 +260,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der description-Eigenschaft fest.
+     * Sets the value of the description property.
      * 
      * @param value
      *     allowed object is
@@ -272,7 +272,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der scriptId-Eigenschaft ab.
+     * Gets the value of the scriptId property.
      * 
      */
     public int getScriptId() {
@@ -280,7 +280,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der scriptId-Eigenschaft fest.
+     * Sets the value of the scriptId property.
      * 
      */
     public void setScriptId(int value) {
@@ -288,7 +288,7 @@ public class Dependency {
     }
 
     /**
-     * Ruft den Wert der secretDependencyId-Eigenschaft ab.
+     * Gets the value of the secretDependencyId property.
      * 
      */
     public int getSecretDependencyId() {
@@ -296,7 +296,7 @@ public class Dependency {
     }
 
     /**
-     * Legt den Wert der secretDependencyId-Eigenschaft fest.
+     * Sets the value of the secretDependencyId property.
      * 
      */
     public void setSecretDependencyId(int value) {

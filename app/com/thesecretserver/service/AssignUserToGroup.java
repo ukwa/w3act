@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -42,7 +42,7 @@ public class AssignUserToGroup {
     protected int groupId;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -54,7 +54,7 @@ public class AssignUserToGroup {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -66,7 +66,7 @@ public class AssignUserToGroup {
     }
 
     /**
-     * Ruft den Wert der userId-Eigenschaft ab.
+     * Gets the value of the userId property.
      * 
      */
     public int getUserId() {
@@ -74,7 +74,7 @@ public class AssignUserToGroup {
     }
 
     /**
-     * Legt den Wert der userId-Eigenschaft fest.
+     * Sets the value of the userId property.
      * 
      */
     public void setUserId(int value) {
@@ -82,7 +82,7 @@ public class AssignUserToGroup {
     }
 
     /**
-     * Ruft den Wert der groupId-Eigenschaft ab.
+     * Gets the value of the groupId property.
      * 
      */
     public int getGroupId() {
@@ -90,7 +90,7 @@ public class AssignUserToGroup {
     }
 
     /**
-     * Legt den Wert der groupId-Eigenschaft fest.
+     * Sets the value of the groupId property.
      * 
      */
     public void setGroupId(int value) {

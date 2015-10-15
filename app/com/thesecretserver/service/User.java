@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für User complex type.
+ * <p>Java class for User complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="User">
@@ -84,7 +84,7 @@ public class User {
     protected boolean oathTwoFactor;
 
     /**
-     * Ruft den Wert der id-Eigenschaft ab.
+     * Gets the value of the id property.
      * 
      * @return
      *     possible object is
@@ -96,7 +96,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der id-Eigenschaft fest.
+     * Sets the value of the id property.
      * 
      * @param value
      *     allowed object is
@@ -108,7 +108,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der userName-Eigenschaft ab.
+     * Gets the value of the userName property.
      * 
      * @return
      *     possible object is
@@ -120,7 +120,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der userName-Eigenschaft fest.
+     * Sets the value of the userName property.
      * 
      * @param value
      *     allowed object is
@@ -132,7 +132,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der displayName-Eigenschaft ab.
+     * Gets the value of the displayName property.
      * 
      * @return
      *     possible object is
@@ -144,7 +144,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der displayName-Eigenschaft fest.
+     * Sets the value of the displayName property.
      * 
      * @param value
      *     allowed object is
@@ -156,7 +156,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der domainId-Eigenschaft ab.
+     * Gets the value of the domainId property.
      * 
      * @return
      *     possible object is
@@ -168,7 +168,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der domainId-Eigenschaft fest.
+     * Sets the value of the domainId property.
      * 
      * @param value
      *     allowed object is
@@ -180,7 +180,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der isApplicationAccount-Eigenschaft ab.
+     * Gets the value of the isApplicationAccount property.
      * 
      */
     public boolean isIsApplicationAccount() {
@@ -188,7 +188,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der isApplicationAccount-Eigenschaft fest.
+     * Sets the value of the isApplicationAccount property.
      * 
      */
     public void setIsApplicationAccount(boolean value) {
@@ -196,7 +196,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der radiusTwoFactor-Eigenschaft ab.
+     * Gets the value of the radiusTwoFactor property.
      * 
      */
     public boolean isRadiusTwoFactor() {
@@ -204,7 +204,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der radiusTwoFactor-Eigenschaft fest.
+     * Sets the value of the radiusTwoFactor property.
      * 
      */
     public void setRadiusTwoFactor(boolean value) {
@@ -212,7 +212,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der emailTwoFactor-Eigenschaft ab.
+     * Gets the value of the emailTwoFactor property.
      * 
      */
     public boolean isEmailTwoFactor() {
@@ -220,7 +220,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der emailTwoFactor-Eigenschaft fest.
+     * Sets the value of the emailTwoFactor property.
      * 
      */
     public void setEmailTwoFactor(boolean value) {
@@ -228,7 +228,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der radiusUserName-Eigenschaft ab.
+     * Gets the value of the radiusUserName property.
      * 
      * @return
      *     possible object is
@@ -240,7 +240,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der radiusUserName-Eigenschaft fest.
+     * Sets the value of the radiusUserName property.
      * 
      * @param value
      *     allowed object is
@@ -252,7 +252,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der emailAddress-Eigenschaft ab.
+     * Gets the value of the emailAddress property.
      * 
      * @return
      *     possible object is
@@ -264,7 +264,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der emailAddress-Eigenschaft fest.
+     * Sets the value of the emailAddress property.
      * 
      * @param value
      *     allowed object is
@@ -276,7 +276,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der password-Eigenschaft ab.
+     * Gets the value of the password property.
      * 
      * @return
      *     possible object is
@@ -288,7 +288,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der password-Eigenschaft fest.
+     * Sets the value of the password property.
      * 
      * @param value
      *     allowed object is
@@ -300,7 +300,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der enabled-Eigenschaft ab.
+     * Gets the value of the enabled property.
      * 
      */
     public boolean isEnabled() {
@@ -308,7 +308,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der enabled-Eigenschaft fest.
+     * Sets the value of the enabled property.
      * 
      */
     public void setEnabled(boolean value) {
@@ -316,7 +316,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der duoTwoFactor-Eigenschaft ab.
+     * Gets the value of the duoTwoFactor property.
      * 
      */
     public boolean isDuoTwoFactor() {
@@ -324,7 +324,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der duoTwoFactor-Eigenschaft fest.
+     * Sets the value of the duoTwoFactor property.
      * 
      */
     public void setDuoTwoFactor(boolean value) {
@@ -332,7 +332,7 @@ public class User {
     }
 
     /**
-     * Ruft den Wert der oathTwoFactor-Eigenschaft ab.
+     * Gets the value of the oathTwoFactor property.
      * 
      */
     public boolean isOATHTwoFactor() {
@@ -340,7 +340,7 @@ public class User {
     }
 
     /**
-     * Legt den Wert der oathTwoFactor-Eigenschaft fest.
+     * Sets the value of the oathTwoFactor property.
      * 
      */
     public void setOATHTwoFactor(boolean value) {

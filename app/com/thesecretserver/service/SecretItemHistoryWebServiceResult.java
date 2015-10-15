@@ -10,9 +10,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java-Klasse für SecretItemHistoryWebServiceResult complex type.
+ * <p>Java class for SecretItemHistoryWebServiceResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="SecretItemHistoryWebServiceResult">
@@ -63,7 +63,7 @@ public class SecretItemHistoryWebServiceResult {
     protected String itemValueNew2;
 
     /**
-     * Ruft den Wert der secretItemHistoryId-Eigenschaft ab.
+     * Gets the value of the secretItemHistoryId property.
      * 
      */
     public int getSecretItemHistoryId() {
@@ -71,7 +71,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Legt den Wert der secretItemHistoryId-Eigenschaft fest.
+     * Sets the value of the secretItemHistoryId property.
      * 
      */
     public void setSecretItemHistoryId(int value) {
@@ -79,7 +79,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Ruft den Wert der userId-Eigenschaft ab.
+     * Gets the value of the userId property.
      * 
      */
     public int getUserId() {
@@ -87,7 +87,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Legt den Wert der userId-Eigenschaft fest.
+     * Sets the value of the userId property.
      * 
      */
     public void setUserId(int value) {
@@ -95,7 +95,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Ruft den Wert der secretItemId-Eigenschaft ab.
+     * Gets the value of the secretItemId property.
      * 
      */
     public int getSecretItemId() {
@@ -103,7 +103,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Legt den Wert der secretItemId-Eigenschaft fest.
+     * Sets the value of the secretItemId property.
      * 
      */
     public void setSecretItemId(int value) {
@@ -111,7 +111,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Ruft den Wert der secretId-Eigenschaft ab.
+     * Gets the value of the secretId property.
      * 
      */
     public int getSecretId() {
@@ -119,7 +119,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Legt den Wert der secretId-Eigenschaft fest.
+     * Sets the value of the secretId property.
      * 
      */
     public void setSecretId(int value) {
@@ -127,7 +127,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Ruft den Wert der date-Eigenschaft ab.
+     * Gets the value of the date property.
      * 
      * @return
      *     possible object is
@@ -139,7 +139,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Legt den Wert der date-Eigenschaft fest.
+     * Sets the value of the date property.
      * 
      * @param value
      *     allowed object is
@@ -151,7 +151,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Ruft den Wert der itemValueNew-Eigenschaft ab.
+     * Gets the value of the itemValueNew property.
      * 
      * @return
      *     possible object is
@@ -163,7 +163,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Legt den Wert der itemValueNew-Eigenschaft fest.
+     * Sets the value of the itemValueNew property.
      * 
      * @param value
      *     allowed object is
@@ -175,7 +175,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Ruft den Wert der itemValueNew2-Eigenschaft ab.
+     * Gets the value of the itemValueNew2 property.
      * 
      * @return
      *     possible object is
@@ -187,7 +187,7 @@ public class SecretItemHistoryWebServiceResult {
     }
 
     /**
-     * Legt den Wert der itemValueNew2-Eigenschaft fest.
+     * Sets the value of the itemValueNew2 property.
      * 
      * @param value
      *     allowed object is

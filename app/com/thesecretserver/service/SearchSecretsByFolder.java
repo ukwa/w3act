@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -55,7 +55,7 @@ public class SearchSecretsByFolder {
     protected Boolean includeRestricted;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -67,7 +67,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -79,7 +79,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Ruft den Wert der searchTerm-Eigenschaft ab.
+     * Gets the value of the searchTerm property.
      * 
      * @return
      *     possible object is
@@ -91,7 +91,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Legt den Wert der searchTerm-Eigenschaft fest.
+     * Sets the value of the searchTerm property.
      * 
      * @param value
      *     allowed object is
@@ -103,7 +103,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Ruft den Wert der folderId-Eigenschaft ab.
+     * Gets the value of the folderId property.
      * 
      * @return
      *     possible object is
@@ -115,7 +115,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Legt den Wert der folderId-Eigenschaft fest.
+     * Sets the value of the folderId property.
      * 
      * @param value
      *     allowed object is
@@ -127,7 +127,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Ruft den Wert der includeSubFolders-Eigenschaft ab.
+     * Gets the value of the includeSubFolders property.
      * 
      */
     public boolean isIncludeSubFolders() {
@@ -135,7 +135,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Legt den Wert der includeSubFolders-Eigenschaft fest.
+     * Sets the value of the includeSubFolders property.
      * 
      */
     public void setIncludeSubFolders(boolean value) {
@@ -143,7 +143,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Ruft den Wert der includeDeleted-Eigenschaft ab.
+     * Gets the value of the includeDeleted property.
      * 
      * @return
      *     possible object is
@@ -155,7 +155,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Legt den Wert der includeDeleted-Eigenschaft fest.
+     * Sets the value of the includeDeleted property.
      * 
      * @param value
      *     allowed object is
@@ -167,7 +167,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Ruft den Wert der includeRestricted-Eigenschaft ab.
+     * Gets the value of the includeRestricted property.
      * 
      * @return
      *     possible object is
@@ -179,7 +179,7 @@ public class SearchSecretsByFolder {
     }
 
     /**
-     * Legt den Wert der includeRestricted-Eigenschaft fest.
+     * Sets the value of the includeRestricted property.
      * 
      * @param value
      *     allowed object is

@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -38,7 +38,7 @@ public class GetSecretItemHistoryByFieldNameResponse {
     protected SecretItemHistoryResult getSecretItemHistoryByFieldNameResult;
 
     /**
-     * Ruft den Wert der getSecretItemHistoryByFieldNameResult-Eigenschaft ab.
+     * Gets the value of the getSecretItemHistoryByFieldNameResult property.
      * 
      * @return
      *     possible object is
@@ -50,7 +50,7 @@ public class GetSecretItemHistoryByFieldNameResponse {
     }
 
     /**
-     * Legt den Wert der getSecretItemHistoryByFieldNameResult-Eigenschaft fest.
+     * Sets the value of the getSecretItemHistoryByFieldNameResult property.
      * 
      * @param value
      *     allowed object is

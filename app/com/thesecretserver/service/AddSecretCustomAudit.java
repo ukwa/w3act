@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -56,7 +56,7 @@ public class AddSecretCustomAudit {
     protected int userId;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -68,7 +68,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -80,7 +80,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Ruft den Wert der secretId-Eigenschaft ab.
+     * Gets the value of the secretId property.
      * 
      */
     public int getSecretId() {
@@ -88,7 +88,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Legt den Wert der secretId-Eigenschaft fest.
+     * Sets the value of the secretId property.
      * 
      */
     public void setSecretId(int value) {
@@ -96,7 +96,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Ruft den Wert der notes-Eigenschaft ab.
+     * Gets the value of the notes property.
      * 
      * @return
      *     possible object is
@@ -108,7 +108,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Legt den Wert der notes-Eigenschaft fest.
+     * Sets the value of the notes property.
      * 
      * @param value
      *     allowed object is
@@ -120,7 +120,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Ruft den Wert der ipAddress-Eigenschaft ab.
+     * Gets the value of the ipAddress property.
      * 
      * @return
      *     possible object is
@@ -132,7 +132,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Legt den Wert der ipAddress-Eigenschaft fest.
+     * Sets the value of the ipAddress property.
      * 
      * @param value
      *     allowed object is
@@ -144,7 +144,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Ruft den Wert der referenceId-Eigenschaft ab.
+     * Gets the value of the referenceId property.
      * 
      * @return
      *     possible object is
@@ -156,7 +156,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Legt den Wert der referenceId-Eigenschaft fest.
+     * Sets the value of the referenceId property.
      * 
      * @param value
      *     allowed object is
@@ -168,7 +168,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Ruft den Wert der ticketNumber-Eigenschaft ab.
+     * Gets the value of the ticketNumber property.
      * 
      * @return
      *     possible object is
@@ -180,7 +180,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Legt den Wert der ticketNumber-Eigenschaft fest.
+     * Sets the value of the ticketNumber property.
      * 
      * @param value
      *     allowed object is
@@ -192,7 +192,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Ruft den Wert der userId-Eigenschaft ab.
+     * Gets the value of the userId property.
      * 
      */
     public int getUserId() {
@@ -200,7 +200,7 @@ public class AddSecretCustomAudit {
     }
 
     /**
-     * Legt den Wert der userId-Eigenschaft fest.
+     * Sets the value of the userId property.
      * 
      */
     public void setUserId(int value) {

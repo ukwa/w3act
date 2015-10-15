@@ -10,9 +10,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java-Klasse für ApprovalInfo complex type.
+ * <p>Java class for ApprovalInfo complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="ApprovalInfo">
@@ -43,7 +43,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class ApprovalInfo {
 
     @XmlElement(name = "Status", required = true)
-    @XmlSchemaType(name = "string")
     protected SecretAccessRequestStatus status;
     @XmlElement(name = "Responder")
     protected String responder;
@@ -57,7 +56,7 @@ public class ApprovalInfo {
     protected XMLGregorianCalendar expirationDate;
 
     /**
-     * Ruft den Wert der status-Eigenschaft ab.
+     * Gets the value of the status property.
      * 
      * @return
      *     possible object is
@@ -69,7 +68,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Legt den Wert der status-Eigenschaft fest.
+     * Sets the value of the status property.
      * 
      * @param value
      *     allowed object is
@@ -81,7 +80,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Ruft den Wert der responder-Eigenschaft ab.
+     * Gets the value of the responder property.
      * 
      * @return
      *     possible object is
@@ -93,7 +92,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Legt den Wert der responder-Eigenschaft fest.
+     * Sets the value of the responder property.
      * 
      * @param value
      *     allowed object is
@@ -105,7 +104,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Ruft den Wert der responseDate-Eigenschaft ab.
+     * Gets the value of the responseDate property.
      * 
      * @return
      *     possible object is
@@ -117,7 +116,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Legt den Wert der responseDate-Eigenschaft fest.
+     * Sets the value of the responseDate property.
      * 
      * @param value
      *     allowed object is
@@ -129,7 +128,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Ruft den Wert der responseComment-Eigenschaft ab.
+     * Gets the value of the responseComment property.
      * 
      * @return
      *     possible object is
@@ -141,7 +140,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Legt den Wert der responseComment-Eigenschaft fest.
+     * Sets the value of the responseComment property.
      * 
      * @param value
      *     allowed object is
@@ -153,7 +152,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Ruft den Wert der expirationDate-Eigenschaft ab.
+     * Gets the value of the expirationDate property.
      * 
      * @return
      *     possible object is
@@ -165,7 +164,7 @@ public class ApprovalInfo {
     }
 
     /**
-     * Legt den Wert der expirationDate-Eigenschaft fest.
+     * Sets the value of the expirationDate property.
      * 
      * @param value
      *     allowed object is

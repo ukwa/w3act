@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für SecretTemplate complex type.
+ * <p>Java class for SecretTemplate complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="SecretTemplate">
@@ -44,7 +44,7 @@ public class SecretTemplate {
     protected ArrayOfSecretField fields;
 
     /**
-     * Ruft den Wert der id-Eigenschaft ab.
+     * Gets the value of the id property.
      * 
      */
     public int getId() {
@@ -52,7 +52,7 @@ public class SecretTemplate {
     }
 
     /**
-     * Legt den Wert der id-Eigenschaft fest.
+     * Sets the value of the id property.
      * 
      */
     public void setId(int value) {
@@ -60,7 +60,7 @@ public class SecretTemplate {
     }
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -72,7 +72,7 @@ public class SecretTemplate {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -84,7 +84,7 @@ public class SecretTemplate {
     }
 
     /**
-     * Ruft den Wert der fields-Eigenschaft ab.
+     * Gets the value of the fields property.
      * 
      * @return
      *     possible object is
@@ -96,7 +96,7 @@ public class SecretTemplate {
     }
 
     /**
-     * Legt den Wert der fields-Eigenschaft fest.
+     * Sets the value of the fields property.
      * 
      * @param value
      *     allowed object is

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für AdditionalDependencyInfoJson complex type.
+ * <p>Java class for AdditionalDependencyInfoJson complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="AdditionalDependencyInfoJson">
@@ -64,7 +64,7 @@ public class AdditionalDependencyInfoJson {
     protected String serverKeyDigest;
 
     /**
-     * Ruft den Wert der regex-Eigenschaft ab.
+     * Gets the value of the regex property.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der regex-Eigenschaft fest.
+     * Sets the value of the regex property.
      * 
      * @param value
      *     allowed object is
@@ -88,7 +88,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Ruft den Wert der powershellArguments-Eigenschaft ab.
+     * Gets the value of the powershellArguments property.
      * 
      * @return
      *     possible object is
@@ -100,7 +100,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der powershellArguments-Eigenschaft fest.
+     * Sets the value of the powershellArguments property.
      * 
      * @param value
      *     allowed object is
@@ -112,7 +112,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Ruft den Wert der sshArguments-Eigenschaft ab.
+     * Gets the value of the sshArguments property.
      * 
      * @return
      *     possible object is
@@ -124,7 +124,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der sshArguments-Eigenschaft fest.
+     * Sets the value of the sshArguments property.
      * 
      * @param value
      *     allowed object is
@@ -136,7 +136,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Ruft den Wert der sqlArguments-Eigenschaft ab.
+     * Gets the value of the sqlArguments property.
      * 
      * @return
      *     possible object is
@@ -148,7 +148,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der sqlArguments-Eigenschaft fest.
+     * Sets the value of the sqlArguments property.
      * 
      * @param value
      *     allowed object is
@@ -160,7 +160,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Ruft den Wert der odbcConnectionArguments-Eigenschaft ab.
+     * Gets the value of the odbcConnectionArguments property.
      * 
      * @return
      *     possible object is
@@ -172,7 +172,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der odbcConnectionArguments-Eigenschaft fest.
+     * Sets the value of the odbcConnectionArguments property.
      * 
      * @param value
      *     allowed object is
@@ -184,7 +184,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Ruft den Wert der port-Eigenschaft ab.
+     * Gets the value of the port property.
      * 
      * @return
      *     possible object is
@@ -196,7 +196,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der port-Eigenschaft fest.
+     * Sets the value of the port property.
      * 
      * @param value
      *     allowed object is
@@ -208,7 +208,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Ruft den Wert der database-Eigenschaft ab.
+     * Gets the value of the database property.
      * 
      * @return
      *     possible object is
@@ -220,7 +220,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der database-Eigenschaft fest.
+     * Sets the value of the database property.
      * 
      * @param value
      *     allowed object is
@@ -232,7 +232,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Ruft den Wert der serverKeyDigest-Eigenschaft ab.
+     * Gets the value of the serverKeyDigest property.
      * 
      * @return
      *     possible object is
@@ -244,7 +244,7 @@ public class AdditionalDependencyInfoJson {
     }
 
     /**
-     * Legt den Wert der serverKeyDigest-Eigenschaft fest.
+     * Sets the value of the serverKeyDigest property.
      * 
      * @param value
      *     allowed object is

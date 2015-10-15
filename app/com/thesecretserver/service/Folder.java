@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für Folder complex type.
+ * <p>Java class for Folder complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="Folder">
@@ -48,7 +48,7 @@ public class Folder {
     protected int parentFolderId;
 
     /**
-     * Ruft den Wert der id-Eigenschaft ab.
+     * Gets the value of the id property.
      * 
      */
     public int getId() {
@@ -56,7 +56,7 @@ public class Folder {
     }
 
     /**
-     * Legt den Wert der id-Eigenschaft fest.
+     * Sets the value of the id property.
      * 
      */
     public void setId(int value) {
@@ -64,7 +64,7 @@ public class Folder {
     }
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class Folder {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -88,7 +88,7 @@ public class Folder {
     }
 
     /**
-     * Ruft den Wert der typeId-Eigenschaft ab.
+     * Gets the value of the typeId property.
      * 
      */
     public int getTypeId() {
@@ -96,7 +96,7 @@ public class Folder {
     }
 
     /**
-     * Legt den Wert der typeId-Eigenschaft fest.
+     * Sets the value of the typeId property.
      * 
      */
     public void setTypeId(int value) {
@@ -104,7 +104,7 @@ public class Folder {
     }
 
     /**
-     * Ruft den Wert der parentFolderId-Eigenschaft ab.
+     * Gets the value of the parentFolderId property.
      * 
      */
     public int getParentFolderId() {
@@ -112,7 +112,7 @@ public class Folder {
     }
 
     /**
-     * Legt den Wert der parentFolderId-Eigenschaft fest.
+     * Sets the value of the parentFolderId property.
      * 
      */
     public void setParentFolderId(int value) {

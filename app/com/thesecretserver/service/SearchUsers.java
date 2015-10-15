@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -42,7 +42,7 @@ public class SearchUsers {
     protected boolean includeInactiveUsers;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -54,7 +54,7 @@ public class SearchUsers {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -66,7 +66,7 @@ public class SearchUsers {
     }
 
     /**
-     * Ruft den Wert der searchTerm-Eigenschaft ab.
+     * Gets the value of the searchTerm property.
      * 
      * @return
      *     possible object is
@@ -78,7 +78,7 @@ public class SearchUsers {
     }
 
     /**
-     * Legt den Wert der searchTerm-Eigenschaft fest.
+     * Sets the value of the searchTerm property.
      * 
      * @param value
      *     allowed object is
@@ -90,7 +90,7 @@ public class SearchUsers {
     }
 
     /**
-     * Ruft den Wert der includeInactiveUsers-Eigenschaft ab.
+     * Gets the value of the includeInactiveUsers property.
      * 
      */
     public boolean isIncludeInactiveUsers() {
@@ -98,7 +98,7 @@ public class SearchUsers {
     }
 
     /**
-     * Legt den Wert der includeInactiveUsers-Eigenschaft fest.
+     * Sets the value of the includeInactiveUsers property.
      * 
      */
     public void setIncludeInactiveUsers(boolean value) {

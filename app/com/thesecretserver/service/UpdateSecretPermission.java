@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -51,7 +51,7 @@ public class UpdateSecretPermission {
     protected boolean owner;
 
     /**
-     * Ruft den Wert der token-Eigenschaft ab.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
@@ -63,7 +63,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Legt den Wert der token-Eigenschaft fest.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
@@ -75,7 +75,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Ruft den Wert der secretId-Eigenschaft ab.
+     * Gets the value of the secretId property.
      * 
      */
     public int getSecretId() {
@@ -83,7 +83,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Legt den Wert der secretId-Eigenschaft fest.
+     * Sets the value of the secretId property.
      * 
      */
     public void setSecretId(int value) {
@@ -91,7 +91,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Ruft den Wert der groupOrUserRecord-Eigenschaft ab.
+     * Gets the value of the groupOrUserRecord property.
      * 
      * @return
      *     possible object is
@@ -103,7 +103,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Legt den Wert der groupOrUserRecord-Eigenschaft fest.
+     * Sets the value of the groupOrUserRecord property.
      * 
      * @param value
      *     allowed object is
@@ -115,7 +115,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Ruft den Wert der view-Eigenschaft ab.
+     * Gets the value of the view property.
      * 
      */
     public boolean isView() {
@@ -123,7 +123,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Legt den Wert der view-Eigenschaft fest.
+     * Sets the value of the view property.
      * 
      */
     public void setView(boolean value) {
@@ -131,7 +131,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Ruft den Wert der edit-Eigenschaft ab.
+     * Gets the value of the edit property.
      * 
      */
     public boolean isEdit() {
@@ -139,7 +139,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Legt den Wert der edit-Eigenschaft fest.
+     * Sets the value of the edit property.
      * 
      */
     public void setEdit(boolean value) {
@@ -147,7 +147,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Ruft den Wert der owner-Eigenschaft ab.
+     * Gets the value of the owner property.
      * 
      */
     public boolean isOwner() {
@@ -155,7 +155,7 @@ public class UpdateSecretPermission {
     }
 
     /**
-     * Legt den Wert der owner-Eigenschaft fest.
+     * Sets the value of the owner property.
      * 
      */
     public void setOwner(boolean value) {

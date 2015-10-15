@@ -25,14 +25,4 @@ they are not needed for SOAP, but only for alternative HTTP GET and POST request
 
 - generate sources
 
-wsimport -keep -p com.thesecretserver.service sswebservice.asmx
-
-- change the URL on two locations in SSWebService.java
-
-@WebServiceClient(..., wsdlLocation = "https://blsps.ad.bl.uk/secretserver/webservices/sswebservice.asmx")
-...
-static {
-    ...
-    url = new URL("https://blsps.ad.bl.uk/secretserver/webservices/sswebservice.asmx");
-    ...
-}
+wsimport -keep -p com.thesecretserver.service -wsdllocation https://blsps.ad.bl.uk/secretserver/webservices/sswebservice.asmx sswebservice.asmx

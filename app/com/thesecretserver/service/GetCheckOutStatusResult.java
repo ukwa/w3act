@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für GetCheckOutStatusResult complex type.
+ * <p>Java class for GetCheckOutStatusResult complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="GetCheckOutStatusResult">
@@ -56,7 +56,7 @@ public class GetCheckOutStatusResult {
     protected int checkOutUserId;
 
     /**
-     * Ruft den Wert der errors-Eigenschaft ab.
+     * Gets the value of the errors property.
      * 
      * @return
      *     possible object is
@@ -68,7 +68,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Legt den Wert der errors-Eigenschaft fest.
+     * Sets the value of the errors property.
      * 
      * @param value
      *     allowed object is
@@ -80,7 +80,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Ruft den Wert der secret-Eigenschaft ab.
+     * Gets the value of the secret property.
      * 
      * @return
      *     possible object is
@@ -92,7 +92,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Legt den Wert der secret-Eigenschaft fest.
+     * Sets the value of the secret property.
      * 
      * @param value
      *     allowed object is
@@ -104,7 +104,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Ruft den Wert der checkOutMinutesRemaining-Eigenschaft ab.
+     * Gets the value of the checkOutMinutesRemaining property.
      * 
      */
     public int getCheckOutMinutesRemaining() {
@@ -112,7 +112,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Legt den Wert der checkOutMinutesRemaining-Eigenschaft fest.
+     * Sets the value of the checkOutMinutesRemaining property.
      * 
      */
     public void setCheckOutMinutesRemaining(int value) {
@@ -120,7 +120,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Ruft den Wert der isCheckedOut-Eigenschaft ab.
+     * Gets the value of the isCheckedOut property.
      * 
      */
     public boolean isIsCheckedOut() {
@@ -128,7 +128,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Legt den Wert der isCheckedOut-Eigenschaft fest.
+     * Sets the value of the isCheckedOut property.
      * 
      */
     public void setIsCheckedOut(boolean value) {
@@ -136,7 +136,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Ruft den Wert der checkOutUserDisplayName-Eigenschaft ab.
+     * Gets the value of the checkOutUserDisplayName property.
      * 
      * @return
      *     possible object is
@@ -148,7 +148,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Legt den Wert der checkOutUserDisplayName-Eigenschaft fest.
+     * Sets the value of the checkOutUserDisplayName property.
      * 
      * @param value
      *     allowed object is
@@ -160,7 +160,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Ruft den Wert der checkOutUserId-Eigenschaft ab.
+     * Gets the value of the checkOutUserId property.
      * 
      */
     public int getCheckOutUserId() {
@@ -168,7 +168,7 @@ public class GetCheckOutStatusResult {
     }
 
     /**
-     * Legt den Wert der checkOutUserId-Eigenschaft fest.
+     * Sets the value of the checkOutUserId property.
      * 
      */
     public void setCheckOutUserId(int value) {
