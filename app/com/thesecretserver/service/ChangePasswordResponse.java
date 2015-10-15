@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -38,7 +38,7 @@ public class ChangePasswordResponse {
     protected WebServiceResult changePasswordResult;
 
     /**
-     * Gets the value of the changePasswordResult property.
+     * Ruft den Wert der changePasswordResult-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -50,7 +50,7 @@ public class ChangePasswordResponse {
     }
 
     /**
-     * Sets the value of the changePasswordResult property.
+     * Legt den Wert der changePasswordResult-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

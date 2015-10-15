@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TokenIsValidResult complex type.
+ * <p>Java-Klasse für TokenIsValidResult complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="TokenIsValidResult">
@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="Errors" type="{urn:thesecretserver.com}ArrayOfString" minOccurs="0"/>
  *         &lt;element name="MaxOfflineSeconds" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="Version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,7 +31,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TokenIsValidResult", propOrder = {
     "errors",
-    "maxOfflineSeconds"
+    "maxOfflineSeconds",
+    "version"
 })
 public class TokenIsValidResult {
 
@@ -38,9 +40,11 @@ public class TokenIsValidResult {
     protected ArrayOfString errors;
     @XmlElement(name = "MaxOfflineSeconds")
     protected int maxOfflineSeconds;
+    @XmlElement(name = "Version")
+    protected String version;
 
     /**
-     * Gets the value of the errors property.
+     * Ruft den Wert der errors-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -52,7 +56,7 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Sets the value of the errors property.
+     * Legt den Wert der errors-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +68,7 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Gets the value of the maxOfflineSeconds property.
+     * Ruft den Wert der maxOfflineSeconds-Eigenschaft ab.
      * 
      */
     public int getMaxOfflineSeconds() {
@@ -72,11 +76,35 @@ public class TokenIsValidResult {
     }
 
     /**
-     * Sets the value of the maxOfflineSeconds property.
+     * Legt den Wert der maxOfflineSeconds-Eigenschaft fest.
      * 
      */
     public void setMaxOfflineSeconds(int value) {
         this.maxOfflineSeconds = value;
+    }
+
+    /**
+     * Ruft den Wert der version-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * Legt den Wert der version-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVersion(String value) {
+        this.version = value;
     }
 
 }

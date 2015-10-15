@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for SecretItem complex type.
+ * <p>Java-Klasse für SecretItem complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="SecretItem">
@@ -64,7 +64,7 @@ public class SecretItem {
     protected String fieldDisplayName;
 
     /**
-     * Gets the value of the value property.
+     * Ruft den Wert der value-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the value property.
+     * Legt den Wert der value-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -88,7 +88,7 @@ public class SecretItem {
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -100,7 +100,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -112,7 +112,7 @@ public class SecretItem {
     }
 
     /**
-     * Gets the value of the fieldId property.
+     * Ruft den Wert der fieldId-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -124,7 +124,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the fieldId property.
+     * Legt den Wert der fieldId-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -136,7 +136,7 @@ public class SecretItem {
     }
 
     /**
-     * Gets the value of the fieldName property.
+     * Ruft den Wert der fieldName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -148,7 +148,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the fieldName property.
+     * Legt den Wert der fieldName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -160,7 +160,7 @@ public class SecretItem {
     }
 
     /**
-     * Gets the value of the isFile property.
+     * Ruft den Wert der isFile-Eigenschaft ab.
      * 
      */
     public boolean isIsFile() {
@@ -168,7 +168,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the isFile property.
+     * Legt den Wert der isFile-Eigenschaft fest.
      * 
      */
     public void setIsFile(boolean value) {
@@ -176,7 +176,7 @@ public class SecretItem {
     }
 
     /**
-     * Gets the value of the isNotes property.
+     * Ruft den Wert der isNotes-Eigenschaft ab.
      * 
      */
     public boolean isIsNotes() {
@@ -184,7 +184,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the isNotes property.
+     * Legt den Wert der isNotes-Eigenschaft fest.
      * 
      */
     public void setIsNotes(boolean value) {
@@ -192,7 +192,7 @@ public class SecretItem {
     }
 
     /**
-     * Gets the value of the isPassword property.
+     * Ruft den Wert der isPassword-Eigenschaft ab.
      * 
      */
     public boolean isIsPassword() {
@@ -200,7 +200,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the isPassword property.
+     * Legt den Wert der isPassword-Eigenschaft fest.
      * 
      */
     public void setIsPassword(boolean value) {
@@ -208,7 +208,7 @@ public class SecretItem {
     }
 
     /**
-     * Gets the value of the fieldDisplayName property.
+     * Ruft den Wert der fieldDisplayName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -220,7 +220,7 @@ public class SecretItem {
     }
 
     /**
-     * Sets the value of the fieldDisplayName property.
+     * Legt den Wert der fieldDisplayName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -45,7 +45,7 @@ public class GetSecretsByFieldValue {
     protected boolean showDeleted;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class GetSecretsByFieldValue {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class GetSecretsByFieldValue {
     }
 
     /**
-     * Gets the value of the fieldName property.
+     * Ruft den Wert der fieldName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class GetSecretsByFieldValue {
     }
 
     /**
-     * Sets the value of the fieldName property.
+     * Legt den Wert der fieldName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -93,7 +93,7 @@ public class GetSecretsByFieldValue {
     }
 
     /**
-     * Gets the value of the searchTerm property.
+     * Ruft den Wert der searchTerm-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -105,7 +105,7 @@ public class GetSecretsByFieldValue {
     }
 
     /**
-     * Sets the value of the searchTerm property.
+     * Legt den Wert der searchTerm-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -117,7 +117,7 @@ public class GetSecretsByFieldValue {
     }
 
     /**
-     * Gets the value of the showDeleted property.
+     * Ruft den Wert der showDeleted-Eigenschaft ab.
      * 
      */
     public boolean isShowDeleted() {
@@ -125,7 +125,7 @@ public class GetSecretsByFieldValue {
     }
 
     /**
-     * Sets the value of the showDeleted property.
+     * Legt den Wert der showDeleted-Eigenschaft fest.
      * 
      */
     public void setShowDeleted(boolean value) {

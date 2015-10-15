@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for SecretSummary complex type.
+ * <p>Java-Klasse für SecretSummary complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="SecretSummary">
@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="SecretTypeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="SecretTypeId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="FolderId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="IsRestricted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,7 +37,8 @@ import javax.xml.bind.annotation.XmlType;
     "secretName",
     "secretTypeName",
     "secretTypeId",
-    "folderId"
+    "folderId",
+    "isRestricted"
 })
 public class SecretSummary {
 
@@ -50,9 +52,11 @@ public class SecretSummary {
     protected int secretTypeId;
     @XmlElement(name = "FolderId")
     protected int folderId;
+    @XmlElement(name = "IsRestricted")
+    protected boolean isRestricted;
 
     /**
-     * Gets the value of the secretId property.
+     * Ruft den Wert der secretId-Eigenschaft ab.
      * 
      */
     public int getSecretId() {
@@ -60,7 +64,7 @@ public class SecretSummary {
     }
 
     /**
-     * Sets the value of the secretId property.
+     * Legt den Wert der secretId-Eigenschaft fest.
      * 
      */
     public void setSecretId(int value) {
@@ -68,7 +72,7 @@ public class SecretSummary {
     }
 
     /**
-     * Gets the value of the secretName property.
+     * Ruft den Wert der secretName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -80,7 +84,7 @@ public class SecretSummary {
     }
 
     /**
-     * Sets the value of the secretName property.
+     * Legt den Wert der secretName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -92,7 +96,7 @@ public class SecretSummary {
     }
 
     /**
-     * Gets the value of the secretTypeName property.
+     * Ruft den Wert der secretTypeName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -104,7 +108,7 @@ public class SecretSummary {
     }
 
     /**
-     * Sets the value of the secretTypeName property.
+     * Legt den Wert der secretTypeName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -116,7 +120,7 @@ public class SecretSummary {
     }
 
     /**
-     * Gets the value of the secretTypeId property.
+     * Ruft den Wert der secretTypeId-Eigenschaft ab.
      * 
      */
     public int getSecretTypeId() {
@@ -124,7 +128,7 @@ public class SecretSummary {
     }
 
     /**
-     * Sets the value of the secretTypeId property.
+     * Legt den Wert der secretTypeId-Eigenschaft fest.
      * 
      */
     public void setSecretTypeId(int value) {
@@ -132,7 +136,7 @@ public class SecretSummary {
     }
 
     /**
-     * Gets the value of the folderId property.
+     * Ruft den Wert der folderId-Eigenschaft ab.
      * 
      */
     public int getFolderId() {
@@ -140,11 +144,27 @@ public class SecretSummary {
     }
 
     /**
-     * Sets the value of the folderId property.
+     * Legt den Wert der folderId-Eigenschaft fest.
      * 
      */
     public void setFolderId(int value) {
         this.folderId = value;
+    }
+
+    /**
+     * Ruft den Wert der isRestricted-Eigenschaft ab.
+     * 
+     */
+    public boolean isIsRestricted() {
+        return isRestricted;
+    }
+
+    /**
+     * Legt den Wert der isRestricted-Eigenschaft fest.
+     * 
+     */
+    public void setIsRestricted(boolean value) {
+        this.isRestricted = value;
     }
 
 }

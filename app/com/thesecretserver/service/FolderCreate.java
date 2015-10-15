@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -45,7 +45,7 @@ public class FolderCreate {
     protected int folderTypeId;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class FolderCreate {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class FolderCreate {
     }
 
     /**
-     * Gets the value of the folderName property.
+     * Ruft den Wert der folderName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class FolderCreate {
     }
 
     /**
-     * Sets the value of the folderName property.
+     * Legt den Wert der folderName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -93,7 +93,7 @@ public class FolderCreate {
     }
 
     /**
-     * Gets the value of the parentFolderId property.
+     * Ruft den Wert der parentFolderId-Eigenschaft ab.
      * 
      */
     public int getParentFolderId() {
@@ -101,7 +101,7 @@ public class FolderCreate {
     }
 
     /**
-     * Sets the value of the parentFolderId property.
+     * Legt den Wert der parentFolderId-Eigenschaft fest.
      * 
      */
     public void setParentFolderId(int value) {
@@ -109,7 +109,7 @@ public class FolderCreate {
     }
 
     /**
-     * Gets the value of the folderTypeId property.
+     * Ruft den Wert der folderTypeId-Eigenschaft ab.
      * 
      */
     public int getFolderTypeId() {
@@ -117,7 +117,7 @@ public class FolderCreate {
     }
 
     /**
-     * Sets the value of the folderTypeId property.
+     * Legt den Wert der folderTypeId-Eigenschaft fest.
      * 
      */
     public void setFolderTypeId(int value) {

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GetSecretResult complex type.
+ * <p>Java-Klasse für GetSecretResult complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="GetSecretResult">
@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Errors" type="{urn:thesecretserver.com}ArrayOfString" minOccurs="0"/>
+ *         &lt;element name="SecretError" type="{urn:thesecretserver.com}SecretError" minOccurs="0"/>
  *         &lt;element name="Secret" type="{urn:thesecretserver.com}Secret" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -30,17 +31,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetSecretResult", propOrder = {
     "errors",
+    "secretError",
     "secret"
 })
 public class GetSecretResult {
 
     @XmlElement(name = "Errors")
     protected ArrayOfString errors;
+    @XmlElement(name = "SecretError")
+    protected SecretError secretError;
     @XmlElement(name = "Secret")
     protected Secret secret;
 
     /**
-     * Gets the value of the errors property.
+     * Ruft den Wert der errors-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -52,7 +56,7 @@ public class GetSecretResult {
     }
 
     /**
-     * Sets the value of the errors property.
+     * Legt den Wert der errors-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +68,31 @@ public class GetSecretResult {
     }
 
     /**
-     * Gets the value of the secret property.
+     * Ruft den Wert der secretError-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link SecretError }
+     *     
+     */
+    public SecretError getSecretError() {
+        return secretError;
+    }
+
+    /**
+     * Legt den Wert der secretError-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link SecretError }
+     *     
+     */
+    public void setSecretError(SecretError value) {
+        this.secretError = value;
+    }
+
+    /**
+     * Ruft den Wert der secret-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -76,7 +104,7 @@ public class GetSecretResult {
     }
 
     /**
-     * Sets the value of the secret property.
+     * Legt den Wert der secret-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

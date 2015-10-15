@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Secret complex type.
+ * <p>Java-Klasse für Secret complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="Secret">
@@ -24,13 +24,15 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="FolderId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsWebLauncher" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="Active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="CheckOutEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutMinutesRemaining" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsCheckedOut" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutUserDisplayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="CheckOutUserId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsOutOfSync" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="IsRestricted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="OutOfSyncReason" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SecretSettings" type="{urn:thesecretserver.com}SecretSettings" minOccurs="0"/>
+ *         &lt;element name="SecretPermissions" type="{urn:thesecretserver.com}SecretPermissions" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -48,13 +50,15 @@ import javax.xml.bind.annotation.XmlType;
     "folderId",
     "isWebLauncher",
     "active",
-    "checkOutEnabled",
     "checkOutMinutesRemaining",
     "isCheckedOut",
     "checkOutUserDisplayName",
     "checkOutUserId",
     "isOutOfSync",
-    "outOfSyncReason"
+    "isRestricted",
+    "outOfSyncReason",
+    "secretSettings",
+    "secretPermissions"
 })
 public class Secret {
 
@@ -72,8 +76,6 @@ public class Secret {
     protected boolean isWebLauncher;
     @XmlElement(name = "Active")
     protected boolean active;
-    @XmlElement(name = "CheckOutEnabled")
-    protected boolean checkOutEnabled;
     @XmlElement(name = "CheckOutMinutesRemaining", required = true, type = Integer.class, nillable = true)
     protected Integer checkOutMinutesRemaining;
     @XmlElement(name = "IsCheckedOut", required = true, type = Boolean.class, nillable = true)
@@ -84,11 +86,17 @@ public class Secret {
     protected Integer checkOutUserId;
     @XmlElement(name = "IsOutOfSync", required = true, type = Boolean.class, nillable = true)
     protected Boolean isOutOfSync;
+    @XmlElement(name = "IsRestricted", required = true, type = Boolean.class, nillable = true)
+    protected Boolean isRestricted;
     @XmlElement(name = "OutOfSyncReason")
     protected String outOfSyncReason;
+    @XmlElement(name = "SecretSettings")
+    protected SecretSettings secretSettings;
+    @XmlElement(name = "SecretPermissions")
+    protected SecretPermissions secretPermissions;
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -100,7 +108,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -112,7 +120,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the items property.
+     * Ruft den Wert der items-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -124,7 +132,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the items property.
+     * Legt den Wert der items-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -136,7 +144,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      */
     public int getId() {
@@ -144,7 +152,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      */
     public void setId(int value) {
@@ -152,7 +160,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the secretTypeId property.
+     * Ruft den Wert der secretTypeId-Eigenschaft ab.
      * 
      */
     public int getSecretTypeId() {
@@ -160,7 +168,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the secretTypeId property.
+     * Legt den Wert der secretTypeId-Eigenschaft fest.
      * 
      */
     public void setSecretTypeId(int value) {
@@ -168,7 +176,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the folderId property.
+     * Ruft den Wert der folderId-Eigenschaft ab.
      * 
      */
     public int getFolderId() {
@@ -176,7 +184,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the folderId property.
+     * Legt den Wert der folderId-Eigenschaft fest.
      * 
      */
     public void setFolderId(int value) {
@@ -184,7 +192,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the isWebLauncher property.
+     * Ruft den Wert der isWebLauncher-Eigenschaft ab.
      * 
      */
     public boolean isIsWebLauncher() {
@@ -192,7 +200,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the isWebLauncher property.
+     * Legt den Wert der isWebLauncher-Eigenschaft fest.
      * 
      */
     public void setIsWebLauncher(boolean value) {
@@ -200,7 +208,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the active property.
+     * Ruft den Wert der active-Eigenschaft ab.
      * 
      */
     public boolean isActive() {
@@ -208,7 +216,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the active property.
+     * Legt den Wert der active-Eigenschaft fest.
      * 
      */
     public void setActive(boolean value) {
@@ -216,23 +224,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the checkOutEnabled property.
-     * 
-     */
-    public boolean isCheckOutEnabled() {
-        return checkOutEnabled;
-    }
-
-    /**
-     * Sets the value of the checkOutEnabled property.
-     * 
-     */
-    public void setCheckOutEnabled(boolean value) {
-        this.checkOutEnabled = value;
-    }
-
-    /**
-     * Gets the value of the checkOutMinutesRemaining property.
+     * Ruft den Wert der checkOutMinutesRemaining-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -244,7 +236,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the checkOutMinutesRemaining property.
+     * Legt den Wert der checkOutMinutesRemaining-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -256,7 +248,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the isCheckedOut property.
+     * Ruft den Wert der isCheckedOut-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -268,7 +260,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the isCheckedOut property.
+     * Legt den Wert der isCheckedOut-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -280,7 +272,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the checkOutUserDisplayName property.
+     * Ruft den Wert der checkOutUserDisplayName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -292,7 +284,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the checkOutUserDisplayName property.
+     * Legt den Wert der checkOutUserDisplayName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -304,7 +296,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the checkOutUserId property.
+     * Ruft den Wert der checkOutUserId-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -316,7 +308,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the checkOutUserId property.
+     * Legt den Wert der checkOutUserId-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -328,7 +320,7 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the isOutOfSync property.
+     * Ruft den Wert der isOutOfSync-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -340,7 +332,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the isOutOfSync property.
+     * Legt den Wert der isOutOfSync-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -352,7 +344,31 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the outOfSyncReason property.
+     * Ruft den Wert der isRestricted-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isIsRestricted() {
+        return isRestricted;
+    }
+
+    /**
+     * Legt den Wert der isRestricted-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setIsRestricted(Boolean value) {
+        this.isRestricted = value;
+    }
+
+    /**
+     * Ruft den Wert der outOfSyncReason-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -364,7 +380,7 @@ public class Secret {
     }
 
     /**
-     * Sets the value of the outOfSyncReason property.
+     * Legt den Wert der outOfSyncReason-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -373,6 +389,54 @@ public class Secret {
      */
     public void setOutOfSyncReason(String value) {
         this.outOfSyncReason = value;
+    }
+
+    /**
+     * Ruft den Wert der secretSettings-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link SecretSettings }
+     *     
+     */
+    public SecretSettings getSecretSettings() {
+        return secretSettings;
+    }
+
+    /**
+     * Legt den Wert der secretSettings-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link SecretSettings }
+     *     
+     */
+    public void setSecretSettings(SecretSettings value) {
+        this.secretSettings = value;
+    }
+
+    /**
+     * Ruft den Wert der secretPermissions-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link SecretPermissions }
+     *     
+     */
+    public SecretPermissions getSecretPermissions() {
+        return secretPermissions;
+    }
+
+    /**
+     * Legt den Wert der secretPermissions-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link SecretPermissions }
+     *     
+     */
+    public void setSecretPermissions(SecretPermissions value) {
+        this.secretPermissions = value;
     }
 
 }

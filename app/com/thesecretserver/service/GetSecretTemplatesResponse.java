@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -38,7 +38,7 @@ public class GetSecretTemplatesResponse {
     protected GetSecretTemplatesResult getSecretTemplatesResult;
 
     /**
-     * Gets the value of the getSecretTemplatesResult property.
+     * Ruft den Wert der getSecretTemplatesResult-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -50,7 +50,7 @@ public class GetSecretTemplatesResponse {
     }
 
     /**
-     * Sets the value of the getSecretTemplatesResult property.
+     * Legt den Wert der getSecretTemplatesResult-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

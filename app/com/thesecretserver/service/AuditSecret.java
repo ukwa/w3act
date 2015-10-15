@@ -10,9 +10,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java class for AuditSecret complex type.
+ * <p>Java-Klasse für AuditSecret complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="AuditSecret">
@@ -79,7 +79,7 @@ public class AuditSecret {
     protected String ticketNumber;
 
     /**
-     * Gets the value of the auditSecretId property.
+     * Ruft den Wert der auditSecretId-Eigenschaft ab.
      * 
      */
     public int getAuditSecretId() {
@@ -87,7 +87,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the auditSecretId property.
+     * Legt den Wert der auditSecretId-Eigenschaft fest.
      * 
      */
     public void setAuditSecretId(int value) {
@@ -95,7 +95,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the secretId property.
+     * Ruft den Wert der secretId-Eigenschaft ab.
      * 
      */
     public int getSecretId() {
@@ -103,7 +103,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the secretId property.
+     * Legt den Wert der secretId-Eigenschaft fest.
      * 
      */
     public void setSecretId(int value) {
@@ -111,7 +111,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the dateRecorded property.
+     * Ruft den Wert der dateRecorded-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -123,7 +123,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the dateRecorded property.
+     * Legt den Wert der dateRecorded-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -135,7 +135,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the action property.
+     * Ruft den Wert der action-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -147,7 +147,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the action property.
+     * Legt den Wert der action-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -159,7 +159,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the notes property.
+     * Ruft den Wert der notes-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -171,7 +171,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the notes property.
+     * Legt den Wert der notes-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -183,7 +183,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the userId property.
+     * Ruft den Wert der userId-Eigenschaft ab.
      * 
      */
     public int getUserId() {
@@ -191,7 +191,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the userId property.
+     * Legt den Wert der userId-Eigenschaft fest.
      * 
      */
     public void setUserId(int value) {
@@ -199,7 +199,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the secretName property.
+     * Ruft den Wert der secretName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -211,7 +211,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the secretName property.
+     * Legt den Wert der secretName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -223,7 +223,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the ipAddress property.
+     * Ruft den Wert der ipAddress-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -235,7 +235,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the ipAddress property.
+     * Legt den Wert der ipAddress-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -247,7 +247,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the referenceId property.
+     * Ruft den Wert der referenceId-Eigenschaft ab.
      * 
      */
     public int getReferenceId() {
@@ -255,7 +255,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the referenceId property.
+     * Legt den Wert der referenceId-Eigenschaft fest.
      * 
      */
     public void setReferenceId(int value) {
@@ -263,7 +263,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the byUserDisplayName property.
+     * Ruft den Wert der byUserDisplayName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -275,7 +275,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the byUserDisplayName property.
+     * Legt den Wert der byUserDisplayName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -287,7 +287,7 @@ public class AuditSecret {
     }
 
     /**
-     * Gets the value of the ticketNumber property.
+     * Ruft den Wert der ticketNumber-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -299,7 +299,7 @@ public class AuditSecret {
     }
 
     /**
-     * Sets the value of the ticketNumber property.
+     * Legt den Wert der ticketNumber-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

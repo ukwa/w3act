@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -42,7 +42,7 @@ public class AssignAgent {
     protected int agentId;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -54,7 +54,7 @@ public class AssignAgent {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -66,7 +66,7 @@ public class AssignAgent {
     }
 
     /**
-     * Gets the value of the secretId property.
+     * Ruft den Wert der secretId-Eigenschaft ab.
      * 
      */
     public int getSecretId() {
@@ -74,7 +74,7 @@ public class AssignAgent {
     }
 
     /**
-     * Sets the value of the secretId property.
+     * Legt den Wert der secretId-Eigenschaft fest.
      * 
      */
     public void setSecretId(int value) {
@@ -82,7 +82,7 @@ public class AssignAgent {
     }
 
     /**
-     * Gets the value of the agentId property.
+     * Ruft den Wert der agentId-Eigenschaft ab.
      * 
      */
     public int getAgentId() {
@@ -90,7 +90,7 @@ public class AssignAgent {
     }
 
     /**
-     * Sets the value of the agentId property.
+     * Legt den Wert der agentId-Eigenschaft fest.
      * 
      */
     public void setAgentId(int value) {

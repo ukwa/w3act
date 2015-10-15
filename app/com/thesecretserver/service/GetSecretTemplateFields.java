@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -39,7 +39,7 @@ public class GetSecretTemplateFields {
     protected int secretTypeId;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -51,7 +51,7 @@ public class GetSecretTemplateFields {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -63,7 +63,7 @@ public class GetSecretTemplateFields {
     }
 
     /**
-     * Gets the value of the secretTypeId property.
+     * Ruft den Wert der secretTypeId-Eigenschaft ab.
      * 
      */
     public int getSecretTypeId() {
@@ -71,7 +71,7 @@ public class GetSecretTemplateFields {
     }
 
     /**
-     * Sets the value of the secretTypeId property.
+     * Legt den Wert der secretTypeId-Eigenschaft fest.
      * 
      */
     public void setSecretTypeId(int value) {

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -51,7 +51,7 @@ public class AddSecret {
     protected int folderId;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -63,7 +63,7 @@ public class AddSecret {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -75,7 +75,7 @@ public class AddSecret {
     }
 
     /**
-     * Gets the value of the secretTypeId property.
+     * Ruft den Wert der secretTypeId-Eigenschaft ab.
      * 
      */
     public int getSecretTypeId() {
@@ -83,7 +83,7 @@ public class AddSecret {
     }
 
     /**
-     * Sets the value of the secretTypeId property.
+     * Legt den Wert der secretTypeId-Eigenschaft fest.
      * 
      */
     public void setSecretTypeId(int value) {
@@ -91,7 +91,7 @@ public class AddSecret {
     }
 
     /**
-     * Gets the value of the secretName property.
+     * Ruft den Wert der secretName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -103,7 +103,7 @@ public class AddSecret {
     }
 
     /**
-     * Sets the value of the secretName property.
+     * Legt den Wert der secretName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -115,7 +115,7 @@ public class AddSecret {
     }
 
     /**
-     * Gets the value of the secretFieldIds property.
+     * Ruft den Wert der secretFieldIds-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -127,7 +127,7 @@ public class AddSecret {
     }
 
     /**
-     * Sets the value of the secretFieldIds property.
+     * Legt den Wert der secretFieldIds-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -139,7 +139,7 @@ public class AddSecret {
     }
 
     /**
-     * Gets the value of the secretItemValues property.
+     * Ruft den Wert der secretItemValues-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -151,7 +151,7 @@ public class AddSecret {
     }
 
     /**
-     * Sets the value of the secretItemValues property.
+     * Legt den Wert der secretItemValues-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -163,7 +163,7 @@ public class AddSecret {
     }
 
     /**
-     * Gets the value of the folderId property.
+     * Ruft den Wert der folderId-Eigenschaft ab.
      * 
      */
     public int getFolderId() {
@@ -171,7 +171,7 @@ public class AddSecret {
     }
 
     /**
-     * Sets the value of the folderId property.
+     * Legt den Wert der folderId-Eigenschaft fest.
      * 
      */
     public void setFolderId(int value) {

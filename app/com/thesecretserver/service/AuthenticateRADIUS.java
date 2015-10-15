@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -48,7 +48,7 @@ public class AuthenticateRADIUS {
     protected String radiusPassword;
 
     /**
-     * Gets the value of the username property.
+     * Ruft den Wert der username-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Sets the value of the username property.
+     * Legt den Wert der username-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Gets the value of the password property.
+     * Ruft den Wert der password-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Sets the value of the password property.
+     * Legt den Wert der password-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Gets the value of the organization property.
+     * Ruft den Wert der organization-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -108,7 +108,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Sets the value of the organization property.
+     * Legt den Wert der organization-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -120,7 +120,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Gets the value of the domain property.
+     * Ruft den Wert der domain-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -132,7 +132,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Sets the value of the domain property.
+     * Legt den Wert der domain-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -144,7 +144,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Gets the value of the radiusPassword property.
+     * Ruft den Wert der radiusPassword-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -156,7 +156,7 @@ public class AuthenticateRADIUS {
     }
 
     /**
-     * Sets the value of the radiusPassword property.
+     * Legt den Wert der radiusPassword-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for WebServiceResult complex type.
+ * <p>Java-Klasse für WebServiceResult complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="WebServiceResult">
@@ -32,8 +32,9 @@ import javax.xml.bind.annotation.XmlType;
     "errors"
 })
 @XmlSeeAlso({
-    FileDownloadResult.class,
-    CreateFolderResult.class
+    SSHCredentialsResult.class,
+    CreateFolderResult.class,
+    FileDownloadResult.class
 })
 public class WebServiceResult {
 
@@ -41,7 +42,7 @@ public class WebServiceResult {
     protected ArrayOfString errors;
 
     /**
-     * Gets the value of the errors property.
+     * Ruft den Wert der errors-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -53,7 +54,7 @@ public class WebServiceResult {
     }
 
     /**
-     * Sets the value of the errors property.
+     * Legt den Wert der errors-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

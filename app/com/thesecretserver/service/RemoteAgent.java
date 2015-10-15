@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for RemoteAgent complex type.
+ * <p>Java-Klasse für RemoteAgent complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="RemoteAgent">
@@ -44,7 +44,7 @@ public class RemoteAgent {
     protected String name;
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      */
     public int getId() {
@@ -52,7 +52,7 @@ public class RemoteAgent {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      */
     public void setId(int value) {
@@ -60,7 +60,7 @@ public class RemoteAgent {
     }
 
     /**
-     * Gets the value of the displayName property.
+     * Ruft den Wert der displayName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -72,7 +72,7 @@ public class RemoteAgent {
     }
 
     /**
-     * Sets the value of the displayName property.
+     * Legt den Wert der displayName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -84,7 +84,7 @@ public class RemoteAgent {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -96,7 +96,7 @@ public class RemoteAgent {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

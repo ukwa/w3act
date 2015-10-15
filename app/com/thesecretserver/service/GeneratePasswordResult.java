@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GeneratePasswordResult complex type.
+ * <p>Java-Klasse für GeneratePasswordResult complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="GeneratePasswordResult">
@@ -40,7 +40,7 @@ public class GeneratePasswordResult {
     protected ArrayOfString errors;
 
     /**
-     * Gets the value of the generatedPassword property.
+     * Ruft den Wert der generatedPassword-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -52,7 +52,7 @@ public class GeneratePasswordResult {
     }
 
     /**
-     * Sets the value of the generatedPassword property.
+     * Legt den Wert der generatedPassword-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +64,7 @@ public class GeneratePasswordResult {
     }
 
     /**
-     * Gets the value of the errors property.
+     * Ruft den Wert der errors-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class GeneratePasswordResult {
     }
 
     /**
-     * Sets the value of the errors property.
+     * Legt den Wert der errors-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

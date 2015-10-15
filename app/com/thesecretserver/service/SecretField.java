@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for SecretField complex type.
+ * <p>Java-Klasse für SecretField complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="SecretField">
@@ -56,7 +56,7 @@ public class SecretField {
     protected boolean isFile;
 
     /**
-     * Gets the value of the displayName property.
+     * Ruft den Wert der displayName-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -68,7 +68,7 @@ public class SecretField {
     }
 
     /**
-     * Sets the value of the displayName property.
+     * Legt den Wert der displayName-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -80,7 +80,7 @@ public class SecretField {
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      */
     public int getId() {
@@ -88,7 +88,7 @@ public class SecretField {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      */
     public void setId(int value) {
@@ -96,7 +96,7 @@ public class SecretField {
     }
 
     /**
-     * Gets the value of the isPassword property.
+     * Ruft den Wert der isPassword-Eigenschaft ab.
      * 
      */
     public boolean isIsPassword() {
@@ -104,7 +104,7 @@ public class SecretField {
     }
 
     /**
-     * Sets the value of the isPassword property.
+     * Legt den Wert der isPassword-Eigenschaft fest.
      * 
      */
     public void setIsPassword(boolean value) {
@@ -112,7 +112,7 @@ public class SecretField {
     }
 
     /**
-     * Gets the value of the isUrl property.
+     * Ruft den Wert der isUrl-Eigenschaft ab.
      * 
      */
     public boolean isIsUrl() {
@@ -120,7 +120,7 @@ public class SecretField {
     }
 
     /**
-     * Sets the value of the isUrl property.
+     * Legt den Wert der isUrl-Eigenschaft fest.
      * 
      */
     public void setIsUrl(boolean value) {
@@ -128,7 +128,7 @@ public class SecretField {
     }
 
     /**
-     * Gets the value of the isNotes property.
+     * Ruft den Wert der isNotes-Eigenschaft ab.
      * 
      */
     public boolean isIsNotes() {
@@ -136,7 +136,7 @@ public class SecretField {
     }
 
     /**
-     * Sets the value of the isNotes property.
+     * Legt den Wert der isNotes-Eigenschaft fest.
      * 
      */
     public void setIsNotes(boolean value) {
@@ -144,7 +144,7 @@ public class SecretField {
     }
 
     /**
-     * Gets the value of the isFile property.
+     * Ruft den Wert der isFile-Eigenschaft ab.
      * 
      */
     public boolean isIsFile() {
@@ -152,7 +152,7 @@ public class SecretField {
     }
 
     /**
-     * Sets the value of the isFile property.
+     * Legt den Wert der isFile-Eigenschaft fest.
      * 
      */
     public void setIsFile(boolean value) {

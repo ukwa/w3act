@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -38,7 +38,7 @@ public class FolderGetResponse {
     protected GetFolderResult folderGetResult;
 
     /**
-     * Gets the value of the folderGetResult property.
+     * Ruft den Wert der folderGetResult-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -50,7 +50,7 @@ public class FolderGetResponse {
     }
 
     /**
-     * Sets the value of the folderGetResult property.
+     * Legt den Wert der folderGetResult-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

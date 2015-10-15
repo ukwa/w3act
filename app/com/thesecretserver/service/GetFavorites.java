@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="token" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="includeRestricted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,15 +29,17 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "token"
+    "token",
+    "includeRestricted"
 })
 @XmlRootElement(name = "GetFavorites")
 public class GetFavorites {
 
     protected String token;
+    protected boolean includeRestricted;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -48,7 +51,7 @@ public class GetFavorites {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -57,6 +60,22 @@ public class GetFavorites {
      */
     public void setToken(String value) {
         this.token = value;
+    }
+
+    /**
+     * Ruft den Wert der includeRestricted-Eigenschaft ab.
+     * 
+     */
+    public boolean isIncludeRestricted() {
+        return includeRestricted;
+    }
+
+    /**
+     * Legt den Wert der includeRestricted-Eigenschaft fest.
+     * 
+     */
+    public void setIncludeRestricted(boolean value) {
+        this.includeRestricted = value;
     }
 
 }

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -39,7 +39,7 @@ public class FolderGet {
     protected int folderId;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -51,7 +51,7 @@ public class FolderGet {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -63,7 +63,7 @@ public class FolderGet {
     }
 
     /**
-     * Gets the value of the folderId property.
+     * Ruft den Wert der folderId-Eigenschaft ab.
      * 
      */
     public int getFolderId() {
@@ -71,7 +71,7 @@ public class FolderGet {
     }
 
     /**
-     * Sets the value of the folderId property.
+     * Legt den Wert der folderId-Eigenschaft fest.
      * 
      */
     public void setFolderId(int value) {

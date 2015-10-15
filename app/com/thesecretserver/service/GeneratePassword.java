@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -39,7 +39,7 @@ public class GeneratePassword {
     protected int secretFieldId;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -51,7 +51,7 @@ public class GeneratePassword {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -63,7 +63,7 @@ public class GeneratePassword {
     }
 
     /**
-     * Gets the value of the secretFieldId property.
+     * Ruft den Wert der secretFieldId-Eigenschaft ab.
      * 
      */
     public int getSecretFieldId() {
@@ -71,7 +71,7 @@ public class GeneratePassword {
     }
 
     /**
-     * Sets the value of the secretFieldId property.
+     * Legt den Wert der secretFieldId-Eigenschaft fest.
      * 
      */
     public void setSecretFieldId(int value) {

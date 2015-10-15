@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GetSecretsByFieldValueResult complex type.
+ * <p>Java-Klasse für GetSecretsByFieldValueResult complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="GetSecretsByFieldValueResult">
@@ -40,7 +40,7 @@ public class GetSecretsByFieldValueResult {
     protected ArrayOfSecret secrets;
 
     /**
-     * Gets the value of the errors property.
+     * Ruft den Wert der errors-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -52,7 +52,7 @@ public class GetSecretsByFieldValueResult {
     }
 
     /**
-     * Sets the value of the errors property.
+     * Legt den Wert der errors-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +64,7 @@ public class GetSecretsByFieldValueResult {
     }
 
     /**
-     * Gets the value of the secrets property.
+     * Ruft den Wert der secrets-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class GetSecretsByFieldValueResult {
     }
 
     /**
-     * Sets the value of the secrets property.
+     * Legt den Wert der secrets-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

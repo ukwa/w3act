@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GetAgentsResult complex type.
+ * <p>Java-Klasse für GetAgentsResult complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="GetAgentsResult">
@@ -44,7 +44,7 @@ public class GetAgentsResult {
     protected boolean success;
 
     /**
-     * Gets the value of the remoteAgents property.
+     * Ruft den Wert der remoteAgents-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class GetAgentsResult {
     }
 
     /**
-     * Sets the value of the remoteAgents property.
+     * Legt den Wert der remoteAgents-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ public class GetAgentsResult {
     }
 
     /**
-     * Gets the value of the errors property.
+     * Ruft den Wert der errors-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ public class GetAgentsResult {
     }
 
     /**
-     * Sets the value of the errors property.
+     * Legt den Wert der errors-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -92,7 +92,7 @@ public class GetAgentsResult {
     }
 
     /**
-     * Gets the value of the success property.
+     * Ruft den Wert der success-Eigenschaft ab.
      * 
      */
     public boolean isSuccess() {
@@ -100,7 +100,7 @@ public class GetAgentsResult {
     }
 
     /**
-     * Sets the value of the success property.
+     * Legt den Wert der success-Eigenschaft fest.
      * 
      */
     public void setSuccess(boolean value) {

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -42,7 +42,7 @@ public class ChangePassword {
     protected String newPassword;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -54,7 +54,7 @@ public class ChangePassword {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -66,7 +66,7 @@ public class ChangePassword {
     }
 
     /**
-     * Gets the value of the currentPassword property.
+     * Ruft den Wert der currentPassword-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -78,7 +78,7 @@ public class ChangePassword {
     }
 
     /**
-     * Sets the value of the currentPassword property.
+     * Legt den Wert der currentPassword-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -90,7 +90,7 @@ public class ChangePassword {
     }
 
     /**
-     * Gets the value of the newPassword property.
+     * Ruft den Wert der newPassword-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -102,7 +102,7 @@ public class ChangePassword {
     }
 
     /**
-     * Sets the value of the newPassword property.
+     * Legt den Wert der newPassword-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

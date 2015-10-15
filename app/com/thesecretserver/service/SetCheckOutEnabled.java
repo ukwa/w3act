@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -50,7 +50,7 @@ public class SetCheckOutEnabled {
     protected Integer checkOutInterval;
 
     /**
-     * Gets the value of the token property.
+     * Ruft den Wert der token-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -62,7 +62,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Sets the value of the token property.
+     * Legt den Wert der token-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -74,7 +74,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Gets the value of the secretId property.
+     * Ruft den Wert der secretId-Eigenschaft ab.
      * 
      */
     public int getSecretId() {
@@ -82,7 +82,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Sets the value of the secretId property.
+     * Legt den Wert der secretId-Eigenschaft fest.
      * 
      */
     public void setSecretId(int value) {
@@ -90,7 +90,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Gets the value of the setCheckOut property.
+     * Ruft den Wert der setCheckOut-Eigenschaft ab.
      * 
      */
     public boolean isSetCheckOut() {
@@ -98,7 +98,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Sets the value of the setCheckOut property.
+     * Legt den Wert der setCheckOut-Eigenschaft fest.
      * 
      */
     public void setSetCheckOut(boolean value) {
@@ -106,7 +106,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Gets the value of the setPasswordChangeOnCheckIn property.
+     * Ruft den Wert der setPasswordChangeOnCheckIn-Eigenschaft ab.
      * 
      */
     public boolean isSetPasswordChangeOnCheckIn() {
@@ -114,7 +114,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Sets the value of the setPasswordChangeOnCheckIn property.
+     * Legt den Wert der setPasswordChangeOnCheckIn-Eigenschaft fest.
      * 
      */
     public void setSetPasswordChangeOnCheckIn(boolean value) {
@@ -122,7 +122,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Gets the value of the checkOutInterval property.
+     * Ruft den Wert der checkOutInterval-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -134,7 +134,7 @@ public class SetCheckOutEnabled {
     }
 
     /**
-     * Sets the value of the checkOutInterval property.
+     * Legt den Wert der checkOutInterval-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

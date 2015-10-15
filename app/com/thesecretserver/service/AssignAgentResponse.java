@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java-Klasse für anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType>
@@ -38,7 +38,7 @@ public class AssignAgentResponse {
     protected WebServiceResult assignAgentResult;
 
     /**
-     * Gets the value of the assignAgentResult property.
+     * Ruft den Wert der assignAgentResult-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -50,7 +50,7 @@ public class AssignAgentResponse {
     }
 
     /**
-     * Sets the value of the assignAgentResult property.
+     * Legt den Wert der assignAgentResult-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Folder complex type.
+ * <p>Java-Klasse für Folder complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="Folder">
@@ -48,7 +48,7 @@ public class Folder {
     protected int parentFolderId;
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      */
     public int getId() {
@@ -56,7 +56,7 @@ public class Folder {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      */
     public void setId(int value) {
@@ -64,7 +64,7 @@ public class Folder {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class Folder {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -88,7 +88,7 @@ public class Folder {
     }
 
     /**
-     * Gets the value of the typeId property.
+     * Ruft den Wert der typeId-Eigenschaft ab.
      * 
      */
     public int getTypeId() {
@@ -96,7 +96,7 @@ public class Folder {
     }
 
     /**
-     * Sets the value of the typeId property.
+     * Legt den Wert der typeId-Eigenschaft fest.
      * 
      */
     public void setTypeId(int value) {
@@ -104,7 +104,7 @@ public class Folder {
     }
 
     /**
-     * Gets the value of the parentFolderId property.
+     * Ruft den Wert der parentFolderId-Eigenschaft ab.
      * 
      */
     public int getParentFolderId() {
@@ -112,7 +112,7 @@ public class Folder {
     }
 
     /**
-     * Sets the value of the parentFolderId property.
+     * Legt den Wert der parentFolderId-Eigenschaft fest.
      * 
      */
     public void setParentFolderId(int value) {
