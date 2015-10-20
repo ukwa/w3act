@@ -1,37 +1,17 @@
 package controllers;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
 import play.*;
 import play.mvc.*;
 import play.data.*;
 import static play.data.Form.*;
 import models.*;
-import uk.bl.Const;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
-import uk.bl.exception.ActException;
-import uk.bl.exception.TaxonomyNotFoundException;
-import uk.bl.scope.Scope;
 import views.html.*;
 
 public class ApplicationController extends Controller {
@@ -106,7 +86,10 @@ public class ApplicationController extends Controller {
     public static Result authenticate() {
     	// Grab the url to redirect to after login:
     	DynamicForm requestData = Form.form().bindFromRequest();
-    	String url = requestData.get("redirectToUrl");
+    	String url = "";
+    	if( requestData.data().containsKey("redirectToUrl")) {
+    		url = requestData.get("redirectToUrl");
+    	}
 		// Parse the login:
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if(loginForm.hasErrors()) {
