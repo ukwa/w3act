@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
+import models.CrawlPermission;
+import models.License.LicenseStatus;
 import models.Organisation;
 import models.Role;
 import models.Target;
@@ -25,6 +27,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
+import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.Const.NpldType;
 import uk.bl.Const.RequestType;
 import uk.bl.Const.ScopeType;
@@ -478,10 +481,12 @@ public class ReportController extends AbstractController {
     	List<Target> nocp = new ArrayList<Target>();
     	for( Target t : Target.findAll() ) {
     		// Does this target have a license?
-    		if( ( t.licenseStatus != null && ! "".equals(t.licenseStatus)) ||
+    		if( ( t.licenseStatus != null && ! "".equals(t.licenseStatus) 
+    				&& ! LicenseStatus.NOT_INITIATED.equals(t.licenseStatus)) ||
     				( t.licenses != null && t.licenses.size() > 0 ) ) {
-    			// Is there a crawl permission?
-    			if( t.crawlPermissions == null || t.crawlPermissions.size() == 0 ) {
+    			// Is there a crawl permission? i.e. latest is NULL or has is NOT_INITIATED:
+    			CrawlPermission cp = t.getLatestCrawlPermission();
+    			if( cp == null || CrawlPermissionStatus.NOT_INITIATED.equals(cp.status) ) {
     				nocp.add(t);
     			}
     		}
