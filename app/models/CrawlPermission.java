@@ -52,7 +52,7 @@ public class CrawlPermission extends ActModel {
 //	Targets could in theory have multiple crawl permissions. This is most likely in the case where a 
 //	permission was sent and then cancelled for whatever reason, and then another one sent to supersede it.
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name="target_id")
     @Required(message="Target is required")
 	public Target target;
@@ -62,12 +62,12 @@ public class CrawlPermission extends ActModel {
 	public List<CommunicationLog> communicationLogs;
     
 	//bi-directional many-to-one association to MailTemplate
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name="mailTemplate_id")
 	public MailTemplate mailTemplate;
 	
 	//bi-directional many-to-one association to ContactPerson
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name="contactPerson_id")
     @Required(message="Contact Person is required")
 	public ContactPerson contactPerson;
@@ -83,7 +83,7 @@ public class CrawlPermission extends ActModel {
     public String anyOtherInformation;
     
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name="archivist_id")
     public User user; 
     
@@ -95,7 +95,7 @@ public class CrawlPermission extends ActModel {
     @Column(columnDefinition = "text")
     public String status; 
     
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name="license_id")
     public License license; 
     

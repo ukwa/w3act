@@ -51,7 +51,7 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	private static final long serialVersionUID = -8987367110038045775L;
 
 	@JsonIgnore
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.REFRESH)
 	@JoinTable(name = "taxonomy_user", joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
 	public List<User> ownerUsers;
@@ -65,7 +65,7 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	public String ttype;
 	 
 	@JsonIgnore
-    @ManyToOne(cascade={CascadeType.ALL})
+    @ManyToOne(cascade=CascadeType.REFRESH)
 	@JoinColumn(name = "parent_id")
 	public Taxonomy parent;
 	

@@ -125,7 +125,7 @@ public class Target extends Model {
 	public String edit_url;
 
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "qaissue_id")
 	public QaIssue qaIssue;
 
@@ -217,13 +217,13 @@ public class Target extends Model {
 							// targets with the same URL
 	
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "author_id")
 	@Required(message="Author Required")
 	public User authorUser;
 
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "document_owner_id")
 	public User documentOwner;
 
@@ -277,7 +277,7 @@ public class Target extends Model {
 	
 	//@JsonIgnore
 	@JsonProperty("nominating_organisation")
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "organisation_id")
 	public Organisation organisation;
 
@@ -482,7 +482,7 @@ public class Target extends Model {
 	private String selector;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy="target", cascade=CascadeType.REMOVE)
+	@OneToOne(mappedBy="target", cascade=CascadeType.ALL)
 	public WatchedTarget watchedTarget;
 	
 	@JsonIgnore
@@ -703,7 +703,6 @@ public class Target extends Model {
 	 *            The identification URL
 	 * @return result as a String
 	 */
-	@JsonIgnore
 	public String checkScopeStr(String fieldUrl, String url) {
 		String res = "false";
 		if (fieldUrl != null && fieldUrl.length() > 0 && url != null
@@ -712,8 +711,7 @@ public class Target extends Model {
 		}
 		return res;
 	}
-
-
+	
 	/**
 	 * This method checks whether all the URLs are in scope for rules
 	 * associated with scope IP.
@@ -2014,7 +2012,7 @@ public class Target extends Model {
 		return false;
 	}
 	
-	@JsonIgnore
+	@JsonProperty("in_npld_scope")
 	public boolean isInScopeAllOrInheritedWithoutLicense() {
 		Logger.debug("isInScopeAllOrInheritedWithoutLicense()");
 		
@@ -2096,6 +2094,7 @@ public class Target extends Model {
 		return (this.licenses != null && !this.licenses.isEmpty());
 	}
 
+	@JsonProperty("has_oa_license")
 	public boolean indicateLicenses() {
 		return (hasLicenses() || hasInheritedLicense());
 	}    
