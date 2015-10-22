@@ -170,7 +170,7 @@ public class AbstractController extends Controller {
 				child.put("select", true);
 			}
 
-			child.put("key", "\"" + collection.id + "\"");
+			child.put("key", collection.id );
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
 //	    	Logger.debug("collection: " + collection.name + " - " + collection.children.size());
 //    	    	Logger.debug("children: " + children.size());
