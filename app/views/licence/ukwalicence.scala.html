@@ -63,11 +63,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Licence:</label>
 						    <div class="col-sm-6">
-                            <p>@cp</p>
-                            <p>
-                            @cp.license
-                            </p>
-						    @if( cp.license != null ) {
+						    @if( cp.license != null || cp.license.name == null ) {
 								<input class="form-control" name="license" value="@cp.license.name" type="text" readonly>
 							} else {
 								<b>WARNING! Licence is unset (i.e. set to NULL for this crawl permission)</b>
