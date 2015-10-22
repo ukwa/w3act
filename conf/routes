@@ -366,6 +366,7 @@ GET     /api/suggested_collections_instance/:url      controllers.InstanceContro
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
 
 POST    /api/targets						controllers.APIController.bulkImport()
+GET     /api/targets	                  	controllers.TargetController.allTargetsAsJson()
 GET     /api/targets/:id                  	controllers.APIController.viewAsJson(id:Long)
 PUT		/api/targets/:id					controllers.APIController.targetUpdate(id:Long)
 GET     /api/targets/:id/instances       	controllers.InstanceController.byTargetAsJson(id:Long)

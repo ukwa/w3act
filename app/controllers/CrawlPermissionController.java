@@ -145,10 +145,10 @@ public class CrawlPermissionController extends AbstractController {
     public static Result view(Long id) {
     	User user = User.findByEmail(request().username());
     	CrawlPermission crawlPermission = CrawlPermission.findById(id);
-    	Logger.debug("contactPerson: " + crawlPermission.contactPerson);
-    	Logger.debug("user: " + crawlPermission.user);
-    	Logger.debug("license: " + crawlPermission.license);
-    	Logger.debug("mailTemplate: " + crawlPermission.mailTemplate);
+    	Logger.debug("CrawlPermissionController.view contactPerson: " + crawlPermission.contactPerson);
+    	Logger.debug("CrawlPermissionController.view user: " + crawlPermission.user);
+    	Logger.debug("CrawlPermissionController.view license: " + crawlPermission.license);
+    	Logger.debug("CrawlPermissionController.view mailTemplate: " + crawlPermission.mailTemplate);
         return ok(view.render(crawlPermission, user));
     }
     

@@ -100,6 +100,10 @@ public class LicenseController extends AbstractController {
     	if (crawlPermission == null) {
     		throw new ActException("CrawlPermission Not Found found for token: " + token);
     	}
+    	Logger.debug("LicenseController.view contactPerson: " + crawlPermission.contactPerson);
+    	Logger.debug("LicenseController.view user: " + crawlPermission.user);
+    	Logger.debug("LicenseController.view license: " + crawlPermission.license);
+    	Logger.debug("LicenseController.view mailTemplate: " + crawlPermission.mailTemplate);
     	
 		return ok(
 			ukwalicence.render(crawlPermission, false)

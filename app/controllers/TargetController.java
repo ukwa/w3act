@@ -142,7 +142,8 @@ public class TargetController extends AbstractController {
     	Target matchTarget = null;
     	try {
 			FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(filter.trim());
-			matchTarget = isExistingFieldUrl.target;
+			if( isExistingFieldUrl != null)
+				matchTarget = isExistingFieldUrl.target;
 		} catch (Exception e) {
 			Logger.error("Problem looking up duplicate URLs.",e);
 		}
@@ -473,6 +474,16 @@ public class TargetController extends AbstractController {
         			order) 
         	);
     }
+    
+    /**
+     * 
+     * @return
+     */
+    public static Result allTargetsAsJson() {
+		List<Target> targets = Target.findAllActive();
+		Logger.debug("all targets: " + targets.size());
+		return ok( Json.toJson(targets));
+    }    
     
     /**
      * 
