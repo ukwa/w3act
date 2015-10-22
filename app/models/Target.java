@@ -2012,7 +2012,17 @@ public class Target extends Model {
 		return false;
 	}
 	
-	@JsonProperty("in_npld_scope")
+	@JsonProperty
+	@Transient
+	public boolean getInScopeForLegalDeposit() {
+		return this.isInScopeAllOrInheritedWithoutLicense();
+	}
+	
+	@JsonIgnore
+	public void setInScopeForLegalDeposit(boolean dummy) {
+	}	
+	
+	@JsonIgnore
 	public boolean isInScopeAllOrInheritedWithoutLicense() {
 		Logger.debug("isInScopeAllOrInheritedWithoutLicense()");
 		
@@ -2094,7 +2104,17 @@ public class Target extends Model {
 		return (this.licenses != null && !this.licenses.isEmpty());
 	}
 
-	@JsonProperty("has_oa_license")
+	@JsonProperty
+	@Transient
+	public boolean getHasOpenAccessLicense() {
+		return this.indicateLicenses();
+	}
+	
+	@JsonIgnore
+	public void setHasOpenAccessLicense(boolean dummy) {
+	}
+	
+	@JsonIgnore
 	public boolean indicateLicenses() {
 		return (hasLicenses() || hasInheritedLicense());
 	}    
