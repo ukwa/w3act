@@ -23,9 +23,16 @@ import uk.bl.exception.ActException;
 import uk.bl.exception.TaxonomyNotFoundException;
 import uk.bl.scope.Scope;
 
+/**
+ * Currently using controller cookie auth rather than HTTP Basic via the @With(SecuredAction.class) technique.
+ * 
+ * @author andy
+ *
+ */
+@Security.Authenticated(SecuredController.class)
 public class APIController extends Controller {
   
-    @With(SecuredAction.class)
+    //@With(SecuredAction.class)
     public static Result viewAsJson(Long id) {
     	Target target = Target.findById(id);
     	if( target != null) {
@@ -49,7 +56,7 @@ public class APIController extends Controller {
      * 
      * @throws ActException
      */
-    @With(SecuredAction.class)
+    //@With(SecuredAction.class)
     @BodyParser.Of(BodyParser.Json.class)
     public static Result targetUpdate(Long id) throws ActException {
     	JsonNode node = request().body().asJson();
@@ -194,6 +201,8 @@ public class APIController extends Controller {
     
     /***
 	 *
+	 * NB Switched to cookie auth.
+	 *
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1","title": "Independent, The: UK Politics"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
@@ -218,7 +227,7 @@ public class APIController extends Controller {
     "field_uk_postal_address":true}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
-    @With(SecuredAction.class)
+    //@With(SecuredAction.class)
     @BodyParser.Of(BodyParser.Json.class)
     public static Result bulkImport() throws ActException {
     	JsonNode node = request().body().asJson();
