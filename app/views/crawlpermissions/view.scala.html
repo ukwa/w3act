@@ -2,7 +2,7 @@
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || (permission.user.url.equals(user.url))) {
 
-@main("", user) {
+@main("Viewing crawl permission "+TargetController.getTitle(permission.target.id), user) {
     
 	<div class="page-header">
    		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
@@ -48,7 +48,7 @@
 							<label class="col-sm-6 control-label">
 								Licence
 							</label>
-							
+							@permission
 							<div class="col-sm-6">
 							@if( permission.license != null ) {
 								@permission.license.name
