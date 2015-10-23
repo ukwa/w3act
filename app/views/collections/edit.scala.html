@@ -75,7 +75,7 @@
 					    <div class="col-sm-6">
 							@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 								<div id="collectionTree"></div>
-						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collectionsForm("parentName").value">
+						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collectionsForm("parent.id").value">
 							} else {
 								@collectionsForm("parent.name").value
 	     	              	}	   
