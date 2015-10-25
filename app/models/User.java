@@ -241,15 +241,23 @@ public class User extends ActModel {
      
     }
     
+	@JsonIgnore
     public boolean isSysAdmin() { return hasRole("sys_admin"); }
+	@JsonIgnore
     public boolean isArchivist() { return hasRole("archivist"); }
+	@JsonIgnore
     public boolean isExpertUser() { return hasRole("expert_user"); }
+	@JsonIgnore
     public boolean isUser() { return hasRole("user"); }
     
+    @JsonIgnore
     public boolean hasArchivistRights() { return isSysAdmin() || isArchivist(); }
+    @JsonIgnore
     public boolean hasExpertUserRights() { return hasArchivistRights() || isExpertUser(); }
+    @JsonIgnore
     public boolean hasUserRights() { return hasExpertUserRights() || isUser(); }
-    
+
+    @JsonIgnore
     public boolean isLDLMember() {
     	String orgstr = "";
     	if( organisation != null ) {
