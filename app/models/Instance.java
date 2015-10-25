@@ -126,6 +126,7 @@ public class Instance extends Model {
 //    @Column(columnDefinition = "text")
 //	public String technicalNotes;
     
+    @JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "target_id")
 	public Target target;

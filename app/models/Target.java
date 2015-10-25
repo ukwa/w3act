@@ -124,16 +124,16 @@ public class Target extends Model {
 	@JsonProperty  
 	public String edit_url;
 
-	@JsonIgnore
+	@JsonProperty
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "qaissue_id")
 	public QaIssue qaIssue;
 
-	@JsonIgnore
+	@JsonProperty
 	@Column(columnDefinition = "text")
 	public String notes;
 	
-	@JsonIgnore
+	@JsonProperty
 	public String format;
 
 
@@ -145,7 +145,6 @@ public class Target extends Model {
 		this.edit_url = edit_url;
 	}
 	
-	//@JsonIgnore
 	@JsonProperty("originating_organisation")
 	@Column(columnDefinition = "text")
 	public String originatingOrganisation;
@@ -155,7 +154,7 @@ public class Target extends Model {
 //    @OrderBy("createdAt DESC")
 	public List<CrawlPermission> crawlPermissions;
 
-	@JsonIgnore
+	@JsonProperty
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<Instance> instances;
 
@@ -164,25 +163,21 @@ public class Target extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
 	public List<License> licenses;
 
-    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
 	public List<Subject> subjects;
 
-    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
 	public List<Collection> collections;
 
-	@JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") }) 
 	public List<Tag> tags;
 	
-	@JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
@@ -216,13 +211,11 @@ public class Target extends Model {
 	public Boolean active; // flag for the latest version of the target among
 							// targets with the same URL
 	
-	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "author_id")
 	@Required(message="Author Required")
 	public User authorUser;
 
-	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "document_owner_id")
 	public User documentOwner;
@@ -2277,6 +2270,7 @@ public class Target extends Model {
 		this.field_collection_cats = field_collection_cats;
 	}
 
+	@JsonIgnore
 	public String getSelector() {
 		return selector;
 	}

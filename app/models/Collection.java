@@ -32,7 +32,6 @@ public class Collection extends Taxonomy {
 			inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
 	public List<Target> targets;
 
-    @JsonIgnore
     @ManyToMany
 	@JoinTable(name = "collection_instance", joinColumns = { @JoinColumn(name = "collection)_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
