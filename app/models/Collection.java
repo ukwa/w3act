@@ -33,7 +33,7 @@ public class Collection extends Taxonomy {
 	public List<Target> targets;
 
     @ManyToMany
-	@JoinTable(name = "collection_instance", joinColumns = { @JoinColumn(name = "collection)_id", referencedColumnName="id") },
+	@JoinTable(name = "collection_instance", joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
 	public List<Instance> instances;
 
