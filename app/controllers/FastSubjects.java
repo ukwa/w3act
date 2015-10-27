@@ -10,6 +10,7 @@ import com.avaje.ebean.Ebean;
 import models.FastSubject;
 import models.FlashMessage;
 import models.User;
+import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -65,9 +66,12 @@ public class FastSubjects extends AbstractController {
 	
 	public static List<FastSubject> getFastSubjects(Form<?> form) {
 		List<FastSubject> fastSubjects = new ArrayList<>();
-		for (FastSubject fastSubject : FastSubject.find.all())
-			if (form.apply(fastSubject.fastId).value() != null)
+		for (FastSubject fastSubject : FastSubject.find.all()) {
+			if (form.apply(fastSubject.fastId).value() != null) {
+				Logger.info("Adding subject "+fastSubject);
 				fastSubjects.add(fastSubject);
+			}
+		}
 		return fastSubjects;
 	}
 	

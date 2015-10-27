@@ -6,6 +6,7 @@
 @import templates.checkbox
 @import templates.checkbox2
 @import templates.inputText
+@import targets.tpl._
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio6to6FieldConstructor.f) }
 
@@ -250,19 +251,7 @@
 		<input type="hidden" id="id" name="id" value="@id">
 		<input type="hidden" id="currentUrls" name="currentUrls" value="@targetForm("fieldUrl").value">
 	
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">
-				    @if( (user.hasRole("user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))) { 
-						<button type="submit" class="btn btn-primary" name="action" id="edit-save" value="save" disabled>Save</button>
-						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
-					} else {
-						<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
-						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" @if( id == null ){disabled}>Delete</button>
-					}
-		       </div>
-			</div>
-		</div>
+@editsection_save(targetForm, user, id)
 
 		<div id="myTabContent" class="tab-content">
 		
@@ -1333,19 +1322,7 @@
 		
 		}
 		
-			<div class="row padding-10 pull-right">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="btn-group">
-					    @if((user.hasRole("user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))) { 
-							<button type="submit" class="btn btn-primary" name="action" id="edit-save" value="save" disabled>Save</button>
-							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
-						} else {
-							<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
-							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete"  @if( id == null ){disabled}>Delete</button>
-						}
-			       </div>
-				</div>
-			</div>
+@editsection_save(targetForm, user, id)
 			
 		}
 	}

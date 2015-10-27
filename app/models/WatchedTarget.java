@@ -25,20 +25,28 @@ import uk.bl.Const;
 
 @Entity
 public class WatchedTarget extends Model {
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	public Long id;
-	@OneToOne @JsonIgnore
+	
+	@JsonIgnore
+	@OneToOne
 	@JoinColumn(name="id_target")
 	public Target target;
-	@OneToMany(mappedBy="watchedTarget", cascade=CascadeType.REMOVE) @JsonIgnore
+	
+	@OneToMany(mappedBy="watchedTarget", cascade=CascadeType.ALL) @JsonIgnore
 	public List<Document> documents;
-    @OneToMany(mappedBy="watchedTarget", cascade=CascadeType.REMOVE) @JsonIgnore
+    
+	@OneToMany(mappedBy="watchedTarget", cascade=CascadeType.ALL) @JsonIgnore
     public List<JournalTitle> journalTitles = new ArrayList<>();
-	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
+    
+	@ManyToMany(cascade=CascadeType.ALL) @JsonIgnore
 	@JoinTable(name = "fast_subject_watched_target",
 		joinColumns = { @JoinColumn(name = "id_watched_target", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
 	public List<FastSubject> fastSubjects = new ArrayList<>();
+
 	public String documentUrlScheme;
 	
 	@Column(columnDefinition = "text")

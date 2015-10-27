@@ -475,7 +475,7 @@ public class Target extends Model {
 	private String selector;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy="target", cascade=CascadeType.ALL)
+	@OneToOne(mappedBy="target", cascade={CascadeType.REFRESH,CascadeType.REMOVE})
 	public WatchedTarget watchedTarget;
 	
 	@JsonIgnore
