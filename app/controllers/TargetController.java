@@ -1471,15 +1471,15 @@ public class TargetController extends AbstractController {
         
         //Updating licence status
         if (filledForm.get().getLatestCrawlPermission() != null) {
-        filledForm.get().getLatestCrawlPermission().status = filledForm.get().licenseStatus;
-        if( Const.CrawlPermissionStatus.GRANTED.getValue().equalsIgnoreCase(filledForm.get().getLatestCrawlPermission().status)){
-        	filledForm.get().getLatestCrawlPermission().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
+        	filledForm.get().getLatestCrawlPermission().status = filledForm.get().licenseStatus;
+        	if( Const.CrawlPermissionStatus.GRANTED.getValue().equalsIgnoreCase(filledForm.get().getLatestCrawlPermission().status)){
+        		filledForm.get().getLatestCrawlPermission().grantedAt = Utils.INSTANCE.getCurrentTimeStamp();
+        	}
+        	if( Const.CrawlPermissionStatus.PENDING.getValue().equalsIgnoreCase(filledForm.get().getLatestCrawlPermission().status)){
+        		filledForm.get().getLatestCrawlPermission().requestedAt = Utils.INSTANCE.getCurrentTimeStamp();
+        	}
+        	filledForm.get().getLatestCrawlPermission().update();
         }
-        if( Const.CrawlPermissionStatus.PENDING.getValue().equalsIgnoreCase(filledForm.get().getLatestCrawlPermission().status)){
-        	filledForm.get().getLatestCrawlPermission().requestedAt = Utils.INSTANCE.getCurrentTimeStamp();
-        }
-        filledForm.get().getLatestCrawlPermission().update();
-    	}
 
         filledForm.get().runChecks();
 
@@ -1490,38 +1490,27 @@ public class TargetController extends AbstractController {
         	filledForm.get().active = Boolean.TRUE;
         	filledForm.get().save();
         }
-        
-		boolean watched = getFormParam("watched") != null;
-		Logger.info("WATCHED status is "+watched);
-        
+
+        // The watchedTarget is not cascaded automatically, so we handle it here:
+        boolean watched = getFormParam("watched") != null;
+        Logger.info("WATCHED status is "+watched);
         if( original != null ) {
-        if (!watched && original.isWatched()) {
-                Ebean.delete(original.watchedTarget.documents);
-                Ebean.delete(original.watchedTarget.journalTitles);
-                Ebean.delete(original.watchedTarget);
-        } else if (watched && !original.isWatched()) {
-                filledForm.get().watchedTarget.target = original;
-                filledForm.get().watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
-                Ebean.save(filledForm.get().watchedTarget);
-        } else if (watched && original.isWatched()) {
-                original.watchedTarget.documentUrlScheme = filledForm.get().watchedTarget.documentUrlScheme;
-               original.watchedTarget.archivistNotesWT = filledForm.get().watchedTarget.archivistNotesWT;
-                original.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
-                Ebean.update(original.watchedTarget);
-        }
+        	if (!watched && original.isWatched()) {
+        		Ebean.delete(original.watchedTarget.documents);
+        		Ebean.delete(original.watchedTarget.journalTitles);
+        		Ebean.delete(original.watchedTarget);
+        	} else if (watched && !original.isWatched()) {
+        		filledForm.get().watchedTarget.target = original;
+        		filledForm.get().watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
+        		Ebean.save(filledForm.get().watchedTarget);
+        	} else if (watched && original.isWatched()) {
+        		original.watchedTarget.documentUrlScheme = filledForm.get().watchedTarget.documentUrlScheme;
+        		original.watchedTarget.archivistNotesWT = filledForm.get().watchedTarget.archivistNotesWT;
+        		original.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
+        		Ebean.update(original.watchedTarget);
+        	}
         }
         
-        Target  newt = Target.findById(filledForm.get().id);
-		for( FieldUrl fu : newt.fieldUrls) {
-			Logger.info("fu1-2: "+fu.id+" "+fu.url);
-		}
-		if( newt.watchedTarget != null ) {
-			for( FieldUrl fu : newt.watchedTarget.target.fieldUrls) {
-				Logger.info("fu2-2: "+fu.id+" "+fu.url);
-			}
-		}
-        
-		
     	if( id != null ) {
     		flash("message", "Target " + filledForm.get().title + " has been updated");
     	} else {
