@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -58,16 +59,16 @@ public class CrawlPermission extends ActModel {
 	public Target target;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "crawlPermission", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "crawlPermission", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	public List<CommunicationLog> communicationLogs;
     
 	//bi-directional many-to-one association to MailTemplate
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
 	@JoinColumn(name="mailTemplate_id")
 	public MailTemplate mailTemplate;
 	
 	//bi-directional many-to-one association to ContactPerson
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
 	@JoinColumn(name="contactPerson_id")
     @Required(message="Contact Person is required")
 	public ContactPerson contactPerson;
@@ -83,7 +84,7 @@ public class CrawlPermission extends ActModel {
     public String anyOtherInformation;
     
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
 	@JoinColumn(name="archivist_id")
     public User user; 
     
@@ -95,7 +96,7 @@ public class CrawlPermission extends ActModel {
     @Column(columnDefinition = "text")
     public String status; 
     
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
 	@JoinColumn(name="license_id")
     public License license; 
     
