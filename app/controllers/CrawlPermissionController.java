@@ -117,13 +117,13 @@ public class CrawlPermissionController extends AbstractController {
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
         crawlPermission.token = UUID.randomUUID().toString();
-        crawlPermission.license = License.findByName(Const.OPEN_UKWA_LICENSE);
+        crawlPermission.setLicense(License.findByName(Const.OPEN_UKWA_LICENSE));
         Exception tracer = new Exception(); tracer.printStackTrace();
         Logger.info("Created new CrawlPermission from newForm("+targetId+") with UUID "+crawlPermission.token);
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
 		filledForm = filledForm.fill(crawlPermission);
-		filledForm.data().put("license_id", ""+crawlPermission.license.id);
+		filledForm.data().put("license_id", ""+crawlPermission.getLicense().id);
 		
         return ok(newForm.render(filledForm, user, crawlPermissionStatuses, targetId, null, License.options()));
         
@@ -137,8 +137,8 @@ public class CrawlPermissionController extends AbstractController {
 		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
 		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
-    	crawlPermission.license = License.findByName(Const.OPEN_UKWA_LICENSE);
-    	crawlPermissionForm.data().put("license_id", ""+crawlPermission.license.id);
+    	crawlPermission.setLicense( License.findByName(Const.OPEN_UKWA_LICENSE) );
+    	crawlPermissionForm.data().put("license_id", ""+crawlPermission.getLicense().id);
       	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options(),crawlPermission));
     }
     
@@ -147,7 +147,7 @@ public class CrawlPermissionController extends AbstractController {
     	CrawlPermission crawlPermission = CrawlPermission.findById(id);
     	Logger.debug("CrawlPermissionController.view contactPerson: " + crawlPermission.contactPerson);
     	Logger.debug("CrawlPermissionController.view user: " + crawlPermission.user);
-    	Logger.debug("CrawlPermissionController.view license: " + crawlPermission.license);
+    	Logger.debug("CrawlPermissionController.view license: " + crawlPermission.getLicense());
     	Logger.debug("CrawlPermissionController.view mailTemplate: " + crawlPermission.mailTemplate);
         return ok(view.render(crawlPermission, user));
     }
@@ -450,7 +450,7 @@ public class CrawlPermissionController extends AbstractController {
     	        // Set up the license
 		        String license_id = requestData.get("license_id");
 		        if( license_id != null ) {
-		        	filledForm.get().license = License.findById(Long.parseLong(license_id));
+		        	filledForm.get().setLicense( License.findById(Long.parseLong(license_id)) );
 		        }
     	        
 		        filledForm.get().update(id);
@@ -560,7 +560,7 @@ public class CrawlPermissionController extends AbstractController {
         // Set up the license
         String license_id = requestData.get("license_id");
         if( license_id != null ) {
-        	filledForm.get().license = License.findById(Long.parseLong(license_id));
+        	filledForm.get().setLicense( License.findById(Long.parseLong(license_id)) );
         }
         
         filledForm.get().save();

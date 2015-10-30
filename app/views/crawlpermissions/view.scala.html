@@ -49,8 +49,8 @@
 								Licence
 							</label>
 							<div class="col-sm-6">
-							@if( permission.license != null ) {
-								@permission.license.name
+							@if( permission.getLicense() != null ) {
+								@permission.getLicense().name
 							} else {
 								<b>SPECIFIC LICENCE NOT DEFINED</b>
 							}

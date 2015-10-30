@@ -96,9 +96,9 @@ public class CrawlPermission extends ActModel {
     @Column(columnDefinition = "text")
     public String status; 
     
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name="license_id")
-    public License license; 
+    private License license; 
     
 	// Do not include the token as this is the 'secret' used to grant licenses
 	@JsonIgnore
@@ -175,7 +175,15 @@ public class CrawlPermission extends ActModel {
 		this.name = name;
 		this.token = UUID.randomUUID().toString();
 	}
-
+	
+	public License getLicense() {
+		return this.license;
+	}
+	
+	public void setLicense( License l ) {
+		this.license = l;
+	}
+	
     public static CrawlPermission findByName(String name) {
         return find.where()
                    .eq("name",
@@ -199,7 +207,7 @@ public class CrawlPermission extends ActModel {
 	public Long numberRequests;
 
 	public static CrawlPermission findByToken(String token) {
-    	CrawlPermission res = find.where().eq("token", token).findUnique();
+    	CrawlPermission res = find.fetch("license").fetch("contactPerson").where().eq("token", token).findUnique();
     	return res;
     }          
     

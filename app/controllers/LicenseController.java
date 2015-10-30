@@ -58,7 +58,7 @@ public class LicenseController extends AbstractController {
     			User user = User.findByEmail(request().username());
     			CrawlPermission cp = new CrawlPermission();
     			cp.contactPerson = new ContactPerson();
-    			cp.license = license;
+    			cp.setLicense(license);
     			cp.target = new Target();
     			return ok(ukwalicence.render(cp, false));
     		} else {
@@ -100,10 +100,6 @@ public class LicenseController extends AbstractController {
     	if (crawlPermission == null) {
     		throw new ActException("CrawlPermission Not Found found for token: " + token);
     	}
-    	Logger.debug("LicenseController.view contactPerson: " + crawlPermission.contactPerson);
-    	Logger.debug("LicenseController.view user: " + crawlPermission.user);
-    	Logger.debug("LicenseController.view license: " + crawlPermission.license);
-    	Logger.debug("LicenseController.view mailTemplate: " + crawlPermission.mailTemplate);
     	
 		return ok(
 			ukwalicence.render(crawlPermission, false)
@@ -338,7 +334,7 @@ public class LicenseController extends AbstractController {
 	                		license = new License();
 	                		license.name = "INVENTED LICENCE";
 	                	}
-	                	permission.license = license;
+	                	permission.setLicense( license );
 	                	
 	                	Target target = permission.target;
 	                	// Only add this license if it's not already associated:
