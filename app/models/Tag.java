@@ -18,6 +18,7 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class allows archivist to manage open tags.
@@ -31,6 +32,7 @@ public class Tag extends Taxonomy {
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
 	
+    @JsonIgnore
     @ManyToMany
 	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
