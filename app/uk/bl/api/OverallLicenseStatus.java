@@ -164,12 +164,16 @@ public class OverallLicenseStatus {
 	 * @param domain
 	 * @return
 	 */
-	private static String getParentDomain(String domain) {
-		domain = stripWWW(domain);
-		InternetDomainName idn = InternetDomainName.from(domain);
-		if( idn.isTopPrivateDomain() ) return idn.toString();
-		// Otherwise, strip a subdomain off:
-		return idn.parent().toString();
+	private static String getParentDomain(String hostname) {
+		hostname = stripWWW(hostname);
+		InternetDomainName idn = InternetDomainName.from(hostname);
+		// Get the private domain:
+		InternetDomainName domain = idn.topPrivateDomain();
+		// If the domain is not just a naked TLD, return it:
+		if( domain != null && domain.toString().contains(".")) {
+			return domain.toString();
+		}
+		return hostname;
 	}
 
 	/** 

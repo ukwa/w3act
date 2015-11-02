@@ -374,7 +374,13 @@ public enum Scope {
 	}
 	
 
-	
+	/**
+	 * Actually gets the host.
+	 * 
+	 * @param url
+	 * @return
+	 * @throws ActException
+	 */
 	public static String getDomainFromUrl(String url) throws ActException {
 	    URL uri;
 		try {
