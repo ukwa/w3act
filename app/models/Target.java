@@ -168,7 +168,6 @@ public class Target extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
 	public List<Subject> subjects;
 
-    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
