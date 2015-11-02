@@ -21,8 +21,7 @@ public class UkHostingTest {
 	public void setUp() throws Exception {
 		target = new Target();
 		fieldUrls = new ArrayList<FieldUrl>();
-		fieldUrls.add(new FieldUrl("http://www.camdentownshed.org/")); // 109.123.65.110
-		fieldUrls.add(new FieldUrl("http://www.camdentownshed.org/")); // 109.123.65.110
+		fieldUrls.add(new FieldUrl("http://109.123.65.110/")); // 109.123.65.110 was www.camdentownshed.org but hosting has changed
 		target.fieldUrls = fieldUrls;
 	}
 
