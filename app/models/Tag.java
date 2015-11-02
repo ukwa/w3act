@@ -38,6 +38,7 @@ public class Tag extends Taxonomy {
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
     public List<Target> targets;
 
+    @JsonIgnore
     @ManyToMany
 	@JoinTable(name = "tag_instance", joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
