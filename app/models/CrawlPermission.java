@@ -209,7 +209,7 @@ public class CrawlPermission extends ActModel {
 	public static CrawlPermission findByToken(String token) {
     	CrawlPermission res = find.fetch("license").fetch("contactPerson").where().eq("token", token).findUnique();
     	return res;
-    }          
+    }
     
     /**
      * Retrieve a crawl permission by URL.

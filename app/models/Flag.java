@@ -16,6 +16,7 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class allows archivist to manage open flags.
@@ -29,11 +30,13 @@ public class Flag extends Taxonomy {
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
 
+	@JsonIgnore
     @ManyToMany
 	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
     public List<Target> targets;
 
+	@JsonIgnore
     @ManyToMany
 	@JoinTable(name = "flag_instance", joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 

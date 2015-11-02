@@ -24,7 +24,6 @@ import play.Logger;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
-
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
 
