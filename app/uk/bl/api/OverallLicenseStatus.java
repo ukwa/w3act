@@ -10,6 +10,7 @@ import java.util.Set;
 import com.google.common.net.InternetDomainName;
 
 import play.Logger;
+import scala.tools.jline_embedded.internal.Log;
 import uk.bl.Const.ScopeType;
 import uk.bl.exception.ActException;
 import uk.bl.scope.Scope;
@@ -168,10 +169,14 @@ public class OverallLicenseStatus {
 		hostname = stripWWW(hostname);
 		InternetDomainName idn = InternetDomainName.from(hostname);
 		// Get the private domain:
-		InternetDomainName domain = idn.topPrivateDomain();
-		// If the domain is not just a naked TLD, return it:
-		if( domain != null && domain.toString().contains(".")) {
-			return domain.toString();
+		try {
+			InternetDomainName domain = idn.topPrivateDomain();
+			// If the domain is not just a naked TLD, return it:
+			if( domain != null && domain.toString().contains(".")) {
+				return domain.toString();
+			}
+		} catch( Exception e ) {
+			Log.info("Exception when checking for private domain: "+e);
 		}
 		return hostname;
 	}
