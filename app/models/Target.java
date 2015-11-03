@@ -671,7 +671,7 @@ public class Target extends Model {
 	}
 
 	public static Target findById(Long id) {
-		Target target = find.fetch("fieldUrls").where().eq("id", id).findUnique();
+		Target target = find.fetch("fieldUrls").fetch("licenses").where().eq("id", id).findUnique();
 		if( target != null ) {
 			target.formUrl = target.fieldUrl();
 		}
