@@ -176,7 +176,7 @@ public class OverallLicenseStatus {
 				return domain.toString();
 			}
 		} catch( Exception e ) {
-			Log.info("Exception when checking for private domain: "+e);
+			Logger.info("Exception when checking for private domain: "+e);
 		}
 		return hostname;
 	}
