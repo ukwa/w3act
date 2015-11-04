@@ -86,6 +86,9 @@ public class Target extends Model {
     @Override
     @Transactional
 	public void save() {
+    	// Clear cached info:
+    	this.overallLicenseStatus = null;
+    	
     	// need to save to get the ID
     	super.save();
     	if (StringUtils.isEmpty(this.url)) {
