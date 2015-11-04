@@ -40,4 +40,6 @@ EclipseKeys.preTasks := Seq(compile in Compile)
 
 parallelExecution in Test := false
 
+testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")
+
 net.virtualvoid.sbt.graph.Plugin.graphSettings

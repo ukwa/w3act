@@ -87,6 +87,7 @@ public class Target extends Model {
     @Transactional
 	public void save() {
     	// Clear cached info:
+    	Logger.info("Clearing cached license status result...");
     	this.overallLicenseStatus = null;
     	
     	// need to save to get the ID
@@ -2051,7 +2052,12 @@ public class Target extends Model {
 			this.overallLicenseStatus = new OverallLicenseStatus(this);
 		return this.overallLicenseStatus;
 	}
-	
+
+	@JsonIgnore
+	@Transient
+	public void clearOverallLicenseStatusCache() {
+		this.overallLicenseStatus = null;
+	}
 
 	/**
 	 * Simple boolean check build on presence of a license.
