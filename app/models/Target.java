@@ -477,6 +477,9 @@ public class Target extends Model {
 	@JsonIgnore
 	@OneToOne(mappedBy="target", cascade={CascadeType.REFRESH,CascadeType.REMOVE})
 	public WatchedTarget watchedTarget;
+
+	@Transient
+	private OverallLicenseStatus overallLicenseStatus;
 	
 	@JsonIgnore
 	public boolean isWatched() {
@@ -2041,7 +2044,9 @@ public class Target extends Model {
 	@JsonIgnore
 	@Transient
 	public OverallLicenseStatus getOverallLicenseStatus() {
-		return new OverallLicenseStatus(this);
+		if( this.overallLicenseStatus == null)
+			this.overallLicenseStatus = new OverallLicenseStatus(this);
+		return this.overallLicenseStatus;
 	}
 	
 
