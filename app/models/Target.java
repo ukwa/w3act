@@ -162,7 +162,7 @@ public class Target extends Model {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<Instance> instances;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinTable(name = "license_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
 	public List<License> licenses;
@@ -1921,6 +1921,8 @@ public class Target extends Model {
 		Logger.debug("" + names);
 		return StringUtils.join(names, ", ");
 	}
+	
+	
 	
 	@JsonIgnore
 	public boolean isUkHosting() {
