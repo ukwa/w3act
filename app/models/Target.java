@@ -836,6 +836,35 @@ public class Target extends Model {
 	}
 
 	/**
+	 * This method finds all targets matching a url query
+	 */
+	public static List<Target> findAllTargetsForParentUrls(String parentDomain,
+			List<String> parentPaths) {
+		Logger.debug("Looking for URLs like: %"+parentDomain+" + "+ parentPaths);
+		List<Target> res = new ArrayList<Target>();
+		ExpressionList<Target> ll = find.where()
+				.eq(Const.ACTIVE, true).disjunction();
+		// Add on the different LIKE queries, starting with the base:
+		Logger.info("Adding LIKE "+"%"+parentDomain);
+		ll = ll.like("fieldUrls.url", "%"+parentDomain);
+		Logger.info("Adding LIKE "+"%"+parentDomain+"/");
+		ll = ll.like("fieldUrls.url", "%"+parentDomain+"/");
+		// And then add each parent path:
+		for( String parentPath :parentPaths) {
+			String q = "%"+parentDomain+parentPath;
+			Logger.info("Adding LIKE "+q);
+			ll = ll.like("fieldUrls.url", q);
+			// And with a trailing slash too:
+			q = "%"+parentDomain+parentPath+"/";
+			Logger.info("Adding LIKE "+q);
+			ll = ll.like("fieldUrls.url", q);
+		}
+		// And query:
+		res = ll.findList();
+		return res;
+	}
+
+	/**
 	 * This method evaluates if element is in a list separated by list delimiter
 	 * e.g. ', '.
 	 * 
@@ -2358,6 +2387,5 @@ public class Target extends Model {
 				+ ", revision=" + revision + ", id=" + id
 				+ ", url=" + url + "]";
 	}
-	
 	
 }

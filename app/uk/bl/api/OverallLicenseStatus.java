@@ -3,6 +3,11 @@
  */
 package uk.bl.api;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,15 +73,22 @@ public class OverallLicenseStatus {
 				Logger.error("No fieldUrl.domain for "+fieldUrl.url);
 				continue;
 			}
-			// Skip invalid domains:
+			// Skip invalid domains or URLs:
 			boolean isValidDomain = Utils.INSTANCE.validDomain(fieldUrl.domain);
 			
 			if(isValidDomain==false) {
 				Logger.error("Invalid fieldUrl.domain "+fieldUrl.domain);
 				continue;
-				}
+			}
+			List<String> parentPaths = null;
+			try {
+				parentPaths = getParentPaths(fieldUrl.url);
+			} catch (Exception e) {
+				continue;
+			}
+			
 			// Look for targets:
-			List<Target> tp = Target.findAllTargetsForDomainLike("%"+getParentDomain(fieldUrl.domain));
+			List<Target> tp = Target.findAllTargetsForParentUrls(getParentDomain(fieldUrl.domain),parentPaths);
 			if( tp == null ) {
 				Logger.info("Found no potential matches.");
 				continue;
@@ -87,7 +99,7 @@ public class OverallLicenseStatus {
 					Logger.info("Skipping "+t.title);
 					continue;
 				}
-				Logger.info("Checking "+t.title);
+				Logger.info("Checking "+t.title +" "+t.fieldUrls);
 				// Check if the scoping of the target applies here:
 				for( FieldUrl pt : t.fieldUrls) {
 					Logger.info("Checking "+pt.url);
@@ -176,6 +188,29 @@ public class OverallLicenseStatus {
 			}
 		}
 		return hostname;
+	}
+	
+	/**
+	 * 
+	 * @param url
+	 * @return
+	 * @throws URISyntaxException 
+	 */
+	private static List<String> getParentPaths(String url) throws URISyntaxException {
+		ArrayList<String> parentPaths = new ArrayList<String>();
+		URI turl = new URI(url);
+		String path = turl.normalize().getPath();
+		String[] parts = path.split("/");
+		String current = "";
+		for( int i = 0; i < parts.length; i++ ) {
+			// Don't include the last bit or any blanks:
+			if( i < parts.length -1 && (! "".equals(parts[i]) ) ) {
+				current = current +  "/" + parts[i];
+				parentPaths.add(current);
+				Logger.info("Scanning path parts "+current);
+			}
+		}
+		return parentPaths;
 	}
 
 	/** 

@@ -1,6 +1,7 @@
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
+import static play.test.Helpers.inMemoryDatabase;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +34,9 @@ public class LicenseInheritanceTest {
 	private static Boolean scopeManual;
 	private static Boolean scopeLicense;
 	
-	@Before
-	public void setUp() throws ActException {	
-        running(fakeApplication(), new Runnable() {
-            @Override
-			public void run() {
-            }
-        });
-	}
-	
 		@Test
 	    public void testLicenseInheritance() {
-	        running(fakeApplication(), new Runnable() {
+	        running(fakeApplication(inMemoryDatabase()), new Runnable() {
 	        	
 	        	private Target addTarget(String title, String[] urls, ScopeType scope ) {
 	        		Target t = new Target();
@@ -84,6 +76,7 @@ public class LicenseInheritanceTest {
 					Target eg  = this.addTarget("Example", new String[]{ "http://example.com/" }, ScopeType.subdomains);
 					Target egs  = this.addTarget("Example Subdomain", new String[]{ "http://subdomain.example.com/" }, ScopeType.root);
 					Target egss = this.addTarget("Example Subsection", new String[]{ "http://example.com/subsection/" }, ScopeType.root);
+					Target egsss = this.addTarget("Example Subsubsection", new String[]{ "http://example.com/subsection/subsubsection/" }, ScopeType.root);
 	            	
 	            	/***************** Perform some basic tests ******************/
 	            	assertThat(eg.isInScopeAllOrInheritedWithoutLicense()).isFalse();
@@ -111,6 +104,17 @@ public class LicenseInheritanceTest {
 	            	egss.clearOverallLicenseStatusCache();
 	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
 	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isTrue();
+	            	// Now check path inheritance:
+	            	eg.setProfessionalJudgement(false);
+	            	eg.save();
+	            	egss.setProfessionalJudgement(true);
+	            	egss.save();
+	            	egs.clearOverallLicenseStatusCache();
+	            	egss.clearOverallLicenseStatusCache();
+	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isTrue();
+	            	assertThat(egsss.isInScopeAllOrInheritedWithoutLicense()).isTrue();
 	            	
 	            	Logger.info("More fine-grained tests...");
 	            	
