@@ -188,10 +188,10 @@
               @document.journal.journalTitle.language
             </mods:languageTerm>
           </mods:languageOfCataloging>*@
-        </mods:mods>
-      @for(fastSubject <- document.fastSubjects) {
+             @for(fastSubject <- document.fastSubjects) {
         <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.fastId"></mods:subject>
       }
+        </mods:mods>
       </mets:xmlData>
     </mets:mdWrap>
   }
