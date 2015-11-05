@@ -22,8 +22,6 @@ import uk.bl.scope.Scope;
 
 public class LicenseInheritanceTest {
 
-	private Target target = null;
-	private List<FieldUrl> fieldUrls;
 	private String url = "http://www.bl.uk/";
 //	private String url = "http://www.parliament.uk/";
 //	private String url = "https://www.gov.uk/";  
@@ -37,10 +35,11 @@ public class LicenseInheritanceTest {
 	
 	@Before
 	public void setUp() throws ActException {	
-		target = new Target();
-		fieldUrls = new ArrayList<FieldUrl>();
-		fieldUrls.add(new FieldUrl(url)); 
-		target.fieldUrls = fieldUrls;
+        running(fakeApplication(), new Runnable() {
+            @Override
+			public void run() {
+            }
+        });
 	}
 	
 		@Test
@@ -100,12 +99,16 @@ public class LicenseInheritanceTest {
 	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
 	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isFalse();
 	            	eg.save();
+	            	egs.clearOverallLicenseStatusCache();
+	            	egss.clearOverallLicenseStatusCache();
 	            	// Now it should pick up the subdomain inheritance:
 	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isTrue();
 	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isTrue();
 	            	// Now switch to root scope and check the inheritance is lost:
 	            	eg.scope = ScopeType.root.name();
 	            	eg.save();
+	            	egs.clearOverallLicenseStatusCache();
+	            	egss.clearOverallLicenseStatusCache();
 	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
 	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isTrue();
 	            	
@@ -113,6 +116,14 @@ public class LicenseInheritanceTest {
 	            	
 	            	/*****************Checking the NPLD scopes & Licensing of a given URL******************/
 	            	
+	        		Target target = new Target();
+	        		target.fieldUrls = new ArrayList<FieldUrl>();
+	        		try {
+						target.fieldUrls.add(new FieldUrl(url));
+					} catch (ActException e1) {
+						Logger.error("Exception when creating test target with "+url);
+					}
+	        		
 	            	scopeHosting = target.isUkHosting();
 	            	scopeDomain = target.isTopLevelDomain();
 					try {

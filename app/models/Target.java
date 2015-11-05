@@ -86,6 +86,10 @@ public class Target extends Model {
     @Override
     @Transactional
 	public void save() {
+    	// Clear cached info:
+    	Logger.info("Clearing cached license status result...");
+    	this.overallLicenseStatus = null;
+    	
     	// need to save to get the ID
     	super.save();
     	if (StringUtils.isEmpty(this.url)) {
@@ -477,6 +481,9 @@ public class Target extends Model {
 	@JsonIgnore
 	@OneToOne(mappedBy="target", cascade={CascadeType.REFRESH,CascadeType.REMOVE})
 	public WatchedTarget watchedTarget;
+
+	@Transient
+	private OverallLicenseStatus overallLicenseStatus;
 	
 	@JsonIgnore
 	public boolean isWatched() {
@@ -2043,9 +2050,16 @@ public class Target extends Model {
 	@JsonIgnore
 	@Transient
 	public OverallLicenseStatus getOverallLicenseStatus() {
-		return new OverallLicenseStatus(this);
+		if( this.overallLicenseStatus == null)
+			this.overallLicenseStatus = new OverallLicenseStatus(this);
+		return this.overallLicenseStatus;
 	}
-	
+
+	@JsonIgnore
+	@Transient
+	public void clearOverallLicenseStatusCache() {
+		this.overallLicenseStatus = null;
+	}
 
 	/**
 	 * Simple boolean check build on presence of a license.

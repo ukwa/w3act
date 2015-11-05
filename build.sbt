@@ -1,6 +1,6 @@
 name := "w3act"
 
-version := "1.1.0"
+version := "1.1.1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
@@ -39,5 +39,7 @@ javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProper
 EclipseKeys.preTasks := Seq(compile in Compile)
 
 parallelExecution in Test := false
+
+testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
