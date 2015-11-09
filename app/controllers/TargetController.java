@@ -482,7 +482,11 @@ public class TargetController extends AbstractController {
     public static Result allTargetsAsJson() {
 		List<Target> targets = Target.findAllActive();
 		Logger.debug("all targets: " + targets.size());
-		return ok( Json.toJson(targets));
+		List<Long> target_ids = new ArrayList<Long>(targets.size());
+		for( Target t : targets ) {
+			target_ids.add( t.id );
+		}
+		return ok( Json.toJson(target_ids));
     }    
     
     /**
@@ -495,7 +499,11 @@ public class TargetController extends AbstractController {
     	if( collection != null ) {
     		List<Target> targets = Target.allCollectionTargets(collection.id);
     		Logger.debug("collections targets: " + targets.size());
-    		return ok( Json.toJson(targets));
+    		List<Long> target_ids = new ArrayList<Long>(targets.size());
+    		for( Target t : targets ) {
+    			target_ids.add( t.id );
+    		}
+    		return ok( Json.toJson(target_ids));
     	} else {
     		return notFound("There is not collection with ID "+collectionId);
     	}

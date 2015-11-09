@@ -90,19 +90,19 @@ public class OverallLicenseStatus {
 			// Look for targets:
 			List<Target> tp = Target.findAllTargetsForParentUrls(getParentDomain(fieldUrl.domain),parentPaths);
 			if( tp == null ) {
-				Logger.info("Found no potential matches.");
+				Logger.debug("Found no potential matches.");
 				continue;
 			}
-			Logger.info("Found " + tp.size() + " potential matches.");
+			Logger.debug("Found " + tp.size() + " potential matches.");
 			for( Target t :  tp ) {
 				if( t.id.equals(target.id)) {
 					Logger.info("Skipping "+t.title);
 					continue;
 				}
-				Logger.info("Checking "+t.title +" "+t.fieldUrls);
+				Logger.debug("Checking "+t.title +" "+t.fieldUrls);
 				// Check if the scoping of the target applies here:
 				for( FieldUrl pt : t.fieldUrls) {
-					Logger.info("Checking "+pt.url);
+					Logger.debug("Checking "+pt.url);
 					// If one of the 'parent's' URLs is a prefix of this one:
 					if( inheritsFromTo( pt,t.scope, fieldUrl ) ) {
 						// Check if this is in scope, but without forcing a full re-check (e.g. whois):

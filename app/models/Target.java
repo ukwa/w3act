@@ -845,18 +845,18 @@ public class Target extends Model {
 		ExpressionList<Target> ll = find.where()
 				.eq(Const.ACTIVE, true).disjunction();
 		// Add on the different LIKE queries, starting with the base:
-		Logger.info("Adding LIKE "+"%"+parentDomain);
+		Logger.debug("Adding LIKE "+"%"+parentDomain);
 		ll = ll.like("fieldUrls.url", "%"+parentDomain);
-		Logger.info("Adding LIKE "+"%"+parentDomain+"/");
+		Logger.debug("Adding LIKE "+"%"+parentDomain+"/");
 		ll = ll.like("fieldUrls.url", "%"+parentDomain+"/");
 		// And then add each parent path:
 		for( String parentPath :parentPaths) {
 			String q = "%"+parentDomain+parentPath;
-			Logger.info("Adding LIKE "+q);
+			Logger.debug("Adding LIKE "+q);
 			ll = ll.like("fieldUrls.url", q);
 			// And with a trailing slash too:
 			q = "%"+parentDomain+parentPath+"/";
-			Logger.info("Adding LIKE "+q);
+			Logger.debug("Adding LIKE "+q);
 			ll = ll.like("fieldUrls.url", q);
 		}
 		// And query:
