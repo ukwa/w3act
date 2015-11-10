@@ -3,10 +3,18 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -17,6 +25,14 @@ public class Subject extends Taxonomy {
 
 	private static final long serialVersionUID = 3535758346565569620L;
 
+	@JsonIgnore
+    @ManyToOne
+	@JoinColumn(name = "parent_id")
+	public Subject parent;
+	
+    @OneToMany(mappedBy="parent")
+	public List<Subject> children;
+	
 	public static Model.Finder<Long,Subject> find = new Model.Finder<Long, Subject>(Long.class, Subject.class);
 
     /**

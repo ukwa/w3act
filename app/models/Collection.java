@@ -22,11 +22,17 @@ import uk.bl.Const;
 @DiscriminatorValue("collections")
 public class Collection extends Taxonomy {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 3043585612371074777L;
-
+	
+	@JsonIgnore
+    @ManyToOne
+	@JoinColumn(name = "parent_id")
+	public Collection parent;
+	
+    @OneToMany(mappedBy="parent")
+	public List<Collection> children;
+	
     @JsonIgnore
     @ManyToMany
 	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
@@ -127,7 +133,7 @@ public class Collection extends Taxonomy {
 	@JsonProperty
 	@Transient
 	public List<Long> getTargetIds() {
-		List<Long> target_ids = new ArrayList<Long>(targets.size());
+		List<Long> target_ids = new ArrayList<Long>();
 		for( Target t : targets ) {
 			target_ids.add( t.id );
 		}
@@ -135,6 +141,7 @@ public class Collection extends Taxonomy {
 	}
 	
 	@JsonProperty
+	@Transient
 	public void setTargetIds(List<Long> targetIds) {
 		List<Target> newTargets = new ArrayList<Target>();
 		for( Long tid : targetIds) {
@@ -142,7 +149,7 @@ public class Collection extends Taxonomy {
 		}
 		this.targets = newTargets;
 	}
-    
+	    
     /**
      * Retrieve a collection object by URL.
      * @param url

@@ -1835,6 +1835,7 @@ public class Target extends Model {
 
 	
 	@JsonIgnore
+	@Transient
 	public String fieldUrl() {
 		List<String> urls = new ArrayList<String>();
 		//
@@ -1857,6 +1858,7 @@ public class Target extends Model {
 	}
 	
 	@JsonIgnore
+	@Transient
 	public String primaryUrl() {
 		if( this.fieldUrls != null && this.fieldUrls.size() > 0 ) {
 			return this.fieldUrls.get(0).url;
@@ -1866,11 +1868,13 @@ public class Target extends Model {
 	}
 	
 	@JsonIgnore
+	@Transient
 	public String subjectIdsAsString() {
 		return StringUtils.join(this.subjectIds(), ", ");
 	}
 
 	@JsonIgnore
+	@Transient
 	public List<Long> subjectIds() {
 		List<Long> ids = new ArrayList<Long>();
 		for (Subject subject : this.subjects) {
@@ -1880,6 +1884,7 @@ public class Target extends Model {
 	}
 	
 	@JsonIgnore
+	@Transient
 	public String subjectsAsString() {
 		List<String> names = new ArrayList<String>();
 		for (Subject subject : this.subjects) {
@@ -1889,6 +1894,7 @@ public class Target extends Model {
 	}
 	
 	@JsonIgnore
+	@Transient
 	public List<Long> collectionIds() {
 		List<Long> ids = new ArrayList<Long>();
 		for (Collection collection : this.collections) {
@@ -1898,11 +1904,13 @@ public class Target extends Model {
 	}
 	
 	@JsonIgnore
+	@Transient
 	public String collectionIdsAsString() {
 		return StringUtils.join(collectionIds(), ", ");
 	}
 	
 	@JsonIgnore
+	@Transient
 	public String collectionsAsString() {
 		List<String> names = new ArrayList<String>();
 		for (Collection collection : this.collections) {
@@ -1912,6 +1920,7 @@ public class Target extends Model {
 	}
 	
 	@JsonIgnore
+	@Transient
 	public String licensesAsString() {
 		Logger.debug("licensesAsString");
 		List<String> names = new ArrayList<String>();

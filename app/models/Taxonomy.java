@@ -11,16 +11,23 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
+
+import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
@@ -30,22 +37,26 @@ import uk.bl.api.models.FieldModel;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.avaje.ebean.annotation.Transactional;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Taxonomy entity managed by Ebean
  */
 @Entity
+@Table(name="taxonomy")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="ttype")
 public class Taxonomy extends ActModelMappedSuperClass { 
-     
+	
 	public final static String TAXONOMY_TERM = "taxonomy_term";
     public static final String TAXONOMY_PARENTS  	 = "taxonomy_parents"; 
     public static final String TAXONOMY_PARENTS_ALL  = "taxonomy_parents_all"; 
 
     /**
-	 * MappedSuperClass "superclass" is needed as "Properties from superclasses not mapped as @MappedSuperclass are ignored"
+	 * MappedSuperClass "superclass" is needed as 
+	 * "Properties from superclasses not mapped as @MappedSuperclass are ignored"
 	 */
 	private static final long serialVersionUID = -8987367110038045775L;
 
@@ -63,20 +74,6 @@ public class Taxonomy extends ActModelMappedSuperClass {
 	@Column(insertable=false, updatable=false)
 	public String ttype;
 	 
-	@JsonIgnore
-    @ManyToOne(cascade=CascadeType.REFRESH)
-	@JoinColumn(name = "parent_id")
-	public Taxonomy parent;
-	
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="parent")
-	public List<Taxonomy> children;
-
-	@JsonIgnore
-	@ManyToMany
-	@JoinTable(name = TAXONOMY_PARENTS_ALL, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
-	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
-	public List<Taxonomy> parentsAllList;
-	
 	@Column(name="start_date")
 	public Date startDate;
 	
@@ -1151,7 +1148,7 @@ public class Taxonomy extends ActModelMappedSuperClass {
 		}
 		return endDateText;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

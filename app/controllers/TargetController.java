@@ -1908,7 +1908,7 @@ public class TargetController extends AbstractController {
 		Ebean.update(target);
 	}
 	
-	private static ObjectNode createCollectionNode(Taxonomy collection) {
+	private static ObjectNode createCollectionNode(Collection collection) {
 		ObjectNode collectionNode = JsonNodeFactory.instance.objectNode();
 		Logger.debug("collection: " + collection.name);
 		collectionNode.put("id", collection.id);
