@@ -172,11 +172,12 @@ public class Target extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
 	public List<Subject> subjects;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
 	public List<Collection> collections;
-
+    
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") }) 
@@ -2291,6 +2292,26 @@ public class Target extends Model {
     	return categories;
 //    	return Collection.getCollectionCategoriesByTargetId(this.id);
     }
+    
+    @JsonProperty
+	@Transient
+    public List<Long> getCollectionIds() {
+		List<Long> ids = new ArrayList<Long>();
+		for( Collection c : collections ) {
+			ids.add( c.id );
+		}
+		return ids;
+    }
+
+	@JsonProperty
+	@Transient
+	public void setCollectionIds(List<Long> ids) {
+		List<Collection> newList = new ArrayList<Collection>();
+		for( Long newid : ids) {
+			newList.add(Collection.findById(newid));
+		}
+		this.collections = newList;
+	}
     
 	public List<String> getField_urls() {
 		return field_urls;
