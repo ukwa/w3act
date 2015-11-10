@@ -8,6 +8,7 @@ import javax.persistence.*;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import play.Logger;
 import play.db.ebean.*;
@@ -118,6 +119,29 @@ public class Collection extends Taxonomy {
 		}
     	return res;
     }
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@JsonProperty
+	@Transient
+	public List<Long> getTargetIds() {
+		List<Long> target_ids = new ArrayList<Long>(targets.size());
+		for( Target t : targets ) {
+			target_ids.add( t.id );
+		}
+		return target_ids;
+	}
+	
+	@JsonProperty
+	public void setTargetIds(List<Long> targetIds) {
+		List<Target> newTargets = new ArrayList<Target>();
+		for( Long tid : targetIds) {
+			newTargets.add(Target.findById(tid));
+		}
+		this.targets = newTargets;
+	}
     
     /**
      * Retrieve a collection object by URL.
