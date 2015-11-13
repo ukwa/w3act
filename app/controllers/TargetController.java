@@ -1478,6 +1478,9 @@ public class TargetController extends AbstractController {
         }
         
         //Updating licence status
+        // ANJ: Note that manual changes at this top-level should not modify the existing CrawlPermissions.
+        // Commenting out until the needs are more clearly defined.
+        /*
         if (filledForm.get().getLatestCrawlPermission() != null) {
         	filledForm.get().getLatestCrawlPermission().status = filledForm.get().licenseStatus;
         	if( Const.CrawlPermissionStatus.GRANTED.getValue().equalsIgnoreCase(filledForm.get().getLatestCrawlPermission().status)){
@@ -1488,7 +1491,8 @@ public class TargetController extends AbstractController {
         	}
         	filledForm.get().getLatestCrawlPermission().update();
         }
-
+        */
+        
         filledForm.get().runChecks();
 
         if( id != null ) {
