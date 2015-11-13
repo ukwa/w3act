@@ -167,3 +167,13 @@ $ git config -l
 $ git submodule update
 
 ```
+
+Using the API from Curl
+-----------------------
+
+Login, then download via the API:
+
+    $ curl -c cookie.jar -i --data "email=user@example.org&password=PASS" https://localhost:9000/act/login
+    $ curl -o 42.json -b cookie.jar https://localhost:9000/act/api/targets/42
+
+
