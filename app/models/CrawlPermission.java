@@ -184,6 +184,63 @@ public class CrawlPermission extends ActModel {
 		this.license = l;
 	}
 	
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+	@Transient
+	@JsonIgnore
+    public boolean hasContactPerson(String curContactPerson) {
+//    	boolean res = false;
+//    	res = Utils.hasElementInList(curContactPerson, contactPerson);
+//    	return res;
+    	throw new NotImplementedError();
+    }
+	
+	@Transient
+	@JsonIgnore
+	public boolean isCompleted() {
+		if( Const.CrawlPermissionStatus.GRANTED.toString().equals(this.status) ||
+				Const.CrawlPermissionStatus.SUPERSEDED.toString().equals(this.status) ||
+				Const.CrawlPermissionStatus.REFUSED.toString().equals(this.status) ||
+				Const.CrawlPermissionStatus.EMAIL_REJECTED.toString().equals(this.status) ) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CrawlPermission other = (CrawlPermission) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
     public static CrawlPermission findByName(String name) {
         return find.where()
                    .eq("name",
@@ -329,18 +386,6 @@ public class CrawlPermission extends ActModel {
     }
     
     /**
-     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
-     * @param subject
-     * @return true if in list
-     */
-    public boolean hasContactPerson(String curContactPerson) {
-//    	boolean res = false;
-//    	res = Utils.hasElementInList(curContactPerson, contactPerson);
-//    	return res;
-    	throw new NotImplementedError();
-    }
-
-    /**
      * This method enables replacing of placeholders in mail text by given value.
      * @param text The text of an email.
      * @param placeHolder The placeholder string e.g. ||URL||
@@ -443,36 +488,6 @@ public class CrawlPermission extends ActModel {
     	return new CrawlPermission(id, url, name);
     }
     
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CrawlPermission other = (CrawlPermission) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
 	
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();

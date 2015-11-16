@@ -194,10 +194,12 @@
 							 
 						    <div class="col-sm-6">
 								<label class="radio-inline">
-   						            <input name="content" id="radio1" value="1" type="radio" @disabler> Yes
+   						            <input name="content" id="radio1" value="1" type="radio"
+   						             @if( cp.isCompleted() && cp.thirdPartyContent ) { checked }@disabler> Yes
 								</label>
 								<label class="radio-inline">
-							        <input name="content" id="radio2" value="2" type="radio" @disabler> No
+							        <input name="content" id="radio2" value="2" type="radio"
+							         @if( cp.isCompleted() && !cp.thirdPartyContent ) { checked }@disabler> No
 								</label>
 							</div>
 						</div>
@@ -217,7 +219,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
 						    <div class="col-sm-6">
-				                <input type="checkbox" name="agree" @disabler/>
+				                <input type="checkbox" name="agree" @if( cp.agree ) { checked } @disabler/>
 							</div>
 						</div>
 					</div>
@@ -228,7 +230,11 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="log-date" class="form-control" id="log-date" value="@LicenseController.getCurrentDate()" readonly/>
+						    @if( cp.isCompleted() ) {
+                                <input type="text" name="log-date" class="form-control" id="log-date" value="@cp.grantedAt" readonly/>
+                            } else {
+                                <input type="text" name="log-date" class="form-control" id="log-date" value="@LicenseController.getCurrentDate()" readonly/>
+                            }
 	                		</div>
 						</div>
 					</div>
@@ -247,10 +253,12 @@
 							 
 						    <div class="col-sm-6">
 								<label class="radio-inline">
-   						            <input name="publish" id="radio1" value="1" type="radio" @disabler> Yes
+   						            <input name="publish" id="radio1" value="1" type="radio"
+   						              @if( cp.isCompleted() && cp.publish ) { checked }@disabler> Yes
 								</label>
 								<label class="radio-inline">
-							        <input name="publish" id="radio2" value="2" type="radio" @disabler> No
+							        <input name="publish" id="radio2" value="2" type="radio"
+							          @if( cp.isCompleted() && !cp.publish ) { checked }@disabler> No
 								</label>
 							</div>
 						</div>

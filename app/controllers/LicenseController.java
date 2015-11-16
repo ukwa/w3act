@@ -82,8 +82,13 @@ public class LicenseController extends AbstractController {
     		throw new ActException("CrawlPermission Not Found found for token: " + token);
     	}
 
+    	// Only allow unset permissions to be edited:
+    	boolean enabled = true;
+    	if( crawlPermission.isCompleted() )
+    		enabled = false;
+
 		return ok(
-            ukwalicence.render(crawlPermission, true)
+            ukwalicence.render(crawlPermission, enabled)
         );
     }
     
@@ -192,6 +197,15 @@ public class LicenseController extends AbstractController {
 		        if (action.equals("submit")) {
 		        	String token = requestData.get("token");
 		        	CrawlPermission permission = CrawlPermission.findByToken(token);
+		        	
+		        	// Reject this action if permissions already submitted:
+		        	if( permission.isCompleted() ) {
+		    			flash("message", "This form has already been completed!");
+		    			
+		    			return ok(
+		    		            ukwalicence.render(permission, false)
+		    		        );
+		        	}
 		        	
 		        	// Update the CrawlPermission
 		        	Logger.debug("save UKWA licence - name: " + getFormParam(Const.NAME));
