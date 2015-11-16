@@ -156,9 +156,9 @@
 						<th>URLs</th>
 						<th>Contact Person</th>
 						<th>Status</th>
-						<th>Communications</th>
 						<th>Licence Form</th>
-						@header("updatedAt", "Received Date")
+                        @header("grantedAt", "Granted Date")
+                        @header("updatedAt", "Updated Date")
 					</tr>
 				</thead>
 				<tbody>
@@ -187,12 +187,11 @@
 				            } else {
 				                <i>CONTACT PERSON NOT SET!</i>
 				            }
+				            <br/>
+                            <a href="@routes.CommunicationLogController.showLogs(permission.token)">View Communication Log</a>
 						</td>
 						<td>
 			                @permission.status
-						</td>
-						<td>
-			                <a href="@routes.CommunicationLogController.showLogs(permission.token)">View Log</a>
 						</td>
 						<td>
 						    @if( "GRANTED".equals(permission.status) ) {
@@ -201,6 +200,9 @@
 				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View</a>
 			                }
 						</td>
+                        <td>
+                            @uk.bl.api.Utils.INSTANCE.convertToDateTime(permission.grantedAt)
+                        </td>
 						<td>
 							@permission.toUpdatedAtString
 						</td>						
