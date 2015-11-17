@@ -157,8 +157,8 @@
 						<th>Contact Person</th>
 						<th>Status</th>
 						<th>Licence Form</th>
+                        @header("requestedAt", "Requested Date")
                         @header("grantedAt", "Granted Date")
-                        @header("updatedAt", "Updated Date")
 					</tr>
 				</thead>
 				<tbody>
@@ -200,12 +200,12 @@
 				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View</a>
 			                }
 						</td>
+						<td>
+                            @uk.bl.api.Utils.INSTANCE.convertToDateTime(permission.requestedAt)
+						</td>						
                         <td>
                             @uk.bl.api.Utils.INSTANCE.convertToDateTime(permission.grantedAt)
                         </td>
-						<td>
-							@permission.toUpdatedAtString
-						</td>						
 					</tr>
 				}
 				</tbody>
