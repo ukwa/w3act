@@ -10,9 +10,15 @@ import play.db.ebean.Model;
 
 @Entity
 public class FastSubject extends Model {
+	
+	/** */
+	private static final long serialVersionUID = -5397834285059204305L;
+
 	@Id
 	public Long id;
+	
 	public String fastId;
+	
 	public String name;
 	
 	public static final Model.Finder<Long, FastSubject> find = new Model.Finder<>(Long.class, FastSubject.class);

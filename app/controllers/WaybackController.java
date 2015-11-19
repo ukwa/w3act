@@ -30,6 +30,14 @@ public class WaybackController extends Controller {
 	
 	private static URL wayback_url;
 
+	public static String getWaybackEndpoint() {
+		return Play.application().configuration().getString("application.wayback.url");
+	}
+	
+	public static String getWaybackQueryEndpoint() {
+		return Play.application().configuration().getString("application.wayback.query.path");
+	}
+
 	@Security.Authenticated(SecuredController.class)
 	public static Result wayback(String url) throws ActException, ClientProtocolException, IOException {
 		
@@ -40,7 +48,7 @@ public class WaybackController extends Controller {
 					);
 		}
 				
-		String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
+		String wayBackUrl = getWaybackEndpoint();
 		
 		// Build up the wayback query:
 		String waybackBuilder = wayBackUrl + "/" + url;
@@ -88,7 +96,7 @@ public class WaybackController extends Controller {
 		Logger.debug("getTotalCrawledUrls url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
+			String wayBackUrl = getWaybackEndpoint();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			/***Check the http status code***/
@@ -128,7 +136,7 @@ public class WaybackController extends Controller {
 		Logger.debug("getTotalCrawledInstances url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
+			String wayBackUrl = getWaybackEndpoint();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			/***Check the http status code***/

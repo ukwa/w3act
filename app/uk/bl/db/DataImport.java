@@ -38,9 +38,7 @@ public enum DataImport {
 		
         try {
         	
-        	if (Ebean.find(FastSubject.class).findRowCount() == 0) {
-        		importFastSubjects();
-        	}
+        	importFastSubjects();
         	
             Logger.debug("+++ Importing test data +++");
 			if (Ebean.find(Permission.class).findRowCount() == 0) {
@@ -77,11 +75,13 @@ public enum DataImport {
         }
 	}
 	
-	private void importFastSubjects() {
-		@SuppressWarnings("unchecked")
-		Map<String,List<FastSubject>> allFastSubjects = (Map<String,List<FastSubject>>)Yaml.load("fast-subjects.yml");
-		List<FastSubject> fastSubjects = allFastSubjects.get(Const.FAST_SUBJECTS);
-		Ebean.save(fastSubjects);
+	public static void importFastSubjects() {
+    	if (Ebean.find(FastSubject.class).findRowCount() == 0) {
+    		@SuppressWarnings("unchecked")
+    		Map<String,List<FastSubject>> allFastSubjects = (Map<String,List<FastSubject>>)Yaml.load("fast-subjects.yml");
+    		List<FastSubject> fastSubjects = allFastSubjects.get(Const.FAST_SUBJECTS);
+    		Ebean.save(fastSubjects);
+    	}
 	}
 
 	public void importPermissions() {

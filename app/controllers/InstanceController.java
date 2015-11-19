@@ -300,8 +300,8 @@ public class InstanceController extends AbstractController {
     
     public static Result importFromWayback(Long targetId, String view) throws ActException {
 
-    	String webArchiveUrl = play.Play.application().configuration().getString("application.wayback.url");
-    	String webArchivePath = play.Play.application().configuration().getString("application.wayback.query.path");
+    	String webArchiveUrl = WaybackController.getWaybackEndpoint();
+    	String webArchivePath = WaybackController.getWaybackQueryEndpoint();
     	
     	String wayBackUrl = webArchiveUrl + webArchivePath;
     	

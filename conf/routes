@@ -7,7 +7,8 @@ GET     /                                   controllers.ApplicationController.ho
 
 # About
 GET     /about								controllers.ApplicationController.index()
-GET     /status								controllers.StatusController.status()
+GET     /status                             controllers.StatusController.status()
+GET     /status/fixFast                     controllers.StatusController.addFastDefaultSubjects()
 
 # Authentication
 GET     /login                              controllers.ApplicationController.login()

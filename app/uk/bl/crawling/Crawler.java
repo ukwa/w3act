@@ -21,6 +21,7 @@ import org.jsoup.nodes.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import controllers.WaybackController;
 import models.Document;
 import models.WatchedTarget;
 import play.Logger;
@@ -39,7 +40,7 @@ public class Crawler {
 	private String crawlTime;
 	
 	private boolean crawlWayback = false;
-	private static String waybackUrl = Play.application().configuration().getString("wayback_url");
+	private static String waybackUrl = WaybackController.getWaybackEndpoint();
 	
 	private Map<String, MetadataExtractor> metadataExtractors;
 	

@@ -44,9 +44,6 @@ secret_server_password=""
 # Host details
 server_name="https://www.webarchive.org.uk"
 
-application.wayback.url="http://crawler03.bl.uk:8080/wayback"
-application.wayback.query.path="/xmlquery.jsp?url="
-
 
 #The queue endpoint
 queue_host=amqp.wa.bl.uk
@@ -56,7 +53,8 @@ routing_key=w3actroutingkey
 exchange_name=w3actexchange
 
 #Wayback-API endpoint
-wayback_url="http://opera.bl.uk:8080/wayback/"
+application.wayback.url="http://opera.bl.uk:8080/wayback/"
+application.wayback.query.path="/xmlquery.jsp?url="
 
 #Pii endpoint
 #pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"

@@ -12,6 +12,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.net.InternetDomainName;
 
 import play.Logger;
@@ -69,17 +71,12 @@ public class OverallLicenseStatus {
 				}
 			}
 			// Skip null domains:			
-			if( fieldUrl.domain == null) {
+			if(  StringUtils.isEmpty(fieldUrl.domain) ) {
 				Logger.error("No fieldUrl.domain for "+fieldUrl.url);
 				continue;
 			}
-			// Skip invalid domains or URLs:
-			boolean isValidDomain = Utils.INSTANCE.validDomain(fieldUrl.domain);
 			
-			if(isValidDomain==false) {
-				Logger.error("Invalid fieldUrl.domain "+fieldUrl.domain);
-				continue;
-			}
+			// Determine the parent paths:
 			List<String> parentPaths = null;
 			try {
 				parentPaths = getParentPaths(fieldUrl.url);

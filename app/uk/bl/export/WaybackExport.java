@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import controllers.WaybackController;
 import models.FieldUrl;
 import models.Instance;
 import models.Target;
@@ -39,8 +40,8 @@ public enum WaybackExport {
 	
 	public void bulkTargetImport() {
 
-    	String webArchiveUrl = play.Play.application().configuration().getString("application.wayback.url");
-    	String webArchivePath = play.Play.application().configuration().getString("application.wayback.query.path");
+    	String webArchiveUrl = WaybackController.getWaybackEndpoint();
+    	String webArchivePath = WaybackController.getWaybackQueryEndpoint();
     	
     	String wayBackUrl = webArchiveUrl + webArchivePath;
     	

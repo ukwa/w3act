@@ -21,7 +21,7 @@
 #     service w3act start
 #
 #    For application start we provide two parameters:
-#        a. Database name -DapplyDownEvolutions.<databasename>=true e.g. w3act
+#        a. Database name -DapplyEvolutions.<databasename>=true e.g. w3act
 #        b. Location for the file that contains the process id of the started application e.g. -Dpidfile.path=/var/run/play.pid
 # 
 # 6. To stop the W3ACT application use e.g.
@@ -39,7 +39,7 @@ PLAY_DIR=/etc/default/play-2.2.0
 case "$1" in
 start)
 	echo -n "Starting w3act services: "
-	$PROJECT_ROOT/bin/w3act -DapplyDownEvolutions.w3act=true -Dpidfile.path=/var/run/play.pid
+	$PROJECT_ROOT/bin/w3act -DapplyEvolutions.default -Dpidfile.path=/var/run/play.pid
 	touch /var/lock/subsys/w3act
 ;;
 stop)
@@ -53,7 +53,7 @@ status)
 restart)
 	kill $(cat /var/run/play.pid)
 	rm -f /var/lock/subsys/w3act
-	$PROJECT_ROOT/bin/w3act -DapplyDownEvolutions.w3act=true -Dpidfile.path=/var/run/play.pid
+	$PROJECT_ROOT/bin/w3act -DapplyEvolutions.default -Dpidfile.path=/var/run/play.pid
 	touch /var/lock/subsys/w3act
 ;;
 probe)

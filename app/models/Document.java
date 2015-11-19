@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import controllers.Portals;
 import controllers.Users;
+import controllers.WaybackController;
 import play.Play;
 import play.data.format.Formats.DateTime;
 import play.data.validation.Constraints.Required;
@@ -185,7 +186,7 @@ public class Document extends Model {
 	}
 	
 	private String waybackUrl() {
-		return Play.application().configuration().getString("wayback_url") +
+		return WaybackController.getWaybackEndpoint() +
 				waybackTimestamp + "/" + documentUrl;
 	}
 	

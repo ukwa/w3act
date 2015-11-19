@@ -10,6 +10,7 @@ import play.Logger;
 import play.Play;
 import play.mvc.Result;
 import play.mvc.Security;
+import uk.bl.db.DataImport;
 import views.html.status.status;
 
 import com.thesecretserver.PasswordManager;
@@ -19,6 +20,11 @@ public class StatusController extends AbstractController {
 	
 	public static Result status() {
 		return ok(status.render(User.findByEmail(request().username())));
+	}
+	
+	public static Result addFastDefaultSubjects() {
+		DataImport.importFastSubjects();
+		return redirect(routes.StatusController.status());
 	}
 	
 	public static boolean areThereFastSubjects() {
@@ -48,7 +54,7 @@ public class StatusController extends AbstractController {
 	}
 	
 	public static boolean isWaybackResponding() {
-		return isSiteResponding(Play.application().configuration().getString("wayback_url"));
+		return isSiteResponding(WaybackController.getWaybackEndpoint()+"/");
 	}
 	
 	public static boolean isPiiResponding() {
