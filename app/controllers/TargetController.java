@@ -1300,13 +1300,20 @@ public class TargetController extends AbstractController {
         List<Tag> newTags = new ArrayList<Tag>();
         String[] tagValues = formParams.get("tagsList");
 
-        if (tagValues != null) {
+        if (original != null && tagValues != null) {
             for(String tagValue: tagValues) {
             	Long tagId = Long.valueOf(tagValue);
             	Tag tag = Tag.findTagById(tagId);
             	newTags.add(tag);
+            	if (!original.tags.contains(tag))
+            		original.tags.add(tag);
             }
+            Ebean.update(original);
             filledForm.get().tags = newTags;
+        }
+        else if(original != null && tagValues == null){
+        	original.tags.clear();
+        	Ebean.update(original);
         }
         
         String[] flagValues = formParams.get("flagsList");
@@ -1327,6 +1334,10 @@ public class TargetController extends AbstractController {
             
             Ebean.update(original);
             filledForm.get().flags = null;
+        }
+        else if(original != null && flagValues == null){
+        	original.flags.clear();
+        	Ebean.update(original);
         }
         
         List<Subject> newSubjects = new ArrayList<Subject>();
