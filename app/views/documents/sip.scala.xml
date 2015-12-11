@@ -1,7 +1,7 @@
 @(document: Document)
 
 <?xml version="1.0" encoding="utf-8"?>
-<mets:mets TYPE="@if(document.isBookOrBookChapter) {eBook} else {eJournal}"
+<mets:mets TYPE="@if(document.isBookOrBookChapter) {eBooks} else {eJournal}"
     xmlns:mets="http://www.loc.gov/METS/"
     xmlns:premis="info:lc/xmlns/premis-v2"
     xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -22,6 +22,9 @@
       <mets:xmlData>
         <collection xmlns="http://www.loc.gov/MARC21/slim">
           <record>
+         	<datafield tag="ITM" ind1="" ind2="">
+              <subfield code="a">dvdc_300018257173.0x000001</subfield>
+			</datafield>
             <datafield tag="245" ind2=" " ind1="0">
               <subfield code="a">@document.title</subfield>
             </datafield>
@@ -196,6 +199,9 @@
     </mets:mdWrap>
   }
   </mets:dmdSec>
+  <mets:dmdSec ID="dmd0002">
+    <mets:mdRef LOCTYPE="ARK" MDTYPE="MARC" OTHERMDTYPE="ALEPH" xlink:href="ark:/81055/dvdc_300018257173.0x000001" />
+  </mets:dmdSec>
   <mets:amdSec ID="amd0001">
     <mets:digiprovMD ID="amd0001-object">
       <mets:mdWrap MDTYPE="PREMIS:OBJECT">
@@ -223,28 +229,7 @@
         </mets:xmlData>
       </mets:mdWrap>
     </mets:digiprovMD>
-  </mets:amdSec>
-  <mets:amdSec ID="amd0002">
-    <mets:rightsMD ID="amd0002-rights01">
-      <mets:mdWrap MDTYPE="METSRIGHTS">
-        <mets:xmlData>
-          <rts:RightsDeclarationMD RIGHTSCATEGORY="COPYRIGHTED"
-              xmlns:rts="http://cosimo.stanford.edu/sdr/metsrights/"
-              xsi:schemaLocation="http://cosimo.stanford.edu/sdr/metsrights/
-                  http://cosimo.stanford.edu/sdr/metsrights.xsd">
-            <rts:RightsDeclaration>TBC</rts:RightsDeclaration>
-            <rts:RightsHolder>
-              <rts:RightsHolderName>TBC</rts:RightsHolderName>
-            </rts:RightsHolder>
-            <rts:Context CONTEXTCLASS="OTHER">
-              <rts:Permissions OTHERPERMITTYPE="NON_PRINT_LEGAL_DEPOSIT"/>
-              <rts:Constraints CONSTRAINTTYPE="RE-USE" OTHERCONSTRAINTTYPE="TBC"/>
-            </rts:Context>
-          </rts:RightsDeclarationMD>
-        </mets:xmlData>
-      </mets:mdWrap>
-    </mets:rightsMD>
-  </mets:amdSec>
+  </mets:amdSec> 
   <mets:fileSec>
     <mets:fileGrp USE="Original">
       <mets:file ADMID="amd0001-object" ID="file0001">
@@ -254,8 +239,8 @@
     </mets:fileGrp>
   </mets:fileSec>
   <mets:structMap TYPE="LOGICAL">
-    <mets:div ADMID="amd0002-rights01" CONTENTIDS="@document.ark"
-        DMDID="dmd0001" ID="log0001"
+    <mets:div CONTENTIDS="@document.ark"
+        DMDID="dmd0001 dmd0002" ID="log0001"
         TYPE="@{
           if(document.isWholeBook) "Monograph"
           else if(document.isJournalIssue) "Issue"
