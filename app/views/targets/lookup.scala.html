@@ -179,8 +179,10 @@
 					</td>
 					<td>
 						@if(target.qaIssue != null) {
-							@target.qaIssue
-						}
+						  	@Taxonomy.findQAStatusById(target.qaIssue.id)
+						 } else {
+                              none
+						 }
 					</td>
 					<td>
 						@if(target.fieldUrls != null && target.url != null) {
