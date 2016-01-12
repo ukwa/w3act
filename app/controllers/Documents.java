@@ -1,6 +1,10 @@
 package controllers;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -177,6 +181,38 @@ public class Documents extends AbstractController {
 				FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
 						"Submission failed! It was not possible to get an ARK identifier.");
 				arkError.send();
+				
+				//code to download sip.xml file to server
+				String url = "https://www.webarchive.org.uk/act-ddhapt/documents/"+id+"/sip";
+				Promise<File> filePromise = WS.url(url).get().map(response -> {
+					 InputStream inputStream = null;
+					 OutputStream outputStream = null;
+					 String fileName = "sip.xml";
+					 String saveDir = Play.application().configuration().getString("ddhapt.input.dir");
+					    try {
+					        inputStream = response.getBodyAsStream();
+					    
+					        // save inputStream to a file
+					        final File file = new File(saveDir + File.separator + fileName);
+					        outputStream = new FileOutputStream(file);
+					    
+					        int read = 0;
+					        byte[] buffer = new byte[1024];
+
+					        while ((read = inputStream.read(buffer)) != -1) {
+					            outputStream.write(buffer, 0, read);
+					        }
+					  
+					        return file;  
+					    } catch (IOException e) {
+					        throw e;
+					    } finally {
+					        if (inputStream != null) {inputStream.close();}
+					        if (outputStream != null) {outputStream.close();}
+					    } 
+					 
+				});
+				
 				return redirect(routes.Documents.view(id));
 			}
 		}

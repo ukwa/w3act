@@ -66,3 +66,5 @@ enableDDHAPT=false
 
 use.accounts=false
 admin.default.email="wa-sysadm@bl.uk"
+
+ddhapt.input.dir="mountpoint /mnt/ddhapt/input/"
