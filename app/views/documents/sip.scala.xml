@@ -22,74 +22,75 @@
       <mets:xmlData>
         <collection xmlns="http://www.loc.gov/MARC21/slim">
           <record>
+            <leader>     nam a22     5i 4500</leader>
          	<datafield tag="ITM" ind1="" ind2="">
               <subfield code="a">dvdc_300018257173.0x000001</subfield>
 			</datafield>
-            <datafield tag="245" ind2=" " ind1="0">
+            <datafield tag="245" ind1="0" ind2=" ">
               <subfield code="a">@document.title</subfield>
             </datafield>
           @if(!document.book.isbn.isEmpty) {
-            <datafield tag="020" ind2=" " ind1=" ">
+            <datafield tag="020" ind1=" " ind2=" ">
               <subfield code="a">@document.book.isbn</subfield>
             </datafield>
           }
           @if(!document.doi.isEmpty) {
-            <datafield tag="024" ind2=" " ind1="7">
+            <datafield tag="024" ind1="7" ind2=" ">
               <subfield code="a">@document.doi</subfield>
               <subfield code="2">doi</subfield>
             </datafield>
           }
           @if(!document.book.edition.isEmpty) {
-            <datafield tag="250" ind2=" " ind1=" ">
+            <datafield tag="250" ind1=" " ind2=" ">
               <subfield code="a">@document.book.edition</subfield>
             </datafield>
           }
-            <datafield tag="264" ind2="1" ind1=" ">
+            <datafield tag="264" ind1=" " ind2="1">
             @if(!document.book.publisher.isEmpty) {
               <subfield code="b">@document.book.publisher</subfield>
             }
               <subfield code="c">@document.publicationYear</subfield>
             </datafield>
           @if(!document.book.series.isEmpty) {
-            <datafield tag="490" ind2=" " ind1="0">
+            <datafield tag="490" ind1="0" ind2=" ">
               <subfield code="a">@document.book.series</subfield>
             </datafield>
           }
           @if(!document.author1Ln.isEmpty) {
-            <datafield tag="100" ind2=" " ind1="1">
+            <datafield tag="100" ind1="1" ind2=" ">
               <subfield code="a">@document.author1Ln, @document.author1Fn</subfield>
             </datafield>
           }
           @if(!document.author2Ln.isEmpty) {
-            <datafield tag="700" ind2=" " ind1="1">
+            <datafield tag="700" ind1="1" ind2=" ">
               <subfield code="a">@document.author2Ln, @document.author2Fn</subfield>
             </datafield>
           }
           @if(!document.author3Ln.isEmpty) {
-            <datafield tag="700" ind2=" " ind1="1">
+            <datafield tag="700" ind1="1" ind2=" ">
               <subfield code="a">@document.author3Ln, @document.author3Fn</subfield>
             </datafield>
           }
           @if(!document.book.corporateAuthor.isEmpty) {
-            <datafield tag="710" ind2=" " ind1="2">
+            <datafield tag="710" ind1="2" ind2=" ">
               <subfield code="a">@document.book.corporateAuthor</subfield>
             </datafield>
           }
           @for(blCollectionSubset <- document.book.blCollectionSubsets) {
-            <datafield tag="690" ind2=" " ind1="7">
+            <datafield tag="690" ind1="7" ind2=" ">
               <subfield code="a">@blCollectionSubset.title</subfield>
               <subfield code="2">blcoll</subfield>
             </datafield>
           }
           @for(fastSubject <- document.fastSubjects) {
-            <datafield tag="650" ind2="7" ind1=" ">
+            <datafield tag="650" ind1=" " ind2="7">
               <subfield code="a">@fastSubject.name</subfield>
               <subfield code="2">fast</subfield>
               <subfield code="0">(OCoLC)@fastSubject.fastId</subfield>
             </datafield>
           }
           @if(document.priorityCataloguing) {
-            <datafield tag="985" ind2=" " ind1=" ">
+            <datafield tag="985" ind1=" " ind2=" ">
               <subfield code="a">Priority cataloguing</subfield>
             </datafield>
           }
