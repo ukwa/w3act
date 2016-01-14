@@ -8,7 +8,6 @@ import java.util.List;
 
 import models.FieldUrl;
 import models.Target;
-import models.WatchedTarget;
 
 /**
  * @author andy
@@ -22,7 +21,7 @@ public class CrawlFeedItem {
 	public final String depth;
 	public final String scope;
 	public final Boolean ignoreRobotsTxt;
-	public final List<CrawlSchedule> crawlSchedules;
+	public final List<CrawlSchedule> schedules;
 	public final Boolean watched;
 	public final String documentUrlScheme;
 	public final String loginPageUrl;
@@ -42,7 +41,7 @@ public class CrawlFeedItem {
 		this.ignoreRobotsTxt = t.ignoreRobotsTxt;
 		List<CrawlSchedule> scheds = new ArrayList<CrawlSchedule>();
 		scheds.add(new CrawlSchedule(t.crawlStartDate, t.crawlEndDate, t.crawlFrequency));
-		this.crawlSchedules = scheds;
+		this.schedules = scheds;
 		this.watched = t.isWatched();
 		if( t.watchedTarget != null ) {
 			this.documentUrlScheme = t.watchedTarget.documentUrlScheme;

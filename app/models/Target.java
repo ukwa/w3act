@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -1482,6 +1483,9 @@ public class Target extends Model {
 	 * @throws MalformedURLException 
 	 */
 	public static List<Target> exportLdFrequency(String frequency) {
+		// Current date:
+		Date current = Calendar.getInstance().getTime();
+		//
 		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
@@ -1491,8 +1495,14 @@ public class Target extends Model {
 		
 		List<Target> result = new ArrayList<Target>();
 		for (Target target : targets.findList()) {
+			// Is in in LD scope:
 			if (target.isInScopeAllOrInheritedWithoutLicense() ) {
-				result.add(target);
+				// Is it in time range?
+				if( target.crawlEndDate == null || target.crawlEndDate.after(current)) {
+					if( target.crawlStartDate != null && target.crawlStartDate.before(current)) {
+						result.add(target);
+					}
+				}
 			}
 		}
 		Logger.debug("exportLdFrequency() resulting list size: " + result.size());
@@ -1508,6 +1518,9 @@ public class Target extends Model {
 	 * @return list of Target objects
 	 */
 	public static List<Target> exportByFrequency(String frequency) {
+		// Current date:
+		Date current = Calendar.getInstance().getTime();
+		//
 		ExpressionList<Target> targets = find.fetch("licenses").where().eq(Const.ACTIVE, true);
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
@@ -1523,9 +1536,14 @@ public class Target extends Model {
 		while (itr.hasNext()) {
 			Target target = itr.next();
 			// This includes all, rather than just the licensed stuff:
-			if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
-			//if ( target.indicateLicenses() ) {
-				result.add(target);
+			//if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
+			if ( target.indicateLicenses() ) {
+				// Is it in time range?
+				if( target.crawlEndDate == null || target.crawlEndDate.after(current)) {
+					if( target.crawlStartDate != null && target.crawlStartDate.before(current)) {
+						result.add(target);
+					}
+				}
 			}
 		}
 		Logger.debug("exportByFrequency() resulting list size: " + result.size());
