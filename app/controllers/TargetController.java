@@ -311,14 +311,18 @@ public class TargetController extends AbstractController {
     		url = url.substring(0, url.length()-1);
     	}
 
-    	Logger.debug("after prefix: " + url);
+    	Logger.debug("search url is: " + url);
 
         JsonNode jsonData = null;
-        if (url != null) {
+        if (url != null && url.length() >= 3 ) {
 	        List<Target> targets = Target.filterActiveUrl(url);
 	        jsonData = Json.toJson(targets);
         }
-        return ok(jsonData);
+        if( jsonData != null ) {
+        	return ok(jsonData);
+        } else {
+        	return notFound();
+        }
     }
 
     /**
