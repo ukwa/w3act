@@ -368,6 +368,8 @@ GET     /api/suggested_collections_instance/:url      controllers.InstanceContro
 
 POST    /api/targets						controllers.APIController.bulkImport()
 GET     /api/targets	                  	controllers.TargetController.allTargetsAsJson()
+GET     /api/targets/ld/:frequency          controllers.TargetController.toCrawlLdFrequencyJson(frequency)
+GET     /api/targets/by/:frequency          controllers.TargetController.toCrawlByFrequencyJson(frequency)
 GET     /api/targets/:id                  	controllers.APIController.viewAsJson(id:Long)
 PUT		/api/targets/:id					controllers.APIController.targetUpdate(id:Long)
 GET     /api/targets/:id/instances       	controllers.InstanceController.byTargetAsJson(id:Long)

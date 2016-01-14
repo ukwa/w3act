@@ -897,6 +897,27 @@ public class TargetController extends AbstractController {
     }
     
     /**
+     * As above, but only lists IDs
+     * 
+     * @param frequency
+     * @return
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result toCrawlByFrequencyJson(String frequency) {
+        JsonNode jsonData = null;
+        if (frequency != null) {
+	        List<Target> targets = new ArrayList<Target>();
+        	targets = Target.exportByFrequency(frequency);
+        	List<Long> targetIds = new ArrayList<Long>();
+        	for( Target t : targets ) {
+        		targetIds.add(t.id);
+        	}
+	        jsonData = Json.toJson(targetIds);
+        }
+        return ok(jsonData);
+    }
+    
+    /**
      * This method provides data exports for each possible crawl-frequency that are in legal deposit. 
      * For each frequency this contains a list of Targets and associated 
      * crawl metadata.
@@ -919,6 +940,34 @@ public class TargetController extends AbstractController {
         }
         return ok(jsonData);
     }
+
+    /**
+     * As above, but only lists IDs.
+     * 
+     * @param frequency
+     * @return
+     * @throws ActException
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result toCrawlLdFrequencyJson(String frequency) throws ActException {
+        JsonNode jsonData = null;
+        if (frequency != null) {
+	        List<Target> targets = new ArrayList<Target>();
+        	try {
+				targets = Target.exportLdFrequency(frequency);
+			} catch (MalformedURLException | WhoisException
+					| URISyntaxException e) {
+				throw new ActException(e);
+			}
+        	List<Long> targetIds = new ArrayList<Long>();
+        	for( Target t : targets ) {
+        		targetIds.add(t.id);
+        	}
+	        jsonData = Json.toJson(targetIds);
+        }
+        return ok(jsonData);
+    }
+    
 
     /**
      * Example form with validation

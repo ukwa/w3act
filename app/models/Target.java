@@ -1491,7 +1491,7 @@ public class Target extends Model {
 		
 		List<Target> result = new ArrayList<Target>();
 		for (Target target : targets.findList()) {
-			if (target.isInScopeAllOrInheritedWithoutLicense()) {
+			if (target.isInScopeAllOrInheritedWithoutLicense() ) {
 				result.add(target);
 			}
 		}
