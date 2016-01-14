@@ -57,6 +57,7 @@ import play.mvc.With;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
+import uk.bl.api.models.CrawlFeedItem;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
@@ -903,7 +904,7 @@ public class TargetController extends AbstractController {
      * @return
      */
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result toCrawlByFrequencyJson(String frequency) {
+    public static Result idsToCrawlByFrequencyJson(String frequency) {
         JsonNode jsonData = null;
         if (frequency != null) {
 	        List<Target> targets = new ArrayList<Target>();
@@ -911,6 +912,26 @@ public class TargetController extends AbstractController {
         	List<Long> targetIds = new ArrayList<Long>();
         	for( Target t : targets ) {
         		targetIds.add(t.id);
+        	}
+	        jsonData = Json.toJson(targetIds);
+        }
+        return ok(jsonData);
+    }
+
+    /**
+     * 
+     * @param frequency
+     * @return
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result crawlFeedByFrequencyJson(String frequency) {
+        JsonNode jsonData = null;
+        if (frequency != null) {
+	        List<Target> targets = new ArrayList<Target>();
+        	targets = Target.exportByFrequency(frequency);
+        	List<CrawlFeedItem> targetIds = new ArrayList<CrawlFeedItem>();
+        	for( Target t : targets ) {
+        		targetIds.add(new CrawlFeedItem(t));
         	}
 	        jsonData = Json.toJson(targetIds);
         }
@@ -930,12 +951,7 @@ public class TargetController extends AbstractController {
         JsonNode jsonData = null;
         if (frequency != null) {
 	        List<Target> targets = new ArrayList<Target>();
-        	try {
-				targets = Target.exportLdFrequency(frequency);
-			} catch (MalformedURLException | WhoisException
-					| URISyntaxException e) {
-				throw new ActException(e);
-			}
+	        targets = Target.exportLdFrequency(frequency);
 	        jsonData = Json.toJson(targets);
         }
         return ok(jsonData);
@@ -949,16 +965,11 @@ public class TargetController extends AbstractController {
      * @throws ActException
      */
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result toCrawlLdFrequencyJson(String frequency) throws ActException {
+    public static Result idsToCrawlLdFrequencyJson(String frequency) {
         JsonNode jsonData = null;
         if (frequency != null) {
 	        List<Target> targets = new ArrayList<Target>();
-        	try {
-				targets = Target.exportLdFrequency(frequency);
-			} catch (MalformedURLException | WhoisException
-					| URISyntaxException e) {
-				throw new ActException(e);
-			}
+	        targets = Target.exportLdFrequency(frequency);
         	List<Long> targetIds = new ArrayList<Long>();
         	for( Target t : targets ) {
         		targetIds.add(t.id);
@@ -968,7 +979,27 @@ public class TargetController extends AbstractController {
         return ok(jsonData);
     }
     
-
+    /**
+     * 
+     * @param frequency
+     * @return
+     * @throws ActException
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result crawlFeedLdFrequencyJson(String frequency) {
+        JsonNode jsonData = null;
+        if (frequency != null) {
+	        List<Target> targets = new ArrayList<Target>();
+			targets = Target.exportLdFrequency(frequency);
+        	List<CrawlFeedItem> targetIds = new ArrayList<CrawlFeedItem>();
+        	for( Target t : targets ) {
+        		targetIds.add(new CrawlFeedItem(t));
+        	}
+	        jsonData = Json.toJson(targetIds);
+        }
+        return ok(jsonData);
+    }
+    
     /**
      * Example form with validation
      * @return blank form for data entry

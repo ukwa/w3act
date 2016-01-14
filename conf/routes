@@ -368,13 +368,16 @@ GET     /api/suggested_collections_instance/:url      controllers.InstanceContro
 
 POST    /api/targets						controllers.APIController.bulkImport()
 GET     /api/targets	                  	controllers.TargetController.allTargetsAsJson()
-GET     /api/targets/ld/:frequency          controllers.TargetController.toCrawlLdFrequencyJson(frequency)
-GET     /api/targets/by/:frequency          controllers.TargetController.toCrawlByFrequencyJson(frequency)
 GET     /api/targets/:id                  	controllers.APIController.viewAsJson(id:Long)
 PUT		/api/targets/:id					controllers.APIController.targetUpdate(id:Long)
 GET     /api/targets/:id/instances       	controllers.InstanceController.byTargetAsJson(id:Long)
 GET    	/api/targets/bycollection/:id       controllers.TargetController.collectionTargetsAsJson(id:Long)
 GET    	/api/targets/:id/categories        	controllers.TargetController.getTargetCategories(id:Long)
+GET     /api/crawl/ids/ld/:frequency        controllers.TargetController.idsToCrawlLdFrequencyJson(frequency)
+GET     /api/crawl/ids/by/:frequency        controllers.TargetController.idsToCrawlByFrequencyJson(frequency)
+GET     /api/crawl/feed/ld/:frequency       controllers.TargetController.crawlFeedLdFrequencyJson(frequency)
+GET     /api/crawl/feed/by/:frequency       controllers.TargetController.crawlFeedByFrequencyJson(frequency)
+
 
 GET		/api/collections					controllers.CollectionController.getByJson()
 POST 	/api/collections 		   			controllers.CollectionController.collectionCreate()

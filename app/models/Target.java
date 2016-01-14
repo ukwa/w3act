@@ -1481,7 +1481,7 @@ public class Target extends Model {
 	 * @throws URISyntaxException 
 	 * @throws MalformedURLException 
 	 */
-	public static List<Target> exportLdFrequency(String frequency) throws WhoisException, MalformedURLException, URISyntaxException {
+	public static List<Target> exportLdFrequency(String frequency) {
 		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
