@@ -1495,7 +1495,7 @@ public class Target extends Model {
 	}
 	
 	/**
-	 * This method provides data exports for given crawl-frequency. Method
+	 * This method provides NPLD crawl exports for given crawl-frequency. Method
 	 * returns a list of Targets and associated crawl metadata.
 	 * 
 	 * @param frequency
@@ -1511,11 +1511,11 @@ public class Target extends Model {
 		// Get and filter down:
 		List<Target> result = new ArrayList<Target>();
 		for (Target target : getByFrequency(frequency)) {
-			// Is in in LD scope:
-			if (target.isInScopeAllOrInheritedWithoutLicense() ) {
-				// Is it in time range?
-				if( target.crawlEndDate == null || target.crawlEndDate.after(current)) {
-					if( target.crawlStartDate != null && target.crawlStartDate.before(current)) {
+			// Is it in time range?
+			if( target.crawlEndDate == null || target.crawlEndDate.after(current)) {
+				if( target.crawlStartDate != null && target.crawlStartDate.before(current)) {
+					// Is in in LD scope?
+					if (target.isInScopeAllOrInheritedWithoutLicense() ) {
 						result.add(target);
 					}
 				}
@@ -1526,7 +1526,7 @@ public class Target extends Model {
 	}
 
 	/**
-	 * This method provides data exports for given crawl-frequency. Method
+	 * This method provides by-permission crawl exports for given crawl-frequency. Method
 	 * returns a list of Targets and associated crawl metadata.
 	 * 
 	 * @param frequency
@@ -1536,20 +1536,15 @@ public class Target extends Model {
 	public static List<Target> exportByFrequency(String frequency) {
 		// Current date:
 		Date current = Calendar.getInstance().getTime();
-		/**
-		 * The resulting list should only include everything we are able to crawl.
-		 */
 		List<Target> result = new ArrayList<Target>();
 		Iterator<Target> itr = getByFrequency(frequency).iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			// This includes all, rather than just the licensed stuff:
-			//if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
-			// This just includes the stuff that is Non-NPLD:
-			if (target.indicateLicenses() && ! target.isInScopeAllOrInheritedWithoutLicense() ) {
-				// Is it in time range?
-				if( target.crawlEndDate == null || target.crawlEndDate.after(current)) {
-					if( target.crawlStartDate != null && target.crawlStartDate.before(current)) {
+			// Is it in time range?
+			if( target.crawlEndDate == null || target.crawlEndDate.after(current)) {
+				if( target.crawlStartDate != null && target.crawlStartDate.before(current)) {
+					// This just includes the stuff that is Non-NPLD:
+					if (target.indicateLicenses() && ! target.isInScopeAllOrInheritedWithoutLicense() ) {
 						result.add(target);
 					}
 				}
