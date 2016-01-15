@@ -1472,6 +1472,29 @@ public class Target extends Model {
 	}
 	
 	/**
+	 * Get's the active Targets by frequency. Special values 'all' and 'frequent'.
+	 * 
+	 * @param frequency
+	 * @return
+	 */
+	private static List<Target> getByFrequency(String frequency) {
+		//
+		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
+		if( frequency.equalsIgnoreCase("all") ) {
+			// Omit NEVERCRAWL:
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
+		} else if ( frequency.equalsIgnoreCase("frequent") ) {
+			// Omit NEVERCRAWL and DOMAINCRAWL:
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.DOMAINCRAWL.name());
+		} else {
+			targets = targets.ieq("crawlFrequency", frequency);
+		}
+		
+		return targets.findList();
+	}
+	
+	/**
 	 * This method provides data exports for given crawl-frequency. Method
 	 * returns a list of Targets and associated crawl metadata.
 	 * 
@@ -1485,16 +1508,9 @@ public class Target extends Model {
 	public static List<Target> exportLdFrequency(String frequency) {
 		// Current date:
 		Date current = Calendar.getInstance().getTime();
-		//
-		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
-		if (!frequency.equalsIgnoreCase("all")) {
-			targets = targets.ieq("crawlFrequency", frequency);
-		} else {
-			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
-		}
-		
+		// Get and filter down:
 		List<Target> result = new ArrayList<Target>();
-		for (Target target : targets.findList()) {
+		for (Target target : getByFrequency(frequency)) {
 			// Is in in LD scope:
 			if (target.isInScopeAllOrInheritedWithoutLicense() ) {
 				// Is it in time range?
@@ -1520,24 +1536,17 @@ public class Target extends Model {
 	public static List<Target> exportByFrequency(String frequency) {
 		// Current date:
 		Date current = Calendar.getInstance().getTime();
-		//
-		ExpressionList<Target> targets = find.fetch("licenses").where().eq(Const.ACTIVE, true);
-		if (!frequency.equalsIgnoreCase("all")) {
-			targets = targets.ieq("crawlFrequency", frequency);
-		} else {
-			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
-		}
-
 		/**
 		 * The resulting list should only include everything we are able to crawl.
 		 */
 		List<Target> result = new ArrayList<Target>();
-		Iterator<Target> itr = targets.findList().iterator();
+		Iterator<Target> itr = getByFrequency(frequency).iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
 			// This includes all, rather than just the licensed stuff:
 			//if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
-			if ( target.indicateLicenses() ) {
+			// This just includes the stuff that is Non-NPLD:
+			if (target.indicateLicenses() && ! target.isInScopeAllOrInheritedWithoutLicense() ) {
 				// Is it in time range?
 				if( target.crawlEndDate == null || target.crawlEndDate.after(current)) {
 					if( target.crawlStartDate != null && target.crawlStartDate.before(current)) {

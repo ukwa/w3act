@@ -316,6 +316,11 @@ public class TargetController extends AbstractController {
         JsonNode jsonData = null;
         if (url != null && url.length() >= 3 ) {
 	        List<Target> targets = Target.filterActiveUrl(url);
+	        // Only grab the first few...
+	        int limit = 25;
+	        if( targets.size() > limit ) {
+	        	targets = targets.subList(0, limit);
+	        }
 	        jsonData = Json.toJson(targets);
         }
         if( jsonData != null ) {
