@@ -184,10 +184,13 @@ public class Documents extends AbstractController {
 				
 				//code to download sip.xml file to server
 				String url = "https://www.webarchive.org.uk/act-ddhapt/documents/"+id+"/sip";
-				Promise<File> filePromise = WS.url(url).get().map(response -> {
+				final Promise<File> filePromise = WS.url(url).get().map( 
+						new Function<WSResponse, File>() {
+							public File apply(WSResponse response) throws Throwable {
+								
 					 InputStream inputStream = null;
 					 OutputStream outputStream = null;
-					 String fileName = "sip.xml";
+					 String fileName = "_sip_"+id+".xml";
 					 String saveDir = Play.application().configuration().getString("ddhapt.input.dir");
 					    try {
 					        inputStream = response.getBodyAsStream();
@@ -202,15 +205,27 @@ public class Documents extends AbstractController {
 					        while ((read = inputStream.read(buffer)) != -1) {
 					            outputStream.write(buffer, 0, read);
 					        }
-					  
-					        return file;  
+					        if (file.exists() && file.isFile() && file.length()!= 0){
+					        	String newFileName = "sip_"+id+".xml";
+					        	file.renameTo(new File(saveDir + File.separator + newFileName));	
+					        	return file;
+					        	
+					        }else{
+					        	file.delete();
+					        	FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
+					    				"The document is corrupted.");
+					        	downloadError.send();
+					        	 return null;
+					        }
+					       
+					         
 					    } catch (IOException e) {
 					        throw e;
 					    } finally {
 					        if (inputStream != null) {inputStream.close();}
 					        if (outputStream != null) {outputStream.close();}
 					    } 
-					 
+					}
 				});
 				
 				return redirect(routes.Documents.view(id));
