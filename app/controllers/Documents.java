@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Query;
@@ -61,6 +62,7 @@ import views.xml.documents.sip;
 public class Documents extends AbstractController {
 	
 	public static BlCollectionSubsetList blCollectionSubsetList = new BlCollectionSubsetList();
+	private static String saveDir = Play.application().configuration().getString("ddhapt.input.dir");
 	
 	public static Result view(Long id) {
 		return render(id, false);
@@ -171,7 +173,7 @@ public class Documents extends AbstractController {
 		return redirect(routes.Documents.view(document.id));
 	}
 	
-	public static Result submit(Long id) {
+	public static Result submit(final Long id) {
 		Document document = Document.find.byId(id);
 		List<AssignableArk> assignableArks = AssignableArk.find.all();
 		if (assignableArks.isEmpty()) {
@@ -181,54 +183,56 @@ public class Documents extends AbstractController {
 				FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
 						"Submission failed! It was not possible to get an ARK identifier.");
 				arkError.send();
-				
+
 				//code to download sip.xml file to server
 				String url = "https://www.webarchive.org.uk/act-ddhapt/documents/"+id+"/sip";
 				final Promise<File> filePromise = WS.url(url).get().map( 
 						new Function<WSResponse, File>() {
+							@Override
 							public File apply(WSResponse response) throws Throwable {
-								
-					 InputStream inputStream = null;
-					 OutputStream outputStream = null;
-					 String fileName = "_sip_"+id+".xml";
-					 String saveDir = Play.application().configuration().getString("ddhapt.input.dir");
-					    try {
-					        inputStream = response.getBodyAsStream();
-					    
-					        // save inputStream to a file
-					        final File file = new File(saveDir + File.separator + fileName);
-					        outputStream = new FileOutputStream(file);
-					    
-					        int read = 0;
-					        byte[] buffer = new byte[1024];
 
-					        while ((read = inputStream.read(buffer)) != -1) {
-					            outputStream.write(buffer, 0, read);
-					        }
-					        if (file.exists() && file.isFile() && file.length()!= 0){
-					        	String newFileName = "sip_"+id+".xml";
-					        	file.renameTo(new File(saveDir + File.separator + newFileName));	
-					        	return file;
-					        	
-					        }else{
-					        	file.delete();
-					        	FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
-					    				"The document is corrupted.");
-					        	downloadError.send();
-					        	 return null;
-					        }
-					       
-					         
-					    } catch (IOException e) {
-					        throw e;
-					    } finally {
-					        if (inputStream != null) {inputStream.close();}
-					        if (outputStream != null) {outputStream.close();}
-					    } 
-					}
-				});
-				
+								InputStream inputStream = null;
+								OutputStream outputStream = null;
+								String fileName = "_sip_"+id+".xml";
+								final File file = new File(saveDir + File.separator + fileName);
+								try {
+									inputStream = response.getBodyAsStream();
+
+									// save inputStream to a file
+									outputStream = new FileOutputStream(file);
+
+									int read = 0;
+									byte[] buffer = new byte[1024];
+
+									while ((read = inputStream.read(buffer)) != -1) {
+										outputStream.write(buffer, 0, read);
+									}
+
+								} catch (IOException e) {
+									throw e;
+								} finally {
+									if (inputStream != null) {inputStream.close();}
+									if (outputStream != null) {outputStream.close();}
+								}
+
+								return file;
+							}
+						});
+				// Wait for the file to download, up to thirty seconds:
+				File file = filePromise.get(30, TimeUnit.SECONDS);
+				// Check it's good:
+				if (file != null && file.exists() && file.isFile() && file.length()!= 0){
+					String newFileName = "sip_"+id+".xml";
+					file.renameTo(new File(saveDir + File.separator + newFileName));	
+				}else{
+					file.delete();
+					FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
+							"The document is corrupted.");
+					downloadError.send();
+				}
+
 				return redirect(routes.Documents.view(id));
+
 			}
 		}
 		document.ark = assignableArks.get(0).ark;
