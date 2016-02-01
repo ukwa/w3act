@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,6 +77,8 @@ public class APIController extends Controller {
 				return badRequest("No Target Found for ID: " + id);
 			}
 			Logger.debug("ORIGINAL: " + dbTarget);
+			boolean dbWatched = dbTarget.isWatched();
+			WatchedTarget dbWatchedTarget = dbTarget.watchedTarget;
 			
 			// find field and then update/save
 			ObjectReader updater = objectMapper.readerForUpdating(dbTarget);
@@ -184,7 +187,29 @@ public class APIController extends Controller {
 				Logger.debug("GOT: "+cp);
 				Logger.debug("Checking: "+cp.contactPerson);
 				cp.contactPerson.save();
-			}			
+			}
+			
+			// Update as Watched if needed
+			Logger.info(" Watched is "+dbWatched+"/"+dbTarget.isWatched()+" - > "+ jsonTarget.isWatched());
+			Logger.info(" Watched is "+dbTarget.watchedTarget+" - > "+ jsonTarget.watchedTarget);
+			Logger.info(" Watched is "+merged);
+			if( !dbWatched && jsonTarget.isWatched() ) {
+				merged.watchedTarget.target = merged;
+				Ebean.save(merged.watchedTarget);
+			}
+			// Or remove/update:
+			if( dbWatched ) {
+				if( ! jsonTarget.isWatched() ) {
+					if( dbWatchedTarget.documents != null )
+						Ebean.delete(dbWatchedTarget.documents);
+					if( dbWatchedTarget.journalTitles != null)
+						Ebean.delete(dbWatchedTarget.journalTitles);
+					Ebean.delete(dbWatchedTarget);
+					merged.watchedTarget = null;
+				} else {
+					Ebean.update(merged.watchedTarget);
+				}
+			}
 			
 			merged.runChecks();
 			merged.update();
@@ -239,7 +264,7 @@ public class APIController extends Controller {
 	    	} else {
 				ObjectMapper objectMapper = new ObjectMapper();
 				objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
-				Logger.debug("node: " + node);
+				Logger.debug("Parsing JSON: " + node);
 	    	    // process Targets here
 				Target target = objectMapper.readValue(node.toString(), Target.class);
 				

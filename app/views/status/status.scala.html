@@ -11,7 +11,11 @@
 	<h2>Status</h2>
 	The database
 	<ul>
-		<li>containts FAST Subjects @check(StatusController.areThereFastSubjects())</li>
+		<li>contains FAST Subjects @check(StatusController.areThereFastSubjects())
+		  @if( ! StatusController.areThereFastSubjects() ) {
+		    <a href="@routes.StatusController.addFastDefaultSubjects()">Click here to add the default FAST subjects</a>
+		  }
+		</li>
 	</ul>
 	pdf2htmlEX
 	<ul>

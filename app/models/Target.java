@@ -52,6 +52,7 @@ import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -480,19 +481,16 @@ public class Target extends Model {
 	@JsonProperty
 	private String selector;
 	
-	@JsonIgnore
 	@OneToOne(mappedBy="target", cascade={CascadeType.REFRESH,CascadeType.REMOVE})
 	public WatchedTarget watchedTarget;
 
 	@Transient
 	private OverallLicenseStatus overallLicenseStatus;
 	
-	@JsonIgnore
 	public boolean isWatched() {
 		return watchedTarget != null;
 	}
 	
-	@JsonIgnore
 	public boolean hasDocuments() {
 		return isWatched() && !watchedTarget.documents.isEmpty();
 	}
@@ -2439,7 +2437,8 @@ public class Target extends Model {
 				+ ", field_notes=" + field_notes + ", title=" + title
 				+ ", edit_url=" + edit_url + ", language=" + language
 				+ ", revision=" + revision + ", id=" + id
-				+ ", url=" + url + "]";
+				+ ", url=" + url + ", watched=" + isWatched() 
+				+ ", watchedTarget=" + watchedTarget + "]";
 	}
 	
 }

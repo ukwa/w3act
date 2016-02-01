@@ -16,6 +16,7 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.DocumentFilter;
+import models.Target;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -74,6 +75,7 @@ public class WatchedTargets extends AbstractController {
 	}
     
     public static Result crawl(Long id, boolean crawlWayback) {
+    	Logger.debug("Calling crawl "+id+" crawlWayback="+crawlWayback);
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
     	if (crawlWayback) {
 	    	List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
@@ -89,6 +91,7 @@ public class WatchedTargets extends AbstractController {
     }
     
     public static Result crawlAll() {
+    	Logger.debug("Calling crawlAll");
     	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
     	Akka.system().scheduler().scheduleOnce(
 				Duration.create(0, TimeUnit.MILLISECONDS),
@@ -101,6 +104,7 @@ public class WatchedTargets extends AbstractController {
     }
     
     public static Result convert() {
+    	Logger.debug("Calling convert");
     	CallableSql cs = Ebean.createCallableSql("{call many_documents_alert()}");
     	cs.addModification("alert", true, false, false);
     	Ebean.execute(cs);
@@ -179,4 +183,5 @@ public class WatchedTargets extends AbstractController {
     	filterData.put("children", "" + children);
     	return Form.form().bind(filterData);
     }
+
 }

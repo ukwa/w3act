@@ -95,4 +95,16 @@ public class WatchedTarget extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }
+	@Override
+	public String toString() {
+		Long target_id = null;
+		if( target != null ) target_id = target.id;
+		return "WatchedTarget [id=" + id + ", documents=" + documents
+				+ ", journalTitles=" + journalTitles + ", fastSubjects="
+				+ fastSubjects + ", documentUrlScheme=" + documentUrlScheme
+				+ ", archivistNotesWT=" + archivistNotesWT
+				+ ", waybackTimestamp=" + waybackTimestamp + ", loginPageUrl="
+				+ loginPageUrl + ", logoutUrl=" + logoutUrl + ", secretId="
+				+ secretId + ", target_id=" + target_id + "]";
+	}
 }
