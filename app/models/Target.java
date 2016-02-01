@@ -486,11 +486,17 @@ public class Target extends Model {
 
 	@Transient
 	private OverallLicenseStatus overallLicenseStatus;
-	
+
+	@JsonProperty
 	public boolean isWatched() {
 		return watchedTarget != null;
 	}
 	
+	@JsonIgnore
+	public void setWatched( boolean watched ) {
+	}
+	
+	@JsonIgnore
 	public boolean hasDocuments() {
 		return isWatched() && !watchedTarget.documents.isEmpty();
 	}
