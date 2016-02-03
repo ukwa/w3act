@@ -178,8 +178,6 @@ GET		/services/save/:id					controllers.Services.save(id: Long)
 GET		/alerts/list						controllers.Alerts.list(p:Int ?= 0, s ?= "createdAt", o ?= "desc")
 POST	/alerts/action						controllers.Alerts.action()
 
-GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
-
 GET     /flags                              controllers.FlagController.index()
 GET     /flags/list							controllers.FlagController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET    	/flags/search                       controllers.FlagController.search()
@@ -408,3 +406,7 @@ POST    /reset/:token               		controllers.ResetController.confirmPasswor
 # Authenticate and proxy requests to the QA Wayback:
 GET		/wayback/					  		controllers.WaybackController.waybackRoot()
 GET		/wayback/*url						controllers.WaybackController.wayback(url)
+
+# Authenticated access to internal services:
+GET     /site/*url                      controllers.WSProxy.passthrough(url)
+

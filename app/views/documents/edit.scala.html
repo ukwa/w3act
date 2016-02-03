@@ -161,6 +161,8 @@
 		var previousSelection="";
 		
 		$(function() {
+            $('body').css('cursor', 'wait');
+            
 			toggleVisibility();
 			defineDefaultButton();
 			@if(editable) {
@@ -180,7 +182,9 @@
 						previousSelection = selectionText;
 					};
 			}
+			
 		});
+		
 	</script>
 }
 @styles = {
@@ -358,11 +362,19 @@
 					</div>
 				</div>
 			</div>
-			<iframe id="document_view" src="@{
-					if(document.status == Document.Status.SUBMITTED) routes.Helper.passthrough(document.actualSourceUrl,"")
-					else routes.Documents.html(document.htmlFilename)
-				}"
+			
+			<div id="document_load_indicator" style="width:100%; text-align: center; margin-top: -20px;" >
+                <img src="@routes.Assets.at("images/loading.gif")">
+			</div>
+			<iframe id="document_view" src="@routes.WSProxy.passthrough(document.pdf2htmlUrl())"
 				width="100%" height="768"></iframe>
+			<script type="text/javascript">
+		      $('#document_view').load( function () {
+                $('body').css('cursor', 'initial');
+                $('#document_load_indicator').hide();
+              });
+			</script>
+			
 		</div>
 	}
 }

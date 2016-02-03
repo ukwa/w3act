@@ -28,6 +28,7 @@ import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
 import models.Portal;
+import models.Target;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -321,9 +322,18 @@ public class Documents extends AbstractController {
 		List<Document> documents = new ArrayList<>();
 		for (JsonNode objNode : json) {
 			Document document = new Document();
-			Long watchedTargetId = objNode.get("id_watched_target").longValue();
-			document.watchedTarget = WatchedTarget.find.byId(watchedTargetId);
+			Long targetId = objNode.get("target_id").longValue();
+			Logger.info("TargetID: "+targetId);
+			Target target = Target.find.byId(targetId);
+			if( target == null ) {
+				badRequest("No Target with ID "+targetId);
+				continue;
+			}
+			Logger.info("Target: "+target.title);
+			document.watchedTarget = target.watchedTarget;
+			Logger.info("WatchedTarget: "+document.watchedTarget);
 			document.waybackTimestamp = objNode.get("wayback_timestamp").textValue();
+			Logger.info("Comparing "+document.watchedTarget.waybackTimestamp+" to "+document.waybackTimestamp);
 			if (document.watchedTarget.waybackTimestamp == null ||
 					document.waybackTimestamp.compareTo(document.watchedTarget.waybackTimestamp) > 0) {
 				document.watchedTarget.waybackTimestamp = document.waybackTimestamp;
@@ -338,12 +348,26 @@ public class Documents extends AbstractController {
 				document.title = document.filename;
 			document.size = objNode.get("size").longValue();
 			document.setStatus(Document.Status.NEW);
-			document.fastSubjects = WatchedTarget.find.byId(watchedTargetId).fastSubjects;
-			Logger.debug("add document " + document.filename);
-			documents.add(document);
+			document.fastSubjects = target.watchedTarget.fastSubjects;
+			if( documentAlreadyKnown(document)) {
+				Logger.warn("This Document is already known to the system.");
+				continue;
+			} else {
+				Logger.debug("attempting to add document " + document);
+				documents.add(document);
+			}
 		}
 		Promise.promise(new ExtractFunction(documents));
 		return ok("Documents added");
+	}
+	
+	private static boolean documentAlreadyKnown(Document document) {
+		String urlWithoutSchema = document.documentUrl.replaceFirst("^.*://", "");
+		if (Document.find.where().eq("regexp_replace(document_url,'^.*://','')", urlWithoutSchema).findRowCount() == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	private static class ExtractFunction implements Function0<Boolean> {
@@ -355,6 +379,7 @@ public class Documents extends AbstractController {
 		
 		@Override
 		public Boolean apply() {
+			Logger.info("Extracting from "+documents.size()+" documents.");
 			for (Document document : filterNew(documents)) {
 				Crawler crawler = new Crawler(true);
 				crawler.extractMetadata(document);
@@ -367,8 +392,7 @@ public class Documents extends AbstractController {
 	public static List<Document> filterNew(List<Document> documentList) {
 		List<Document> newDocumentList = new ArrayList<>();
 		for (Document document : documentList) {
-			String urlWithoutSchema = document.documentUrl.replaceFirst("^.*://", "");
-			if (Document.find.where().eq("regexp_replace(document_url,'^.*://','')", urlWithoutSchema).findRowCount() == 0)
+			if (! documentAlreadyKnown(document))
 				newDocumentList.add(document);
 		}
 		return newDocumentList;
@@ -382,7 +406,7 @@ public class Documents extends AbstractController {
 		
 		builder.append(
 				"id" + Const.CSV_SEPARATOR +
-				"id_watched_target" + Const.CSV_SEPARATOR +
+				"id_target" + Const.CSV_SEPARATOR +
 				"title" + Const.CSV_SEPARATOR +
 				"landing_page_url" + Const.CSV_SEPARATOR +
 				"document_url" + Const.CSV_SEPARATOR +
@@ -392,7 +416,7 @@ public class Documents extends AbstractController {
 		for (Document document : query.findList()) {
 			builder.append(
 					document.id + Const.CSV_SEPARATOR +
-					document.watchedTarget.id + Const.CSV_SEPARATOR +
+					document.watchedTarget.target.id + Const.CSV_SEPARATOR +
 					document.title + Const.CSV_SEPARATOR +
 					document.landingPageUrl + Const.CSV_SEPARATOR +
 					document.documentUrl + Const.CSV_SEPARATOR +

@@ -1,5 +1,7 @@
 package models;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -193,6 +195,14 @@ public class Document extends Model {
 	public String actualSourceUrl() {
 		return waybackTimestamp != null ? waybackUrl() : documentUrl;
 	}
+
+	public static String getPdf2HtmlEndpoint() {
+		return Play.application().configuration().getString("application.pdftohtmlex.url");
+	}
+	
+	public String pdf2htmlUrl() throws UnsupportedEncodingException {
+		return getPdf2HtmlEndpoint()+URLEncoder.encode(this.waybackUrl(), "UTF-8");
+	}
 	
 	public enum Type {
     	BOOK ("Book"),
@@ -218,5 +228,23 @@ public class Document extends Model {
 		IGNORED,
 		DELETED;
     }
+
+	@Override
+	public String toString() {
+		return "Document [id=" + id + ", waybackTimestamp=" + waybackTimestamp
+				+ ", status=" + status + ", currentStatusSet="
+				+ currentStatusSet + ", book=" + book + ", journal=" + journal
+				+ ", portals=" + portals + ", fastSubjects=" + fastSubjects
+				+ ", landingPageUrl=" + landingPageUrl + ", documentUrl="
+				+ documentUrl + ", sha256Hash=" + sha256Hash + ", ctpHash="
+				+ ctpHash + ", title=" + title + ", doi=" + doi + ", ark="
+				+ ark + ", publicationDate=" + publicationDate
+				+ ", publicationYear=" + publicationYear + ", filename="
+				+ filename + ", size=" + size + ", priorityCataloguing="
+				+ priorityCataloguing + ", type=" + type + ", author1Fn="
+				+ author1Fn + ", author1Ln=" + author1Ln + ", author2Fn="
+				+ author2Fn + ", author2Ln=" + author2Ln + ", author3Fn="
+				+ author3Fn + ", author3Ln=" + author3Ln + "]";
+	}
     
 }
