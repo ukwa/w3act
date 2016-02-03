@@ -56,6 +56,9 @@ exchange_name=w3actexchange
 application.wayback.url="http://opera.bl.uk:8080/wayback/"
 application.wayback.query.path="/xmlquery.jsp?url="
 
+# Location of pdftohtmlex web service:
+application.pdftohtmlex.url="http://192.168.99.100:5000/convert?url="
+
 #Pii endpoint
 #pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"
 

@@ -248,7 +248,7 @@
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
 					} else {
-                        <a data-toggle="tooltip" class="pull-left tooltipLink" data-original-title="This Target does not have appropriate permissions to allow the content to be submitted to this portal.">
+                        <a data-toggle="tooltip" class="pull-right tooltipLink" data-original-title="This Target does not have appropriate permissions to allow the content to be submitted to this portal.">
                            <span class="glyphicon glyphicon-warning-sign"></span>
                         </a>
 						@checkbox2(form("portal_" + portal.id), editable,'_label -> portal.title, 'disabled -> "disabled")(
