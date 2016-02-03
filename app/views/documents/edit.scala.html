@@ -248,6 +248,9 @@
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
 					} else {
+                        <a data-toggle="tooltip" class="pull-left tooltipLink" data-original-title="This Target does not have appropriate permissions to allow the content to be submitted to this portal.">
+                           <span class="glyphicon glyphicon-warning-sign"></span>
+                        </a>
 						@checkbox2(form("portal_" + portal.id), editable,'_label -> portal.title, 'disabled -> "disabled")(
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
@@ -369,6 +372,7 @@
 			<iframe id="document_view" src="@routes.WSProxy.passthrough(document.pdf2htmlUrl())"
 				width="100%" height="768"></iframe>
 			<script type="text/javascript">
+  			  $("a.tooltipLink").tooltip();
 		      $('#document_view').load( function () {
                 $('body').css('cursor', 'initial');
                 $('#document_load_indicator').hide();

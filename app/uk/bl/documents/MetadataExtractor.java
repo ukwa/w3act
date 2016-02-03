@@ -1,4 +1,4 @@
-package uk.bl.crawling;
+package uk.bl.documents;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 import org.jsoup.select.Elements;
 
+import play.Logger;
 import models.Document;
 
 public class MetadataExtractor {
@@ -57,6 +58,8 @@ public class MetadataExtractor {
 					}
 				}
 			}
+		} else {
+			Logger.error("No "+nameSelector+" found!");
 		}
 	}
 	

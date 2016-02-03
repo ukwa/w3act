@@ -54,6 +54,7 @@ import org.w3c.dom.NodeList;
 import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
 import uk.bl.crawling.Crawler;
+import uk.bl.documents.DocumentAnalyser;
 import views.html.documents.compare;
 import views.html.documents.edit;
 import views.html.documents.list;
@@ -354,10 +355,10 @@ public class Documents extends AbstractController {
 				continue;
 			} else {
 				Logger.debug("attempting to add document " + document);
-				documents.add(document);
 			}
+			documents.add(document);
 		}
-		Promise.promise(new ExtractFunction(documents));
+		Promise.promise(new DocumentAnalyser.ExtractFunction(documents));
 		return ok("Documents added");
 	}
 	
@@ -366,25 +367,6 @@ public class Documents extends AbstractController {
 		if (Document.find.where().eq("regexp_replace(document_url,'^.*://','')", urlWithoutSchema).findRowCount() == 0) {
 			return false;
 		} else {
-			return true;
-		}
-	}
-	
-	private static class ExtractFunction implements Function0<Boolean> {
-		
-		public List<Document> documents;
-		public ExtractFunction(List<Document> documents) {
-			this.documents = documents;
-		}
-		
-		@Override
-		public Boolean apply() {
-			Logger.info("Extracting from "+documents.size()+" documents.");
-			for (Document document : filterNew(documents)) {
-				Crawler crawler = new Crawler(true);
-				crawler.extractMetadata(document);
-				Ebean.save(document);
-			}
 			return true;
 		}
 	}

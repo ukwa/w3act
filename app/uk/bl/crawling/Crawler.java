@@ -32,6 +32,7 @@ import play.libs.XPath;
 import play.libs.ws.WS;
 import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
+import uk.bl.documents.MetadataExtractor;
 
 public class Crawler {
 	private Set<String> knownSites;
@@ -194,7 +195,8 @@ public class Crawler {
 			String domain = new URI(document.landingPageUrl).getHost();
 			if (metadataExtractors.containsKey(domain)) {
 				MetadataExtractor metadataExtractor = metadataExtractors.get(domain);
-				org.jsoup.nodes.Document doc = Jsoup.connect(document.landingPageUrl).get();
+				String wbu = waybackReplayUrl(document.landingPageUrl, document.waybackTimestamp);
+				org.jsoup.nodes.Document doc = Jsoup.connect(wbu).get();
 				metadataExtractor.extract(document, doc);
 			}
 		} catch (IOException | URISyntaxException e) {
