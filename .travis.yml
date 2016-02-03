@@ -12,7 +12,7 @@ jdk:
 sbt_args: -XX:+CMSClassUnloadingEnabled
 
 script:
-- sbt -Dconfig.file=conf/dev.conf test
+- sbt -Dconfig.file=conf/travis.conf test
 
 notifications:
   slack: ukwebarchive:oqbYOo0bd09bnSXn4hGR1aUk
