@@ -3,6 +3,10 @@
  */
 package uk.bl.documents;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -52,15 +56,11 @@ public class DocumentAnalyser {
 				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=author]"));
 		metadataExtractors.put("www.gov.uk", new MetadataExtractor("h1", null, null));
 	}
-	
+
 	public void extractMetadata(Document document) {
-		// Get the Wayback URL:
-		String wbu = waybackReplayUrl(document.documentUrl, document.waybackTimestamp);
-		
 		// Get the binary hash
 		try {
-			URL wburl = new URL(wbu);
-			byte[] digest = DigestUtils.sha256(wburl.openStream());
+			byte[] digest = DigestUtils.sha256(getWaybackInputStream(document.documentUrl, document.waybackTimestamp));
 			document.sha256Hash = String.format("%064x", new java.math.BigInteger(1, digest));
 			Logger.info("Recorded sha256Hash "+document.sha256Hash+" for "+document.documentUrl);
 		} catch (Exception e) {
@@ -83,9 +83,8 @@ public class DocumentAnalyser {
 			AutoDetectParser parser = new AutoDetectParser();
 			Metadata metadata = new Metadata();
 			BodyContentHandler handler = new BodyContentHandler();
-			URL wburl = new URL(wbu);
 			try {
-				parser.parse(wburl.openStream(), handler, metadata);
+				parser.parse(getWaybackInputStream(document.documentUrl, document.waybackTimestamp), handler, metadata);
 			} catch( Exception e) {
 				Logger.error("Exception while running Tika on "+document.documentUrl);
 			}
@@ -127,6 +126,16 @@ public class DocumentAnalyser {
 			document.ctpHash = fh.getBlocksize()+":"+fh.getHash()+":"+fh.getHash2()+":\""+document.filename+"\"";
 			Logger.info("Recorded ctpHash "+document.ctpHash+" for "+document.documentUrl);
 		}
+	}
+	
+	private InputStream getWaybackInputStream(String url, String timestamp ) throws IOException {
+		String wbu = waybackReplayUrl(url, timestamp);
+		URL wburl = new URL(wbu);
+		HttpURLConnection conn = (HttpURLConnection)wburl.openConnection();
+		// Do NOT follow redirects, as we want precisely the right timestamp:
+		HttpURLConnection.setFollowRedirects(false);
+		// Get the input stream:
+		return conn.getInputStream();
 	}
 	
 	private String waybackReplayUrl(String url, String timestamp) {

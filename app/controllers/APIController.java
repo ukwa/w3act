@@ -170,8 +170,13 @@ public class APIController extends Controller {
 			if (jsonTarget.getField_crawl_start_date() != null) {
 				merged.crawlStartDate = Utils.INSTANCE.getDateFromSeconds(jsonTarget.getField_crawl_start_date());
 			}
+			Logger.debug("Dealing with field_crawl_end_date: "+ jsonTarget.getField_crawl_end_date());
 			if (jsonTarget.getField_crawl_end_date() != null) {
-				merged.crawlEndDate = Utils.INSTANCE.getDateFromSeconds(jsonTarget.getField_crawl_end_date());
+				if( jsonTarget.getField_crawl_end_date() == 0 ) {
+					merged.crawlEndDate = null;
+				} else {
+					merged.crawlEndDate = Utils.INSTANCE.getDateFromSeconds(jsonTarget.getField_crawl_end_date());
+				}
 			}
 			
 			if (StringUtils.isNotBlank(jsonTarget.getSelector())) {
