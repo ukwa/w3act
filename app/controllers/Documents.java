@@ -327,8 +327,7 @@ public class Documents extends AbstractController {
 			Logger.info("TargetID: "+targetId);
 			Target target = Target.find.byId(targetId);
 			if( target == null ) {
-				badRequest("No Target with ID "+targetId);
-				continue;
+				return badRequest("No Target with ID "+targetId);
 			}
 			Logger.info("Target: "+target.title);
 			document.watchedTarget = target.watchedTarget;
