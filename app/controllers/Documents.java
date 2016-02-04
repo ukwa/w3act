@@ -53,7 +53,6 @@ import org.w3c.dom.NodeList;
 
 import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
-import uk.bl.crawling.Crawler;
 import uk.bl.documents.DocumentAnalyser;
 import views.html.documents.compare;
 import views.html.documents.edit;

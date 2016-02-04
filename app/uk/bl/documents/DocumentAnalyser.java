@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Alert;
 import models.Document;
+import models.WatchedTarget;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +32,9 @@ import play.libs.F.Function0;
 
 import com.avaje.ebean.Ebean;
 
+import controllers.Documents;
 import controllers.WaybackController;
+import eu.scape_project.bitwiser.utils.ExtendedFuzzyHash;
 import eu.scape_project.bitwiser.utils.FuzzyHash;
 import eu.scape_project.bitwiser.utils.SSDeep;
 
@@ -70,15 +74,8 @@ public class DocumentAnalyser {
 		
 		// Extended metadata and text:
 		String text = null;
+		Logger.info("Running document parser process...");
 		try {
-			Logger.info("Running extraction process...");
-			String domain = new URI(document.landingPageUrl).getHost();
-			if (metadataExtractors.containsKey(domain)) {
-				MetadataExtractor metadataExtractor = metadataExtractors.get(domain);
-				String wblpu = waybackReplayUrl(document.landingPageUrl, document.waybackTimestamp);
-				org.jsoup.nodes.Document doc = Jsoup.connect(wblpu).get();
-				metadataExtractor.extract(document, doc);
-			}
 			// Use Tika on it:
 			AutoDetectParser parser = new AutoDetectParser();
 			Metadata metadata = new Metadata();
@@ -109,9 +106,24 @@ public class DocumentAnalyser {
 					StringUtils.isNotBlank(metadata.get(Metadata.AUTHOR)) ) {
 				document.author1Fn = metadata.get(Metadata.AUTHOR);
 			}
-			// Ouput all for debugging:
+			// Output all for debugging:
 			for( String k : metadata.names()) {
 				Logger.debug("Found "+k+" -> "+metadata.get(k));
+			}
+		} catch (Exception e) {
+			Logger.error("Failure while parsing "+document.documentUrl);
+			e.printStackTrace();
+		}
+		
+		// Now override that with custom parser results, if there is one:
+		Logger.info("Running extraction process...");
+		try {
+			String domain = new URI(document.landingPageUrl).getHost();
+			if (metadataExtractors.containsKey(domain)) {
+				MetadataExtractor metadataExtractor = metadataExtractors.get(domain);
+				String wblpu = waybackReplayUrl(document.landingPageUrl, document.waybackTimestamp);
+				org.jsoup.nodes.Document doc = Jsoup.connect(wblpu).get();
+				metadataExtractor.extract(document, doc);
 			}
 		} catch (Exception e) {
 			Logger.error("Failure while parsing "+document.documentUrl);
@@ -123,7 +135,7 @@ public class DocumentAnalyser {
 		if( StringUtils.isNoneBlank(text)) {
 			SSDeep ssd = new SSDeep();
 			FuzzyHash fh = ssd.fuzzy_hash_buf(text.getBytes());
-			document.ctpHash = fh.getBlocksize()+":"+fh.getHash()+":"+fh.getHash2()+":\""+document.filename+"\"";
+			document.ctpHash = fh.toString();
 			Logger.info("Recorded ctpHash "+document.ctpHash+" for "+document.documentUrl);
 		}
 	}
@@ -142,8 +154,6 @@ public class DocumentAnalyser {
 		return waybackUrl + "replay?url=" + url + "&date=" + timestamp;
 	}
 	
-
-	
 	/**
 	 * 
 	 * @author andy
@@ -158,14 +168,31 @@ public class DocumentAnalyser {
 		
 		@Override
 		public Boolean apply() {
-			Logger.info("Extracting from "+documents.size()+" documents.");
+			Logger.info("Extracting from "+documents.size()+" documents...");
 			for (Document document : documents) {
 				DocumentAnalyser da = new DocumentAnalyser();
 				da.extractMetadata(document);
 				Logger.info("Saving updated document metadata.");
 				Ebean.save(document);
 			}
+			Logger.info("Checking similarity against all documents for each WatchedTarget...");
+			for (Document doc1 : documents) {
+				for (Document doc2 : doc1.watchedTarget.documents ) {
+					double similarity = ExtendedFuzzyHash.compare(doc1.ctpHash, doc2.ctpHash);
+					if( similarity >= 90 ) {
+						Alert alert = new Alert();
+						alert.user = doc1.watchedTarget.target.authorUser;
+						alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
+								Alert.link(doc2) + " with " + similarity + "% " +
+								"(" + Alert.compareLink(doc1, doc2) + ")";
+						Ebean.save(alert);
+						
+					}
+				}
+			}
 			return true;
 		}
 	}
+
+
 }
