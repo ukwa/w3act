@@ -332,8 +332,9 @@ public class Documents extends AbstractController {
 				if( document != null) {
 					documents.add(document);
 				}
-			} catch( Exception e ) {
-				return badRequest(e.getMessage());				
+			} catch( Exception ex ) {
+				ex.printStackTrace();
+				return badRequest("Problem during import: "+ex);
 			}
 		}
 		Promise.promise(new DocumentAnalyser.ExtractFunction(documents));
@@ -379,6 +380,7 @@ public class Documents extends AbstractController {
 		}
 		// Publisher:
 		if( objNode.get("publisher") != null) {
+			if( document.book == null) document.book = new Book(document);
 			document.book.publisher = objNode.get("publisher").textValue();
 		}
 		// Publication Date (in yyyy-MM-dd format):
@@ -420,10 +422,12 @@ public class Documents extends AbstractController {
 		}
 		// ISBN
 		if( objNode.get("isbn") != null ) {
+			if( document.book == null) document.book = new Book(document);
 			document.book.isbn = objNode.get("isbn").textValue();
 		}
 		// DOI
 		if( objNode.get("doi") != null ) {
+			if( document.book == null) document.book = new Book(document);
 			document.doi = objNode.get("doi").textValue();
 		}
 		

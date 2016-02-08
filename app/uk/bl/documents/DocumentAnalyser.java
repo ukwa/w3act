@@ -21,6 +21,7 @@ import models.WatchedTarget;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.metadata.DublinCore;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
@@ -76,6 +77,7 @@ public class DocumentAnalyser {
 				parser.parse(getWaybackInputStream(document.documentUrl, document.waybackTimestamp), handler, metadata);
 			} catch( Exception e) {
 				Logger.error("Exception while running Tika on "+document.documentUrl);
+				e.printStackTrace();
 			}
 			// Pull in the text:
 			text = handler.toString();
@@ -95,8 +97,10 @@ public class DocumentAnalyser {
 				}
 			}
 			if( StringUtils.isBlank(document.author1Fn) && 
-					StringUtils.isNotBlank(metadata.get(Metadata.AUTHOR)) ) {
-				document.author1Fn = metadata.get(Metadata.AUTHOR);
+					StringUtils.isNotBlank(metadata.get(DublinCore.CREATOR)) ) {
+				String[] authsplit = metadata.get(DublinCore.CREATOR).trim().split("\\s+", 2);
+				document.author1Fn = authsplit[0];
+				document.author1Ln = authsplit[1];
 			}
 			// Output all for debugging:
 			for( String k : metadata.names()) {
@@ -151,6 +155,9 @@ public class DocumentAnalyser {
 				da.extractMetadata(document);
 				Logger.info("Saving updated document metadata.");
 				Ebean.save(document);
+				if( document.book != null ) {
+					Ebean.save(document.book);			
+				}
 			}
 			Logger.info("Checking similarity against all documents for each WatchedTarget...");
 			for (Document doc1 : documents) {
