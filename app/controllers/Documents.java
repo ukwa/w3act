@@ -379,7 +379,7 @@ public class Documents extends AbstractController {
 		}
 		// Publisher:
 		if( objNode.get("publisher") != null) {
-			document.book.publisher = objNode.get("publisher").textValue();				
+			document.book.publisher = objNode.get("publisher").textValue();
 		}
 		// Publication Date (in yyyy-MM-dd format):
 		if( objNode.get("publication_date") != null ) {
@@ -390,7 +390,7 @@ public class Documents extends AbstractController {
 				calendar.setTime(document.publicationDate);
 				document.publicationYear = calendar.get(Calendar.YEAR);
 			} catch( ParseException e ) {
-				throw new Exception("Could not parse publication date (should be yyy-MM-dd format"+ymd);
+				throw new Exception("Could not parse publication date (should be yyyy-MM-dd format"+ymd);
 			}
 			
 		}
