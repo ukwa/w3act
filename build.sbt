@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "org.mindrot" % "jbcrypt" % "0.3m",
   "com.rabbitmq" % "amqp-client" % "3.3.1",
   "org.jsoup" % "jsoup" % "1.8.1",
-  "uk.bl.wa.bitwiser" % "bitwiser" % "0.0.2",
+  "eu.scape-project.bitwiser" % "bitwiser" % "1.0.0",
   "info.cukes" % "cucumber-java" % "1.2.2" % "test",
   "info.cukes" % "cucumber-junit" % "1.2.2" % "test",
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15" % "test"

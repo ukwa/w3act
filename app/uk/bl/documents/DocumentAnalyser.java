@@ -34,7 +34,6 @@ import com.avaje.ebean.Ebean;
 
 import controllers.Documents;
 import controllers.WaybackController;
-import eu.scape_project.bitwiser.utils.ExtendedFuzzyHash;
 import eu.scape_project.bitwiser.utils.FuzzyHash;
 import eu.scape_project.bitwiser.utils.SSDeep;
 
@@ -51,14 +50,7 @@ public class DocumentAnalyser {
 
 	private static String waybackUrl = WaybackController.getWaybackEndpoint();
 	
-	private Map<String, MetadataExtractor> metadataExtractors;
-	
 	public DocumentAnalyser() {
-		metadataExtractors = new HashMap<>();
-		metadataExtractors.put("www.ifs.org.uk", new MetadataExtractor("*[itemtype=http://schema.org/CreativeWork] *[itemprop=name]",
-				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=datePublished]",
-				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=author]"));
-		metadataExtractors.put("www.gov.uk", new MetadataExtractor("h1", null, null));
 	}
 
 	public void extractMetadata(Document document) {
@@ -115,26 +107,11 @@ public class DocumentAnalyser {
 			e.printStackTrace();
 		}
 		
-		// Now override that with custom parser results, if there is one:
-		Logger.info("Running extraction process...");
-		try {
-			String domain = new URI(document.landingPageUrl).getHost();
-			if (metadataExtractors.containsKey(domain)) {
-				MetadataExtractor metadataExtractor = metadataExtractors.get(domain);
-				String wblpu = waybackReplayUrl(document.landingPageUrl, document.waybackTimestamp);
-				org.jsoup.nodes.Document doc = Jsoup.connect(wblpu).get();
-				metadataExtractor.extract(document, doc);
-			}
-		} catch (Exception e) {
-			Logger.error("Failure while parsing "+document.documentUrl);
-			e.printStackTrace();
-		}
-		
 		// Use the text from Tika to make a fuzzy hash:
 		Logger.info("Attempting ssdeep hash generation...");
 		if( StringUtils.isNoneBlank(text)) {
 			SSDeep ssd = new SSDeep();
-			FuzzyHash fh = ssd.fuzzy_hash_buf(text.getBytes());
+			FuzzyHash fh = ssd.fuzzyHashBuf(text.getBytes());
 			document.ctpHash = fh.toString();
 			Logger.info("Recorded ctpHash "+document.ctpHash+" for "+document.documentUrl);
 		}
@@ -178,7 +155,7 @@ public class DocumentAnalyser {
 			Logger.info("Checking similarity against all documents for each WatchedTarget...");
 			for (Document doc1 : documents) {
 				for (Document doc2 : doc1.watchedTarget.documents ) {
-					double similarity = ExtendedFuzzyHash.compare(doc1.ctpHash, doc2.ctpHash);
+					double similarity = FuzzyHash.compare(doc1.ctpHash, doc2.ctpHash);
 					if( similarity >= 90 ) {
 						Alert alert = new Alert();
 						alert.user = doc1.watchedTarget.target.authorUser;

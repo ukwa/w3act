@@ -75,6 +75,7 @@ public class WatchedTargets extends AbstractController {
 	}
     
     public static Result crawl(Long id, boolean crawlWayback) {
+    	/*
     	Logger.debug("Calling crawl "+id+" crawlWayback="+crawlWayback);
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
     	if (crawlWayback) {
@@ -88,9 +89,12 @@ public class WatchedTargets extends AbstractController {
     	}
     	
     	return redirect(routes.Documents.list(new DocumentFilter().withWatchedTarget(id), 0, "title", "asc", ""));
+    	*/
+    	return badRequest("No longer implemented.");
     }
     
     public static Result crawlAll() {
+    	/*
     	Logger.debug("Calling crawlAll");
     	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
     	Akka.system().scheduler().scheduleOnce(
@@ -101,9 +105,12 @@ public class WatchedTargets extends AbstractController {
 				null
     	);
     	return redirect(routes.ApplicationController.home());
+    	*/
+    	return badRequest("No longer implemented.");
     }
     
     public static Result convert() {
+    	/*
     	Logger.debug("Calling convert");
     	CallableSql cs = Ebean.createCallableSql("{call many_documents_alert()}");
     	cs.addModification("alert", true, false, false);
@@ -117,6 +124,8 @@ public class WatchedTargets extends AbstractController {
 				null
     	);
     	return redirect(routes.ApplicationController.home());
+    	*/
+    	return badRequest("No longer implemented.");
     }
     
     public static Result noDocuments(Long id) {
