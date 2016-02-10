@@ -120,7 +120,7 @@
 					</td>
 					<td><a href="@routes.UserController.view(watchedTarget.target.authorUser.id)">@watchedTarget.target.authorUser.name</a></td>
 					<td><a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(watchedTarget.id))">@watchedTarget.documents.size</a></td>
-					<td>@WatchedTargets.dayCount(watchedTarget.waybackTimestamp) days ago</td>
+					<td>@WatchedTargets.dayCount(watchedTarget.waybackTimestamp)</td>
 				</tr>
 			}
 			</tbody>

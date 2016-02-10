@@ -100,7 +100,9 @@ public class DocumentAnalyser {
 					StringUtils.isNotBlank(metadata.get(DublinCore.CREATOR)) ) {
 				String[] authsplit = metadata.get(DublinCore.CREATOR).trim().split("\\s+", 2);
 				document.author1Fn = authsplit[0];
-				document.author1Ln = authsplit[1];
+				if( authsplit.length > 1 ) {
+					document.author1Ln = authsplit[1];
+				}
 			}
 			// Output all for debugging:
 			for( String k : metadata.names()) {
@@ -162,15 +164,18 @@ public class DocumentAnalyser {
 			Logger.info("Checking similarity against all documents for each WatchedTarget...");
 			for (Document doc1 : documents) {
 				for (Document doc2 : doc1.watchedTarget.documents ) {
-					double similarity = FuzzyHash.compare(doc1.ctpHash, doc2.ctpHash);
-					if( similarity >= 90 ) {
-						Alert alert = new Alert();
-						alert.user = doc1.watchedTarget.target.authorUser;
-						alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
-								Alert.link(doc2) + " with " + similarity + "% " +
-								"(" + Alert.compareLink(doc1, doc2) + ")";
-						Ebean.save(alert);
-						
+					// Don't compare one with itself:
+					if( ! doc1.documentUrl.equals(doc2.documentUrl) ) {
+						double similarity = FuzzyHash.compare(doc1.ctpHash, doc2.ctpHash);
+						if( similarity >= 90 ) {
+							Alert alert = new Alert();
+							alert.user = doc1.watchedTarget.target.authorUser;
+							alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
+									Alert.link(doc2) + " with " + similarity + "% " +
+									"(" + Alert.compareLink(doc1, doc2) + ")";
+							Ebean.save(alert);
+							
+						}
 					}
 				}
 			}

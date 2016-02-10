@@ -173,13 +173,17 @@
 								</a>
 							}
 						</td>
-						<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
+                        @if(document.landingPageUrl.length()>=40){
+						<td><a href="@document.landingPageUrl" target="_blank" title="@document.landingPageUrl">...@document.landingPageUrl.substring(document.landingPageUrl.length()-40)</a></td>
+                        }else{
+                        <td><a href="@document.landingPageUrl" target="_blank" title="@document.landingPageUrl">@document.landingPageUrl</a></td>
+                        }
 						@if(document.documentUrl.length()>=40){
 						<td><a href="@document.documentUrl" target="_blank" title="@document.documentUrl">...@document.documentUrl.substring(document.documentUrl.length()-40)</a></td>
 						}else{
-						<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
+						<td><a href="@document.documentUrl" target="_blank" title="@document.documentUrl">@document.documentUrl</a></td>
 						}
-						<td>@WatchedTargets.dayCount(document.waybackTimestamp) days ago</td>
+						<td>@WatchedTargets.dayCount(document.waybackTimestamp)</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<td>
 								@if(document.isEditableFor(user)) {

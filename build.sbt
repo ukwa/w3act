@@ -25,6 +25,7 @@ libraryDependencies ++= Seq(
   "com.rabbitmq" % "amqp-client" % "3.3.1",
   "org.jsoup" % "jsoup" % "1.8.1",
   "eu.scape-project.bitwiser" % "bitwiser" % "1.0.0",
+  "com.github.kevinsawicki" % "timeago" % "1.0.1",
   "info.cukes" % "cucumber-java" % "1.2.2" % "test",
   "info.cukes" % "cucumber-junit" % "1.2.2" % "test",
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15" % "test"

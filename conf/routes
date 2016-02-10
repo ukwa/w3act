@@ -130,7 +130,7 @@ POST    /tags	                          	controllers.TagController.save()
 POST    /tags/:id	                        controllers.TagController.update(id:Long)
 
 GET		/overview/watchedtargets			controllers.WatchedTargets.overview(p:Int ?= 0, s ?= "target.title", o ?= "asc")
-GET		/overview/documents					controllers.Documents.overview(p:Int ?= 0, s ?= "title", o ?= "asc")
+GET		/overview/documents					controllers.Documents.overview(p:Int ?= 0, s ?= "waybackTimestamp", o ?= "desc")
 
 GET		/fastsubjects/list					controllers.FastSubjects.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET		/fastsubjects/new					controllers.FastSubjects.newForm()
@@ -140,7 +140,7 @@ POST	/fastsubjects						controllers.FastSubjects.save()
 
 GET    	/documents/filterbyjson/:title		controllers.Documents.filterByJson(title)
 GET		/documents/unsaved					controllers.Documents.continueEdit()
-GET     /documents/list						controllers.Documents.list(filter: models.DocumentFilter ?= new models.DocumentFilter(), p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET     /documents/list						controllers.Documents.list(filter: models.DocumentFilter ?= new models.DocumentFilter(), p:Int ?= 0, s ?= "waybackTimestamp", o ?= "desc", f ?= "")
 GET		/documents/ignoreall				controllers.Documents.ignoreAll(filter: models.DocumentFilter, f, filters: Boolean)
 GET		/documents/export					controllers.Documents.export(filter: models.DocumentFilter, s, o, f)
 GET     /documents/compare/$id1<[0-9]+>..$id2<[0-9]+>	controllers.Documents.compare(id1: Long, id2: Long)
