@@ -129,7 +129,7 @@
 		@pagination(currentPage, link)
 		
 		@if(!filters) {
-			@helper.form(routes.TargetController.list()) {
+			@helper.form(routes.TargetController.lookup()) {
 				<h3>New Target</h3>
 				<input type="hidden" name="s" value="title">
 				<div class="row padding-10">

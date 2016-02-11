@@ -1604,8 +1604,12 @@ public class TargetController extends AbstractController {
         }
 
         // The watchedTarget is not cascaded automatically, so we handle it here:
-        boolean watched = getFormParam("watched") != null;
-        Logger.info("WATCHED status is "+watched);
+        String watchedString = getFormParam("watched");
+        boolean watched = false;
+        if( watchedString != null ) {
+        	watched = Boolean.parseBoolean(watchedString);
+        }
+        Logger.info("WATCHED status is "+watched+ " from "+ watchedString);
         if( original != null ) {
         	if (!watched && original.isWatched()) {
         		Ebean.delete(original.watchedTarget.documents);
