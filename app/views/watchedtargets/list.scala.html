@@ -111,7 +111,11 @@
 					<td>
 						@if(watchedTarget.target.fieldUrls != null) {
 							@for(fieldUrl <- watchedTarget.target.fieldUrls) {
-								<a href="@fieldUrl.url" title="@fieldUrl.url" target="_blank">...@fieldUrl.url.substring(fieldUrl.url.length-40)</a><br>
+							    @if( fieldUrl.url.length > 40 ) {
+								    <a href="@fieldUrl.url" title="@fieldUrl.url" target="_blank">...@fieldUrl.url.substring(fieldUrl.url.length-40)</a><br>
+								} else {
+                                    <a href="@fieldUrl.url" title="@fieldUrl.url" target="_blank">@fieldUrl.url</a><br>
+								}
 							}
 						} else {
 							N/A
