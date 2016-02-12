@@ -124,18 +124,17 @@
 		
 		@pagination
     
-		<table class="table table-hover">
+		<table class="table table-hover tablesorter">
 			<thead>
 				<tr>
-					@header("title", "Title")
-					@header("organisation", "Organisation")
+                    @header("title", "Title")
+                    @header("seeds", "Seeds")
 					<th>Crawled URL(s)</th>
-					<th>Crawled Instances</th>
-					<th>Crawl Frequency</th>
+                    @header("frequency", "Crawl Frequency")
 					<th>User</th>
+                    @header("organisation", "Organisation")
 					<th>QA Status</th>
 					<th>In Scope</th>
-					<th>Other Archives</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -143,30 +142,22 @@
 				<tr>
 					<td>
 						<a class="brand" href="@routes.TargetController.view(target.id)">@target.title&nbsp;</a><br>
-						@if(target.fieldUrls != null && target.url != null) {
-							@for(fieldUrl <- target.fieldUrls) {
-								   <a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a>									
-							}
-						}
 					</td>
-					@if(target.organisation != null) {
-						<td><a href="@routes.OrganisationController.view(target.organisation.id)">
-							@target.organisation.title</a></td>
-					} else {
-						<td></td>
-					}
+					<td>
+                        @if(target.fieldUrls != null && target.url != null) {
+                            @for(fieldUrl <- target.fieldUrls) {
+                                   <a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a>                                  
+                            }
+                        }
+					</td>
+					<td>
 					@if(target.fieldUrls != null && target.url != null) {
-						<td>@for(fieldUrl <- target.fieldUrls) {
+						@for(fieldUrl <- target.fieldUrls) {
 						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/query?type=prefixquery&url=@fieldUrl.url">
-						@controllers.WaybackController.getTotalCrawledUrls(fieldUrl.url)</a>
-						}</td>
+						@controllers.WaybackController.getTotalCrawledUrls(fieldUrl.url)</a>&nbsp;
+						}
 					} 
-						@if(target.fieldUrls != null && target.url != null) {
-						<td>@for(fieldUrl <- target.fieldUrls) {
-						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">
-						@controllers.WaybackController.getTotalCrawledInstances(fieldUrl.url)</a>
-						}</td>
-					} 
+                    </td>
 					<td>
 				    	@if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
  							@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
@@ -177,6 +168,12 @@
 							<a class="brand" href="@routes.UserController.edit(target.authorUser.id)">@target.authorUser.name</a>
 						}
 					</td>
+                    @if(target.organisation != null) {
+                        <td><a href="@routes.OrganisationController.view(target.organisation.id)">
+                            @target.organisation.title</a></td>
+                    } else {
+                        <td></td>
+                    }
 					<td>
 						@if(target.qaIssue != null) {
 						  	@Taxonomy.findQAStatusById(target.qaIssue.id)
@@ -189,11 +186,6 @@
 							@for(fieldUrl <- target.fieldUrls) {
 								@target.checkScopeStr(fieldUrl.url, target.url)
 							}
-						}
-					</td>
-					<td>
-						@for(fieldUrl <- target.fieldUrls) {
-							<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url" target="_blank">(mementos)</a>
 						}
 					</td>
 				</tr>
