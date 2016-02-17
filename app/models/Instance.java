@@ -882,6 +882,11 @@ public class Instance extends Model {
 		if (status != null && status.equals(Const.ReportQaStatusType.WITHQAISSUESRESOLVED.name().toLowerCase())) { 
 			exp = exp.ne(Const.QA_STATUS, Const.QAStatusType.ISSUE_NOTED.name());
 			isProcessed = true;
+    	} 		
+		
+		if (status != null && status.equals(Const.ReportQaStatusType.WITHQAISSUESBUTOK.name().toLowerCase())) { 
+			exp = exp.ne(Const.QA_STATUS, Const.QAStatusType.ISSUE_NOTED.name());
+			isProcessed = true;
     	} 
     	
     	if (startDate != null && startDate.length() > 0) {
@@ -895,6 +900,7 @@ public class Instance extends Model {
         				|| status.equals(Const.ReportQaStatusType.FAILEDINSTANCES.name().toLowerCase())	
         				|| status.equals(Const.ReportQaStatusType.PASSED.name().toLowerCase())	
         				|| status.equals(Const.ReportQaStatusType.WITHQAISSUESRESOLVED.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.WITHQAISSUESBUTOK.name().toLowerCase())	
     					)) { 
     			exp = exp.ge(Const.CHANGED, startDateStr);
     		}
@@ -914,6 +920,7 @@ public class Instance extends Model {
         				|| status.equals(Const.ReportQaStatusType.FAILEDINSTANCES.name().toLowerCase())	
         				|| status.equals(Const.ReportQaStatusType.PASSED.name().toLowerCase())	
         				|| status.equals(Const.ReportQaStatusType.WITHQAISSUESRESOLVED.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.WITHQAISSUESBUTOK.name().toLowerCase())	
     					)) { 
     			exp = exp.le(Const.CHANGED, endDateStr);
     		}
