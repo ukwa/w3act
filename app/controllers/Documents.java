@@ -6,7 +6,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.net.URLDecoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +57,6 @@ import org.w3c.dom.NodeList;
 
 import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
-import uk.bl.crawling.Crawler;
 import uk.bl.documents.DocumentAnalyser;
 import views.html.documents.compare;
 import views.html.documents.edit;
@@ -322,43 +325,113 @@ public class Documents extends AbstractController {
 		JsonNode json = request().body().asJson();
 		List<Document> documents = new ArrayList<>();
 		for (JsonNode objNode : json) {
-			Document document = new Document();
-			Long targetId = objNode.get("target_id").longValue();
-			Logger.info("TargetID: "+targetId);
-			Target target = Target.find.byId(targetId);
-			if( target == null ) {
-				return badRequest("No Target with ID "+targetId);
+			// Parse:
+			try {
+				Document document = parseDocumentJson(objNode);
+				// And add if not null:
+				if( document != null) {
+					documents.add(document);
+				}
+			} catch( Exception ex ) {
+				ex.printStackTrace();
+				return badRequest("Problem during import: "+ex);
 			}
-			Logger.info("Target: "+target.title);
-			document.watchedTarget = target.watchedTarget;
-			Logger.info("WatchedTarget: "+document.watchedTarget);
-			document.waybackTimestamp = objNode.get("wayback_timestamp").textValue();
-			Logger.info("Comparing "+document.watchedTarget.waybackTimestamp+" to "+document.waybackTimestamp);
-			if (document.watchedTarget.waybackTimestamp == null ||
-					document.waybackTimestamp.compareTo(document.watchedTarget.waybackTimestamp) > 0) {
-				document.watchedTarget.waybackTimestamp = document.waybackTimestamp;
-				Ebean.save(document.watchedTarget);
-			}
-			document.landingPageUrl = objNode.get("landing_page_url").textValue().replace("'", "%27");
-			document.documentUrl = objNode.get("document_url").textValue().replace("'", "%27");
-			document.filename = objNode.get("filename").textValue();
-			if (document.filename.contains("."))
-				document.title = document.filename.substring(0, document.filename.lastIndexOf("."));
-			else
-				document.title = document.filename;
-			document.size = objNode.get("size").longValue();
-			document.setStatus(Document.Status.NEW);
-			document.fastSubjects = target.watchedTarget.fastSubjects;
-			if( documentAlreadyKnown(document)) {
-				Logger.warn("This Document is already known to the system.");
-				continue;
-			} else {
-				Logger.debug("attempting to add document " + document);
-			}
-			documents.add(document);
 		}
 		Promise.promise(new DocumentAnalyser.ExtractFunction(documents));
 		return ok("Documents added");
+	}
+	
+	protected static Document parseDocumentJson(JsonNode objNode) throws Exception {
+		Document document = new Document();
+		Long targetId = objNode.get("target_id").longValue();
+		Logger.info("TargetID: "+targetId);
+		Target target = Target.find.byId(targetId);
+		if( target == null ) {
+			throw new Exception("No Target with ID "+targetId);
+		}
+		Logger.info("Target: "+target.title);
+		document.watchedTarget = target.watchedTarget;
+		Logger.info("WatchedTarget: "+document.watchedTarget);
+		document.waybackTimestamp = objNode.get("wayback_timestamp").textValue();
+		Logger.info("Comparing "+document.watchedTarget.waybackTimestamp+" to "+document.waybackTimestamp);
+		if (document.watchedTarget.waybackTimestamp == null ||
+				document.waybackTimestamp.compareTo(document.watchedTarget.waybackTimestamp) > 0) {
+			document.watchedTarget.waybackTimestamp = document.waybackTimestamp;
+			Ebean.save(document.watchedTarget);
+		}
+		document.landingPageUrl = objNode.get("landing_page_url").textValue().replace("'", "%27");
+		document.documentUrl = objNode.get("document_url").textValue().replace("'", "%27");
+		document.filename = objNode.get("filename").textValue();
+		document.size = objNode.get("size").longValue();
+		document.setStatus(Document.Status.NEW);
+		document.fastSubjects = target.watchedTarget.fastSubjects;
+		if( documentAlreadyKnown(document)) {
+			Logger.warn("This Document is already known to the system.");
+			return null;
+		} else {
+			Logger.debug("attempting to add document " + document);
+		}
+		//
+		// Optional fields
+		// 
+		// Title:
+		if(objNode.get("title") != null) {
+			document.title = objNode.get("title").textValue();				
+		}
+		// Publisher:
+		if( objNode.get("publisher") != null) {
+			if( document.book == null) document.book = new Book(document);
+			document.book.publisher = objNode.get("publisher").textValue();
+		}
+		// Publication Date (in yyyy-MM-dd format):
+		if( objNode.get("publication_date") != null ) {
+			String ymd = objNode.get("publication_date").textValue();
+			try {
+				document.publicationDate = new SimpleDateFormat("yyyy-MM-dd").parse(ymd);
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(document.publicationDate);
+				document.publicationYear = calendar.get(Calendar.YEAR);
+			} catch( ParseException e ) {
+				throw new Exception("Could not parse publication date (should be yyyy-MM-dd format"+ymd);
+			}
+			
+		}
+		// Authors array processing:
+		if( objNode.get("authors") != null ) {
+			List<String> authors = new ArrayList<String>();
+			Iterator<JsonNode> it = objNode.get("authors").elements();
+			while( it.hasNext()) {
+				JsonNode val = it.next();
+				authors.add(val.textValue());
+			}
+			if (authors.size() >= 1) {
+				String[] a = authors.get(0).trim().split("\\s+", 2);
+				document.author1Fn = a[0];
+				document.author1Ln = a[1];
+			}
+			if (authors.size() >= 2) {
+				String[] a = authors.get(1).trim().split("\\s+", 2);
+				document.author2Fn = a[0];
+				document.author2Ln = a[1];
+			}
+			if (authors.size() >= 3) {
+				String[] a = authors.get(2).trim().split("\\s+", 2);
+				document.author3Fn = a[0];
+				document.author3Ln = a[1];
+			}
+		}
+		// ISBN
+		if( objNode.get("isbn") != null ) {
+			if( document.book == null) document.book = new Book(document);
+			document.book.isbn = objNode.get("isbn").textValue();
+		}
+		// DOI
+		if( objNode.get("doi") != null ) {
+			if( document.book == null) document.book = new Book(document);
+			document.doi = objNode.get("doi").textValue();
+		}
+		
+		return document;
 	}
 	
 	private static boolean documentAlreadyKnown(Document document) {

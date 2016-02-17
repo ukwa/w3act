@@ -35,47 +35,59 @@ import play.db.ebean.Model;
 @Entity
 public class Document extends Model {
 	
-    /**
-	 * 
-	 */
+    /** */
 	private static final long serialVersionUID = 4697602797902508209L;
+	
 	@Id
     public Long id;
+	
 	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_watched_target")
 	public WatchedTarget watchedTarget;
+	
 	public String waybackTimestamp;
 	public Status status;
 	public Date currentStatusSet;
+	
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Book book;
+	
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Journal journal;
+	
 	@ManyToMany(cascade=CascadeType.ALL) @JsonIgnore
 	@JoinTable(name = "portal_document",
 			joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
 			inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") })
 	public List<Portal> portals = new ArrayList<>();
+	
 	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
 	@JoinTable(name = "fast_subject_document",
 		joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
 	public List<FastSubject> fastSubjects = new ArrayList<>();
+	
     public String landingPageUrl;
     public String documentUrl;
     public String sha256Hash;
     public String ctpHash;
+    
     @Required
     @Column(columnDefinition = "text")
 	public String title;
+    
 	public String doi;
 	public String ark;
+
 	@DateTime(pattern="dd-MM-yyyy")
 	public Date publicationDate;
+	
 	@Required
     public Integer publicationYear;
+	
     @Required
 	public String filename;
+    
     public Long size;
     public boolean priorityCataloguing;
     public String type;

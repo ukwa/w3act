@@ -41,13 +41,13 @@
     }
     
     if (filters)
-    	routes.WatchedTargets.list(filterForm("user").value, new Boolean(filterForm("children").value), newPage, sortBy, order, searchstr)
+    	routes.WatchedTargets.list(filterForm("user").value, new java.lang.Boolean(filterForm("children").value), newPage, sortBy, order, searchstr)
     else
     	routes.WatchedTargets.overview(newPage, sortBy, order)
     
 }
 
-@main("", user, scripts, styles) {
+@main("Watched Targets", user, scripts, styles) {
 
 	<div class="page-header">
 	    <h1>@{if (filters) "Watched Targets" else "Document Harvesting"}</h1>
@@ -94,7 +94,7 @@
 		
 		@pagination(currentPage, link)
 		
-		<table class="table table-hover">
+		<table class="table table-hover tablesorter">
 			<thead>
 				<tr>
 					@header("target.title", "Title", currentSortBy, currentOrder, link)
@@ -102,17 +102,20 @@
 					@header("target.authorUser", "Curator", currentSortBy, currentOrder, link)
 					<th>Documents</th>
 					@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
-					<th>Action</th>
 				</tr>
 			</thead>
 			<tbody>
 			@for(watchedTarget <- currentPage.getList) {
 				<tr>
-					<td><a href="@routes.TargetController.view(new Long(watchedTarget.target.id))">@watchedTarget.target.title</a></td>
+					<td><a href="@routes.TargetController.view(new java.lang.Long(watchedTarget.target.id))">@watchedTarget.target.title</a></td>
 					<td>
 						@if(watchedTarget.target.fieldUrls != null) {
 							@for(fieldUrl <- watchedTarget.target.fieldUrls) {
-								<a href="@fieldUrl.url" target="_blank">@fieldUrl.url</a><br>
+							    @if( fieldUrl.url.length > 40 ) {
+								    <a href="@fieldUrl.url" title="@fieldUrl.url" target="_blank">...@fieldUrl.url.substring(fieldUrl.url.length-40)</a><br>
+								} else {
+                                    <a href="@fieldUrl.url" title="@fieldUrl.url" target="_blank">@fieldUrl.url</a><br>
+								}
 							}
 						} else {
 							N/A
@@ -121,14 +124,7 @@
 					</td>
 					<td><a href="@routes.UserController.view(watchedTarget.target.authorUser.id)">@watchedTarget.target.authorUser.name</a></td>
 					<td><a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(watchedTarget.id))">@watchedTarget.documents.size</a></td>
-					<td>@WatchedTargets.dayCount(watchedTarget.waybackTimestamp) days ago</td>
-					<td>
-						@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
-							<input type="hidden" name="watchedtarget" value="@watchedTarget.id">
-							<input type="submit" class="btn btn-success" value="Live Crawl" onclick=
-								"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.fieldUrls(0).url}\n\nDo you want to proceed?');">
-						}
-					</td>
+					<td>@WatchedTargets.dayCount(watchedTarget.waybackTimestamp)</td>
 				</tr>
 			}
 			</tbody>
@@ -137,7 +133,7 @@
 		@pagination(currentPage, link)
 		
 		@if(!filters) {
-			@helper.form(routes.TargetController.list()) {
+			@helper.form(routes.TargetController.lookup()) {
 				<h3>New Target</h3>
 				<input type="hidden" name="s" value="title">
 				<div class="row padding-10">

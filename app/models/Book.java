@@ -17,6 +17,9 @@ import play.db.ebean.Model;
 @Entity
 public class Book extends Model {
 	
+	/** */
+	private static final long serialVersionUID = -1862880935979934744L;
+	
 	public Book(Document document) {
 		this.document = document;
 	}

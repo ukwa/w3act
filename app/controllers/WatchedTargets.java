@@ -14,6 +14,7 @@ import akka.actor.Props;
 import com.avaje.ebean.CallableSql;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.kevinsawicki.timeago.TimeAgo;
 
 import models.DocumentFilter;
 import models.Target;
@@ -75,6 +76,7 @@ public class WatchedTargets extends AbstractController {
 	}
     
     public static Result crawl(Long id, boolean crawlWayback) {
+    	/*
     	Logger.debug("Calling crawl "+id+" crawlWayback="+crawlWayback);
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
     	if (crawlWayback) {
@@ -88,9 +90,12 @@ public class WatchedTargets extends AbstractController {
     	}
     	
     	return redirect(routes.Documents.list(new DocumentFilter().withWatchedTarget(id), 0, "title", "asc", ""));
+    	*/
+    	return badRequest("No longer implemented.");
     }
     
     public static Result crawlAll() {
+    	/*
     	Logger.debug("Calling crawlAll");
     	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
     	Akka.system().scheduler().scheduleOnce(
@@ -101,9 +106,12 @@ public class WatchedTargets extends AbstractController {
 				null
     	);
     	return redirect(routes.ApplicationController.home());
+    	*/
+    	return badRequest("No longer implemented.");
     }
     
     public static Result convert() {
+    	/*
     	Logger.debug("Calling convert");
     	CallableSql cs = Ebean.createCallableSql("{call many_documents_alert()}");
     	cs.addModification("alert", true, false, false);
@@ -117,6 +125,8 @@ public class WatchedTargets extends AbstractController {
 				null
     	);
     	return redirect(routes.ApplicationController.home());
+    	*/
+    	return badRequest("No longer implemented.");
     }
     
     public static Result noDocuments(Long id) {
@@ -141,30 +151,21 @@ public class WatchedTargets extends AbstractController {
     }
     
     public static String dayCount(String waybackTimestamp) {
-    	if (waybackTimestamp == null || waybackTimestamp.length() < 12) return waybackTimestamp;
+    	if (waybackTimestamp == null || waybackTimestamp.length() < 14) return waybackTimestamp;
     	
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
-		Calendar c = Calendar.getInstance();
-		
-		Date d1 = null;
-		Date d2 = null;
-		long diffDays = 0;
-
 		try {
+	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			Date d2 = sdf.parse(waybackTimestamp);
 			
-			d1 = sdf.parse(sdf.format(c.getTime()));
-			d2 = sdf.parse(waybackTimestamp);
+			TimeAgo time = new TimeAgo();
 			
-			//in milliseconds
-			long diff = d1.getTime() - d2.getTime();
-
-			diffDays = diff / (24 * 60 * 60 * 1000);			
-
+			return time.timeAgo(d2.getTime());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			return "ERR!";
 		}
-    	
-		return Long.toString(diffDays);
+		
     }
     
     public static Result filterByJson(String title) {

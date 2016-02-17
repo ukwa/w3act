@@ -1021,9 +1021,11 @@
 							<strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
 						</div>
 						<ul>
+						<!-- 
 						    <li>
 									<a class="brand" target="_blank" href="@routes.InstanceController.showByTarget(target.id)">Instances</a>
 						    </li>
+                         -->
 							<li>
 									<a class="brand" target="_blank" href="@{routes.WaybackController.wayback("*/" + fieldUrl.url)}">Search QA Wayback</a>
 							</li>
@@ -1033,9 +1035,11 @@
 							<li>
 									<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">Search Other Web Archives</a>
 							</li>
+                        <!-- 
 							<li>
 						        	<a class="brand" target="_blank" href="@fieldUrl.url">View Live Site</a>
 							</li>
+                         -->
 						</ul>
 					}
 				</div>

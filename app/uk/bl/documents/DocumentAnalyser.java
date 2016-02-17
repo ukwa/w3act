@@ -15,10 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Alert;
 import models.Document;
+import models.WatchedTarget;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.metadata.DublinCore;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
@@ -30,6 +33,7 @@ import play.libs.F.Function0;
 
 import com.avaje.ebean.Ebean;
 
+import controllers.Documents;
 import controllers.WaybackController;
 import eu.scape_project.bitwiser.utils.FuzzyHash;
 import eu.scape_project.bitwiser.utils.SSDeep;
@@ -47,14 +51,7 @@ public class DocumentAnalyser {
 
 	private static String waybackUrl = WaybackController.getWaybackEndpoint();
 	
-	private Map<String, MetadataExtractor> metadataExtractors;
-	
 	public DocumentAnalyser() {
-		metadataExtractors = new HashMap<>();
-		metadataExtractors.put("www.ifs.org.uk", new MetadataExtractor("*[itemtype=http://schema.org/CreativeWork] *[itemprop=name]",
-				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=datePublished]",
-				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=author]"));
-		metadataExtractors.put("www.gov.uk", new MetadataExtractor("h1", null, null));
 	}
 
 	public void extractMetadata(Document document) {
@@ -70,15 +67,8 @@ public class DocumentAnalyser {
 		
 		// Extended metadata and text:
 		String text = null;
+		Logger.info("Running document parser process...");
 		try {
-			Logger.info("Running extraction process...");
-			String domain = new URI(document.landingPageUrl).getHost();
-			if (metadataExtractors.containsKey(domain)) {
-				MetadataExtractor metadataExtractor = metadataExtractors.get(domain);
-				String wblpu = waybackReplayUrl(document.landingPageUrl, document.waybackTimestamp);
-				org.jsoup.nodes.Document doc = Jsoup.connect(wblpu).get();
-				metadataExtractor.extract(document, doc);
-			}
 			// Use Tika on it:
 			AutoDetectParser parser = new AutoDetectParser();
 			Metadata metadata = new Metadata();
@@ -87,6 +77,7 @@ public class DocumentAnalyser {
 				parser.parse(getWaybackInputStream(document.documentUrl, document.waybackTimestamp), handler, metadata);
 			} catch( Exception e) {
 				Logger.error("Exception while running Tika on "+document.documentUrl);
+				e.printStackTrace();
 			}
 			// Pull in the text:
 			text = handler.toString();
@@ -106,10 +97,14 @@ public class DocumentAnalyser {
 				}
 			}
 			if( StringUtils.isBlank(document.author1Fn) && 
-					StringUtils.isNotBlank(metadata.get(Metadata.AUTHOR)) ) {
-				document.author1Fn = metadata.get(Metadata.AUTHOR);
+					StringUtils.isNotBlank(metadata.get(DublinCore.CREATOR)) ) {
+				String[] authsplit = metadata.get(DublinCore.CREATOR).trim().split("\\s+", 2);
+				document.author1Fn = authsplit[0];
+				if( authsplit.length > 1 ) {
+					document.author1Ln = authsplit[1];
+				}
 			}
-			// Ouput all for debugging:
+			// Output all for debugging:
 			for( String k : metadata.names()) {
 				Logger.debug("Found "+k+" -> "+metadata.get(k));
 			}
@@ -122,8 +117,8 @@ public class DocumentAnalyser {
 		Logger.info("Attempting ssdeep hash generation...");
 		if( StringUtils.isNoneBlank(text)) {
 			SSDeep ssd = new SSDeep();
-			FuzzyHash fh = ssd.fuzzy_hash_buf(text.getBytes());
-			document.ctpHash = fh.getBlocksize()+":"+fh.getHash()+":"+fh.getHash2()+":\""+document.filename+"\"";
+			FuzzyHash fh = ssd.fuzzyHashBuf(text.getBytes());
+			document.ctpHash = fh.toString();
 			Logger.info("Recorded ctpHash "+document.ctpHash+" for "+document.documentUrl);
 		}
 	}
@@ -142,8 +137,6 @@ public class DocumentAnalyser {
 		return waybackUrl + "replay?url=" + url + "&date=" + timestamp;
 	}
 	
-
-	
 	/**
 	 * 
 	 * @author andy
@@ -158,14 +151,37 @@ public class DocumentAnalyser {
 		
 		@Override
 		public Boolean apply() {
-			Logger.info("Extracting from "+documents.size()+" documents.");
+			Logger.info("Extracting from "+documents.size()+" documents...");
 			for (Document document : documents) {
 				DocumentAnalyser da = new DocumentAnalyser();
 				da.extractMetadata(document);
 				Logger.info("Saving updated document metadata.");
 				Ebean.save(document);
+				if( document.book != null ) {
+					Ebean.save(document.book);			
+				}
+			}
+			Logger.info("Checking similarity against all documents for each WatchedTarget...");
+			for (Document doc1 : documents) {
+				for (Document doc2 : doc1.watchedTarget.documents ) {
+					// Don't compare one with itself:
+					if( ! doc1.documentUrl.equals(doc2.documentUrl) ) {
+						double similarity = FuzzyHash.compare(doc1.ctpHash, doc2.ctpHash);
+						if( similarity >= 90 ) {
+							Alert alert = new Alert();
+							alert.user = doc1.watchedTarget.target.authorUser;
+							alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
+									Alert.link(doc2) + " with " + similarity + "% " +
+									"(" + Alert.compareLink(doc1, doc2) + ")";
+							Ebean.save(alert);
+							
+						}
+					}
+				}
 			}
 			return true;
 		}
 	}
+
+
 }

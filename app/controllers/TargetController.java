@@ -68,6 +68,7 @@ import views.html.infomessage;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Query;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -130,10 +131,21 @@ public class TargetController extends AbstractController {
     	}
     	
     	Logger.debug("After processing Filter::"+url);
-    	Page<Target> pages = Target.find.fetch("fieldUrls").where()
+    	Query<Target> query = Target.find.fetch("fieldUrls").where()
 			.eq(Const.ACTIVE, true)
-			.add(Expr.or(Expr.icontains("fieldUrls.url", url), Expr.icontains("t0.title", url)))
-			.orderBy("t0.title" + " " + order)
+			.add(Expr.or(Expr.icontains("fieldUrls.url", url), Expr.icontains("t0.title", url))).query();
+    	// Set up the sorting:
+		if( "title".equals(sortBy)) {
+			query = query.orderBy("t0.title" + " " + order);
+		} else if( "organisation".equals(sortBy) ) {
+			query = query.orderBy("t0.organisation_id" + " " + order);
+		} else if( "seeds".equals(sortBy) ) {
+			query = query.orderBy("t0.url" + " " + order);			
+		} else if( "frequency".equals(sortBy) ) {
+			query = query.orderBy("t0.crawl_frequency" + " " + order);			
+		}
+		// Finish the query:
+    	Page<Target> pages = query
 			.findPagingList(10)
 			.setFetchAhead(false).getPage(pageNo);
     	
@@ -1604,8 +1616,12 @@ public class TargetController extends AbstractController {
         }
 
         // The watchedTarget is not cascaded automatically, so we handle it here:
-        boolean watched = getFormParam("watched") != null;
-        Logger.info("WATCHED status is "+watched);
+        String watchedString = getFormParam("watched");
+        boolean watched = false;
+        if( watchedString != null ) {
+        	watched = Boolean.parseBoolean(watchedString);
+        }
+        Logger.info("WATCHED status is "+watched+ " from "+ watchedString);
         if( original != null ) {
         	if (!watched && original.isWatched()) {
         		Ebean.delete(original.watchedTarget.documents);

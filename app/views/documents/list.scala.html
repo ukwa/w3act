@@ -60,7 +60,7 @@
     	routes.Documents.overview(newPage, sortBy, order)
 }
 
-@main("", user, scripts, styles) {
+@main("Documents", user, scripts, styles) {
 
 	<div class="page-header">
 	    <h1>@{if (filters) "Documents" else "Document Harvesting"}</h1>
@@ -143,7 +143,7 @@
 			
 	    	@pagination(currentPage, link)
 	    	
-			<table class="table table-hover">
+			<table class="table table-hover tablesorter">
 				<thead>
 					<tr>
 						@header("title", "Title", currentSortBy, currentOrder, link)
@@ -162,24 +162,36 @@
 					<tr>
 						<td>
 							@if(filterForm.get.status == Document.Status.IGNORED) {
-								@document.title
+                                        @if( document.title != null && document.title.trim().length() == 0 ) {
+                                            [untitled]
+                                        } else {
+                                            @document.title
+                                        }
 							} else {
 								<a href="@{
 										if (document.isEditableFor(user))
 											routes.Documents.edit(document.id)
 										else
 											routes.Documents.view(document.id)}">
-									@document.title
+									    @if( document.title != null && document.title.trim().length() == 0 ) {
+									        [untitled]
+									    } else {
+        									@document.title
+									    }
 								</a>
 							}
 						</td>
-						<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
-						@if(document.documentUrl.length()>=40){
+                        @if(document.landingPageUrl != null && document.landingPageUrl.length()>=40){
+						<td><a href="@document.landingPageUrl" target="_blank" title="@document.landingPageUrl">...@document.landingPageUrl.substring(document.landingPageUrl.length()-40)</a></td>
+                        }else{
+                        <td><a href="@document.landingPageUrl" target="_blank" title="@document.landingPageUrl">@document.landingPageUrl</a></td>
+                        }
+						@if(document.documentUrl != null && document.documentUrl.length()>=40){
 						<td><a href="@document.documentUrl" target="_blank" title="@document.documentUrl">...@document.documentUrl.substring(document.documentUrl.length()-40)</a></td>
 						}else{
-						<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
+						<td><a href="@document.documentUrl" target="_blank" title="@document.documentUrl">@document.documentUrl</a></td>
 						}
-						<td>@WatchedTargets.dayCount(document.waybackTimestamp) days ago</td>
+						<td>@WatchedTargets.dayCount(document.waybackTimestamp)</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<td>
 								@if(document.isEditableFor(user)) {
