@@ -435,23 +435,7 @@
 							)(FieldConstructor(genericInput.f), lang)							
 						</div>
 					</div>
-		     	</div>
-	
-		   		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Tag(s): keywords common to all users, controlled centrally and visible to other users</label>
-							<div class="col-sm-6">
-	  							@for((tag, index) <- tags.zipWithIndex) {
-	  								<label class="checkbox-inline">
-				                	<input type="checkbox" name="tagsList" value="@tag.id" @if(targetTags != null && targetTags.contains(tag)) {checked} />
-						                 @tag.name
-					                </label>
-					            }
-							</div>
-						</div>
-					</div>
-		     	</div>		   
+		     	</div>	   
 	
 			</div>
 			
@@ -681,6 +665,22 @@
 					</div>
 		     	</div>
 		     	
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Tag(s): keywords common to all users, controlled centrally and visible to other users</label>
+							<div class="col-sm-6">
+	  							@for((tag, index) <- tags.zipWithIndex) {
+	  								<label class="checkbox-inline">
+				                	<input type="checkbox" name="tagsList" value="@tag.id" @if(targetTags != null && targetTags.contains(tag)) {checked} />
+						                 @tag.name
+					                </label>
+					            }
+							</div>
+						</div>
+					</div>
+		     	</div>	
+				
 			</div>
 			
 			<div class="tab-pane fade" id="crawlpermission">
