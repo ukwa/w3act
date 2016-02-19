@@ -1091,6 +1091,9 @@ public class Target extends Model {
     		exp = exp.in("collections", collectionIds);
         }
 
+		Logger.debug("QUERY SORT: " + sortBy + " " + order);
+
+        
         Page<Target> res = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
@@ -2283,11 +2286,21 @@ public class Target extends Model {
 		return instance;
 	}
 	
+    @JsonIgnore
+	public boolean checkInstance() {
+		boolean res = false;
+		if (this.instances != null && !this.instances.isEmpty()) {
+			res = true;
+		}
+		return res;
+	}	
+	
 	@JsonIgnore
 	public boolean isDeletable() {
 		Logger.debug("collections size...." + this.collections.size());
 		Logger.debug("licenses size...." + this.licenses.size());
-		return (!this.checkLicense() && CollectionUtils.isEmpty(this.collections));
+		Logger.debug("instances size...." + this.instances.size());
+		return (!this.checkLicense() && !this.checkInstance() && CollectionUtils.isEmpty(this.collections));
 	}
 	
     @PreUpdate

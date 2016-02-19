@@ -366,6 +366,11 @@ public class TargetController extends AbstractController {
     	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");
+    	
+		Logger.debug("SORT: " + sort);
+		Logger.debug("ORDER: " + order);
+
+    	
     	int pageSize = Integer.parseInt(requestData.get("pageSize"));
     	Long curatorId = Long.parseLong(requestData.get("curator"));
     	Long organisationId = Long.parseLong(requestData.get("organisation"));
@@ -871,7 +876,7 @@ public class TargetController extends AbstractController {
 		filledForm = filledForm.fill(target);
 
 		if (!target.isDeletable()) {
-			ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references License(s) and/or Collection(s)");
+			ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references Instance(s), License(s) and/or Collection(s)");
 			filledForm.reject(ve);
 			return info(filledForm, id);
 		}
