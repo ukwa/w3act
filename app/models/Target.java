@@ -1090,9 +1090,6 @@ public class Target extends Model {
             }
     		exp = exp.in("collections", collectionIds);
         }
-
-		Logger.debug("QUERY SORT: " + sortBy + " " + order);
-
         
         Page<Target> res = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());

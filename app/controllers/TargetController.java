@@ -366,11 +366,7 @@ public class TargetController extends AbstractController {
     	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");
-    	
-		Logger.debug("SORT: " + sort);
-		Logger.debug("ORDER: " + order);
 
-    	
     	int pageSize = Integer.parseInt(requestData.get("pageSize"));
     	Long curatorId = Long.parseLong(requestData.get("curator"));
     	Long organisationId = Long.parseLong(requestData.get("organisation"));
