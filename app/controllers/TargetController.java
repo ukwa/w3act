@@ -68,6 +68,7 @@ import views.html.infomessage;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.FetchConfig;
 import com.avaje.ebean.Query;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -131,22 +132,23 @@ public class TargetController extends AbstractController {
     	}
     	
     	Logger.debug("After processing Filter::"+url);
-    	Query<Target> query = Target.find.fetch("fieldUrls").where()
-			.add(Expr.or(Expr.icontains("fieldUrls.url", url), Expr.icontains("t0.title", url))).query();
+    	
+    	Query<FieldUrl> query = FieldUrl.find.fetch("target").fetch("target.organisation").where()
+			.add(Expr.or(Expr.icontains("url", url), Expr.icontains("target.title", url))).query();
     	// Set up the sorting:
 		if( "title".equals(sortBy)) {
-			query = query.orderBy("t0.title" + " " + order);
+			query = query.orderBy("target.title" + " " + order);
 		} else if( "organisation".equals(sortBy) ) {
-			query = query.orderBy("t0.organisation_id" + " " + order);
+			query = query.orderBy("target.organisation.id" + " " + order);
 		} else if( "seeds".equals(sortBy) ) {
-			query = query.orderBy("t0.url" + " " + order);			
+			query = query.orderBy("url" + " " + order);
 		} else if( "frequency".equals(sortBy) ) {
-			query = query.orderBy("t0.crawl_frequency" + " " + order);			
+			query = query.orderBy("target.crawlFrequency" + " " + order);
 		} else if( "active".equals(sortBy) ) {
-			query = query.orderBy("t0.active" + " " + order);			
+			query = query.orderBy("target.active" + " " + order);
 		}
 		// Finish the query:
-    	Page<Target> pages = query
+    	Page<FieldUrl> pages = query
 			.findPagingList(10)
 			.setFetchAhead(false).getPage(pageNo);
     	

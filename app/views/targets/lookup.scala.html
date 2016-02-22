@@ -1,4 +1,4 @@
-@(title: String, matchTarget: Target, user: User, filter: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String)
+@(title: String, matchTarget: Target, user: User, filter: String, currentPage: com.avaje.ebean.Page[FieldUrl], currentSortBy: String, currentOrder: String)
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
@@ -139,59 +139,59 @@
 				</tr>
 			</thead>
 			<tbody>
-				@for(target <- currentPage.getList) {
+				@for(f <- currentPage.getList) {
 				<tr>
 					<td>
-						<a class="brand" href="@routes.TargetController.view(target.id)">@target.title&nbsp;</a><br>
+						<a class="brand" href="@routes.TargetController.view(f.target.id)">@f.target.title&nbsp;</a><br>
 					</td>
 					<td>
-                        @if(target.fieldUrls != null && target.url != null) {
-                            @for(fieldUrl <- target.fieldUrls) {
+                        @if(f.target.fieldUrls != null) {
+                            @for(fieldUrl <- f.target.fieldUrls) {
                                    <a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a>                                  
                             }
                         }
 					</td>
 					<td>
-					@if(target.fieldUrls != null ) {
-						@for(fieldUrl <- target.fieldUrls) {
+					@if(f.target.fieldUrls != null ) {
+						@for(fieldUrl <- f.target.fieldUrls) {
 						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/query?type=prefixquery&url=@fieldUrl.url">
 						@controllers.WaybackController.getTotalCrawledInstances(fieldUrl.url)</a>&nbsp;
 						}
 					} 
                     </td>
 					<td>
-				    	@if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
- 							@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
+				    	@if(f.target.crawlFrequency != null && f.target.crawlFrequency.length > 0) {
+ 							@uk.bl.Const.CrawlFrequency.getCrawlFrequency(f.target.crawlFrequency).getValue
 						}
 					</td>
 					<td>
-						@if(target.authorUser != null) {
-							<a class="brand" href="@routes.UserController.edit(target.authorUser.id)">@target.authorUser.name</a>
+						@if(f.target.authorUser != null) {
+							<a class="brand" href="@routes.UserController.edit(f.target.authorUser.id)">@f.target.authorUser.name</a>
 						}
 					</td>
-                    @if(target.organisation != null) {
-                        <td><a href="@routes.OrganisationController.view(target.organisation.id)">
-                            @target.organisation.title</a></td>
+                    @if(f.target.organisation != null) {
+                        <td><a href="@routes.OrganisationController.view(f.target.organisation.id)">
+                            @f.target.organisation.title</a></td>
                     } else {
                         <td></td>
                     }
 					<td>
-						@if(target.qaIssue != null) {
-						  	@Taxonomy.findQAStatusById(target.qaIssue.id)
+						@if(f.target.qaIssue != null) {
+						  	@Taxonomy.findQAStatusById(f.target.qaIssue.id)
 						 } else {
                               none
 						 }
 					</td>
 					<td>
-			    @if(target.isInScopeAllOrInheritedWithoutLicense()) {
+			    @if(f.target.isInScopeAllOrInheritedWithoutLicense()) {
                     <font color="green">(+)</font>
                 } else {
                     <font color="red">(-)</font>
                 }   
-                @if(target.indicateLicenses()) {
+                @if(f.target.indicateLicenses()) {
                     <font color="green">(+)</font>
                 } else {
-                  @if( target.getOverallLicenseStatus().pendingIncludingInherited ) {
+                  @if( f.target.getOverallLicenseStatus().pendingIncludingInherited ) {
                     <font color="orange">(~)</font>
                   } else {
                     <font color="red">(-)</font>
@@ -199,7 +199,7 @@
                 }               
 					</td>
                     <td>
-                    @target.active
+                    @f.target.active
                     </td>
 				</tr>
 				}
