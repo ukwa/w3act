@@ -92,7 +92,7 @@ public class WaybackController extends Controller {
 
 	
 	/**Method to fetch number of crawled urls**/
-	public static String getTotalCrawledUrls(String url) {
+	public static int getTotalCrawledUrls(String url) {
 		Logger.debug("getTotalCrawledUrls url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -117,22 +117,21 @@ public class WaybackController extends Controller {
 				Document doc = db.parse(http.getInputStream());
 
 				Logger.debug("getTotalCrawledUrls getting values from XML...");
-				NodeList nl = doc.getElementsByTagName("request");
-				Node n = nl.item(0).getChildNodes().item(9);  
-				Logger.debug("getTotalCrawledUrls = "+ n.getTextContent());
+				NodeList nl = doc.getElementsByTagName("result");
+				Logger.debug("getTotalCrawledUrls = "+ nl.getLength());
 
-				return n.getTextContent();
+				return nl.getLength();
 
 			}
 		}catch( Exception e ) {
 			Logger.warn("Exception while lookup up getTotalCrawledUrls",e);
 		}
 		
-		return "0";
+		return 0;
 	}
 
 	/**Method to fetch number of times the specific url has been crawled**/
-	public static String getTotalCrawledInstances(String url) {
+	public static int getTotalCrawledInstances(String url) {
 		Logger.debug("getTotalCrawledInstances url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -155,17 +154,16 @@ public class WaybackController extends Controller {
 			if(statusCode==200){
 				Document doc = db.parse(http.getInputStream());
 
-				NodeList nl = doc.getElementsByTagName("request");
-				Node n = nl.item(0).getChildNodes().item(9);  
+				NodeList nl = doc.getElementsByTagName("result");
 
-				return n.getTextContent();
+				return nl.getLength();
 
 			}
 		} catch (Exception e) {
 			Logger.warn("Exception while lookup up getTotalCrawledInstances",e);
 		}
 		
-		return "0";
+		return 0;
 	}
 }
 

@@ -129,12 +129,13 @@
 				<tr>
                     @header("title", "Title")
                     @header("seeds", "Seeds")
-					<th>Crawled URL(s)</th>
+					<th>Crawled?</th>
                     @header("frequency", "Crawl Frequency")
 					<th>User</th>
                     @header("organisation", "Organisation")
 					<th>QA Status</th>
-					<th>In Scope</th>
+                    <th>In Scope</th>
+                    @header("active", "Active?")
 				</tr>
 			</thead>
 			<tbody>
@@ -151,10 +152,10 @@
                         }
 					</td>
 					<td>
-					@if(target.fieldUrls != null && target.url != null) {
+					@if(target.fieldUrls != null ) {
 						@for(fieldUrl <- target.fieldUrls) {
 						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/query?type=prefixquery&url=@fieldUrl.url">
-						@controllers.WaybackController.getTotalCrawledUrls(fieldUrl.url)</a>&nbsp;
+						@controllers.WaybackController.getTotalCrawledInstances(fieldUrl.url)</a>&nbsp;
 						}
 					} 
                     </td>
@@ -182,12 +183,24 @@
 						 }
 					</td>
 					<td>
-						@if(target.fieldUrls != null && target.url != null) {
-							@for(fieldUrl <- target.fieldUrls) {
-								@target.checkScopeStr(fieldUrl.url, target.url)
-							}
-						}
+			    @if(target.isInScopeAllOrInheritedWithoutLicense()) {
+                    <font color="green">(+)</font>
+                } else {
+                    <font color="red">(-)</font>
+                }   
+                @if(target.indicateLicenses()) {
+                    <font color="green">(+)</font>
+                } else {
+                  @if( target.getOverallLicenseStatus().pendingIncludingInherited ) {
+                    <font color="orange">(~)</font>
+                  } else {
+                    <font color="red">(-)</font>
+                  }
+                }               
 					</td>
+                    <td>
+                    @target.active
+                    </td>
 				</tr>
 				}
 			</tbody>

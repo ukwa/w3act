@@ -132,7 +132,6 @@ public class TargetController extends AbstractController {
     	
     	Logger.debug("After processing Filter::"+url);
     	Query<Target> query = Target.find.fetch("fieldUrls").where()
-			.eq(Const.ACTIVE, true)
 			.add(Expr.or(Expr.icontains("fieldUrls.url", url), Expr.icontains("t0.title", url))).query();
     	// Set up the sorting:
 		if( "title".equals(sortBy)) {
@@ -143,6 +142,8 @@ public class TargetController extends AbstractController {
 			query = query.orderBy("t0.url" + " " + order);			
 		} else if( "frequency".equals(sortBy) ) {
 			query = query.orderBy("t0.crawl_frequency" + " " + order);			
+		} else if( "active".equals(sortBy) ) {
+			query = query.orderBy("t0.active" + " " + order);			
 		}
 		// Finish the query:
     	Page<Target> pages = query
