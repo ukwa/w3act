@@ -919,7 +919,8 @@ public final class Const {
 		WITHNOQAISSUES("With no QA issues"),
 		FAILEDINSTANCES("Failed Instances"),
 		PASSED("Passed to Crawl Engineer"),
-		WITHQAISSUESRESOLVED("With QA issues resolved");
+		WITHQAISSUESRESOLVED("With QA issues resolved"),
+		WITHQAISSUESBUTOK("With QA issues, but OK to publish");
 		
         private String value;
 
