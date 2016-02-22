@@ -149,7 +149,7 @@ public class TargetController extends AbstractController {
 		}
 		// Finish the query:
     	Page<FieldUrl> pages = query
-			.findPagingList(10)
+			.findPagingList(20)
 			.setFetchAhead(false).getPage(pageNo);
     	
     	Logger.debug("Total: " + pages.getTotalRowCount());
@@ -330,11 +330,17 @@ public class TargetController extends AbstractController {
 
         JsonNode jsonData = null;
         if (url != null && url.length() >= 3 ) {
-	        List<Target> targets = Target.filterActiveUrl(url);
+        	Query<FieldUrl> query = FieldUrl.find.fetch("target").fetch("target.organisation").where()
+        			.add(Expr.or(Expr.icontains("url", url), Expr.icontains("target.title", url))).orderBy().asc("url");
+        	
 	        // Only grab the first few...
-	        int limit = 25;
-	        if( targets.size() > limit ) {
-	        	targets = targets.subList(0, limit);
+        	Page<FieldUrl> pages = query
+        			.findPagingList(20)
+        			.setFetchAhead(false).getPage(0);
+        	
+	        List<Target> targets = new ArrayList<Target>();
+	        for( FieldUrl f : pages.getList()) {
+	        	targets.add(f.target);
 	        }
 	        jsonData = Json.toJson(targets);
         }
