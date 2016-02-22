@@ -1,5 +1,7 @@
 @(title: String, user: User, filter: String, currentPage: com.avaje.ebean.Page[Target], sortBy: String, orderBy: String, curatorId: Long, organisationId: Long, subjects: String, crawlFrequencyName: String, depthName: String, collections: String, licenseId: Long, pageSize: Int, flagId: Long, licenses: List[License], collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, users: List[User], organisations: List[Organisation], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency], flags: List[Flag])
 
+@import templates.shortLink
+
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	if(data != null) {
 		Html(data.toString)
@@ -309,7 +311,7 @@
 									<td>
 										@if(target.fieldUrls != null) {
 											@for(fieldUrl <- target.fieldUrls) {
-												<a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a><br />
+											    @shortLink(fieldUrl.url, "_blank")<br />
 											}
 										} else {
 											N/A

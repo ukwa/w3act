@@ -1,0 +1,6 @@
+@(url: String, target: String = "", maxSize: Integer = 60)
+@if(url != null && url.length()>=maxSize){
+<a href="@url" target="@target" title="@url">...@url.substring(url.length()-maxSize)</a>
+}else{
+<a href="@url" target="@target" title="@url">@url</a>
+}

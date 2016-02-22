@@ -1,5 +1,7 @@
 @(title: String, matchTarget: Target, user: User, filter: String, currentPage: com.avaje.ebean.Page[FieldUrl], currentSortBy: String, currentOrder: String)
 
+@import templates.shortLink
+
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
@@ -147,7 +149,7 @@
 					<td>
                         @if(f.target.fieldUrls != null) {
                             @for(fieldUrl <- f.target.fieldUrls) {
-                                   <a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a>                                  
+                                @shortLink(fieldUrl.url, "_blank")<br />
                             }
                         }
 					</td>
