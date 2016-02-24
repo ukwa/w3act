@@ -408,8 +408,8 @@ GET     /wayback/                           controllers.WaybackController.waybac
 GET     /wayback/*url                       controllers.WaybackController.wayback(url)
 
 # Authenticate and proxy requests to Monitrix:
-GET     /monitrix                            controllers.MonitrixController.root()
-GET     /monitrix/*url                       controllers.MonitrixController.proxy(url)
+GET     /monitrix/target/:id                controllers.MonitrixController.forTarget(id:Long)
+GET     /monitrix/all                       controllers.MonitrixController.all()
 
 # Authenticated access to internal services:
 GET     /site/*url                      controllers.WSProxy.passthrough(url)

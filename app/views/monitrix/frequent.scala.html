@@ -1,0 +1,63 @@
+@(target: Target, user: User, query: String, kibana: String)
+
+@title(target: Target) = @{
+  if( target != null )
+    "Crawl activity for Target %s".format(target.title)
+  else
+    "All Frequent Crawl activity"  
+}
+
+@scripts = {}
+
+@styles = {
+    <style type="text/css">
+        .container {
+            width: 100%;
+        }
+        .kibana-iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid black;
+            margin-top: 6px;
+        }
+    </style>
+}
+
+@main(title(target), user, scripts, styles) {
+
+    <div class="page-header">
+      <h1>@title(target)</h1>
+    </div>
+    
+     <div class="row">
+      <div class="col-md-12 col-sm-12">
+      
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#crawl-log" aria-controls="crawl-log" role="tab" data-toggle="tab">Crawl Log</a></li>
+    <li role="presentation"><a href="#status-codes" aria-controls="status-codes" role="tab" data-toggle="tab">Status Codes</a></li>
+  </ul>
+
+      </div>
+     </div>
+      
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="crawl-log">
+     <div class="row">
+      <div class="col-md-12 col-sm-12">
+       <iframe class="kibana-iframe" src="@kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1d,mode:quick,to:now))&amp;_a=(columns:!(_source),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'@query')),sort:!(log_timestamp,desc))"></iframe>
+      </div>
+     </div>
+    </div>
+     
+     
+    <div role="tabpanel" class="tab-pane" id="status-codes">
+     <div class="row">
+      <div class="col-md-12 col-sm-12">
+       <iframe class="kibana-iframe" src="@kibana#/visualize/create?embed=true&amp;type=histogram&amp;indexPattern=logstash-*&amp;_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&amp;_a=(filters:!(),linked:!f,query:(query_string:(analyze_wildcard:!t,query:'@query')),uiState:(),vis:(aggs:!((id:'1',params:(),schema:metric,type:count),(id:'2',params:(customInterval:'2h',extended_bounds:(),field:log_timestamp,interval:auto,min_doc_count:1),schema:segment,type:date_histogram),(id:'3',params:(field:fetch_status_code,order:desc,orderBy:'1',size:50),schema:group,type:terms)),listeners:(),params:(addLegend:!t,addTimeMarker:!f,addTooltip:!t,defaultYExtents:!f,mode:stacked,scale:linear,setYExtents:!f,shareYAxis:!t,times:!(),yAxis:()),title:'Status Codes Over Time',type:histogram))"></iframe>
+      </div>
+     </div>
+    </div>
+
+  </div>      
+
+}

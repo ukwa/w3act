@@ -59,8 +59,7 @@ public class DocumentAnalyser {
 			document.sha256Hash = String.format("%064x", new java.math.BigInteger(1, digest));
 			Logger.info("Recorded sha256Hash "+document.sha256Hash+" for "+document.documentUrl);
 		} catch (Exception e) {
-			Logger.error("Failure while SHA256 hashing "+document.documentUrl);
-			e.printStackTrace();
+			Logger.error("Failure while SHA256 hashing "+document.documentUrl, e);
 		}
 		
 		// Extended metadata and text:
@@ -74,8 +73,7 @@ public class DocumentAnalyser {
 			try {
 				parser.parse(getWaybackInputStream(document.documentUrl, document.waybackTimestamp), handler, metadata);
 			} catch( Exception e) {
-				Logger.error("Exception while running Tika on "+document.documentUrl);
-				e.printStackTrace();
+				Logger.error("Exception while running Tika on "+document.documentUrl,e);
 			}
 			// Pull in the text:
 			text = handler.toString();
@@ -107,8 +105,7 @@ public class DocumentAnalyser {
 				Logger.debug("Found "+k+" -> "+metadata.get(k));
 			}
 		} catch (Exception e) {
-			Logger.error("Failure while parsing "+document.documentUrl);
-			e.printStackTrace();
+			Logger.error("Failure while parsing "+document.documentUrl, e);
 		}
 		
 		// Use the text from Tika to make a fuzzy hash:
