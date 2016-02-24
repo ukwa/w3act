@@ -404,8 +404,12 @@ GET     /reset/:token               		controllers.ResetController.resetPassword(
 POST    /reset/:token               		controllers.ResetController.confirmPassword(token:String)
 
 # Authenticate and proxy requests to the QA Wayback:
-GET		/wayback/					  		controllers.WaybackController.waybackRoot()
-GET		/wayback/*url						controllers.WaybackController.wayback(url)
+GET     /wayback/                           controllers.WaybackController.waybackRoot()
+GET     /wayback/*url                       controllers.WaybackController.wayback(url)
+
+# Authenticate and proxy requests to Monitrix:
+GET     /monitrix                            controllers.MonitrixController.root()
+GET     /monitrix/*url                       controllers.MonitrixController.proxy(url)
 
 # Authenticated access to internal services:
 GET     /site/*url                      controllers.WSProxy.passthrough(url)

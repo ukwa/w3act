@@ -31,7 +31,11 @@ public class WaybackController extends Controller {
 	private static URL wayback_url;
 
 	public static String getWaybackEndpoint() {
-		return Play.application().configuration().getString("application.wayback.url");
+		String prefix = Play.application().configuration().getString("application.wayback.url");
+		if( ! prefix.endsWith("/")) {
+			prefix = prefix + "/";
+		}
+		return prefix;
 	}
 	
 	public static String getWaybackQueryEndpoint() {
@@ -51,7 +55,7 @@ public class WaybackController extends Controller {
 		String wayBackUrl = getWaybackEndpoint();
 		
 		// Build up the wayback query:
-		String waybackBuilder = wayBackUrl + "/" + url;
+		String waybackBuilder = wayBackUrl + url;
 		String q = ctx()._requestHeader().rawQueryString();
 		if( q != null && q.length() > 0 ) {
 			Logger.info("Passing through raw Query String: "+q);
@@ -101,7 +105,7 @@ public class WaybackController extends Controller {
 
 			/***Check the http status code***/
 
-			wayback_url = new URL(wayBackUrl+"/xmlquery.jsp?type=prefixquery&url="+url);
+			wayback_url = new URL(wayBackUrl+"xmlquery.jsp?type=prefixquery&url="+url);
 
 			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
@@ -140,7 +144,7 @@ public class WaybackController extends Controller {
 
 			/***Check the http status code***/
 
-			wayback_url = new URL(wayBackUrl + "/xmlquery.jsp?type=urlquery&url=" + url);
+			wayback_url = new URL(wayBackUrl + "xmlquery.jsp?type=urlquery&url=" + url);
 
 			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");

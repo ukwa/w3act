@@ -49,8 +49,6 @@ import eu.scape_project.bitwiser.utils.SSDeep;
  */
 public class DocumentAnalyser {
 
-	private static String waybackUrl = WaybackController.getWaybackEndpoint();
-	
 	public DocumentAnalyser() {
 	}
 
@@ -134,7 +132,7 @@ public class DocumentAnalyser {
 	}
 	
 	private String waybackReplayUrl(String url, String timestamp) {
-		return waybackUrl + "replay?url=" + url + "&date=" + timestamp;
+		return WaybackController.getWaybackEndpoint() + "replay?url=" + url + "&date=" + timestamp;
 	}
 	
 	/**

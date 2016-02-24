@@ -54,7 +54,7 @@ public class StatusController extends AbstractController {
 	}
 	
 	public static boolean isWaybackResponding() {
-		return isSiteResponding(WaybackController.getWaybackEndpoint()+"/");
+		return isSiteResponding(WaybackController.getWaybackEndpoint());
 	}
 	
 	public static boolean isPiiResponding() {
