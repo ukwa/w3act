@@ -178,25 +178,37 @@ public class Documents extends AbstractController {
 		return redirect(routes.Documents.view(document.id));
 	}
 	
+	private static String getAnARK() {
+		List<AssignableArk> assignableArks = AssignableArk.find.all();
+		if (assignableArks.isEmpty()) {
+			requestNewArks();
+			assignableArks = AssignableArk.find.all();
+			if (assignableArks.isEmpty()) {
+				FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
+						"Submission failed! It was not possible to get an ARK identifier.");
+				arkError.send();
+				return null;
+			}
+		}
+		String ark = assignableArks.get(0).ark;
+		Ebean.delete(assignableArks.get(0));
+		
+		return ark;
+	}
+	
 	public static Result submit(final Long id) {
 		// Find the document:
 		Document document = Document.find.byId(id);
 		
-		// Mint an ARK for it:
+		// Mint an ARK for the document:
 		if( StringUtils.isEmpty(document.ark) ) {
-			List<AssignableArk> assignableArks = AssignableArk.find.all();
-			if (assignableArks.isEmpty()) {
-				requestNewArks();
-				assignableArks = AssignableArk.find.all();
-				if (assignableArks.isEmpty()) {
-					FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
-							"Submission failed! It was not possible to get an ARK identifier.");
-					arkError.send();
-					return redirect(routes.Documents.view(id));
-				}
-			}
-			document.ark = assignableArks.get(0).ark;
-			Ebean.delete(assignableArks.get(0));
+			document.ark = getAnARK();
+		}
+		
+		// Check it worked:
+		if( document.ark == null ) {
+			return redirect(routes.Documents.view(id));
+		} else {
 			Ebean.save(document);
 		}
 
