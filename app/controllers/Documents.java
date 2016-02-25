@@ -323,30 +323,52 @@ public class Documents extends AbstractController {
 			// Parse:
 			try {
 				Document document = parseDocumentJson(objNode);
-				// Attempt to extract critical data:
-				DocumentAnalyser da = new DocumentAnalyser();
-				da.extractMetadata(document);
 				// And save and add if not null:
 				if( document != null) {
-					// Allow unset titles:
-					if( document.title == null){
-						document.title = "";
+					// Attempt to extract critical data:
+					DocumentAnalyser da = new DocumentAnalyser();
+					da.extractMetadata(document);
+					
+					// Look for other documents with the same non-empty hash:
+					boolean unique = true;
+					if( StringUtils.isNoneEmpty(document.sha256Hash)) {
+						for (Document doc2 : document.watchedTarget.documents ) {
+							if( document.sha256Hash.equals( doc2.sha256Hash)) {
+								Logger.warn("Already seen this document at "+doc2.documentUrl);
+								unique = false;
+								break;
+							}
+						}
 					}
-					Logger.info("Saving document metadata.");
-					Ebean.save(document);
-					if( document.book != null ) {
-						Ebean.save(document.book);
+					
+					// Record unique documents:
+					if( unique ) {
+						// Allow unset titles:
+						if( document.title == null){
+							document.title = "";
+						}
+						Logger.info("Saving document metadata.");
+						Ebean.save(document);
+						if( document.book != null ) {
+							Ebean.save(document.book);
+						}
+						// Add to list for post-import checks:
+						documents.add(document);
+					} else {
+						Logger.warn("Dropping document from " + document.documentUrl + " based on SHA-256 hash being identical to an existing document on this target.");
 					}
-					// Add to list for post-import checks:
-					documents.add(document);
 				}
 			} catch( Exception ex ) {
 				ex.printStackTrace();
 				return badRequest("Problem during import: "+ex);
 			}
 		}
-		Promise.promise(new DocumentAnalyser.SimilarityFunction(documents));
-		return ok("Documents added");
+		if( documents.size() > 0 ) {
+			Promise.promise(new DocumentAnalyser.SimilarityFunction(documents));
+			return ok("Documents added");
+		} else {
+			return ok("No new documents added");
+		}
 	}
 	
 	protected static Document parseDocumentJson(JsonNode objNode) throws Exception {

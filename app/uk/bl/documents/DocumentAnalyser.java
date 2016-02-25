@@ -5,10 +5,12 @@ package uk.bl.documents;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -130,8 +132,8 @@ public class DocumentAnalyser {
 		return conn.getInputStream();
 	}
 	
-	private String waybackReplayUrl(String url, String timestamp) {
-		return WaybackController.getWaybackEndpoint() + "replay?url=" + url + "&date=" + timestamp;
+	private String waybackReplayUrl(String url, String timestamp) throws UnsupportedEncodingException {
+		return WaybackController.getWaybackEndpoint() + "replay?url=" + URLEncoder.encode(url, "UTF-8") + "&date=" + timestamp;
 	}
 	
 	/**
