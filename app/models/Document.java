@@ -195,6 +195,10 @@ public class Document extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }
+    
+    public String getType() {
+    	return this.type;
+    }
 
 	public void setStatus(Status status) {
 		this.status = status;

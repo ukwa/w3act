@@ -1,5 +1,6 @@
 @(cp: CrawlPermission, enabled: Boolean)
 
+@import licence.tpl._
 
 @disabler() = @{
 	if( ! enabled ) { "disabled" }
@@ -7,7 +8,11 @@
 
 <html>
     <head>
-        <title>W3ACT</title>
+        @if( cp.getLicense() != null ) {
+            <title>@cp.getLicense().name</title>
+        } else {
+            <title>UK Web Archive Licence Form</title>
+        }
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,264 +37,19 @@
         <script type="text/javascript" src="@routes.ApplicationController.javascriptRoutes"></script>
     </head>
     <body>
-		<div class="container">         
-   	<div class="page-header">
-	    <h1>The British Library Web Archiving Program</h1>
-	</div>  
+		<div class="container">
 
-	<div class="padding-20">
-		<div class="alert alert-info">
-			You have reached this page because your website has been selected by the British Library to be included in its Web Archive. If you are happy for your site to be archived, please complete the Licence form below.<br><br>
-			If you are not the sole owner of copyright (and other rights) in the content of your site, please ensure you have cleared the permissions with other contributors to your site. It should be noted that the British Library reserves the right to take down any material from the archived site which, in its reasonable opinion either infringes copyright or any other intellectual property right or is likely to be illegal.<br><br>
-			We select and archive sites to represent aspects of UK documentary heritage and as a result, they will remain available to researchers in the future. The British Library works closely with leading UK institutions to collect and permanently preserve the UK web, and our archive can be seen at www.webarchive.org.uk.<br><br>
-			For more information about copyright and how your archived website will be made available, please see the FAQs. Alternatively, if you have any queries or need further information, please do not hesitate to contact us. 
+        @if( cp.getLicense().name.startsWith("Open UKWA Licence (2014") ) {
+           @oukwa2014(cp,enabled)
+        } else {
+            @if( cp.getLicense().name.startsWith("Joint LDL Web Archiving Licence") ) {
+               @ldukwa2016(cp,enabled)
+            } else {
+                WARNING UNKNOWN LICENSE!
+            }
+        }
+
 		</div>
-	</div>
-
-	@helper.form(action=routes.LicenseController.submit) {
-		@warningmessage(flash)            	
-   		<input type="hidden" name="token" value="@cp.token">
-   		        	
-		<div id="myTabContent" class="tab-content">
-			<div class="tab-pane padding-20 fade active in" id="basicinformation">
-				<div class="padding-20">
-					<h2><font id="BLlicence" style="color: green">The British Library Web Archiving Licence</font></h2>
-					I / We the undersigned grant the British Library a licence to make any reproductions or communications of this web site as are reasonably necessary to preserve it over time and to make it available to the public:
-					(All fields marked <font color="red">*</font> are compulsory) 
-				</div>		     	
-	   
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Licence:</label>
-						    <div class="col-sm-6">
-						    @if( cp.getLicense() != null || cp.getLicense().name == null ) {
-								<input class="form-control" name="license" value="@cp.getLicense().name" type="text" readonly>
-							} else {
-								<b>WARNING! Licence is unset (i.e. set to NULL for this crawl permission)</b>
-							}
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
-						    <div class="col-sm-6">
-				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@TargetController.getTitle(cp.target.id)" type="text" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="target" value="@cp.target.primaryUrl" placeholder="http://www.londonbusinessforum.com/" type="text" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">LICENCE GRANTED BY:</label>
-						</div>
-					</div>
-		     	</div>	     	
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Name: <font color="red">*</font><small class="text-center">(organisation or individual)</small></label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="contactPerson" type="text" value="@cp.contactPerson.name" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="position" type="text" value="@cp.contactPerson.position" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="email" type="text" value="@cp.contactPerson.email" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Postal Address: </label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="postalAddress" type="text" value="@cp.contactPerson.postalAddress" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Contact Organisation: </label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="contactOrganisation" type="text" value="@cp.contactPerson.contactOrganisation" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Tel:</label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="phone" type="text" value="@cp.contactPerson.phone" @disabler>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-				<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Any other information:</label>
-						    <div class="col-sm-6">
-		 						<textarea name="description" cols="100" rows="1" class="form-control" @disabler>@cp.description</textarea>
-							</div>
-						</div>
-					</div>
-		     	</div>	
-
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Third-Party Content: <font color="red">*</font></label>
-				    		<div class="row padding-20">
-					     		<div class="col-md-12 col-xs-12 col-sm-12">
-									<div class="form-group">
-										Is any content on this web site subject to copyright and/or the database right held by another party?<font color="red">*</font>
-									</div>
-								</div>
-					     	</div>	 
-							 
-						    <div class="col-sm-6">
-								<label class="radio-inline">
-   						            <input name="content" id="radio1" value="1" type="radio"
-   						             @if( cp.isCompleted() && cp.thirdPartyContent ) { checked }@disabler> Yes
-								</label>
-								<label class="radio-inline">
-							        <input name="content" id="radio2" value="2" type="radio"
-							         @if( cp.isCompleted() && !cp.thirdPartyContent ) { checked }@disabler> No
-								</label>
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-	
-	    		<div class="row padding-20">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							In consideration of the British Library archiving the website, and crediting me on the UK Web Archive, I confirm that I am authorised to grant this licence on behalf of all owners of copyright, database right or trade marks in the website; I further warrant that (i) nothing contained in this website infringes the copyright or other intellectual property rights of any third party; (ii) no claims have been made in respect of any part of the website; (iii) I am not aware of anything unlawful on the website; and I promise to notify the Library if I become aware that a claim is subsequently made in respect of any content on the website.
-						</div>
-					</div>
-		     	</div>	 
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
-						    <div class="col-sm-6">
-				                <input type="checkbox" name="agree" @if( cp.agree ) { checked } @disabler/>
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-
-				<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Date</label>
-						    <div class="col-sm-6">
-						    @if( cp.isCompleted() ) {
-                                <input type="text" name="log-date" class="form-control" id="log-date" value="@cp.grantedAt" readonly/>
-                            } else {
-                                <input type="text" name="log-date" class="form-control" id="log-date" value="@LicenseController.getCurrentDate()" readonly/>
-                            }
-	                		</div>
-						</div>
-					</div>
-		     	</div>	
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-				    		<div class="row padding-10">
-					     		<div class="col-md-12 col-xs-12 col-sm-12">
-									<div class="form-group">
-										Would you allow the archived web site to be used in any future publicity for the Web Archive? <font color="red">*</font> 
-									</div>
-								</div>
-					     	</div>	 
-							 
-						    <div class="col-sm-6">
-								<label class="radio-inline">
-   						            <input name="publish" id="radio1" value="1" type="radio"
-   						              @if( cp.isCompleted() && cp.publish ) { checked }@disabler> Yes
-								</label>
-								<label class="radio-inline">
-							        <input name="publish" id="radio2" value="2" type="radio"
-							          @if( cp.isCompleted() && !cp.publish ) { checked }@disabler> No
-								</label>
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							Personal details you provide on this form are protected by UK data protection law. Please <a href="@play.api.Play.current.configuration.getString("privacy.statement")" target="_blank">view</a> our Privacy Statement.<br>
-							Contact information:<br>
-							Permissions Officer (pp. Helen Hockx-Yu, Head of Web Archiving)<br>
-							Web Archiving<br>
-							The British Library<br>
-							96 Euston Road<br> 
-						</div>
-					</div>
-		     	</div>	 							 
-		     	
-			</div>		     		        
-		</div>
-                        
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="action" value="submit" id="submit" @disabler>Submit</button>
-		       </div>
-			</div>
-		</div>
-	}
-			</div>
     </body>
 </html>	
 

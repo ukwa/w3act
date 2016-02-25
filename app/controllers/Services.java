@@ -15,11 +15,6 @@ import views.html.services.list;
 @Security.Authenticated(SecuredController.class)
 public class Services extends AbstractController {
 	
-	public static Result list() {
-		return ok(
-			list.render(User.findByEmail(request().username()))
-		);
-	}
 	public static Result edit(Long id) {
 		License license = License.find.byId(id);
 		DynamicForm form = Form.form().bind(Portals.getFormData(license.portals));
@@ -35,7 +30,7 @@ public class Services extends AbstractController {
 		Ebean.save(license);
 		
 		FlashMessage.updateSuccess.send();
-		return redirect(routes.Services.list());
+		return redirect(routes.LicencesController.list());
 	}
 
 }

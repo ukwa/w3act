@@ -1,0 +1,49 @@
+@(user: User)
+
+@main("", user) {
+
+	<div class="page-header">
+	    <h1>Licences</h1>
+	</div>
+	
+	@warningmessage(flash)
+	
+	<article class="licences">
+	    	
+		<table class="table table-hover">
+			<thead>
+				<tr>
+                    <th>Licence</th>
+                    <th>Description</th>
+                    <th colspan="2">Services</th>
+				</tr>
+			</thead>
+			<tbody>
+			@for(license <- License.findAllLicenses) {
+				<tr>
+				    <td>
+                    <a href="@routes.LicencesController.preview(license.id)">@license.name</a>
+				    @if( user.isSysAdmin() ) {
+					&nbsp;<a href="@routes.LicencesController.edit(license.id)">Edit</a>
+					}
+					</td>
+					<td>@license.description</td>
+					<td>
+						@for(portal <- license.portals) {
+							@portal.title<br>
+						}
+					</td>
+                    <td>
+                    @if( user.isSysAdmin() || user.isArchivist() ) {
+                    <a href="@routes.Services.edit(license.id)" title="Edit services associated with @license.name licence">Edit</a>
+                    }
+                    </td>
+				</tr>
+			}
+			</tbody>
+		</table>
+				
+	</article>
+}
+
+

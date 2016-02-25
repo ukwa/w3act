@@ -79,7 +79,7 @@
 								<li><a href="@routes.TagController.index()">Tags</a></li>
 								<li><a href="@routes.FlagController.index()">Flags</a></li>
 								@if(user.hasRole("sys_admin")) {
-									<li><a href="@routes.Services.list()">Services for Licence</a></li>
+									<li><a href="@routes.LicencesController.list()">Licences and Services</a></li>
 									<li><a href="@routes.ExportController.index()">Export</a></li>
 								}
 							</ul>

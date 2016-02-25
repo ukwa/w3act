@@ -1,0 +1,46 @@
+@(licenseForm: Form[models.License], user: User)
+
+@import helper._
+@import bootstrap._
+
+@main("", user) {
+
+	<div class="page-header">
+    	<h1>
+    		<a href="@routes.LicencesController.list()">Licences</a> > Edit
+    	</h1>
+	</div>
+	
+	@helper.form(action = routes.LicencesController.save()) {
+        <input type="hidden" name="id" value="@licenseForm.get().id">
+
+            <div class="row padding-10">
+                <div class="col-md-12 col-xs-12 col-sm-12">
+                    <div class="form-group">
+                        @inputText(licenseForm("name"),
+                            '_label -> "Name",
+                            'id -> "title",
+                            'class -> "form-control",
+                            'placeholder -> "Name"
+                        )(FieldConstructor(genericMandatoryInput.f), lang)
+                    </div>
+                </div>
+            </div>
+            <div class="row padding-10">
+                <div class="col-md-12 col-xs-12 col-sm-12">
+                    <div class="form-group">
+                        @inputText(licenseForm("description"),
+                            '_label -> "Description",
+                            'id -> "description",
+                            'class -> "form-control",
+                            'placeholder -> "Description"
+                        )(FieldConstructor(genericInput.f), lang)
+                    </div>
+                </div>
+            </div>
+        
+		<input type="submit" class="btn btn-primary" value="Save">
+	}
+}
+
+

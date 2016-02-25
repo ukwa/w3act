@@ -151,6 +151,7 @@
 						@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
 						@header("documentUrl", "Document", currentSortBy, currentOrder, link)
 						@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
+                        @header("type", "Type", currentSortBy, currentOrder, link)
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<th>Action</th>
 						} else {
@@ -185,6 +186,7 @@
                         <td>@shortLink(document.landingPageUrl, "_blank")</td>
                         <td>@shortLink(document.documentUrl, "_blank")</td>
 						<td>@WatchedTargets.dayCount(document.waybackTimestamp)</td>
+						<td>@document.getType()</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<td>
 								@if(document.isEditableFor(user)) {

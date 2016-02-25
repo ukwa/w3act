@@ -1,0 +1,248 @@
+@(cp: CrawlPermission, enabled: Boolean)
+
+
+@disabler() = @{
+	if( ! enabled ) { "disabled" }
+}
+
+<!-- 
+	<div class="padding-20">
+		<div class="alert alert-info">
+			You have reached this page because your website has been selected by the British Library to be included in its Web Archive. If you are happy for your site to be archived, please complete the Licence form below.<br><br>
+			If you are not the sole owner of copyright (and other rights) in the content of your site, please ensure you have cleared the permissions with other contributors to your site. It should be noted that the British Library reserves the right to take down any material from the archived site which, in its reasonable opinion either infringes copyright or any other intellectual property right or is likely to be illegal.<br><br>
+			We select and archive sites to represent aspects of UK documentary heritage and as a result, they will remain available to researchers in the future. The British Library works closely with leading UK institutions to collect and permanently preserve the UK web, and our archive can be seen at www.webarchive.org.uk.<br><br>
+			For more information about copyright and how your archived website will be made available, please see the FAQs. Alternatively, if you have any queries or need further information, please do not hesitate to contact us. 
+		</div>
+	</div>
+ -->
+
+	@helper.form(action=routes.LicenseController.submit) {
+		@warningmessage(flash)            	
+   		<input type="hidden" name="token" value="@cp.token">
+   		        	
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane padding-20 fade active in" id="basicinformation">
+				<div class="padding-20">
+					<h2><font id="BLlicence" style="color: green">Web Archive Access Licence</font></h2>
+					<p>
+					I/We the undersigned grant the UK Legal Deposit Libraries<sup>1</sup> a licence to provide public access to the copies of my/our website that have been collected under Legal Deposit legislation.  We understand that public access will apply to copies of the website and associated content that are collected over time.
+					</p>
+					<p>
+					(All fields marked <font color="red">*</font> are compulsory)
+					</p>
+				</div>		     	
+	   
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
+						    <div class="col-sm-6">
+				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@TargetController.getTitle(cp.target.id)" type="text" @disabler>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="target" value="@cp.target.primaryUrl" placeholder="http://www.londonbusinessforum.com/" type="text" @disabler>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">LICENCE GRANTED BY:</label>
+						</div>
+					</div>
+		     	</div>	     	
+
+                <div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label">Name:  <font color="red">*</font><small class="text-center">(organisation or individual)</small></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" name="contactOrganisation" type="text" value="@cp.contactPerson.contactOrganisation" @disabler>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Contact Name: <font color="red">*</font></label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="contactPerson" type="text" value="@cp.contactPerson.name" @disabler>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="position" type="text" value="@cp.contactPerson.position" @disabler>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="email" type="text" value="@cp.contactPerson.email" @disabler>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Postal Address: </label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="postalAddress" type="text" value="@cp.contactPerson.postalAddress" @disabler>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Tel:</label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="phone" type="text" value="@cp.contactPerson.phone" @disabler>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-12 control-label">Any other information:</label>
+						    <div class="col-sm-12">
+		 						<textarea name="description" cols="100" rows="2" class="form-control" @disabler>@cp.description</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Third-Party Content: <font color="red">*</font></label>
+				    		<div class="row padding-20">
+					     		<div class="col-md-12 col-xs-12 col-sm-12">
+									<div class="form-group">
+										Is any content on this website subject to copyright and/or database rights held by another party?<font color="red">*</font>
+									</div>
+								</div>
+					     	</div>	 
+							 
+						    <div class="col-sm-6">
+								<label class="radio-inline">
+   						            <input name="content" id="radio1" value="1" type="radio"
+   						             @if( cp.isCompleted() && cp.thirdPartyContent ) { checked }@disabler> Yes
+								</label>
+								<label class="radio-inline">
+							        <input name="content" id="radio2" value="2" type="radio"
+							         @if( cp.isCompleted() && !cp.thirdPartyContent ) { checked }@disabler> No
+								</label>
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+	
+	    		<div class="row padding-20">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+    						I confirm that I am authorised to grant this licence on behalf of all the owners of copyright, database right and trade marks in the website.  I further warrant that (i) nothing contained in this website infringes the copyright or other intellectual property rights of any third party; (ii) no claims have been made in respect of any part of the website; (iii) I am not aware of anything unlawful on the website; and I promise to notify the Libraries if I become aware that a claim is subsequently made in respect of any content on the website
+						</div>
+					</div>
+		     	</div>	 
+		     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
+						    <div class="col-sm-6">
+				                <input type="checkbox" name="agree" @if( cp.agree ) { checked } @disabler/>
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Date</label>
+						    <div class="col-sm-6">
+						    @if( cp.isCompleted() ) {
+                                <input type="text" name="log-date" class="form-control" id="log-date" value="@cp.grantedAt" readonly/>
+                            } else {
+                                <input type="text" name="log-date" class="form-control" id="log-date" value="@LicenseController.getCurrentDate()" readonly/>
+                            }
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+				    		<div class="row padding-10">
+					     		<div class="col-md-12 col-xs-12 col-sm-12">
+									<div class="form-group">
+										Would you allow the archived website to be used in any future publicity for the Web Archive? <font color="red">*</font> 
+									</div>
+								</div>
+					     	</div>	 
+							 
+						    <div class="col-sm-6">
+								<label class="radio-inline">
+   						            <input name="publish" id="radio1" value="1" type="radio"
+   						              @if( cp.isCompleted() && cp.publish ) { checked }@disabler> Yes
+								</label>
+								<label class="radio-inline">
+							        <input name="publish" id="radio2" value="2" type="radio"
+							          @if( cp.isCompleted() && !cp.publish ) { checked }@disabler> No
+								</label>
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+	
+        <div class="row padding-10 pull-right">
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" name="action" value="submit" id="submit" @disabler>Submit</button>
+               </div>
+            </div>
+        </div>
+        
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+						    <sup>1</sup> The Legal Deposit Libaries are: the British Libary; the National Library of Scotland; the National Library of Wales; Bodleian Libaries, Oxford; University Library, Cambridge; and the Library of Trinity College, Dublin
+						</div>
+					</div>
+		     	</div>	 							 
+		     	
+			</div>		     		        
+		</div>
+                        
+	}
+
+

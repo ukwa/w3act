@@ -172,7 +172,11 @@ GET		/watchedtargets/:id/nodocuments		controllers.WatchedTargets.noDocuments(id:
 
 GET		/secret/:id							controllers.LoginCredentialsController.getSecret(id: Int)
 
-GET		/services/list						controllers.Services.list()
+GET     /licences/list                      controllers.LicencesController.list()
+GET     /licences/preview/:id               controllers.LicencesController.preview(id: Long)
+GET     /licences/edit/:id                  controllers.LicencesController.edit(id: Long)
+GET     /licences/new                       controllers.LicencesController.newForm()
+POST    /licences/save                      controllers.LicencesController.save()
 GET		/services/edit/:id					controllers.Services.edit(id: Long)
 GET		/services/save/:id					controllers.Services.save(id: Long)
 
