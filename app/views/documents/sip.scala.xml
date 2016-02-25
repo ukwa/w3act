@@ -1,7 +1,7 @@
 @(document: Document)
 
 <?xml version="1.0" encoding="utf-8"?>
-<mets:mets TYPE="@if(document.isBookOrBookChapter) {eBooks} else {eJournal}"
+<mets:mets TYPE="@if(document.isBookOrBookChapter) {eBooks} else {Legal Deposit eJournals|Document Harvester}"
     xmlns:mets="http://www.loc.gov/METS/"
     xmlns:premis="info:lc/xmlns/premis-v2"
     xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -9,7 +9,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd
         info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd
-        http://www.loc.gov/mods/v3 http://www.loc.gov/mods/v3/mods-3-4.xsd">
+        http://www.loc.gov/mods/v3 http://www.loc.gov/mods/v3/mods-3-4.xsd
+        http://bl.uk/namespaces/blmodsextension.xsd">
   <mets:metsHdr CREATEDATE="@document.currentStatusSetUTCString">
     <mets:agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
       <mets:name>ACT;@ApplicationController.getVersion</mets:name>
@@ -108,12 +109,13 @@
             <mods:title>@document.title</mods:title>
           </mods:titleInfo>
         }
+         <mods:relatedItem type="host" displayLabel="Issue">
         @if(!document.doi.isEmpty) {
           <mods:identifier type="DOI">@document.doi</mods:identifier>
         }
         @if(document.publicationDate != null) {
           <mods:originInfo>
-            <mods:dateIssued encoding="w3cdtf">@document.publicationDate</mods:dateIssued>
+            <mods:dateIssued encoding="w3cdtf">@document.publicationDate.format("yyyy-MM-dd")</mods:dateIssued>
             @*<mods:issuance>@document.journal.journalTitle.frequency</mods:issuance>*@
           </mods:originInfo>
         }
@@ -197,6 +199,7 @@
              @for(fastSubject <- document.fastSubjects) {
         <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.fastId"></mods:subject>
       }
+         </mods:relatedItem>
         </mods:mods>
       </mets:xmlData>
     </mets:mdWrap>
