@@ -12,7 +12,7 @@
         http://www.loc.gov/mods/v3 http://www.loc.gov/mods/v3/mods-3-4.xsd">
   <mets:metsHdr CREATEDATE="@document.currentStatusSetUTCString">
     <mets:agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
-      <mets:name>ACT;1.0</mets:name>
+      <mets:name>ACT;@ApplicationController.getVersion</mets:name>
     </mets:agent>
     <mets:metsDocumentID>@document.ark</mets:metsDocumentID>
   </mets:metsHdr>

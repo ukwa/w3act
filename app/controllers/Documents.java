@@ -52,6 +52,7 @@ import play.mvc.Security;
 import play.Play;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.io.IOUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -61,13 +62,12 @@ import uk.bl.documents.DocumentAnalyser;
 import views.html.documents.compare;
 import views.html.documents.edit;
 import views.html.documents.list;
-import views.xml.documents.sip;
 
 @Security.Authenticated(SecuredController.class)
 public class Documents extends AbstractController {
 	
 	public static BlCollectionSubsetList blCollectionSubsetList = new BlCollectionSubsetList();
-	private static String saveDir = Play.application().configuration().getString("ddhapt.input.dir");
+	private static String saveDir = Play.application().configuration().getString("dls.documents.sip.dir");
 	
 	public static Result view(Long id) {
 		return render(id, false);
@@ -179,75 +179,70 @@ public class Documents extends AbstractController {
 	}
 	
 	public static Result submit(final Long id) {
+		// Find the document:
 		Document document = Document.find.byId(id);
-		List<AssignableArk> assignableArks = AssignableArk.find.all();
-		if (assignableArks.isEmpty()) {
-			requestNewArks();
-			assignableArks = AssignableArk.find.all();
+		
+		// Mint an ARK for it:
+		if( StringUtils.isEmpty(document.ark) ) {
+			List<AssignableArk> assignableArks = AssignableArk.find.all();
 			if (assignableArks.isEmpty()) {
-				FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
-						"Submission failed! It was not possible to get an ARK identifier.");
-				arkError.send();
-
-				//code to download sip.xml file to server
-				String url = "https://www.webarchive.org.uk/act-ddhapt/documents/"+id+"/sip";
-				final Promise<File> filePromise = WS.url(url).get().map( 
-						new Function<WSResponse, File>() {
-							@Override
-							public File apply(WSResponse response) throws Throwable {
-
-								InputStream inputStream = null;
-								OutputStream outputStream = null;
-								String fileName = "_sip_"+id+".xml";
-								final File file = new File(saveDir + File.separator + fileName);
-								try {
-									inputStream = response.getBodyAsStream();
-
-									// save inputStream to a file
-									outputStream = new FileOutputStream(file);
-
-									int read = 0;
-									byte[] buffer = new byte[1024];
-
-									while ((read = inputStream.read(buffer)) != -1) {
-										outputStream.write(buffer, 0, read);
-									}
-
-								} catch (IOException e) {
-									throw e;
-								} finally {
-									if (inputStream != null) {inputStream.close();}
-									if (outputStream != null) {outputStream.close();}
-								}
-
-								return file;
-							}
-						});
-				// Wait for the file to download, up to thirty seconds:
-				File file = filePromise.get(30, TimeUnit.SECONDS);
-				// Check it's good:
-				if (file != null && file.exists() && file.isFile() && file.length()!= 0){
-					String newFileName = "sip_"+id+".xml";
-					file.renameTo(new File(saveDir + File.separator + newFileName));	
-				}else{
-					file.delete();
-					FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
-							"The document is corrupted.");
-					downloadError.send();
+				requestNewArks();
+				assignableArks = AssignableArk.find.all();
+				if (assignableArks.isEmpty()) {
+					FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
+							"Submission failed! It was not possible to get an ARK identifier.");
+					arkError.send();
+					return redirect(routes.Documents.view(id));
 				}
-
-				return redirect(routes.Documents.view(id));
-
 			}
+			document.ark = assignableArks.get(0).ark;
+			Ebean.delete(assignableArks.get(0));
+			Ebean.save(document);
 		}
-		document.ark = assignableArks.get(0).ark;
-		Ebean.delete(assignableArks.get(0));
+
+		// Download it to a local file.
+		String url = routes.DocumentSIPController.sip(id).absoluteURL(request());
+		Logger.info("Downloading "+url);
+		final Promise<File> filePromise = WS.url(url).get().map( 
+				new Function<WSResponse, File>() {
+					@Override
+					public File apply(WSResponse response) throws Throwable {
+
+						String fileName = "_sip_"+id+".xml";
+						final File file = new File(saveDir, fileName);
+						try {
+							IOUtils.copy(response.getBodyAsStream(), new FileOutputStream(file));
+						} catch (IOException e) {
+							Logger.error("Exception while downloading file: "+e.getMessage(),e);
+							return null;
+						}
+
+						return file;
+					}
+				});
+		// Wait for the file to download, up to thirty seconds:
+		File file = filePromise.get(30, TimeUnit.SECONDS);
+		// Check it's good:
+		if (file != null && file.exists() && file.isFile() && file.length()!= 0){
+			String newFileName = "sip_"+id+".xml";
+			file.renameTo(new File(saveDir, newFileName));	
+		} else {
+			if( file.exists()) {
+				file.delete();
+			}
+			FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
+					"SIP XML could not be downloaded for submission!");
+			downloadError.send();
+		}
+		
+		// Record success:
 		document.setStatus(Document.Status.SUBMITTED);
 		Ebean.save(document);
-		deleteHtmlFile(document.htmlFilename());
+		
+		// And tell:
 		FlashMessage submitSuccess = new FlashMessage(FlashMessage.Type.SUCCESS,
 				"The document has been submitted.");
-		submitSuccess.send();
+		submitSuccess.send();		
 		return redirect(routes.Documents.view(id));
 	}
 	
@@ -328,8 +323,21 @@ public class Documents extends AbstractController {
 			// Parse:
 			try {
 				Document document = parseDocumentJson(objNode);
-				// And add if not null:
+				// Attempt to extract critical data:
+				DocumentAnalyser da = new DocumentAnalyser();
+				da.extractMetadata(document);
+				// And save and add if not null:
 				if( document != null) {
+					// Allow unset titles:
+					if( document.title == null){
+						document.title = "";
+					}
+					Logger.info("Saving document metadata.");
+					Ebean.save(document);
+					if( document.book != null ) {
+						Ebean.save(document.book);
+					}
+					// Add to list for post-import checks:
 					documents.add(document);
 				}
 			} catch( Exception ex ) {
@@ -337,7 +345,7 @@ public class Documents extends AbstractController {
 				return badRequest("Problem during import: "+ex);
 			}
 		}
-		Promise.promise(new DocumentAnalyser.ExtractFunction(documents));
+		Promise.promise(new DocumentAnalyser.SimilarityFunction(documents));
 		return ok("Documents added");
 	}
 	
@@ -481,11 +489,6 @@ public class Documents extends AbstractController {
 		response().setContentType("text/csv; charset=utf-8");
 		response().setHeader("Content-Disposition","attachment; filename=\"document-export.csv");
 		return ok(builder.toString());
-	}
-	
-	public static Result sip(Long id) {
-		Document document = Document.find.byId(id);
-		return ok(sip.render(document));
 	}
 	
 	public static void addHashes(Document document) {

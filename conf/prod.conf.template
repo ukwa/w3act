@@ -56,6 +56,9 @@ exchange_name=w3actexchange
 application.wayback.url="http://opera.bl.uk:8080/wayback/"
 application.wayback.query.path="/xmlquery.jsp?url="
 
+# Location of Monitrix on ELK (Kibana) service:
+application.monitrix.url="http://192.168.99.100:5601/app/kibana"
+
 # Location of pdftohtmlex web service:
 application.pdftohtmlex.url="http://192.168.99.100:5000/convert?url="
 
@@ -66,6 +69,7 @@ ehcacheplugin=disabled
 
 #DDHAPT
 enableDDHAPT=false
+dls.documents.sip.dir=/var/tmp
 
 use.accounts=false
 admin.default.email="wa-sysadm@bl.uk"

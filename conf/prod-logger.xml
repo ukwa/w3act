@@ -3,7 +3,7 @@
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<file>/var/log/w3act.log</file>
 		<encoder>
-			<pattern>%date %coloredLevel %logger{15} - %message%n%xException{5}</pattern>
+            <pattern>%date %coloredLevel %logger{15} - %message%n%xException{5}</pattern>
 		</encoder>
 	</appender>
 

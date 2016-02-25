@@ -52,7 +52,7 @@ public class DocumentAnalyser {
 	public DocumentAnalyser() {
 	}
 
-	public void extractMetadata(Document document) {
+	public void extractMetadata(Document document) throws Exception {
 		// Get the binary hash
 		try {
 			byte[] digest = DigestUtils.sha256(getWaybackInputStream(document.documentUrl, document.waybackTimestamp));
@@ -60,6 +60,8 @@ public class DocumentAnalyser {
 			Logger.info("Recorded sha256Hash "+document.sha256Hash+" for "+document.documentUrl);
 		} catch (Exception e) {
 			Logger.error("Failure while SHA256 hashing "+document.documentUrl, e);
+			// This is a critical error - we can't submit without a hash.
+			throw new Exception("Could not generate SHA256 hash for "+document.documentUrl,e);
 		}
 		
 		// Extended metadata and text:
@@ -137,25 +139,15 @@ public class DocumentAnalyser {
 	 * @author andy
 	 *
 	 */
-	public static class ExtractFunction implements Function0<Boolean> {
+	public static class SimilarityFunction implements Function0<Boolean> {
 		
 		public List<Document> documents;
-		public ExtractFunction(List<Document> documents) {
+		public SimilarityFunction(List<Document> documents) {
 			this.documents = documents;
 		}
 		
 		@Override
 		public Boolean apply() {
-			Logger.info("Extracting from "+documents.size()+" documents...");
-			for (Document document : documents) {
-				DocumentAnalyser da = new DocumentAnalyser();
-				da.extractMetadata(document);
-				Logger.info("Saving updated document metadata.");
-				Ebean.save(document);
-				if( document.book != null ) {
-					Ebean.save(document.book);			
-				}
-			}
 			Logger.info("Checking similarity against all documents for each WatchedTarget...");
 			for (Document doc1 : documents) {
 				for (Document doc2 : doc1.watchedTarget.documents ) {

@@ -193,6 +193,13 @@ public class Document extends Model {
 		currentStatusSet = new Date();
 	}
 	
+	public boolean isSubmissable() {
+		if( type != null ) {
+			return true;
+		}
+		return false;
+	}
+	
 	public String currentStatusSetUTCString() {
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		dateFormatGmt.setTimeZone(TimeZone.getTimeZone("UTC"));

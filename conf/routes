@@ -147,13 +147,14 @@ GET     /documents/compare/$id1<[0-9]+>..$id2<[0-9]+>	controllers.Documents.comp
 GET     /documents/html/*file				controllers.Documents.html(file)
 GET		/documents/:document				controllers.Documents.view(document: Long)
 GET		/documents/:document/edit			controllers.Documents.edit(document: Long)
-GET		/documents/:document/submit			controllers.Documents.submit(document: Long)
+POST	/documents/:document/submit			controllers.Documents.submit(document: Long)
 GET		/documents/:document/ignore			controllers.Documents.ignore(document: Long, filter: models.DocumentFilter, p:Int, s, o, f, filters: Boolean)
-GET		/documents/:document/sip			controllers.Documents.sip(document: Long)
+GET     /documents/:document/sip            controllers.DocumentSIPController.sip(document: Long)
 POST	/documents/:id						controllers.Documents.save(id: Long)
 POST	/documents							controllers.Documents.importJson()
 
-GET		/pii/vdc							controllers.Pii.pii(arks: Integer)
+GET     /pii/vdc                            controllers.Pii.pii(arks: Integer)
+POST     /pii/vdc                            controllers.Pii.pii(arks: Integer)
 
 GET		/journaltitles/:journaltitle		controllers.JournalTitles.edit(journaltitle: Long)
 POST	/journaltitles						controllers.JournalTitles.save(toDocument: Boolean ?= false)
