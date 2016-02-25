@@ -816,7 +816,8 @@
 				</div>
 	     	</div>	
 		     	
-    		<div class="row padding-10" hidden>
+            @if(target.isInScopeAllOrInheritedWithoutLicense()) {
+    		<div class="row padding-10" disabled>
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label class="col-sm-6 control-label"></label>
@@ -828,6 +829,7 @@
 					</div>
 				</div>
 	     	</div>
+	     	}
         </div>
 	        
 		<div class="tab-pane fade padding-20" id="licensing">

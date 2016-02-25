@@ -2116,7 +2116,7 @@ public class Target extends Model {
 		// Otherwise, nope:
 		return false;
 	}
-
+	
 	/**
 	 * This helper looks at the direct and inherited licenses and returns an object that 
 	 * describes the current state.

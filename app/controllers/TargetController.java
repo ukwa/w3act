@@ -1735,8 +1735,12 @@ public class TargetController extends AbstractController {
     	Target target = Target.findById(id);
     	Logger.debug("archiveTarget() " + target);
     	if (target != null) {
+    		if( !target.isInScopeAllOrInheritedWithoutLicense()) {
+                return ok(infomessage.render("On-demand archiving is only supported for NPLD targets."));
+    		}
+    		
+    		// Send the message:
     		try {
-//    	        String target = Scope.INSTANCE.normalizeUrl(url);
 		    	String queueHost = Play.application().configuration().getString(Const.QUEUE_HOST);
 		    	String queuePort = Play.application().configuration().getString(Const.QUEUE_PORT);
 		    	String queueName = Play.application().configuration().getString(Const.QUEUE_NAME);
