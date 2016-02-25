@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -1339,6 +1340,9 @@ public class TargetController extends AbstractController {
 				Date date = formatter.parse(crawlStartDate);
 				filledForm.get().crawlStartDate = date;
 				 Logger.debug("crawlStartDate:::::::: " + date);
+				 if( date.before(Calendar.getInstance().getTime()) ) {
+					 flash("warning", "<b>Warning! The crawl start date is in the past!</b><br/>This is normal for existing targets, but should not be the case for new targets.");
+				 }
 			} catch (ParseException e) {
 				e.printStackTrace();
 	            return info(filledForm, id);
