@@ -195,6 +195,13 @@
 	</style>
 }
 
+@docTitleLabel(isIssue: Boolean) = @{
+  if( isIssue )
+    "Title"
+  else
+    "Title *"
+}
+
 @main(title, user, scripts, styles) {
 	
 	<div class="page-header">
@@ -234,7 +241,7 @@
 			<input type="hidden" name="watchedTarget.target.nid" value="@form("watchedTarget.target.nid").value">
 			<input type="hidden" name="watchedTarget.target.title" value="@form("watchedTarget.target.title").value">
 
-			@inputText(form("title"), editable, '_label -> "Title")
+			@inputText(form("title"), editable, '_label -> docTitleLabel(document.isJournalIssue))
 			@inputText(form("doi"), editable, '_label -> "DOI (Digital Object Identifier)")
 			@inputText(form("publicationDate"), editable, '_label -> "Publication Date", 'onchange -> "fillYear()")
 			@inputText(form("publicationYear"), editable, '_label -> "Year of Publication")

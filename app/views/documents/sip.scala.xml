@@ -103,9 +103,11 @@
     <mets:mdWrap MDTYPE="MODS">
       <mets:xmlData>
         <mods:mods>
+        @if(document.isJournalArticle) {
           <mods:titleInfo>
             <mods:title>@document.title</mods:title>
           </mods:titleInfo>
+        }
         @if(!document.doi.isEmpty) {
           <mods:identifier type="DOI">@document.doi</mods:identifier>
         }

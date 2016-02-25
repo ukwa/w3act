@@ -18,6 +18,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.Query;
@@ -72,7 +74,6 @@ public class Document extends Model {
     public String sha256Hash;
     public String ctpHash;
     
-    @Required
     @Column(columnDefinition = "text")
 	public String title;
     
@@ -107,6 +108,13 @@ public class Document extends Model {
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
         String required = "This field is required";
+        // Title required unless a journal issue:
+        if( ! this.isJournalIssue() ) {
+        	if( StringUtils.isEmpty(this.title)) {
+                errors.add(new ValidationError("title", "A title is required for all documents except journal issues"));
+        	}
+        }
+        // Sub-cases
         if (isJournalArticleOrIssue()) {
         	if (journal.journalTitleId == null)
                 errors.add(new ValidationError("journal.journalTitleId", required));
