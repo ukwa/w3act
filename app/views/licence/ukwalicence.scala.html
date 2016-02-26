@@ -45,7 +45,10 @@
             @if( cp.getLicense().name.startsWith("Joint LDL Web Archiving Licence") ) {
                @ldukwa2016(cp,enabled)
             } else {
-                WARNING UNKNOWN LICENSE!
+               <h1>UNKNOWN LICENCE!</h1>
+               <p>
+                No form has been set up for the '<b>@cp.getLicense().name</b>' licence.
+               </p>
             }
         }
 
