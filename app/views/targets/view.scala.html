@@ -2,6 +2,7 @@
 
 @import templates.checkbox
 @import templates.inputText
+@import monitrix.monitrix_link
 
 @script = {
 	<script>
@@ -1059,6 +1060,23 @@
 					}
 				</div>
 			</div>
+
+            <div class="panel panel-primary" id="wayback-instances-panel">
+                <div class="panel-heading">
+                        Crawl Logs
+                </div>
+                <div id="collapseInstances" class="panel-body">
+                    @for(fieldUrl <- target.fieldUrls) {
+                        <div class="padding-10">
+                            <strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
+                        </div>
+                        <ul>
+                            <li>@monitrix_link(fieldUrl.url, MonitrixController.Query.EXACT)</li>
+                            <li>@monitrix_link(fieldUrl.url, MonitrixController.Query.PREFIX)</li>
+                        </ul>
+                    }
+                </div>
+            </div>
 		</div>
 	</div>
 	

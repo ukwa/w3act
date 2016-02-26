@@ -1,0 +1,23 @@
+@(url: String, mode: MonitrixController.Query)
+
+@kibana = @{
+    MonitrixController.getEndpoint()
+}
+
+@query(url: String, mode: MonitrixController.Query) = @{
+    if (mode == MonitrixController.Query.PREFIX)
+        MonitrixController.getURLPrefixQuery(url)
+    else
+        MonitrixController.getURLQuery(url)
+}
+
+@linktext(mode: MonitrixController.Query) = @{
+    if (mode == MonitrixController.Query.PREFIX)
+        "Find all URLs with this prefix in the crawl logs"
+    else
+        "Find URL in crawl logs"
+}
+
+<a target="_blank" href="@kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1d,mode:quick,to:now))&amp;_a=(columns:!(_source),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'@query(url,mode)')),sort:!(log_timestamp,desc))">
+@linktext(mode)
+</a>

@@ -22,10 +22,23 @@ public class MonitrixController extends Controller {
 		return Play.application().configuration().getString("application.monitrix.url");
 	}
 	
+    public static String getURLPrefixQuery(String url) {
+    	return "downloaded_uri.raw:/"+escape(url)+".*/";
+    }
+    
+    public static String getURLQuery(String url) {
+    	return "downloaded_uri.raw:\""+url+"\"";
+    }
+    
     public static Result all() {
     	User user = User.findByEmail(request().username());
     	return ok(frequent.render(null, user, "*", getEndpoint()));
     }
+    
+    public static enum Query {
+    	EXACT,
+    	PREFIX
+    };
     
     private static String escape(String in) {
     	Logger.debug("in: "+in);
@@ -46,7 +59,7 @@ public class MonitrixController extends Controller {
     			// For precise match:
     			//query = query + "downloaded_uri.raw:\""+furl.url+"\"";
     			// For prefix:
-    			query = query + "downloaded_uri.raw:/"+escape(furl.url)+".*/";
+    			query = query + getURLQuery(furl.url);
     		}
     		Logger.debug("query: "+query);
     		return ok(frequent.render(target, user, URLEncoder.encode(query,"UTF-8").replaceFirst(":", "%3D"), getEndpoint()));
