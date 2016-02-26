@@ -7,37 +7,39 @@
 	@if(test) {@good} else {@bad}
 }
 
-@main("", user) {
+@main("Server Status", user) {
 	<h2>Status</h2>
-	The database
-	<ul>
-		<li>contains FAST Subjects @check(StatusController.areThereFastSubjects())
+	
+	<style>
+	  dt {
+	  margin-top: 2em;
+	  }
+	</style>
+	
+	<dl>
+	
+	<dt>The database</dt>
+	<dd>contains FAST Subjects @check(StatusController.areThereFastSubjects())
 		  @if( ! StatusController.areThereFastSubjects() ) {
 		    <a href="@routes.StatusController.addFastDefaultSubjects()">Click here to add the default FAST subjects</a>
 		  }
-		</li>
-	</ul>
-	pdf2htmlEX
-	<ul>
-		<li>is available @check(StatusController.isPdf2htmlEXAvailable())</li>
-	</ul>
-	ssdeep
-	<ul>
-		<li>is available @check(StatusController.isSsdeepAvailable())</li>
-	</ul>
-	Wayback
-	<ul>
-		<li>is responding @check(StatusController.isWaybackResponding())</li>
-	</ul>
-	PII
-	<ul>
-		<li>is responding @check(StatusController.isPiiResponding())</li>
-	</ul>
+    </dd>
+    
+    <dt>pdf2htmlEX <a href="@StatusController.getPdf2HtmlEndpoint()">[here]</a></dt>
+	<dd>is available @check(StatusController.isPdf2htmlEXAvailable())</dd>
+	
+    <dt>Wayback <a href="@StatusController.getWaybackEndpoint()">[here]</a></dt>
+	<dd>is responding @check(StatusController.isWaybackResponding())</dd>
+	
+	<dt>PII <a href="@StatusController.getPIIEndpoint()">[here]</a></dt>
+    <dd>is responding @check(StatusController.isPiiResponding())</dd>
+    <dd>appears to be a real PII server (not a test instance) @check(StatusController.isOfficalPiiInstance())</dd>
+
+	<dt>The Secret Server <a href="@StatusController.getSecretServerEndpoint()">[here]</a></dt>
 @defining(StatusController.secretServerVersion()) { version =>
-	The Secret Server<br>
-	<ul>
-		<li>is accessible @check(version != null)</li>
-		<li>has version 8.8.000020 @check(version == "8.8.000020")</li>
-	</ul>
+		<dd>is accessible @check(version != null)</dd>
+		<dd>has version 8.8.000020 @check(version == "8.8.000020")</dd>
 }
+    </dl>
+
 }

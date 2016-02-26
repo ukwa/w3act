@@ -1,6 +1,8 @@
 package com.thesecretserver;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.URL;
 
 import play.Logger;
 
@@ -65,6 +67,17 @@ public class PasswordManager {
 	public static String versionGet() {
 		SSWebServiceSoap ssWebServiceSoap = new SSWebService().getSSWebServiceSoap();
 		return ssWebServiceSoap.versionGet().getVersion();
+	}
+	
+	public static URL getSecretServerEndpoint() {
+		try {
+			Field f = SSWebService.class.getDeclaredField("SSWEBSERVICE_WSDL_LOCATION");
+			f.setAccessible(true);
+			return (URL) f.get(null);
+		} catch (Exception e) {
+			Logger.warn("Could not inspect WSDL location. ", e);
+		}
+		return null;
 	}
 	
 	private String authenticate() {

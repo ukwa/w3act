@@ -6,6 +6,7 @@ import java.net.URL;
 
 import models.FastSubject;
 import models.User;
+import models.Document;
 import play.Logger;
 import play.Play;
 import play.mvc.Result;
@@ -32,34 +33,19 @@ public class StatusController extends AbstractController {
 	}
 	
 	public static boolean isPdf2htmlEXAvailable() {
-		try {
-			ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c", "pdf2htmlEX -v");
-			Process p = builder.start();
-			if (p.waitFor() == 0) {
-				return true;
-			}
-		} catch (Exception e) {}
-		return false;
-	}
-	
-	public static boolean isSsdeepAvailable() {
-		try {
-			ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c", "ssdeep -V");
-			Process p = builder.start();
-			if (p.waitFor() == 0) {
-				return true;
-			}
-		} catch (Exception e) {}
-		return false;
+		return isSiteResponding(getPdf2HtmlEndpoint());
 	}
 	
 	public static boolean isWaybackResponding() {
-		return isSiteResponding(WaybackController.getWaybackEndpoint());
+		return isSiteResponding(getWaybackEndpoint());
 	}
 	
 	public static boolean isPiiResponding() {
-		
-		String arkRequest = Play.application().configuration().getString("pii_url");
+		return isSiteResponding(getPIIEndpoint());
+	}
+	
+	public static boolean isOfficalPiiInstance() {
+		String arkRequest = getPIIEndpoint();
 		if(arkRequest != null){
 		String statusRequest = arkRequest.substring(0, arkRequest.lastIndexOf('/') + 1) + "status";
 		return isSiteResponding(statusRequest);
@@ -67,7 +53,35 @@ public class StatusController extends AbstractController {
 			return false;
 	}
 	
-	public static boolean isSiteResponding(String url) {
+	public static String secretServerVersion() {
+		try {
+			return PasswordManager.versionGet();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public static String getWaybackEndpoint() {
+		return WaybackController.getWaybackEndpoint();
+	}
+	
+	public static String getPIIEndpoint() {
+		return Play.application().configuration().getString("pii_url");
+	}
+	
+	public static String getSecretServerEndpoint() {
+		URL url = PasswordManager.getSecretServerEndpoint();
+		if( url == null ) return "";
+		return url.toString();
+	}
+	
+	public static String getPdf2HtmlEndpoint() {
+		String url = Document.getPdf2HtmlEndpoint();
+		url = url.replace("convert?url=", "");
+		return url;
+	}
+
+	private static boolean isSiteResponding(String url) {
 		try {
 			URL obj = new URL(url);
 			HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
@@ -78,12 +92,5 @@ public class StatusController extends AbstractController {
 		}
 	}
 	
-	public static String secretServerVersion() {
-		try {
-			return PasswordManager.versionGet();
-		} catch (Exception e) {
-			return null;
-		}
-	}
 }
 
