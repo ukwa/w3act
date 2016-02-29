@@ -394,6 +394,9 @@ public class Documents extends AbstractController {
 		Logger.info("Target: "+target.title);
 		document.watchedTarget = target.watchedTarget;
 		Logger.info("WatchedTarget: "+document.watchedTarget);
+		if( document.watchedTarget == null ) {
+			throw new Exception("This is not a watched target!");
+		}
 		document.waybackTimestamp = objNode.get("wayback_timestamp").textValue();
 		Logger.info("Comparing "+document.watchedTarget.waybackTimestamp+" to "+document.waybackTimestamp);
 		if (document.watchedTarget.waybackTimestamp == null ||

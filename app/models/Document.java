@@ -218,7 +218,7 @@ public class Document extends Model {
 		return dateFormatGmt.format(currentStatusSet);
 	}
 	
-	private String waybackUrl() {
+	public String waybackUrl() {
 		return WaybackController.getWaybackEndpoint() +
 				waybackTimestamp + "/" + documentUrl;
 	}
