@@ -1,0 +1,3 @@
+@(turl: String, target: String = "", timestamp: String = "*")
+<a href="@routes.WaybackController.wayback(timestamp+"/"+turl)" target="@target" role="button" class="btn btn-primary btn-xs" title="Archived version of @turl" >Archived</a>
+<a href="@turl" target="@target" role="button" class="btn btn-default btn-xs" title="Live version of @turl">Live</a>

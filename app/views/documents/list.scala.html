@@ -4,7 +4,7 @@
 @import templates.checkbox2
 @import templates.select
 @import templates.inputRange
-@import templates.shortLink
+@import templates.archiveAndLive
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio4to8FieldConstructor.f) }
 
@@ -183,8 +183,8 @@
 								</a>
 							}
 						</td>
-                        <td>@shortLink(document.landingPageUrl, "_blank")</td>
-                        <td>@shortLink(document.documentUrl, "_blank")</td>
+                        <td>@archiveAndLive(document.landingPageUrl, "_blank", document.waybackTimestamp)</td>
+                        <td>@archiveAndLive(document.documentUrl, "_blank", document.waybackTimestamp)</td>
 						<td>@WatchedTargets.dayCount(document.waybackTimestamp)</td>
 						<td>@document.getType()</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
