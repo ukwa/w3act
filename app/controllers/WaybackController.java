@@ -37,6 +37,13 @@ public class WaybackController extends Controller {
 		}
 		return prefix;
 	}
+	public static String getAccessResolverEndpoint() {
+		String prefix = Play.application().configuration().getString("application.access.resolver.url");
+		if( ! prefix.endsWith("/")) {
+			prefix = prefix + "/";
+		}
+		return prefix;
+	}
 	
 	public static String getWaybackQueryEndpoint() {
 		return Play.application().configuration().getString("application.wayback.query.path");

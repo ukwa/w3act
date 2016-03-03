@@ -78,7 +78,15 @@ public class Document extends Model {
 	public String title;
     
 	public String doi;
+	
+	/* The Logical ARK for the Logical Document */
 	public String ark;
+	
+	/* The Logical MD-ARK for the Document Metadata*/
+	public String md_ark;
+	
+	/* The Logical D-ARK for the Document Data (bitstream) */
+	public String d_ark;
 
 	@DateTime(pattern="dd-MM-yyyy")
 	public Date publicationDate;
@@ -218,8 +226,20 @@ public class Document extends Model {
 		return dateFormatGmt.format(currentStatusSet);
 	}
 	
+	public boolean hasARKs() {
+		if( StringUtils.isEmpty(ark) ||  StringUtils.isEmpty(md_ark) ||  StringUtils.isEmpty(d_ark) ){
+			return false;
+		}
+		return true;
+	}
+	
 	public String waybackUrl() {
 		return WaybackController.getWaybackEndpoint() +
+				waybackTimestamp + "/" + documentUrl;
+	}
+	
+	public String globalAccessDocumentUrl() {
+		return WaybackController.getAccessResolverEndpoint() + 
 				waybackTimestamp + "/" + documentUrl;
 	}
 	

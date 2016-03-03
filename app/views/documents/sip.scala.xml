@@ -15,7 +15,7 @@
     <mets:agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
       <mets:name>ACT;@ApplicationController.getVersion</mets:name>
     </mets:agent>
-    <mets:metsDocumentID>@document.ark</mets:metsDocumentID>
+    <mets:metsDocumentID>@document.md_ark</mets:metsDocumentID>
   </mets:metsHdr>
   <mets:dmdSec ID="dmd0001">
   @if(document.isWholeBook) {
@@ -215,7 +215,7 @@
           <premis:object xsi:type="premis:file">
             <premis:objectIdentifier>
               <premis:objectIdentifierType>ARK</premis:objectIdentifierType>
-              <premis:objectIdentifierValue>@document.ark</premis:objectIdentifierValue>
+              <premis:objectIdentifierValue>@document.d_ark</premis:objectIdentifierValue>
             </premis:objectIdentifier>
             <premis:objectCharacteristics>
               <premis:compositionLevel>0</premis:compositionLevel>

@@ -1102,7 +1102,7 @@
 					@checkbox(targetForm("watched"), false, '_label -> "Watched?", '_id -> "watched")
 				}
 			<div id="division">             
-			@inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
+			@inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> Html("Document URL Scheme:<br/>(it should not be necessary to set a document URL scheme, but this can be used to limit the scope of the document detection process. It cannot be used to grow the scope of the crawl)"))
 				
 		  @if(Target.findById(id).watchedTarget != null) { 
 		  <div class="row padding-10">
@@ -1210,7 +1210,7 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						@textarea(field = targetForm("watchedTarget.archivistNotesWT"),
-							'_label -> "Archivist Notes (This field should include any information provided by curators justifying the creation of the record. This field is NOT public.):",
+							'_label -> Html("Archivist Notes:<br/>(this field should include any information provided by curators justifying the creation of the record. This field is NOT public.)"),
 							'_id -> "archivistNotesWT",
 							'class -> "form-control"
 						)(FieldConstructor(genericInput.f), lang)					    

@@ -178,22 +178,15 @@ public class Documents extends AbstractController {
 		return redirect(routes.Documents.view(document.id));
 	}
 	
-	private static String getAnARK() {
-		List<AssignableArk> assignableArks = AssignableArk.find.all();
-		if (assignableArks.isEmpty()) {
-			requestNewArks();
-			assignableArks = AssignableArk.find.all();
-			if (assignableArks.isEmpty()) {
-				FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
-						"Submission failed! It was not possible to get an ARK identifier.");
-				arkError.send();
-				return null;
-			}
+	private static void getARKs(Document d) {
+		List<AssignableArk> arks = requestNewArks(3);
+		if( arks == null || arks.size() != 3) {
+			return;
 		}
-		String ark = assignableArks.get(0).ark;
-		Ebean.delete(assignableArks.get(0));
-		
-		return ark;
+		// Add these ARKs to the document:
+		d.ark = arks.get(0).ark;
+		d.md_ark = arks.get(1).ark;
+		d.d_ark = arks.get(2).ark;
 	}
 	
 	public static Result submit(final Long id) {
@@ -201,12 +194,14 @@ public class Documents extends AbstractController {
 		Document document = Document.find.byId(id);
 		
 		// Mint an ARK for the document:
-		if( StringUtils.isEmpty(document.ark) ) {
-			document.ark = getAnARK();
+		if( document.hasARKs() == false ){
+			Documents.getARKs(document);
 		}
 		
 		// Check it worked:
-		if( document.ark == null ) {
+		if( document.hasARKs() == false ) {
+			FlashMessage error = new FlashMessage(FlashMessage.Type.ERROR,
+					"There was a problem minting ARK identifiers for this SIP!");
 			return redirect(routes.Documents.view(id));
 		} else {
 			Ebean.save(document);
@@ -264,9 +259,9 @@ public class Documents extends AbstractController {
 		return ok(compare.render(d1, d2, User.findByEmail(request().username())));
 	}
 	
-	private static void requestNewArks() {
+	private static List<AssignableArk> requestNewArks( int numArks ) {
 		String piiUrl = Play.application().configuration().getString("pii_url");
-		WSRequestHolder holder = WS.url(piiUrl);
+		WSRequestHolder holder = WS.url(piiUrl).setQueryParameter("arks", Integer.toString(numArks));
 
 		Promise<List<AssignableArk>> arksPromise = holder.post("").map(
 				new Function<WSResponse, List<AssignableArk>>() {
@@ -292,7 +287,7 @@ public class Documents extends AbstractController {
 		);
 		
 		List<AssignableArk> arks = arksPromise.get(5000);
-		Ebean.save(arks);
+		return arks;
 	}
 
 	public static Result ignore(Long id, DocumentFilter documentFilter, int pageNo,
