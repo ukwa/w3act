@@ -60,7 +60,7 @@ application.wayback.query.path="/xmlquery.jsp?url="
 application.access.resolver.url="http://www.webarchive.org.uk/access/resolve/"
 
 # Location of Monitrix on ELK (Kibana) service:
-application.monitrix.url="http://192.168.45.41:5601/app/kibana"
+application.monitrix.url="http://elk.ddb.wa.bl.uk:5601/app/kibana"
 
 # Location of pdftohtmlex web service:
 application.pdftohtmlex.url="http://192.168.99.100:5000/convert?url="
