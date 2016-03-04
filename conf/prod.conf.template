@@ -56,6 +56,9 @@ exchange_name=w3actexchange
 application.wayback.url="http://opera.bl.uk:8080/wayback/"
 application.wayback.query.path="/xmlquery.jsp?url="
 
+# Location of the global access playback resolver
+application.access.resolver.url="http://www.webarchive.org.uk/access/resolve/"
+
 # Location of Monitrix on ELK (Kibana) service:
 application.monitrix.url="http://192.168.45.41:5601/app/kibana"
 
@@ -63,7 +66,7 @@ application.monitrix.url="http://192.168.45.41:5601/app/kibana"
 application.pdftohtmlex.url="http://192.168.99.100:5000/convert?url="
 
 #Pii endpoint
-#pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"
+#pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc"
 
 ehcacheplugin=disabled
 
