@@ -78,7 +78,7 @@ public class ApplicationController extends Controller {
             login.render(form(Login.class))
         );
     }
-    
+    	
     /**
      * Handle login form submission.
      * We only store lowercase emails and transform user input to lowercase for this field.
@@ -181,6 +181,19 @@ public class ApplicationController extends Controller {
 		Boolean ddhaptStatus = Play.application().configuration().getBoolean("enableDDHAPT");		
 		return ddhaptStatus;		
 	}
+	
+	//Redirect urls with trailing "/" to the url they intended
+    public static Result untrail(String path) {
+		
+	 // We've already removed the trailing "/", so if there's still one (or more) there, 
+	 // there's a danger of too many redirects, so let's just 404 in case somebody's playing silly browsers
+	 if (path.charAt(path.length() -1 ) == '/') 
+		return notFound("Sorry, that page does not exist.");
+	 else {
+         return movedPermanently(Play.application().configuration().getString("application.context")  + "/" + path); //HTTP 301
+	 }
+    }
+	
 
 }
 
