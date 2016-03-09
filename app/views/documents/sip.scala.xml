@@ -108,6 +108,36 @@
           <mods:titleInfo>
             <mods:title>@document.title</mods:title>
           </mods:titleInfo>
+         @if(!document.author1Ln.isEmpty) {
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author1Fn</mods:namePart>
+            <mods:namePart type="family">@document.author1Ln</mods:namePart>
+          </mods:name>
+         }
+         @if(!document.author2Ln.isEmpty) {
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author2Fn</mods:namePart>
+            <mods:namePart type="family">@document.author2Ln</mods:namePart>
+          </mods:name>
+         }
+         @if(!document.author3Ln.isEmpty) {
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author3Fn</mods:namePart>
+            <mods:namePart type="family">@document.author3Ln</mods:namePart>
+          </mods:name>
+         }
+         @if(document.priorityCataloguing) {
+          <mods:note type="admin" displayLabel="Priority Cataloguing">Aleph</mods:note>
+         }
         }
          <mods:relatedItem type="host" displayLabel="Issue">
         @if(!document.doi.isEmpty) {
@@ -133,37 +163,10 @@
             </mods:detail>
           }
           </mods:part>
-        @if(!document.author1Ln.isEmpty) {
-          <mods:name>
-            <mods:role>
-              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
-            </mods:role>
-            <mods:namePart type="given">@document.author1Fn</mods:namePart>
-            <mods:namePart type="family">@document.author1Ln</mods:namePart>
-          </mods:name>
-        }
-        @if(!document.author2Ln.isEmpty) {
-          <mods:name>
-            <mods:role>
-              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
-            </mods:role>
-            <mods:namePart type="given">@document.author2Fn</mods:namePart>
-            <mods:namePart type="family">@document.author2Ln</mods:namePart>
-          </mods:name>
-        }
-        @if(!document.author3Ln.isEmpty) {
-          <mods:name>
-            <mods:role>
-              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
-            </mods:role>
-            <mods:namePart type="given">@document.author3Fn</mods:namePart>
-            <mods:namePart type="family">@document.author3Ln</mods:namePart>
-          </mods:name>
-        }
         @for(portal <- document.portals) {
           <mods:note type="admin" displayLabel="Service">@portal.title</mods:note>
         }
-        @if(document.priorityCataloguing) {
+        @if(document.isJournalIssue && document.priorityCataloguing) {
           <mods:note type="admin" displayLabel="Priority Cataloguing">Aleph</mods:note>
         }
           <mods:relatedItem type="host" displayLabel="Journal">
@@ -174,9 +177,7 @@
               <mods:publisher>@document.journal.journalTitle.publisherName</mods:publisher>
             </mods:originInfo>
           @if(!document.journal.journalTitle.issn.isEmpty) {
-            <mods:identifier type="pub-id e-issn">
-              @document.journal.journalTitle.issn
-            </mods:identifier>
+            <mods:identifier type="pub-id e-issn">@document.journal.journalTitle.issn</mods:identifier>
           }
           </mods:relatedItem>
         @if(!document.journal.journalTitle.blCollectionSubsets.isEmpty) {
