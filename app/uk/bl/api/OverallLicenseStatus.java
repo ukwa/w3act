@@ -175,14 +175,18 @@ public class OverallLicenseStatus {
 	 */
 	private static String getParentDomain(String hostname) {
 		hostname = stripWWW(hostname);
-		InternetDomainName idn = InternetDomainName.from(hostname);
-		// Get the private domain, if there is one:
-		if( idn.isUnderPublicSuffix() ) {
-			InternetDomainName domain = idn.topPrivateDomain();
-			// If the domain is not just a naked TLD, return it:
-			if( domain != null && domain.toString().contains(".")) {
-				return domain.toString();
+		try {
+			InternetDomainName idn = InternetDomainName.from(hostname);
+			// Get the private domain, if there is one:
+			if( idn.isUnderPublicSuffix() ) {
+				InternetDomainName domain = idn.topPrivateDomain();
+				// If the domain is not just a naked TLD, return it:
+				if( domain != null && domain.toString().contains(".")) {
+					return domain.toString();
+				}
 			}
+		} catch( IllegalArgumentException e ) {
+			Logger.info("Could not parse "+hostname+" as a domain name.");
 		}
 		return hostname;
 	}
