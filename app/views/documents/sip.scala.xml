@@ -135,9 +135,6 @@
             <mods:namePart type="family">@document.author3Ln</mods:namePart>
           </mods:name>
          }
-         @if(document.priorityCataloguing) {
-          <mods:note type="admin" displayLabel="Priority Cataloguing">Aleph</mods:note>
-         }
         }
          <mods:relatedItem type="host" displayLabel="Issue">
         @if(!document.doi.isEmpty) {
@@ -166,7 +163,7 @@
         @for(portal <- document.portals) {
           <mods:note type="admin" displayLabel="Service">@portal.title</mods:note>
         }
-        @if(document.isJournalIssue && document.priorityCataloguing) {
+        @if(document.priorityCataloguing) {
           <mods:note type="admin" displayLabel="Priority Cataloguing">Aleph</mods:note>
         }
           <mods:relatedItem type="host" displayLabel="Journal">
