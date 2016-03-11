@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.Query;
@@ -194,9 +195,10 @@ public class Document extends Model {
     		el = el.lt("waybackTimestamp", waybackFormat.format(documentFilter.enddate));
     	}
     	
-    	return el.eq("status", documentFilter.status.ordinal())
-        		.icontains("title", filter)
-        		.orderBy(sortBy + " " + order);
+    	return el.eq("status", documentFilter.status.ordinal()).add(Expr.or(
+					Expr.icontains("documentUrl", filter), 
+					Expr.icontains("title", filter))
+    			).orderBy(sortBy + " " + order);
     }
     
     public static Page<Document> page(DocumentFilter documentFilter, int page,
@@ -278,6 +280,7 @@ public class Document extends Model {
     
 	public enum Status {
 		NEW,
+		SAVED,
 		SUBMITTED,
 		IGNORED,
 		DELETED;

@@ -172,7 +172,11 @@ public class Documents extends AbstractController {
 				Ebean.update(document.journal);
 			}
 		}
-		
+
+		// Record success:
+		document.setStatus(Document.Status.SAVED);
+		Ebean.update(document);
+
 		FlashMessage.updateSuccess.send();
 		
 		return redirect(routes.Documents.view(document.id));

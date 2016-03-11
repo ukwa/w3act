@@ -73,18 +73,27 @@
 		@helper.form(action=routes.Documents.list()) {
 			<ul class="nav nav-tabs">
 				@if(filters) {
-					@if(filterForm.get.status == Document.Status.NEW) {
-						<li class="active"><a href="#">New</a></li>
-						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SUBMITTED))">Submitted</a></li>
-						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.IGNORED))">Ignored</a></li>
-					}
+                    @if(filterForm.get.status == Document.Status.NEW) {
+                        <li class="active"><a href="#">New</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SAVED))">Saved</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SUBMITTED))">Submitted</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.IGNORED))">Ignored</a></li>
+                    }
+                    @if(filterForm.get.status == Document.Status.SAVED) {
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.NEW))">New</a></li>
+                        <li class="active"><a href="#">Saved</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SUBMITTED))">Submitted</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.IGNORED))">Ignored</a></li>
+                    }
 					@if(filterForm.get.status == Document.Status.SUBMITTED) {
-						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.NEW))">New</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.NEW))">New</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SAVED))">Saved</a></li>
 						<li class="active"><a href="#">Submitted</a></li>
 						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.IGNORED))">Ignored</a></li>
 					}
 					@if(filterForm.get.status == Document.Status.IGNORED) {
 						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.NEW))">New</a></li>
+                        <li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SAVED))">Saved</a></li>
 						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SUBMITTED))">Submitted</a></li>
 						<li class="active"><a href="#">Ignored</a></li>
 					}
@@ -196,8 +205,8 @@
 											currentSortBy,
 											currentOrder,
 											searchstr,
-											filters)" class="btn btn-success">
-										@{if(filterForm.get.status == Document.Status.NEW) "Ignore" else "Restore"}
+											filters)" class="btn btn-success btn-xs">
+										@{if(filterForm.get.status == Document.Status.NEW) "Ignore" else "Reset status to NEW"}
 									</a>
 								}
 							</td>
