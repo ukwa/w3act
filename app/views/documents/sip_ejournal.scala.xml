@@ -1,7 +1,7 @@
 @(document: Document)
 
 <?xml version="1.0" encoding="utf-8"?>
-<mets:mets TYPE="eBooks"
+<mets:mets TYPE="Legal Deposit eJournals|Document Harvester"
     xmlns:mets="http://www.loc.gov/METS/"
     xmlns:premis="info:lc/xmlns/premis-v2"
     xmlns:xlink="http://www.w3.org/1999/xlink"
