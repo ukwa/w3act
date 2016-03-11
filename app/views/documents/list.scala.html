@@ -161,11 +161,7 @@
 						@header("documentUrl", "Document", currentSortBy, currentOrder, link)
 						@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
                         @header("type", "Type", currentSortBy, currentOrder, link)
-						@if(filterForm.get.status != Document.Status.SUBMITTED) {
-							<th>Action</th>
-						} else {
-							<th>SIP</th>
-						}
+						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -196,7 +192,6 @@
                         <td>@archiveAndLive(document.documentUrl, "_blank", document.waybackTimestamp)</td>
 						<td>@WatchedTargets.dayCount(document.waybackTimestamp)</td>
 						<td>@document.getType()</td>
-						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<td>
 								@if(document.isEditableFor(user)) {
 									<a href="@routes.Documents.ignore(document.id,
@@ -209,12 +204,10 @@
 										@{if(filterForm.get.status == Document.Status.NEW) "Ignore" else "Reset status to NEW"}
 									</a>
 								}
-							</td>
-						} else {
-							<td>
-								<a href="@routes.DocumentSIPController.sip(document.id)"  target="_blank">SIP</a>
-							</td>
-						}
+                                @if(filterForm.get.status == Document.Status.SUBMITTED) {
+								<a href="@routes.DocumentSIPController.sip(document.id)" class="btn btn-success btn-xs" target="_blank">View SIP</a>
+						        }
+                            </td>
 					</tr>
 				}
 				</tbody>
