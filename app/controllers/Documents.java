@@ -179,14 +179,15 @@ public class Documents extends AbstractController {
 	}
 	
 	private static void getARKs(Document d) {
-		List<AssignableArk> arks = requestNewArks(3);
-		if( arks == null || arks.size() != 3) {
+		List<AssignableArk> arks = requestNewArks(4);
+		if( arks == null || arks.size() != 4) {
 			return;
 		}
 		// Add these ARKs to the document:
 		d.ark = arks.get(0).ark;
-		d.md_ark = arks.get(1).ark;
+		d.mets_d_ark = arks.get(1).ark;
 		d.d_ark = arks.get(2).ark;
+		d.md_ark = arks.get(3).ark;
 	}
 	
 	public static Result submit(final Long id) {

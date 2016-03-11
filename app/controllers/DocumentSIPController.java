@@ -4,7 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import models.Document;
 import play.mvc.Result;
-import views.xml.documents.sip;
+import views.xml.documents.sip_ebook;
+import views.xml.documents.sip_ejournal;
 
 public class DocumentSIPController extends AbstractController {
 		
@@ -19,8 +20,16 @@ public class DocumentSIPController extends AbstractController {
 		if( StringUtils.isEmpty(document.d_ark) ) {
 			document.d_ark = "ark:/81055/vdc_100000000710.0x000003";
 		}
+		if( StringUtils.isEmpty(document.mets_d_ark) ) {
+			document.mets_d_ark = "ark:/81055/vdc_100000000710.0x000004";
+		}
 		response().setContentType("text/xml");
-		return ok(sip.render(document));
+		if( document.isJournalArticleOrIssue()) {
+			return ok(sip_ejournal.render(document));
+			
+		} else {
+			return ok(sip_ebook.render(document));
+		}
 	}
 	
 }

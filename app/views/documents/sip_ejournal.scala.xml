@@ -1,0 +1,168 @@
+@(document: Document)
+
+<?xml version="1.0" encoding="utf-8"?>
+<mets:mets TYPE="eBooks"
+    xmlns:mets="http://www.loc.gov/METS/"
+    xmlns:premis="info:lc/xmlns/premis-v2"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:mods="http://www.loc.gov/mods/v3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd
+        info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd
+        http://www.loc.gov/mods/v3 http://www.loc.gov/mods/v3/mods-3-4.xsd
+        http://bl.uk/namespaces/blmodsextension.xsd">
+  <mets:metsHdr CREATEDATE="@document.currentStatusSetUTCString">
+    <mets:agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
+      <mets:name>ACT;@ApplicationController.getVersion</mets:name>
+    </mets:agent>
+    <mets:metsDocumentID>@document.mets_d_ark</mets:metsDocumentID>
+  </mets:metsHdr>
+  <mets:dmdSec ID="dmd0001">
+    <mets:mdWrap MDTYPE="MODS">
+      <mets:xmlData>
+        <mods:mods>
+        @if(document.isJournalArticle) {
+          <mods:titleInfo>
+            <mods:title>@document.title</mods:title>
+          </mods:titleInfo>
+         @if(!document.author1Ln.isEmpty) {
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author1Fn</mods:namePart>
+            <mods:namePart type="family">@document.author1Ln</mods:namePart>
+          </mods:name>
+         }
+         @if(!document.author2Ln.isEmpty) {
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author2Fn</mods:namePart>
+            <mods:namePart type="family">@document.author2Ln</mods:namePart>
+          </mods:name>
+         }
+         @if(!document.author3Ln.isEmpty) {
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author3Fn</mods:namePart>
+            <mods:namePart type="family">@document.author3Ln</mods:namePart>
+          </mods:name>
+         }
+        }
+         <mods:relatedItem type="host" displayLabel="Issue">
+        @if(!document.doi.isEmpty) {
+          <mods:identifier type="DOI">@document.doi</mods:identifier>
+        }
+        @if(document.publicationDate != null) {
+          <mods:originInfo>
+            <mods:dateIssued encoding="w3cdtf">@document.publicationDate.format("yyyy-MM-dd")</mods:dateIssued>
+            @*<mods:issuance>@document.journal.journalTitle.frequency</mods:issuance>*@
+          </mods:originInfo>
+        }
+          <mods:part>
+          @if(!document.journal.volume.isEmpty) {
+            <mods:detail type="volume">
+              <mods:number>@document.journal.volume</mods:number>
+              <mods:caption>vol.</mods:caption>
+            </mods:detail>
+          }
+          @if(!document.journal.issue.isEmpty) {
+            <mods:detail type="issue">
+              <mods:number>@document.journal.issue</mods:number>
+              <mods:caption>no.</mods:caption>
+            </mods:detail>
+          }
+          </mods:part>
+        @for(portal <- document.portals) {
+          <mods:note type="admin" displayLabel="Service">@portal.title</mods:note>
+        }
+        @if(document.priorityCataloguing) {
+          <mods:note type="admin" displayLabel="Priority Cataloguing">Aleph</mods:note>
+        }
+          <mods:relatedItem type="host" displayLabel="Journal">
+            <mods:titleInfo>
+              <mods:title>@document.journal.journalTitle.title</mods:title>
+            </mods:titleInfo>
+            <mods:originInfo>
+              <mods:publisher>@document.journal.journalTitle.publisherName</mods:publisher>
+            </mods:originInfo>
+          @if(!document.journal.journalTitle.issn.isEmpty) {
+            <mods:identifier type="pub-id e-issn">@document.journal.journalTitle.issn</mods:identifier>
+          }
+          </mods:relatedItem>
+        @if(!document.journal.journalTitle.blCollectionSubsets.isEmpty) {
+          <mods:location>
+            <mods:physicalLocation authority="marcorg">Uk</mods:physicalLocation>
+            <mods:holdingSimple>
+              <mods:copyInformation>
+              @for(blCollectionSubset <- document.journal.journalTitle.blCollectionSubsets) {
+                <mods:subLocation>@blCollectionSubset.title</mods:subLocation>
+              }
+              </mods:copyInformation>
+            </mods:holdingSimple>
+          </mods:location>
+        }
+          @*<mods:languageOfCataloging>
+            <mods:languageTerm type="code" authority="iso639-2b">
+              @document.journal.journalTitle.language
+            </mods:languageTerm>
+          </mods:languageOfCataloging>*@
+             @for(fastSubject <- document.fastSubjects) {
+        <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.fastId"></mods:subject>
+      }
+         </mods:relatedItem>
+        </mods:mods>
+      </mets:xmlData>
+    </mets:mdWrap>
+  </mets:dmdSec>
+  <mets:amdSec ID="amd0001">
+    <mets:digiprovMD ID="amd0001-object">
+      <mets:mdWrap MDTYPE="PREMIS:OBJECT">
+        <mets:xmlData>
+          <premis:object xsi:type="premis:file">
+            <premis:objectIdentifier>
+              <premis:objectIdentifierType>ARK</premis:objectIdentifierType>
+              <premis:objectIdentifierValue>@document.d_ark</premis:objectIdentifierValue>
+            </premis:objectIdentifier>
+            <premis:objectCharacteristics>
+              <premis:compositionLevel>0</premis:compositionLevel>
+              <premis:fixity>
+                <premis:messageDigestAlgorithm>SHA-256</premis:messageDigestAlgorithm>
+                <premis:messageDigest>@document.sha256Hash</premis:messageDigest>
+              </premis:fixity>
+              <premis:size>@document.size</premis:size>
+              <premis:format>
+                <premis:formatDesignation>
+                  <premis:formatName>application/pdf</premis:formatName>
+                </premis:formatDesignation>
+              </premis:format>
+            </premis:objectCharacteristics>
+            <premis:originalName>@document.documentUrl</premis:originalName>
+          </premis:object>
+        </mets:xmlData>
+      </mets:mdWrap>
+    </mets:digiprovMD>
+  </mets:amdSec> 
+  <mets:fileSec>
+    <mets:fileGrp USE="Original">
+      <mets:file ADMID="amd0001-object" ID="file0001">
+        <mets:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="EXTERNALCONTENT"
+            xlink:href="@document.globalAccessDocumentUrl"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="LOGICAL">
+    <mets:div CONTENTIDS="@document.ark"
+        DMDID="dmd0001" ID="log0001"
+        TYPE="@{
+          if(document.isJournalIssue) "Issue"
+          else "Article"
+        }">
+      <mets:fptr FILEID="file0001"/>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

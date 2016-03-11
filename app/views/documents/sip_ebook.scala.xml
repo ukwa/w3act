@@ -1,7 +1,7 @@
 @(document: Document)
 
 <?xml version="1.0" encoding="utf-8"?>
-<mets:mets TYPE="@if(document.isBookOrBookChapter) {eBooks} else {Legal Deposit eJournals|Document Harvester}"
+<mets:mets TYPE="Legal Deposit eJournals|Document Harvester"
     xmlns:mets="http://www.loc.gov/METS/"
     xmlns:premis="info:lc/xmlns/premis-v2"
     xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -15,17 +15,16 @@
     <mets:agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
       <mets:name>ACT;@ApplicationController.getVersion</mets:name>
     </mets:agent>
-    <mets:metsDocumentID>@document.md_ark</mets:metsDocumentID>
+    <mets:metsDocumentID>@document.mets_d_ark</mets:metsDocumentID>
   </mets:metsHdr>
   <mets:dmdSec ID="dmd0001">
-  @if(document.isWholeBook) {
     <mets:mdWrap MDTYPE="MARC">
       <mets:xmlData>
         <collection xmlns="http://www.loc.gov/MARC21/slim">
           <record>
             <leader>     nam a22     5i 4500</leader>
          	<datafield tag="ITM" ind1="" ind2="">
-              <subfield code="a">dvdc_300018257173.0x000001</subfield>
+              <subfield code="a">@document.md_ark.substring(11)</subfield>
 			</datafield>
             <datafield tag="245" ind1="0" ind2=" ">
               <subfield code="a">@document.title</subfield>
@@ -99,112 +98,9 @@
         </collection>
       </mets:xmlData>
     </mets:mdWrap>
-  }
-  @if(document.isJournalArticleOrIssue) {
-    <mets:mdWrap MDTYPE="MODS">
-      <mets:xmlData>
-        <mods:mods>
-        @if(document.isJournalArticle) {
-          <mods:titleInfo>
-            <mods:title>@document.title</mods:title>
-          </mods:titleInfo>
-         @if(!document.author1Ln.isEmpty) {
-          <mods:name>
-            <mods:role>
-              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
-            </mods:role>
-            <mods:namePart type="given">@document.author1Fn</mods:namePart>
-            <mods:namePart type="family">@document.author1Ln</mods:namePart>
-          </mods:name>
-         }
-         @if(!document.author2Ln.isEmpty) {
-          <mods:name>
-            <mods:role>
-              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
-            </mods:role>
-            <mods:namePart type="given">@document.author2Fn</mods:namePart>
-            <mods:namePart type="family">@document.author2Ln</mods:namePart>
-          </mods:name>
-         }
-         @if(!document.author3Ln.isEmpty) {
-          <mods:name>
-            <mods:role>
-              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
-            </mods:role>
-            <mods:namePart type="given">@document.author3Fn</mods:namePart>
-            <mods:namePart type="family">@document.author3Ln</mods:namePart>
-          </mods:name>
-         }
-        }
-         <mods:relatedItem type="host" displayLabel="Issue">
-        @if(!document.doi.isEmpty) {
-          <mods:identifier type="DOI">@document.doi</mods:identifier>
-        }
-        @if(document.publicationDate != null) {
-          <mods:originInfo>
-            <mods:dateIssued encoding="w3cdtf">@document.publicationDate.format("yyyy-MM-dd")</mods:dateIssued>
-            @*<mods:issuance>@document.journal.journalTitle.frequency</mods:issuance>*@
-          </mods:originInfo>
-        }
-          <mods:part>
-          @if(!document.journal.volume.isEmpty) {
-            <mods:detail type="volume">
-              <mods:number>@document.journal.volume</mods:number>
-              <mods:caption>vol.</mods:caption>
-            </mods:detail>
-          }
-          @if(!document.journal.issue.isEmpty) {
-            <mods:detail type="issue">
-              <mods:number>@document.journal.issue</mods:number>
-              <mods:caption>no.</mods:caption>
-            </mods:detail>
-          }
-          </mods:part>
-        @for(portal <- document.portals) {
-          <mods:note type="admin" displayLabel="Service">@portal.title</mods:note>
-        }
-        @if(document.priorityCataloguing) {
-          <mods:note type="admin" displayLabel="Priority Cataloguing">Aleph</mods:note>
-        }
-          <mods:relatedItem type="host" displayLabel="Journal">
-            <mods:titleInfo>
-              <mods:title>@document.journal.journalTitle.title</mods:title>
-            </mods:titleInfo>
-            <mods:originInfo>
-              <mods:publisher>@document.journal.journalTitle.publisherName</mods:publisher>
-            </mods:originInfo>
-          @if(!document.journal.journalTitle.issn.isEmpty) {
-            <mods:identifier type="pub-id e-issn">@document.journal.journalTitle.issn</mods:identifier>
-          }
-          </mods:relatedItem>
-        @if(!document.journal.journalTitle.blCollectionSubsets.isEmpty) {
-          <mods:location>
-            <mods:physicalLocation authority="marcorg">Uk</mods:physicalLocation>
-            <mods:holdingSimple>
-              <mods:copyInformation>
-              @for(blCollectionSubset <- document.journal.journalTitle.blCollectionSubsets) {
-                <mods:subLocation>@blCollectionSubset.title</mods:subLocation>
-              }
-              </mods:copyInformation>
-            </mods:holdingSimple>
-          </mods:location>
-        }
-          @*<mods:languageOfCataloging>
-            <mods:languageTerm type="code" authority="iso639-2b">
-              @document.journal.journalTitle.language
-            </mods:languageTerm>
-          </mods:languageOfCataloging>*@
-             @for(fastSubject <- document.fastSubjects) {
-        <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.fastId"></mods:subject>
-      }
-         </mods:relatedItem>
-        </mods:mods>
-      </mets:xmlData>
-    </mets:mdWrap>
-  }
   </mets:dmdSec>
   <mets:dmdSec ID="dmd0002">
-    <mets:mdRef LOCTYPE="ARK" MDTYPE="MARC" OTHERMDTYPE="ALEPH" xlink:href="ark:/81055/dvdc_300018257173.0x000001" />
+    <mets:mdRef LOCTYPE="ARK" MDTYPE="MARC" OTHERMDTYPE="ALEPH" xlink:href="@document.md_ark" />
   </mets:dmdSec>
   <mets:amdSec ID="amd0001">
     <mets:digiprovMD ID="amd0001-object">
@@ -245,11 +141,7 @@
   <mets:structMap TYPE="LOGICAL">
     <mets:div CONTENTIDS="@document.ark"
         DMDID="dmd0001 dmd0002" ID="log0001"
-        TYPE="@{
-          if(document.isWholeBook) "Monograph"
-          else if(document.isJournalIssue) "Issue"
-          else "Article"
-        }">
+        TYPE="Monograph">
       <mets:fptr FILEID="file0001"/>
     </mets:div>
   </mets:structMap>

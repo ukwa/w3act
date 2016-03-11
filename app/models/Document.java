@@ -82,11 +82,14 @@ public class Document extends Model {
 	/* The Logical ARK for the Logical Document */
 	public String ark;
 	
-	/* The Logical MD-ARK for the Document Metadata*/
+	/* The Logical MD-ARK for the Document Metadata (not used by eJournals here)*/
 	public String md_ark;
 	
 	/* The Logical D-ARK for the Document Data (bitstream) */
 	public String d_ark;
+
+	/* The Logical D-ARK for the Mets Document */
+	public String mets_d_ark;
 
 	@DateTime(pattern="dd-MM-yyyy")
 	public Date publicationDate;
