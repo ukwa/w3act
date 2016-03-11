@@ -78,5 +78,3 @@ dls.documents.sip.copy.dir=/var/tmp
 
 use.accounts=false
 admin.default.email="wa-sysadm@bl.uk"
-
-ddhapt.input.dir="mountpoint /mnt/ddhapt/input/"

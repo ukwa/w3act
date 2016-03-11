@@ -141,7 +141,11 @@ public class Documents extends AbstractController {
 		Document document = documentForm.get();
 		document.clearImproperFields();
 		setRelatedEntitiesOfModel(document, documentForm);
+		
+		// Record that there's been an update:
+		document.setStatus(Document.Status.SAVED);		
 		Ebean.update(document);
+		
 		if (document.publicationDate == null) {
 			Ebean.createUpdate(Document.class, "update document SET publication_date=null where id=:id")
 					.setParameter("id", document.id).execute();
@@ -172,10 +176,6 @@ public class Documents extends AbstractController {
 				Ebean.update(document.journal);
 			}
 		}
-
-		// Record success:
-		document.setStatus(Document.Status.SAVED);
-		Ebean.update(document);
 
 		FlashMessage.updateSuccess.send();
 		
