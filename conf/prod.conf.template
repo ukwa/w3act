@@ -72,11 +72,9 @@ ehcacheplugin=disabled
 
 #DDHAPT
 enableDDHAPT=false
-dls.documents.ebook.sip.dir=/var/tmp
-dls.documents.ejournal.sip.dir=/var/tmp
-dls.documents.sip.copy.dir=/var/tmp
+dls.documents.ebook.sip.dir=/mnt/w3act/ebooks
+dls.documents.ejournal.sip.dir=/mnt/w3act/ejournals
+dls.documents.sip.copy.dir=/opt/data/w3act/dls_sips_copy
 
 use.accounts=false
 admin.default.email="wa-sysadm@bl.uk"
-
-ddhapt.input.dir="mountpoint /mnt/ddhapt/input/"
