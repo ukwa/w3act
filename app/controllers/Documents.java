@@ -51,6 +51,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.Play;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.io.IOUtils;
 import org.w3c.dom.Node;
@@ -67,7 +68,6 @@ import views.html.documents.list;
 public class Documents extends AbstractController {
 	
 	public static BlCollectionSubsetList blCollectionSubsetList = new BlCollectionSubsetList();
-	private static String saveDir = Play.application().configuration().getString("dls.documents.sip.dir");
 	
 	public static Result view(Long id) {
 		return render(id, false);
@@ -180,7 +180,7 @@ public class Documents extends AbstractController {
 	
 	private static void getARKs(Document d) {
 		List<AssignableArk> arks = requestNewArks(4);
-		if( arks == null || arks.size() != 4) {
+		if( arks == null || arks.size() < 4) {
 			return;
 		}
 		// Add these ARKs to the document:
@@ -203,9 +203,18 @@ public class Documents extends AbstractController {
 		if( document.hasARKs() == false ) {
 			FlashMessage error = new FlashMessage(FlashMessage.Type.ERROR,
 					"There was a problem minting ARK identifiers for this SIP!");
+			error.send();
 			return redirect(routes.Documents.view(id));
 		} else {
 			Ebean.save(document);
+		}
+		
+		// Choose the save dir:
+		final String saveDir;
+		if( document.isJournalArticleOrIssue() ) {
+			saveDir = Play.application().configuration().getString("dls.documents.ejournal.sip.dir");
+		} else {
+			saveDir = Play.application().configuration().getString("dls.documents.ebook.sip.dir");
 		}
 
 		// Download it to a local file.
@@ -232,8 +241,29 @@ public class Documents extends AbstractController {
 		File file = filePromise.get(30, TimeUnit.SECONDS);
 		// Check it's good:
 		if (file != null && file.exists() && file.isFile() && file.length()!= 0){
+			// Make a copy (in case something goes wrong:
+			String copyDir = Play.application().configuration().getString("dls.documents.sip.copy.dir");
+			if( ! StringUtils.isEmpty(copyDir) ) {
+				Calendar cal = Calendar.getInstance();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				String dateStr = dateFormat.format(cal.getTime());
+				String copyFilename = dateStr+"_"+document.type.toLowerCase()+"_sip_"+id+".xml";
+				File copyFile = new File(copyDir, copyFilename);
+				try {
+					FileUtils.copyFile(file, copyFile);
+					if( copyFile.length() != file.length()) {
+						throw new IOException("Copy failed - lengths to not match.");
+					}
+				} catch (IOException e) {
+					FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
+							"SIP XML could not be copied!");
+					downloadError.send();
+					return redirect(routes.Documents.view(id));
+				}
+			}
+			// And rename, this initiation submission:
 			String newFileName = "sip_"+id+".xml";
-			file.renameTo(new File(saveDir, newFileName));	
+			file.renameTo(new File(saveDir, newFileName));
 		} else {
 			if( file.exists()) {
 				file.delete();
@@ -241,6 +271,7 @@ public class Documents extends AbstractController {
 			FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
 					"SIP XML could not be downloaded for submission!");
 			downloadError.send();
+			return redirect(routes.Documents.view(id));
 		}
 		
 		// Record success:
@@ -276,6 +307,7 @@ public class Documents extends AbstractController {
 								NodeList nodes = XPath.selectNodes("/pii/results/arkList/ark", xml);
 								for (int i=0; i < nodes.getLength(); i++) {
 									Node node = nodes.item(i);
+									Logger.debug("node "+node.getNodeName()+" "+node.getTextContent());
 									arks.add(new AssignableArk(node.getTextContent()));
 								}
 							}
