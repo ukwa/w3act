@@ -143,7 +143,9 @@ public class Documents extends AbstractController {
 		setRelatedEntitiesOfModel(document, documentForm);
 		
 		// Record that there's been an update:
-		document.setStatus(Document.Status.SAVED);		
+		if(document.status == Document.Status.NEW) {
+			document.setStatus(Document.Status.SAVED);
+		}
 		Ebean.update(document);
 		
 		if (document.publicationDate == null) {

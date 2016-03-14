@@ -137,7 +137,9 @@ public class CrawlPermissionController extends AbstractController {
 		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
 		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
-    	crawlPermission.setLicense( License.findByName(Const.OPEN_UKWA_LICENSE) );
+    	if( crawlPermission.getLicense() == null ) {
+    		crawlPermission.setLicense( License.findByName(Const.OPEN_UKWA_LICENSE) );
+    	}
     	crawlPermissionForm.data().put("license_id", ""+crawlPermission.getLicense().id);
       	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options(),crawlPermission));
     }

@@ -170,7 +170,7 @@
 						<td>
 							@if(filterForm.get.status == Document.Status.IGNORED) {
                                         @if( document.title != null && document.title.trim().length() == 0 ) {
-                                            [untitled]
+                                            @document.filename
                                         } else {
                                             @document.title
                                         }

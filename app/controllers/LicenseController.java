@@ -349,14 +349,19 @@ public class LicenseController extends AbstractController {
 	                		license.name = "INVENTED LICENCE";
 	                	}
 	                	permission.setLicense( license );
+	                	Logger.debug("Got license " + license);
 	                	
 	                	Target target = permission.target;
 	                	// Only add this license if it's not already associated:
-	                	if( ! target.licenses.contains(license))
+	                	if( ! target.licenses.contains(license)) {
+	                		Logger.debug("Adding " + license);
 	                		target.licenses.add(license);
+	                	}
 	                	target.licenseStatus = permission.status;
-	                	Logger.debug("Updating Target "+target.id);
+	                	Logger.debug("Updating Target "+target.id + " with licenseStatus "+ target.licenseStatus);
 	                	target.update();	                    	
+	                } else {
+	                	Logger.error("No LICENCE found in form!");
 	                }
 	                Logger.debug("About to update crawl permission: "+permission);
 	                permission.update();
