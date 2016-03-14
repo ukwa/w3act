@@ -54,6 +54,11 @@
          }
         }
          <mods:relatedItem type="host" displayLabel="Issue">
+        @if(document.isJournalIssue) {
+          <mods:titleInfo>
+            <mods:title>@document.title</mods:title>
+          </mods:titleInfo>
+        }
         @if(!document.doi.isEmpty) {
           <mods:identifier type="DOI">@document.doi</mods:identifier>
         }
