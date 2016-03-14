@@ -42,6 +42,10 @@ public class License extends Taxonomy {
     	return find.where().eq("name", name).findUnique();
     }
     
+    public static License findByNameStartsWith(String name) {
+    	return find.where().like("name", name+"%").findUnique();
+    }
+    
     public static List<License> findAllLicenses() {
     	return find.all();
     }

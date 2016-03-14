@@ -117,8 +117,7 @@ public class CrawlPermissionController extends AbstractController {
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
         crawlPermission.token = UUID.randomUUID().toString();
-        crawlPermission.setLicense(License.findByName(Const.OPEN_UKWA_LICENSE));
-        Exception tracer = new Exception(); tracer.printStackTrace();
+    	setupDefaultLicense(crawlPermission);
         Logger.info("Created new CrawlPermission from newForm("+targetId+") with UUID "+crawlPermission.token);
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
@@ -129,6 +128,12 @@ public class CrawlPermissionController extends AbstractController {
         
         
     }
+    
+    private static void setupDefaultLicense( CrawlPermission crawlPermission ) {
+    	if( crawlPermission.getLicense() == null ) {
+    		crawlPermission.setLicense( License.findByNameStartsWith(Const.LDL_UKWA_LICENSE) );
+    	}
+    }
 
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
@@ -137,9 +142,7 @@ public class CrawlPermissionController extends AbstractController {
 		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
 		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
-    	if( crawlPermission.getLicense() == null ) {
-    		crawlPermission.setLicense( License.findByName(Const.OPEN_UKWA_LICENSE) );
-    	}
+    	setupDefaultLicense(crawlPermission);
     	crawlPermissionForm.data().put("license_id", ""+crawlPermission.getLicense().id);
       	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options(),crawlPermission));
     }

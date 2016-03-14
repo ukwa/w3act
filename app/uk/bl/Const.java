@@ -229,6 +229,7 @@ public final class Const {
 	public static final String PARENT             = "parent";
 	public static final String PARENTS_ALL        = "parents_all";
 	public static final String OPEN_UKWA_LICENSE  = "Open UKWA Licence (2014-)";
+	public static final String LDL_UKWA_LICENSE   = "Joint LDL Web Archiving Licence";
 	public static final String FIELD_PUBLISH      = "field_publish";
 	
 	/**
