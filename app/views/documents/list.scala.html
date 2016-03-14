@@ -5,6 +5,7 @@
 @import templates.select
 @import templates.inputRange
 @import templates.archiveAndLive
+@import templates.shortLink
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio4to8FieldConstructor.f) }
 
@@ -59,6 +60,20 @@
     	routes.Documents.list(filterForm.get, newPage, sortBy, order, searchstr)
     else
     	routes.Documents.overview(newPage, sortBy, order)
+}
+
+@docTitle(document: Document) = @{
+    if( document.title != null && document.title.trim().length() == 0 )
+        document.filename
+    else
+        document.title
+}
+
+@docLink(document: Document, user: User) = @{
+    if (document.isEditableFor(user))
+        routes.Documents.edit(document.id).url
+    else
+        routes.Documents.view(document.id).url
 }
 
 @main("Documents", user, scripts, styles) {
@@ -157,6 +172,7 @@
 				<thead>
 					<tr>
 						@header("title", "Title", currentSortBy, currentOrder, link)
+						@header("watchedTarget.target.title", "Target", currentSortBy, currentOrder, link)
 						@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
 						@header("documentUrl", "Document", currentSortBy, currentOrder, link)
 						@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
@@ -168,25 +184,10 @@
 				@for(document <- currentPage.getList) {
 					<tr>
 						<td>
-							@if(filterForm.get.status == Document.Status.IGNORED) {
-                                        @if( document.title != null && document.title.trim().length() == 0 ) {
-                                            @document.filename
-                                        } else {
-                                            @document.title
-                                        }
-							} else {
-								<a href="@{
-										if (document.isEditableFor(user))
-											routes.Documents.edit(document.id)
-										else
-											routes.Documents.view(document.id)}">
-									    @if( document.title != null && document.title.trim().length() == 0 ) {
-									        [untitled]
-									    } else {
-        									@document.title
-									    }
-								</a>
-							}
+						    @shortLink(docLink(document,user),"",docTitle(document))
+						</td>
+						<td>
+						    @shortLink(routes.TargetController.view(document.watchedTarget.target.id).url,"",document.watchedTarget.target.title)
 						</td>
                         <td>@archiveAndLive(document.landingPageUrl, "_blank", document.waybackTimestamp)</td>
                         <td>@archiveAndLive(document.documentUrl, "_blank", document.waybackTimestamp)</td>

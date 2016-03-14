@@ -4,6 +4,7 @@
 @import templates.checkbox
 @import templates.select
 @import templates.inputText
+@import templates.shortLink
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
 
@@ -111,11 +112,7 @@
 					<td>
 						@if(watchedTarget.target.fieldUrls != null) {
 							@for(fieldUrl <- watchedTarget.target.fieldUrls) {
-							    @if( fieldUrl.url.length > 40 ) {
-								    <a href="@fieldUrl.url" title="@fieldUrl.url" target="_blank">...@fieldUrl.url.substring(fieldUrl.url.length-40)</a><br>
-								} else {
-                                    <a href="@fieldUrl.url" title="@fieldUrl.url" target="_blank">@fieldUrl.url</a><br>
-								}
+							    @shortLink(fieldUrl.url, "_blank")
 							}
 						} else {
 							N/A
