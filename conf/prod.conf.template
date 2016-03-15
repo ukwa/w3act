@@ -44,7 +44,6 @@ secret_server_password=""
 # Host details
 server_name="https://www.webarchive.org.uk"
 
-
 #The queue endpoint
 queue_host=amqp.wa.bl.uk
 queue_port=5672

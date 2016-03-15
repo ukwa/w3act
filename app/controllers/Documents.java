@@ -304,6 +304,7 @@ public class Documents extends AbstractController {
 	private static List<AssignableArk> requestNewArks( int numArks ) {
 		String piiUrl = Play.application().configuration().getString("pii_url");
 		WSRequestHolder holder = WS.url(piiUrl).setQueryParameter("arks", Integer.toString(numArks));
+		Logger.info("Requesting ARKs via POST to "+holder.getUrl());
 
 		Promise<List<AssignableArk>> arksPromise = holder.post("").map(
 				new Function<WSResponse, List<AssignableArk>>() {
