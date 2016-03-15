@@ -1,5 +1,7 @@
 @(document1: Document, document2: Document, user: User)
 
+@import templates.shortLink
+
 @styles = {
 	<style type="text/css">
 		.container {
@@ -19,7 +21,7 @@
 @main("Comparing documents", user, styles = styles) {
 	<div class="col-sm-6">
 		@if(document1 != null) {
-			<h3>Document <a href="@routes.Documents.view(document1.id)">@document1.title</a></h3>
+			<h3>@shortLink(routes.Documents.view(document1.id).url, "", document1.title, 60)</h3>
 			<iframe id="document1" src="@document1.waybackUrl()"></iframe>
 		} else {
 			<h3>Document not Found</h3>
@@ -28,7 +30,7 @@
 	</div>
 	<div class="col-sm-6">
 		@if(document2 != null) {
-			<h3>Document <a href="@routes.Documents.view(document2.id)">@document2.title</a></h3>
+			<h3>@shortLink(routes.Documents.view(document2.id).url, "", document2.title, 60)</h3>
 			<iframe id="document2" src="@document2.waybackUrl()"></iframe>
 		} else {
 			<h3>Document not Found</h3>

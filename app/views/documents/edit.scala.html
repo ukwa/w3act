@@ -7,6 +7,7 @@
 @import templates.inputText
 @import templates.select
 @import templates.nameInputText
+@import templates.shortLink
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
 
@@ -240,7 +241,7 @@
 			<input type="hidden" name="watchedTarget.id" value="@form("watchedTarget.id").value">
 			<input type="hidden" name="watchedTarget.target.nid" value="@form("watchedTarget.target.nid").value">
 			<input type="hidden" name="watchedTarget.target.title" value="@form("watchedTarget.target.title").value">
-
+			
 			@inputText(form("title"), editable, '_label -> docTitleLabel(document.isJournalIssue))
 			@inputText(form("doi"), editable, '_label -> "DOI (Digital Object Identifier)")
 			@inputText(form("publicationDate"), editable, '_label -> "Publication Date", 'onchange -> "fillYear()")
@@ -311,14 +312,26 @@
 				@nameInputText(form("author3Fn"), form("author3Ln"), editable, '_label -> "")
 			</div>
 			
-			<a target="landingPage" onclick="openPopup('@document.landingPageUrl')">Open Landing Page</a><br>
-			<a target="document" onclick="openPopup('@document.documentUrl')">Open Document</a><br>
-			@if(editable) {
+            @helper.input(form("dummy-watched-target"), '_label -> "Watched Target" ) { (id, name, value, args) =>
+                @shortLink(routes.TargetController.view(document.watchedTarget.target.id).url,"",document.watchedTarget.target.title)
+            }
+
+            @helper.input(form("dummy-landing-page"), '_label -> "Landing Page" ) { (id, name, value, args) =>
+			<a target="landingPage" onclick="openPopup('@document.landingPageUrl')" href="@document.landingPageUrl" title="@document.landingPageUrl">Open Landing Page</a>
+			}
+			
+            @helper.input(form("dummy-doc-url"), '_label -> "Document" ) { (id, name, value, args) =>
+			<a target="document" onclick="openPopup('@document.documentUrl')" href="@document.documentUrl" title="@document.documentUrl">Open Document</a>
+			}
+			
+            @helper.input(form("dummy-submit"), '_label -> "" ) { (id, name, value, args) =>
+			 @if(editable) {
 				<input type="submit" class="btn btn-primary" value="Save">
-			} else {
+			 } else {
 				@if(document.status != Document.Status.SUBMITTED && !form("type").value.isEmpty) {
-					<input type="submit" name="submit" class="btn btn-primary" value="Submit" onclick="return confirm('Are you sure?');">
-				}
+                    <input type="submit" name="submit" class="btn btn-primary" value="Submit" onclick="return confirm('Are you sure?');">
+                }				
+  			 }
 			}
 		</div>
 		
