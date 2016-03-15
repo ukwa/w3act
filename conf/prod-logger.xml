@@ -8,8 +8,9 @@
 	</appender>
 
 	<logger name="play" level="WARN" />
-	<logger name="application" level="WARN" />
-	<logger name="uk.bl" level="WARN" />
+	<logger name="controllers" level="INFO" />
+    <logger name="uk.bl" level="INFO" />
+    <logger name="com.thesecretserver" level="INFO" />
 
 	<root level="ERROR">
 		<appender-ref ref="FILE" />

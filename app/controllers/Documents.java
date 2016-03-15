@@ -189,6 +189,7 @@ public class Documents extends AbstractController {
 		if( arks == null || arks.size() < 4) {
 			return;
 		}
+		Logger.info("Minted four arks. ark[0] = "+arks.get(0).ark);
 		// Add these ARKs to the document:
 		d.ark = arks.get(0).ark;
 		d.mets_d_ark = arks.get(1).ark;
@@ -200,9 +201,11 @@ public class Documents extends AbstractController {
 		// Find the document:
 		Document document = Document.find.byId(id);
 		
-		// Mint an ARK for the document:
+		// Mint ARKs for the document:
 		if( document.hasARKs() == false ){
 			Documents.getARKs(document);
+		} else {
+			Logger.warn("Re-using existing ARKs, e.g. doc.ark = "+ document.ark);
 		}
 		
 		// Check it worked:
@@ -253,7 +256,7 @@ public class Documents extends AbstractController {
 				Calendar cal = Calendar.getInstance();
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				String dateStr = dateFormat.format(cal.getTime());
-				String copyFilename = dateStr+"_"+document.type.toLowerCase()+"_sip_"+id+".xml";
+				String copyFilename = dateStr+"_"+document.type.toLowerCase().replace(' ','_')+"_sip_"+id+".xml";
 				File copyFile = new File(copyDir, copyFilename);
 				try {
 					FileUtils.copyFile(file, copyFile);

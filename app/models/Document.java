@@ -232,7 +232,7 @@ public class Document extends Model {
 	}
 	
 	public boolean hasARKs() {
-		if( StringUtils.isEmpty(ark) ||  StringUtils.isEmpty(md_ark) ||  StringUtils.isEmpty(d_ark) ){
+		if( StringUtils.isEmpty(ark) ||  StringUtils.isEmpty(md_ark) ||  StringUtils.isEmpty(d_ark) || StringUtils.isEmpty(mets_d_ark) ){
 			return false;
 		}
 		return true;
