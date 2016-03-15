@@ -74,7 +74,7 @@ ehcacheplugin=disabled
 enableDDHAPT=false
 dls.documents.ebook.sip.dir=/opt/data/w3act/ebooks
 dls.documents.ejournal.sip.dir=/opt/data/w3act/ejournals
-dls.documents.sip.copy.dir=/opt/data/w3act/dls_sips_copy
+dls.documents.sip.copy.dir=/opt/data/dls_sips_copy
 
 use.accounts=false
 admin.default.email="wa-sysadm@bl.uk"
