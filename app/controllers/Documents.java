@@ -261,6 +261,7 @@ public class Documents extends AbstractController {
 						throw new IOException("Copy failed - lengths to not match.");
 					}
 				} catch (IOException e) {
+					Logger.error("Exception while copying SIP xml: "+e.getMessage(),e);
 					FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
 							"SIP XML could not be copied!");
 					downloadError.send();
