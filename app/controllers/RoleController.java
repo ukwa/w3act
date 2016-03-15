@@ -62,11 +62,18 @@ public class RoleController extends AbstractController {
     }
     
     public static Result view(Long id) {
-        return ok(
-                view.render(
-                        Role.findById(id), User.findByEmail(request().username())
-                )
-            );
+		
+		Role role = Role.findById(id);
+		if (role != null) {
+			if (request().accepts("text/html")) {
+				return ok(view.render(role, User.findByEmail(request().username())));
+			} else { 
+			    return ok(Json.toJson(role));
+			}
+		} else {
+			return notFound("There is no Role with ID " + id);
+		}
+			
     }
     
     /**
