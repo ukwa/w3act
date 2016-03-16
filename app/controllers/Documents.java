@@ -275,7 +275,7 @@ public class Documents extends AbstractController {
 			String newFileName = "sip_"+id+".xml";
 			file.renameTo(new File(saveDir, newFileName));
 		} else {
-			if( file.exists()) {
+			if( file != null && file.exists()) {
 				file.delete();
 			}
 			FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,

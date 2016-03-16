@@ -102,7 +102,8 @@
 					<th>URL</th>
 					@header("target.authorUser", "Curator", currentSortBy, currentOrder, link)
 					<th>Documents</th>
-					@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
+					@header("waybackTimestamp", "Last Crawl Date", currentSortBy, currentOrder, link)
+					<th>Next Crawl Date</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -122,6 +123,7 @@
 					<td><a href="@routes.UserController.view(watchedTarget.target.authorUser.id)">@watchedTarget.target.authorUser.name</a></td>
 					<td><a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(watchedTarget.id))">@watchedTarget.documents.size</a></td>
 					<td>@WatchedTargets.dayCount(watchedTarget.waybackTimestamp)</td>
+					<td><abbr title="@watchedTarget.target.getNextScheduledCrawlDate()">@watchedTarget.target.getNextScheduledCrawlDateAsString()</abbr></td>
 				</tr>
 			}
 			</tbody>

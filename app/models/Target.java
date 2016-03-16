@@ -39,6 +39,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.github.kevinsawicki.timeago.TimeAgo;
+
 import play.Logger;
 import play.data.validation.Constraints;
 import play.data.validation.Constraints.Required;
@@ -2060,6 +2062,57 @@ public class Target extends Model {
 			crawlEndDateISO = Utils.INSTANCE.convertToDateTimeISO(crawlEndDate);
 		}
 		return crawlEndDateISO;
+	}
+	
+	@JsonIgnore
+	public Date getNextScheduledCrawlDate() throws Exception {
+		Calendar now = Calendar.getInstance();
+		// Cases where no crawl is scheduled:
+		if( this.crawlEndDate != null && now.after(this.crawlEndDate)) {
+			return null;
+		}
+		if( this.crawlStartDate == null || Const.CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency) || 
+				Const.CrawlFrequency.DOMAINCRAWL.name().equals(crawlFrequency)) {
+			return null;
+		}
+		// Otherwise, determine the next scheduled launch:
+		Calendar scheduled = Calendar.getInstance();
+		scheduled.setTime(crawlStartDate);
+		// Ensure move to a recent year if the start date is a long time ago:
+		if( (now.get(Calendar.YEAR) - scheduled.get(Calendar.YEAR)) > 1 ) {
+			scheduled.set(Calendar.YEAR, now.get(Calendar.YEAR) - 1);
+		}
+		// Now step forward by the crawl frequency until we cross the current date:
+		while( scheduled.before(now)) {
+			if( Const.CrawlFrequency.DAILY.name().equals(crawlFrequency)) {
+				scheduled.add(Calendar.DAY_OF_YEAR, 1);
+			} else if( Const.CrawlFrequency.WEEKLY.name().equals(crawlFrequency)) {
+				scheduled.add(Calendar.WEEK_OF_YEAR, 1);
+			} else if( Const.CrawlFrequency.MONTHLY.name().equals(crawlFrequency)) {
+				scheduled.add(Calendar.MONTH, 1);
+			} else if( Const.CrawlFrequency.QUARTERLY.name().equals(crawlFrequency)) {
+				scheduled.add(Calendar.MONTH, 3);
+			} else if( Const.CrawlFrequency.SIXMONTHLY.name().equals(crawlFrequency)) {
+				scheduled.add(Calendar.MONTH, 6);
+			} else if( Const.CrawlFrequency.ANNUAL.name().equals(crawlFrequency)) {
+				scheduled.add(Calendar.YEAR, 1);
+			} else {
+				throw new Exception("Unknown crawl frequency "+this.crawlFrequency);
+			}
+		}
+		// And return it:
+		return scheduled.getTime();
+	}
+	
+	@JsonIgnore
+	public String getNextScheduledCrawlDateAsString() throws Exception {
+		TimeAgo time = new TimeAgo();
+		long current = System.currentTimeMillis();
+		Date next = getNextScheduledCrawlDate();
+		if( next == null ) return "unscheduled";
+		long difference = next.getTime() - current;
+		// Getting future 'time until' values of this utility seems to need this approach:
+		return time.timeUntil(current - difference);
 	}
 
 	/**

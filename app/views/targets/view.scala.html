@@ -1064,24 +1064,20 @@
                 </div>
             </div>
             
-            
-            @if(target.isInScopeAllOrInheritedWithoutLicense() && false ) {
-            <div class="panel panel-primary" id="archive-this-now-panel">
+            <div class="panel panel-primary" id="crawl-schedule-panel">
                 <div class="panel-heading">
-                        Archive This Now
+                        Crawl Schedule
                 </div>
                 <div id="collapseNow" class="panel-body">
-                    <div class="form-group">
-                        <label class="col-sm-6 control-label"></label>
-                        <div class="col-sm-6">
+                Next crawl due to launch <abbr title="@target.getNextScheduledCrawlDate()">@target.getNextScheduledCrawlDateAsString()</abbr>.
+            @if(target.isInScopeAllOrInheritedWithoutLicense() && false ) {
                             <a class="btn btn-success" role="button" href="@routes.TargetController.archive(target.id)">
-                                Archive this now
+                                Archive This Target Now
                             </a>
-                        </div>
-                    </div>
+            }
+            
                 </div>
             </div>
-            }
             
 		</div>
 	</div>
