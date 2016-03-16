@@ -33,29 +33,29 @@
               <subfield code="a">@document.title</subfield>
             </datafield>
           @if( document.book != null ) {
-           @if(!document.book.isbn.isEmpty) {
+           @if(document.book.isbn != null && !document.book.isbn.isEmpty) {
             <datafield tag="020" ind1=" " ind2=" ">
               <subfield code="a">@document.book.isbn</subfield>
             </datafield>
            }
-           @if(!document.doi.isEmpty) {
+           @if(document.doi != null && !document.doi.isEmpty) {
             <datafield tag="024" ind1="7" ind2=" ">
               <subfield code="a">@document.doi</subfield>
               <subfield code="2">doi</subfield>
             </datafield>
            }
-           @if(!document.book.edition.isEmpty) {
+           @if(document.book.edition != null && !document.book.edition.isEmpty) {
             <datafield tag="250" ind1=" " ind2=" ">
               <subfield code="a">@document.book.edition</subfield>
             </datafield>
            }
             <datafield tag="264" ind1=" " ind2="1">
-            @if(!document.book.publisher.isEmpty) {
+            @if(document.book.publisher != null && !document.book.publisher.isEmpty) {
               <subfield code="b">@document.book.publisher</subfield>
             }
               <subfield code="c">@document.publicationYear</subfield>
             </datafield>
-           @if(!document.book.series.isEmpty) {
+           @if(document.book.series != null && !document.book.series.isEmpty) {
             <datafield tag="490" ind1="0" ind2=" ">
               <subfield code="a">@document.book.series</subfield>
             </datafield>
@@ -75,7 +75,7 @@
               <subfield code="a">@document.author3Ln, @document.author3Fn</subfield>
             </datafield>
            }
-           @if(!document.book.corporateAuthor.isEmpty) {
+           @if(document.book.corporateAuthor != null && !document.book.corporateAuthor.isEmpty) {
             <datafield tag="710" ind1="2" ind2=" ">
               <subfield code="a">@document.book.corporateAuthor</subfield>
             </datafield>
