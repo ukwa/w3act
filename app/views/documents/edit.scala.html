@@ -8,6 +8,7 @@
 @import templates.select
 @import templates.nameInputText
 @import templates.shortLink
+@import templates.archiveAndLive
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
 
@@ -317,11 +318,11 @@
             }
 
             @helper.input(form("dummy-landing-page"), '_label -> "Landing Page" ) { (id, name, value, args) =>
-			<a target="landingPage" onclick="openPopup('@document.landingPageUrl')" href="@document.landingPageUrl" title="@document.landingPageUrl">Open Landing Page</a>
+			 @archiveAndLive(document.landingPageUrl, "landingPage", document.waybackTimestamp)
 			}
 			
             @helper.input(form("dummy-doc-url"), '_label -> "Document" ) { (id, name, value, args) =>
-			<a target="document" onclick="openPopup('@document.documentUrl')" href="@document.documentUrl" title="@document.documentUrl">Open Document</a>
+			 @archiveAndLive(document.documentUrl, "document", document.waybackTimestamp)
 			}
 			
             @helper.input(form("dummy-submit"), '_label -> "" ) { (id, name, value, args) =>
