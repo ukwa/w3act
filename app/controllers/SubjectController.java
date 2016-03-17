@@ -117,8 +117,11 @@ public class SubjectController extends AbstractController {
 	    
 	  
     public static Result view(Long id) {
+		Subject subject = Subject.findById(id);
+		if (subject == null) return notFound("There is no Subject with ID " + id);
+		
     	User user = User.findByEmail(request().username());
-        return ok(view.render(Subject.findById(id), user));
+        return ok(view.render(subject, user));
     }
     
     public static Result newForm() {
@@ -132,8 +135,10 @@ public class SubjectController extends AbstractController {
     }
 
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
 		Subject subject = Subject.findById(id);
+		if (subject == null) return notFound("There is no Subject with ID " + id);
+		
+    	User user = User.findByEmail(request().username());
 		if( subject.description != null ) {
 			subject.description = subject.description.replace("<p>", "").replace("</p>", "").replace("<br />", "\n").replace("<br>", "\n");
 		}

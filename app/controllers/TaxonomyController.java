@@ -96,17 +96,23 @@ public class TaxonomyController extends AbstractController {
     }
 	    
 	public static Result edit(Long id) {
+		Taxonomy taxonomy = Taxonomy.findById(id);
+		if (taxonomy == null) return notFound("There is no Taxonomy with ID " + id);
+		
         return ok(
                 edit.render(
-                        Taxonomy.findById(id), User.findByEmail(request().username())
+                        taxonomy, User.findByEmail(request().username())
                 )
             );
 	}
 	
     public static Result view(Long id) {
+		Taxonomy taxonomy = Taxonomy.findById(id);
+		if (taxonomy == null) return notFound("There is no Taxonomy with ID " +id);
+		
         return ok(
                 view.render(
-                        Taxonomy.findById(id), User.findByEmail(request().username())
+                        taxonomy, User.findByEmail(request().username())
                 )
             );
     }

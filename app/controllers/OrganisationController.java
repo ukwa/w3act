@@ -113,6 +113,8 @@ public class OrganisationController extends AbstractController {
 
     public static Result view(Long id) {
     	Organisation organisation = Organisation.findById(id);
+		if (organisation == null) return notFound("There is no Organisation with ID " + id);
+		
     	User user = User.findByEmail(request().username());
         return ok(view.render(organisation, user));
     }
@@ -161,6 +163,8 @@ public class OrganisationController extends AbstractController {
         if(SecuredController.isSysAdmin(request().username())) {
 	    	User user = User.findByEmail(request().username());
 	    	Organisation organisation = Organisation.findById(id);
+			if (organisation == null) return notFound("There is no Organisation with ID " + id);
+			
 			Form<Organisation> organisationForm = Form.form(Organisation.class);
 			organisationForm = organisationForm.fill(organisation);
 	        return ok(edit.render(organisationForm, user, id));

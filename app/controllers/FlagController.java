@@ -47,9 +47,13 @@ public class FlagController extends AbstractController {
     
 
     public static Result view(Long id) {
+		
+		Flag flag = models.Flag.findById(id);
+		if (flag == null) return notFound("There is no Flag with ID " + id);
+		
         return ok(
                 view.render(
-                		models.Flag.findById(id), User.findByEmail(request().username())
+                		flag, User.findByEmail(request().username())
                 )
             );
     }
@@ -124,8 +128,10 @@ public class FlagController extends AbstractController {
     }
 
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
     	Flag flag = Flag.findById(id);
+        if (flag == null) return notFound("There is no Flag with ID " + id);
+		
+    	User user = User.findByEmail(request().username());
 		Form<Flag> flagForm = Form.form(Flag.class);
 		flagForm = flagForm.fill(flag);
         return ok(edit.render(flagForm, user, id));

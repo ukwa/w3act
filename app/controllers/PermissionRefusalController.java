@@ -58,6 +58,8 @@ public class PermissionRefusalController extends AbstractController {
      */
     public static Result edit(Long id) {
 		PermissionRefusal refusal = PermissionRefusal.findById(id);
+		if (refusal == null) return notFound("There is no Permission Refusal with ID " + id);
+			
 		User user = User.findByEmail(request().username());
 		Form<PermissionRefusal> refusalForm = Form.form(PermissionRefusal.class);
 		refusalForm = refusalForm.fill(refusal);
@@ -143,9 +145,11 @@ public class PermissionRefusalController extends AbstractController {
     }    
     
     public static Result view(Long id) {
+		PermissionRefusal refusal = PermissionRefusal.findById(id);
+		if (refusal == null) return notFound("There is no Permission Refusal with ID " +id);
+		
         return ok(
-                view.render(
-                		models.PermissionRefusal.findById(id), User.findByEmail(request().username())
+                view.render(refusal, User.findByEmail(request().username())
                 )
             );
     }

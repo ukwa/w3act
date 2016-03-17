@@ -55,9 +55,11 @@ public class NominationController extends AbstractController {
         );
     
     public static Result view(Long id) {
+		Nomination nomination = Nomination.findById(id);
+		if (nomination == null) return notFound("There is no Nomination with ID " + id);
+		
         return ok(
-                view.render(
-                        Nomination.findById(id), User.findByEmail(request().username())
+                view.render(nomination, User.findByEmail(request().username())
                 )
             );
     }
@@ -178,6 +180,8 @@ public class NominationController extends AbstractController {
     
     public static Result edit(Long id) {
 		Nomination nomination = Nomination.findById(id);
+		if (nomination == null) return notFound("There is no Nomination with ID " + id);
+		
 		Form<Nomination> nominationForm = Form.form(Nomination.class);
 		nominationForm = nominationForm.fill(nomination);
       	return ok(edit.render(nominationForm, User.findByEmail(request().username()), id));

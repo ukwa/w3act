@@ -121,6 +121,8 @@ public class UserController extends AbstractController {
     
     public static Result view(Long id) {
     	User curator = User.findById(id);
+		if (curator == null) return notFound("There is no Curator with ID " + id);
+		
     	User user = User.findByEmail(request().username());
     	List<Role> roles = null;
     	if (user.isSysAdmin()) {
@@ -175,8 +177,10 @@ public class UserController extends AbstractController {
     }
 
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
 		User curator = User.findById(id);
+        if (curator == null) return notFound("There is no Curator with ID " + id);
+		
+    	User user = User.findByEmail(request().username());
 		Form<User> userForm = Form.form(User.class);
 		userForm = userForm.fill(curator);
     	List<Role> roles = null;

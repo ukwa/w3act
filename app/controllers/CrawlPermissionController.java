@@ -136,8 +136,10 @@ public class CrawlPermissionController extends AbstractController {
     }
 
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
 		CrawlPermission crawlPermission = CrawlPermission.findById(id);
+	    if (crawlPermission == null) return notFound("There is no CrawlPermission with id " + id);
+
+		User user = User.findByEmail(request().username());
 		crawlPermission.target.formUrl = crawlPermission.target.fieldUrl();
 		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
 		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
@@ -148,8 +150,11 @@ public class CrawlPermissionController extends AbstractController {
     }
     
     public static Result view(Long id) {
-    	User user = User.findByEmail(request().username());
     	CrawlPermission crawlPermission = CrawlPermission.findById(id);
+	    if (crawlPermission == null) return notFound("There is no CrawlPermission with id " + id);
+      	
+		User user = User.findByEmail(request().username());
+
     	Logger.debug("CrawlPermissionController.view contactPerson: " + crawlPermission.contactPerson);
     	Logger.debug("CrawlPermissionController.view user: " + crawlPermission.user);
     	Logger.debug("CrawlPermissionController.view license: " + crawlPermission.getLicense());

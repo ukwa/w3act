@@ -50,8 +50,11 @@ public class RoleController extends AbstractController {
      * Display the role edit panel for this URL.
      */
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
-		Role role = Role.findById(id);
+		Role role = Role.findById(id);	
+        if (role == null) return notFound("There is no Role with ID " + id);
+		
+		User user = User.findByEmail(request().username());
+
 		Form<Role> roleForm = Form.form(Role.class);
 		roleForm = roleForm.fill(role);
 		List<Permission> permissions = Permission.findAll();

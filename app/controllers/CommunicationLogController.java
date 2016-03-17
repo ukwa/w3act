@@ -49,6 +49,8 @@ public class CommunicationLogController extends AbstractController {
      */
     public static Result edit(Long id) {
 		CommunicationLog log = CommunicationLog.findById(id);
+	    if (log == null) return notFound("There is no Communication Log with ID " + id);
+
 		Form<CommunicationLog> communicationLogForm = Form.form(CommunicationLog.class);
 		communicationLogForm = communicationLogForm.fill(log);
 		
@@ -60,7 +62,9 @@ public class CommunicationLogController extends AbstractController {
     }
     
     public static Result view(Long id) {
-    	CommunicationLog log = new CommunicationLog();
+    	CommunicationLog log = CommunicationLog.findById(id);
+	    if (log == null) return notFound("There is no Communication Log with ID " + id);
+
     	Logger.debug("VIEW:::"+log.crawlPermission);
         return ok(
                 view.render(

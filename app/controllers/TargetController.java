@@ -826,9 +826,12 @@ public class TargetController extends AbstractController {
      * Display the target edit panel for this URL.
      * @param url The target identifier URL
      */
-    public static Result edit(Long id) {		
-		Target target = Target.findById(id);
+    public static Result edit(Long id) {	
 		Logger.debug("Targets.edit() id::::: " + id);
+	
+		Target target = Target.findById(id);
+		if (target == null) return notFound("There is no Target with ID " + id);
+		
 		// Make sure scope checks are up to date:
 		target.runChecks();
 		target.update();

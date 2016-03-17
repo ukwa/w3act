@@ -45,12 +45,12 @@ public class ContactPersonController extends AbstractController {
 
     public static Result view(Long id) {
     	User user = User.findByEmail(request().username());
-    	Logger.debug("view contact person");
-        return ok(
-                view.render(
-                		models.ContactPerson.findById(id), user
-                )
-            );
+		ContactPerson contactPerson = ContactPerson.findById(id);
+		
+	    if (contactPerson == null) return notFound("There is no Contact Person with ID " + id);
+    	
+		Logger.debug("view contact person");
+        return ok(view.render(contactPerson, user));
     }
     
     /**
@@ -97,7 +97,6 @@ public class ContactPersonController extends AbstractController {
      * @return
      */
     public static List<ContactPerson> processFilterContactPersons(String filterUrl) {
-//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<ContactPerson> exp = ContactPerson.find.where();
     	List<ContactPerson> res = new ArrayList<ContactPerson>();
@@ -126,8 +125,10 @@ public class ContactPersonController extends AbstractController {
     }
     
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
 		ContactPerson person = ContactPerson.findById(id);
+	    if (person == null) return notFound("There is no Contact Person with ID " + id);
+
+		User user = User.findByEmail(request().username());
 		Form<ContactPerson> contactPersonForm = Form.form(ContactPerson.class);
 		contactPersonForm = contactPersonForm.fill(person);
       	return ok(

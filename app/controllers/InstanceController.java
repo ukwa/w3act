@@ -373,7 +373,8 @@ public class InstanceController extends AbstractController {
     
     public static Result edit(Long id) {
 		Instance instance = Instance.findById(id);
-//		instance.notes = StringEscapeUtils.escapeJava(instance.notes);
+		if (instance == null) return notFound("THere is no Instance with ID " +id);
+		
 		Long targetId = instance.target.id;
 		Logger.debug("title: " + instance.title);
 		Logger.debug("authorUser: " + instance.authorUser);
@@ -388,6 +389,8 @@ public class InstanceController extends AbstractController {
     
     public static Result view(Long id) {
 		Instance instance = Instance.findById(id);
+		if (instance == null) return notFound("There is no Instance with ID " +id);
+		
 		User user = User.findByEmail(request().username());
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();

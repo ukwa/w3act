@@ -48,9 +48,11 @@ public class MailTemplateController extends AbstractController {
     }
     
     public static Result view(Long id) {
+		MailTemplate mailTemplate = MailTemplate.findById(id);
+		if (mailTemplate == null) return notFound("There is no Mail Template with ID " + id);
+		
         return ok(
-                view.render(
-                		models.MailTemplate.findById(id), User.findByEmail(request().username())
+                view.render(mailTemplate, User.findByEmail(request().username())
                 )
             );
     }
@@ -152,8 +154,10 @@ public class MailTemplateController extends AbstractController {
     }
 
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
     	MailTemplate template = MailTemplate.findById(id);
+        if (template == null) return notFound("There is no Mail Template with ID " + id);
+		
+    	User user = User.findByEmail(request().username());
 		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
 		templateForm = templateForm.fill(template);
 		Map<String,String> templates = MailTemplateType.options();

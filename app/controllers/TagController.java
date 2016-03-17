@@ -42,9 +42,11 @@ public class TagController extends AbstractController {
         );
     
     public static Result view(Long id) {
+		Tag tag = Tag.findTagById(id);
+		if (tag == null) return notFound("There is no Tag with ID " + id);
+		
         return ok(
-                view.render(
-                		models.Tag.findTagById(id), User.findByEmail(request().username())
+                view.render(tag, User.findByEmail(request().username())
                 )
             );
     }
@@ -58,8 +60,10 @@ public class TagController extends AbstractController {
     }
 
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
     	Tag tag = Tag.findTagById(id);
+		if(tag == null) return notFound("There is no Tag with ID " + id);
+		
+    	User user = User.findByEmail(request().username());
 		Form<Tag> tagForm = Form.form(Tag.class);
 		tagForm = tagForm.fill(tag);
         return ok(edit.render(tagForm, user, id));

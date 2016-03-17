@@ -50,15 +50,19 @@ public class PermissionController extends AbstractController {
     
     public static Result edit(Long id) {
 		Permission permission = Permission.findById(id);
+		if (permission == null) return notFound("There is no Permission with ID " + id);
+		
 		Form<Permission> permissionsForm = Form.form(Permission.class);
 		permissionsForm = permissionsForm.fill(permission);
       	return ok(edit.render(permissionsForm, User.findByEmail(request().username()), id));
     }
     
     public static Result view(Long id) {
+		Permission permission = Permission.findById(id);
+		if (permission == null) return notFound("There is no Permission with ID " + id);
+		
         return ok(
-                view.render(
-                        Permission.findById(id), User.findByEmail(request().username())
+                view.render(permission, User.findByEmail(request().username())
                 )
             );
     }
