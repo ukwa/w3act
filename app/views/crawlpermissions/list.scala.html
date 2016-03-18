@@ -151,12 +151,13 @@
 			<table class="table table-hover">
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>Target</th>
+                        @header("name", "Name")
+                        @header("target", "Target")
 						<th>URLs</th>
 						<th>Contact Person</th>
-						<th>Status</th>
+                        @header("status", "Status")
 						<th>Licence Form</th>
+                        @header("createdAt", "Created Date")
                         @header("requestedAt", "Requested Date")
                         @header("grantedAt", "Granted Date")
 					</tr>
@@ -200,9 +201,12 @@
 				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View</a>
 			                }
 						</td>
-						<td>
+                        <td>
+                            @uk.bl.api.Utils.INSTANCE.convertToDateTime(permission.createdAt)
+                        </td>                       
+                        <td>
                             @uk.bl.api.Utils.INSTANCE.convertToDateTime(permission.requestedAt)
-						</td>						
+                        </td>                       
                         <td>
                             @uk.bl.api.Utils.INSTANCE.convertToDateTime(permission.grantedAt)
                         </td>

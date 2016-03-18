@@ -462,6 +462,10 @@ public class CrawlPermission extends ActModel {
     	if( ! "-1".equals(status)) {
     		q = q .eq("status", status);
     	}
+    	// Strip out NULLs when sorting by these dates:
+    	if( "grantedAt".equals(sortBy) ||"requestedAt".equals(sortBy) ) {
+    		q = q.isNotNull(sortBy);
+    	}
     	// Query and return paged list:
     	return q.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)

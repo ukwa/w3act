@@ -8,6 +8,10 @@ taxonomies:
 
     - !!models.License
         ttype:        licenses
+        name:         Joint LDL Web Archiving Licence (2016-)
+
+    - !!models.License
+        ttype:        licenses
         name:         NPLD + remote access for registered users of the MBS Portal only, negotiated
 
     - !!models.License
