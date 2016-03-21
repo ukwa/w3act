@@ -404,9 +404,16 @@ public class Documents extends AbstractController {
 							document.title = document.title.substring(0, 255);
 						}
 						Logger.info("Saving document metadata.");
-						Ebean.save(document);
-						if( document.book != null ) {
-							Ebean.save(document.book);
+						try {
+							Ebean.save(document);
+							if( document.book != null ) {
+								Ebean.save(document.book);
+							}
+						} catch( Exception ex ) {
+							Logger.error("Exception when calling Ebean.save: ", ex);
+							Logger.error("Document was: "+document);
+							Logger.error("Document.Book was: "+document.book);
+							throw ex;
 						}
 						// Add to list for post-import checks:
 						documents.add(document);
