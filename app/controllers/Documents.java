@@ -365,6 +365,15 @@ public class Documents extends AbstractController {
 			return redirect(routes.Documents.overview(0, "title", "asc"));
 	}
 	
+	private static String truncator(String in) {
+		if( in.length() > 255 ) {
+			Logger.info("Truncating over-long field: "+in);
+			return in.substring(0, 255);
+		} else {
+			return in;
+		}
+	}
+	
 	@BodyParser.Of(value = BodyParser.Json.class, maxLength = 1024 * 1024)
 	public static Result importJson() {
 		Logger.info("documents are imported");
@@ -398,11 +407,9 @@ public class Documents extends AbstractController {
 						if( document.title == null){
 							document.title = "";
 						}
-						// Avoid submitting over-long titles (current 255 char limit)
-						if( document.title.length() > 255 ) {
-							Logger.info("Truncating over-long title: "+document.title);
-							document.title = document.title.substring(0, 255);
-						}
+						// Avoid submitting over-long fields (current 255 char limit)
+						document.title = truncator(document.title);
+						document.author1Ln = truncator(document.author1Ln);
 						Logger.info("Saving document metadata.");
 						try {
 							Ebean.save(document);
