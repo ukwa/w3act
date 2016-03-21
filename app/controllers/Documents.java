@@ -398,6 +398,11 @@ public class Documents extends AbstractController {
 						if( document.title == null){
 							document.title = "";
 						}
+						// Avoid submitting over-long titles (current 255 char limit)
+						if( document.title.length() > 255 ) {
+							Logger.info("Truncating over-long title: "+document.title);
+							document.title = document.title.substring(0, 255);
+						}
 						Logger.info("Saving document metadata.");
 						Ebean.save(document);
 						if( document.book != null ) {
