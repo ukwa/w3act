@@ -410,7 +410,8 @@ public class Documents extends AbstractController {
 					}
 				}
 			} catch( Exception ex ) {
-				ex.printStackTrace();
+				Logger.error("Problem while importing document.", ex);
+				Logger.error("JSON was: "+objNode.toString());
 				return badRequest("Problem during import: "+ex);
 			}
 		}
