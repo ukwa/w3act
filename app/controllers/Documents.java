@@ -366,7 +366,7 @@ public class Documents extends AbstractController {
 	}
 	
 	private static String truncator(String in) {
-		if( in.length() > 255 ) {
+		if( in != null && in.length() > 255 ) {
 			Logger.info("Truncating over-long field: "+in);
 			return in.substring(0, 255);
 		} else {
