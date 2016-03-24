@@ -1407,13 +1407,6 @@ public class TargetController extends AbstractController {
     		}
     	}
         
-//        String qaIssueId = requestData.get("qaIssue.id");
-//        if (StringUtils.isNotEmpty(qaIssueId)) {
-//        	Long qaId = Long.valueOf(qaIssueId);
-//        	QaIssue qaIssue = QaIssue.findById(qaId);
-//        	filledForm.get().qaIssue = qaIssue;
-//        }
-    	
     
         List<Tag> newTags = new ArrayList<Tag>();
         String[] tagValues = formParams.get("tagsList");
@@ -1464,7 +1457,6 @@ public class TargetController extends AbstractController {
         if (StringUtils.isNotEmpty(subjectSelect)) {
             String[] subjects = subjectSelect.split(", ");
             for (String sId : subjects) {
-//            	sId = sId.replace("\"", "");
             	Long subjectId = Long.valueOf(sId);
             	Subject subject = Subject.findById(subjectId);
             	if (subject.parent != null) {
@@ -1474,16 +1466,15 @@ public class TargetController extends AbstractController {
         			newSubjects.add(subject);
         		}
             }
-            filledForm.get().subjects = newSubjects;
         }
-        
+        filledForm.get().subjects = newSubjects; 
+
         List<Collection> newCollections = new ArrayList<Collection>();
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
         if (StringUtils.isNotEmpty(collectionSelect)) {
             String[] collections = collectionSelect.split(", ");
             for (String cId : collections) {
-//            	sId = sId.replace("\"", "");
             	Long collectionId = Long.valueOf(cId);
             	Collection collection = Collection.findById(collectionId);
             	if (collection.parent != null) {
@@ -1493,22 +1484,9 @@ public class TargetController extends AbstractController {
         			newCollections.add(collection);
         		}
             }
-            filledForm.get().collections = newCollections;
         }
-        
-//        String organisationId = requestData.get("organisationId");
-//        if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("")) {
-//        	Long oId = Long.valueOf(organisationId);
-//        	Organisation organisation = Organisation.findById(oId);
-//        	filledForm.get().organisation = organisation;
-//        }
-//        
-//        String authorId = requestData.get("authorId");
-//        if (StringUtils.isNotEmpty(authorId)) {
-//        	Long aId = Long.valueOf(authorId);
-//        	User author = User.findById(aId);
-//        	filledForm.get().authorUser = author;
-//        }
+        filledForm.get().collections = newCollections;
+
 
         String dateOfPublication = requestData.get("dateOfPublicationText");
     	if (StringUtils.isNotEmpty(dateOfPublication)) {
