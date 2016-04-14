@@ -1,4 +1,4 @@
-@(collection: models.Collection, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String)
+@(collection: models.Collection, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String,  pageSize: Int)
 
 @import models.Collection
 
@@ -41,7 +41,7 @@
     }
     
     // Generate the link
-    routes.TargetController.collectionTargets(newPage, sortBy, order, searchurl, collection.id)
+    routes.TargetController.collectionTargets(newPage, pageSize, sortBy, order, searchurl, collection.id)
     
 }
 
@@ -103,19 +103,23 @@
 		@warningmessage(flash)
 		@helper.form(action=routes.TargetController.searchTargetsByCollection, 'class -> "form-inline") {
    			<div class="input-group">
-   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+   				    <input type="hidden" name="p" value="@currentPage.getPageIndex" />
   					<input type="hidden" name="s" value="@currentSortBy">
   					<input type="hidden" name="o" value="@currentOrder">
   					<input type="hidden" name="collection_url" value="@collection.url">
-				<input type="text" class="form-control lookup-form-control" name="url" value="@searchurl" id="search-query">
-	   			<span class="input-group-btn">
-					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
-				</span>
+					
+				    <input type="text" class="form-control lookup-form-control" name="url" value="@searchurl" id="search-query">
+	   			    <span class="input-group-btn">
+					    <button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
+				    </span>
 			</div>
+			<div class="search-option">
+				<input type="text" name="page_size" value="@pageSize" maxlength="3" />
+				<label>Page size</label>
+            </div>				
 		}
 	</div>
-	
-	
+
 	@pagination
     
 	<table class="table table-hover">

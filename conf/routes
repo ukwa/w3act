@@ -252,7 +252,7 @@ GET    	/targets/lookup                  	controllers.TargetController.lookup(p:
 GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", curatorId:Long ?= 0, organisationId:Long ?= 0, subjects ?= "", crawlFrequency ?= "", depth ?= "", collections ?= "", licenseId:Long ?= 0, pageSize:Int ?= 10, flagId:Long ?= 0)
 GET    	/targets/new                 		controllers.TargetController.newForm(title ?= "")
 
-GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= 0)
+GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, pageSize:Int ?= 50, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= 0)
 #GET    	/targets/collectiontargets/:id/json controllers.TargetController.collectionTargetsAsJson(id:Long)
 GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisationId:Long)
 GET    	/targets/usertargets           		controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", userId:Long, subjectId:Long ?= 0, collectionId:Long ?= 0)

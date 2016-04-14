@@ -491,12 +491,12 @@ public class TargetController extends AbstractController {
      * @param filter Filter applied on target urls
      * @param collection_url Collection where targets search occurs
      */
-    public static Result collectionTargets(int pageNo, String sortBy, String order, String filter, 
+    public static Result collectionTargets(int pageNo, int pageSize, String sortBy, String order, String filter, 
     		Long collectionId) {
     	Logger.debug("Targets.collectionTargets()");
     	Collection collection = Collection.findById(collectionId);
     	Logger.debug("Collection: " + collection);
-    	Page<Target> pages = Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection.id);
+    	Page<Target> pages = Target.pageCollectionTargets(pageNo, pageSize, sortBy, order, filter, collection.id);
         return ok(
         		sites.render(
         			collection,  
@@ -504,7 +504,8 @@ public class TargetController extends AbstractController {
         			filter, 
         			pages, 
         			sortBy, 
-        			order) 
+        			order, 
+					pageSize) 
         	);
     }
     
@@ -606,13 +607,9 @@ public class TargetController extends AbstractController {
     	String action = form.get("action");
     	String query = form.get("url");
 
-//    	if (StringUtils.isBlank(query)) {
-//			Logger.debug("Target name is empty. Please write name in search window.");
-//			flash("message", "Please enter a name in the search window");
-//	        return redirect(routes.CollectionController.list(0, "title", "asc", ""));
-//    	}    	
-
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	int pageSize = Integer.parseInt(form.get(Const.PAGE_SIZE));
+
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
     	String collection_url = form.get(Const.COLLECTION_URL);
@@ -622,8 +619,8 @@ public class TargetController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
-    			Logger.debug("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.collectionTargets(pageNo, sort, order, query, collection.id));
+    			Logger.debug("searching " + pageNo + " " + pageSize + " " + sort + " " + order);
+    	    	return redirect(routes.TargetController.collectionTargets(pageNo, pageSize, sort, order, query, collection.id));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }

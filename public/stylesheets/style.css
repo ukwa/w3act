@@ -448,3 +448,14 @@ form div.clearfix.error .input-prepend span.add-on,form div.clearfix.error .inpu
 	padding-top: 5px;
 	padding-left: 10px;
 }
+
+.search-option input {
+    width:50px; 
+	float:right; 
+}
+
+.search-option label {
+	float:right;
+	padding-right:5px;
+	padding-top:3px;
+}

@@ -373,16 +373,6 @@ public class CollectionController extends AbstractController {
         		Collection collection = Collection.findById(id);
 		        flash("message", "Collection " + filledForm.get().name + " has been deleted");
             	collection.delete();
-            	
-            	/**
-            	 * Check whether children exist
-            	 */
-//                if (Collection.hasChildren(collection.url)) {
-//                	Logger.debug("This collection has children nodes. Please re-assign children to other nodes first.");
-//    	  			flash("message", "This collection has children nodes. Please re-assign children to other nodes first.");
-//    	  			return info(collectionForm);
-//                } 
-
         		return redirect(routes.CollectionController.index()); 
         	}
         }
@@ -391,7 +381,7 @@ public class CollectionController extends AbstractController {
 	    
 	@Security.Authenticated(SecuredController.class)
     public static Result sites(Long id) {
-        return redirect(routes.TargetController.collectionTargets(0, "title", "asc", "", id));
+        return redirect(routes.TargetController.collectionTargets(0, 50, "title", "asc", "", id));
     }
     
 	public static String serializeCollections(List<Collection> dCollections) {
@@ -413,9 +403,6 @@ public class CollectionController extends AbstractController {
     @With(SecuredAction.class)
     @BodyParser.Of(BodyParser.Json.class)
     public static Result collectionUpdate(Long id) throws ActException {
-//    	JsonNode node = request().body().asJson();
-//    	ObjectMapper objectMapper = new ObjectMapper();
-//		objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
     	Collection collection = Collection.findById(id);
 		String url = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/collections/" + collection.id;
 		Logger.debug("location: " + url);
@@ -446,14 +433,7 @@ public class CollectionController extends AbstractController {
 				if ( cl.id != null ) {
 					return badRequest("No ID should be passed when creating a new Collection!");
 				}
-				/*
-				// Refuse if there's an existing one at the same point in the tree:
-				for ( Collection c : Collection.findAllCollections() ) {
-					if( c.name.equals(cl.name) && c.parent.equals(cl.parent)) {
-						return badRequest("A collection with the name '"+cl.name+"' and parent '"+cl.parent+"' already exists! " );
-					}
-				}
-				*/
+
 				cl.save();
 	    	}
         } catch (IllegalArgumentException e) {
