@@ -1093,7 +1093,7 @@ public class Target extends Model {
     		exp = exp.in("collections", collectionIds);
         }
         
-        Page<Target> res = exp.query().orderBy(sortBy + " " + order + ",fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
+        Page<Target> res = exp.query().orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
 	}

@@ -96,8 +96,10 @@ import views.html.users.usersites;
 public class TargetController extends AbstractController {
 	
     final static Form<Target> targetForm = new Form<Target>(Target.class);
+	private static final String DEFAULT_SORT_BY = "title";
+	private static final String DEFAULT_ORDER = "asc";
 
-    /**
+	/**
      * Display the targets.
      */
     public static Result index() {
@@ -194,8 +196,8 @@ public class TargetController extends AbstractController {
      * @param pageSize The number of Target entries on the page
      * @param flag The flag assigned by user
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
-    		String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject,
+												 String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
     	
     	String url = filter;
     	if (url.startsWith("http://")) {
@@ -212,7 +214,12 @@ public class TargetController extends AbstractController {
     	if (url.endsWith("/")) {
     		url = url.substring(0, url.length()-1);
     	}
-    	
+
+		if(StringUtils.isBlank(sortBy)){
+			sortBy = DEFAULT_SORT_BY;
+			order = DEFAULT_ORDER;
+		}
+
     	Logger.debug("After processing Filter::"+url);
     	
     	Logger.debug("Pre Targets.list(): " + pageNo + " - " + url + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);

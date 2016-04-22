@@ -249,7 +249,7 @@ GET    	/targets/search-targets-by-subject		controllers.TargetController.searchT
 
 GET    	/targets/filterbyjson/:url			controllers.TargetController.filterByJson(url)
 GET    	/targets/lookup                  	controllers.TargetController.lookup(p:Int ?= 0, s ?= "seeds", o ?= "asc", f ?= "")
-GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", curatorId:Long ?= 0, organisationId:Long ?= 0, subjects ?= "", crawlFrequency ?= "", depth ?= "", collections ?= "", licenseId:Long ?= 0, pageSize:Int ?= 10, flagId:Long ?= 0)
+GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "", curatorId:Long ?= 0, organisationId:Long ?= 0, subjects ?= "", crawlFrequency ?= "", depth ?= "", collections ?= "", licenseId:Long ?= 0, pageSize:Int ?= 10, flagId:Long ?= 0)
 GET    	/targets/new                 		controllers.TargetController.newForm(title ?= "")
 
 GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, pageSize:Int ?= 50, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= 0)
