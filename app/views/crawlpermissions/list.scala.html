@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.CrawlPermissionController.list(newPage, sortBy, order, searchstr, cur_status)
+    routes.CrawlPermissionController.list(newPage, sortBy, order, searchstr, cur_status, sel)
     
 }
 
@@ -234,7 +234,8 @@
 					</div>
 				</div>
 				<input type="hidden" id="statusValue" name="statusValue" value="@cur_status">
-				
+				<input type="hidden" id="pageNo" name="pageNo" value="@currentPage.getPageIndex">
+
 				<div class="btn-group">		
 					@if(currentPage.getTotalRowCount() > 0 && CrawlPermissionController.haveContactPerson(currentPage.getList())) {
 						<button type="submit" class="btn btn-primary" name="action" value="selectall">Select all</button>

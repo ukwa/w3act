@@ -76,14 +76,11 @@ public class CrawlPermissionController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String status, String sel) {
-    	Logger.debug("CrawlPermissions.list() " + filter + " - " + sel);
-    	
+    	Logger.debug("CrawlPermissions.list() " + "\npageNo - " + pageNo + "\nsortby - " + sortBy + "\norder - " + order + "\nfilter - " + filter + "\nstatus - " + status +  "\nsel - " + sel);
     	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status);
 
     	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-    	
     	List<MailTemplate> templates = MailTemplate.findByType(MailTemplate.TemplateType.PERMISSION_REQUEST.name());
-    	
     	Logger.debug("template: " + templates);
 
         return ok(
@@ -843,9 +840,9 @@ public class CrawlPermissionController extends AbstractController {
 	        
 	        String status = requestData.get("statusValue");
 	    	Logger.debug("status: " + status);
-	    	
-//	    	String toMails = evaluateToEmails();
-//	    	Logger.debug("toMails: " + toMails);
+
+	        int pageNo = Integer.parseInt(requestData.get("pageNo"));
+		    Logger.debug("pageNo: " + pageNo);
 	
 		    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
 	        String[] permissionValues = formParams.get("permissionsList");
@@ -864,14 +861,6 @@ public class CrawlPermissionController extends AbstractController {
 	        }
 	    	Logger.debug("crawlPermissions: total = " + crawlPermissions.size());
 	    	
-//	    	if (action.equals("sendall")) {
-//	        	Logger.debug("send all crawl permission requests");
-//	            boolean sendingRes = setPendingSelectedCrawlPermissions(template, crawlPermissions);
-//	            if (!sendingRes) {
-//	    			flash("message", "Missing contact email. Please check contact person");
-//	            }
-//	        	res = redirect(routes.CrawlPermissionController.index()); 
-//	        }
 	        if (action.equals("sendsome")) {
 	        	Logger.debug("send some crawl permission requests");
 	        	boolean sendingRes = setPendingSelectedCrawlPermissions(template, crawlPermissions);//messageBody, messageSubject); 
@@ -934,12 +923,12 @@ public class CrawlPermissionController extends AbstractController {
 	        if (action.equals("selectall")) {
 	        	Logger.debug("select all listed in page crawl permissions");
 	        	res = redirect(routes.CrawlPermissionController.list(
-	        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL));
+	        			pageNo, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
 	        }
 	        if (action.equals("deselectall")) {
-	        	Logger.debug("deselect all listed in page crawl permissions");
+	        	Logger.debug("deselect all listed in page crawl permissions");				
 	        	res = redirect(routes.CrawlPermissionController.list(
-	        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.DESELECT_ALL));
+	        			pageNo, Const.NAME, Const.ASC, "", status, Const.DESELECT_ALL));
 	        }
     	}
         return res;
