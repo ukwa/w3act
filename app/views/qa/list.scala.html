@@ -10,25 +10,8 @@
 	<script>
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
-			searchContext = 'targets';
-/* 			applySearch(context, searchContext);
-			scopeCheck(context);
- */			
-			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 3);
-
-			
-/*          	$('#qa_status').change(function(event) {
-        		console.log('qa_status');
-        		event.preventDefault();
-        		
-			    var action = $("<input>")
-       			.attr("type", "hidden")
-       			.attr("name", "action").val("search");
-		    
-		    	$('#forms').append($(action));
-       			$('#forms').submit();
-        	});
- */             
+			searchContext = 'targets';	
+			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 3);         
              
 		});
 	</script>
@@ -191,9 +174,9 @@
 				<tr>
 					@header("title", "Target Name")
 					@header("fieldUrls.url", "URL")
-					<th>Instances to date</th>
-					@header("createdAt", "Most Recent")
 					<th>QA Status</th>
+					<th>Instances to date</th>
+					@header("createdAt", "Most Recent Instance")
 				</tr>
 			</thead>
 			<tbody>
@@ -207,22 +190,19 @@
 								<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
 							}						
 						</td>
+						<td>
+								@if(target.qaIssue != null) {
+						  			@Taxonomy.findQAStatusById(target.qaIssue.id)
+						        } else {
+						        	<!-- Unassigned -->
+								}
+						</td>
 						<td><a class="brand" href="@routes.InstanceController.showByTarget(target.id)">@target.instances.size</a></td>
 						<td>
 							@if(target.findLastInstance != null) {
 								<a class="brand" href="@routes.InstanceController.edit(target.findLastInstance.id)?tab=qa">@target.findLastInstance().toCreatedAtString</a>
 							}
 						</td>
-						<td>
-							@if(target.findLastInstance != null) {
-								@if(target.findLastInstance.qaIssue == null) {
-									Unknown
-								} else {																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																
-									@target.findLastInstance.qaIssue.name
-								}
-							}
-						</td>
-						
 					</tr>
 				}
 			</tbody>

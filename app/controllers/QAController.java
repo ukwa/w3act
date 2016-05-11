@@ -53,10 +53,7 @@ public class QAController extends AbstractController {
     	
     	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaIssueId);
     	Logger.debug("Calling QAController.list() collection: " + collection + " - " + qaIssueId);
-//    	if (page.getTotalRowCount() == 0) {
-//    		pageNo = 0;
-//        	page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
-//    	}
+
     	Logger.debug("Called QAController.list() collection: " + collection + " - " + qaIssueId + " - " + page);
     	
 		User user = User.findByEmail(request().username());
@@ -81,12 +78,10 @@ public class QAController extends AbstractController {
         			user, 
         			filter, 
         			page,
-//        			Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus), 
         			sortBy, 
         			order,
         			collection,
         			qaIssueId, collectionData, qaIssues)
-//        			Taxonomy.findQaStatus(qaStatus))
         	);
     }
 	
@@ -103,14 +98,6 @@ public class QAController extends AbstractController {
     	
     	Logger.debug("QAController.search() query: " + query);
     	
-//    	if (StringUtils.isBlank(query)) {
-//			Logger.debug("Target name is empty. Please write name in search window.");
-//			flash("message", "Please enter a name in the search window");
-//	        return redirect(
-//	        		routes.QAController.list(0, "title", "asc", "", "", 0)
-//	        );
-//    	}    	
-//
     	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");

@@ -972,19 +972,8 @@ public class Target extends Model {
 
 		if (qaIssueId == null || qaIssueId == 0) {
 			Logger.debug("nothing selected: " + qaIssueId);
-			// get last instance
-//			results = Target.find.fetch("fieldUrls").fetch("collections").fetch("instances").setMaxRows(1).orderBy("").where();
 		} else {
-			if (qaIssueId == 285) {
-				// get last instance
-				Logger.debug("unknown: " + qaIssueId);
-
-				results = results.isNotNull("instances").add(Expr.or(
-						Expr.isNull("instances.qaIssue.id"), 
-						Expr.eq("instances.qaIssue.id", qaIssueId)));
-			} else {
-				results = results.eq("instances.qaIssue.id", qaIssueId);
-			}
+			results = results.eq("qaIssue_id", qaIssueId);
 		}
 
         String collectionSelect = collections.replace("\"", "");
@@ -1001,7 +990,6 @@ public class Target extends Model {
         }		     
 
         results = results.eq("active", true);
-//        order by t0.created_at desc
 		Page<Target> res = results.query().orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);        
         Logger.debug("results: " + res.getList().size());
 		return res;
@@ -2344,10 +2332,9 @@ public class Target extends Model {
 	@JsonIgnore
 	public Instance findLastInstance() {
 		Instance instance = Instance.findLastInstanceByTarget(this.id);
-//		Logger.debug("Last instance: " + instance);
 		return instance;
 	}
-	
+
     @JsonIgnore
 	public boolean checkInstance() {
 		boolean res = false;
