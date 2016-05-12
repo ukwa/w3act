@@ -1,21 +1,18 @@
-@(targetForm: Form[Target], user: User, id: Long)
+@(targetForm: Form[Target], user: User, id: Long, idPrefix: String)
 
 <div class="row padding-10 pull-right">
 	<div class="col-md-12 col-xs-12 col-sm-12">
 		<div class="btn-group">
-			@if((user.hasRole("user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))) {
 			<button type="submit" class="btn btn-primary" name="action"
-				id="edit-save" value="save" disabled>Save</button>
-			<button type="submit" class="btn btn-primary" name="action"
-				value="delete" onclick="return confirm('Are you sure?');"
-				id="delete" disabled>Delete</button>
-			} else {
-			<button type="submit" class="btn btn-primary" name="action"
-				value="save" id="edit-save">Save</button>
-			<button type="submit" class="btn btn-primary" name="action"
-				value="delete" onclick="return confirm('Are you sure?');"
-				id="delete" @if( id==null ){disabled}>Delete</button>
-			}
+				id="@{idPrefix}edit-save" value="save"
+				@if((user.hasRole("user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))){ disabled }>
+				Save
+				</button>
+			<button type="submit" class="btn btn-primary" name="action" onclick="return confirm('Are you sure?');"
+				id="@{idPrefix}delete" value="delete"
+				@if((user.hasRole("user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value)) || id == null ){ disabled }>
+				Delete
+				</button>
 		</div>
 	</div>
 </div>
