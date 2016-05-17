@@ -82,7 +82,7 @@ public class DocumentAnalyser {
 			// Pull in the text:
 			text = handler.toString();
 			// Use anything we find:
-			if( StringUtils.isBlank(document.title) && 
+			if( (StringUtils.isBlank(document.title) || "[untitled]".equals(document.title)) && 
 					StringUtils.isNotBlank(metadata.get(TikaCoreProperties.TITLE)) ) {
 				document.title = metadata.get(TikaCoreProperties.TITLE);
 			}
