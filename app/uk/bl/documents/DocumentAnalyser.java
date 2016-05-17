@@ -86,6 +86,10 @@ public class DocumentAnalyser {
 					StringUtils.isNotBlank(metadata.get(TikaCoreProperties.TITLE)) ) {
 				document.title = metadata.get(TikaCoreProperties.TITLE);
 			}
+			// If that didn't work, set to [untitled] (rather than doing so in the upstream extractor)
+			if( StringUtils.isBlank(document.title)) {
+				document.title = "[untitled]";
+			}
 			if( metadata.get(TikaCoreProperties.CREATED) != null ) {
 				Date created = metadata.getDate(TikaCoreProperties.CREATED);
 				if( document.publicationDate == null ) {
