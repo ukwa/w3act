@@ -763,7 +763,7 @@ public enum Utils {
     	String formatted = null;
     	if (date != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			dateFormat.setTimeZone(TimeZone.getDefault());
 			formatted =  dateFormat.format(date);
     	}
     	return formatted;
@@ -773,7 +773,7 @@ public enum Utils {
     	String formatted = null;
     	if (date != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			dateFormat.setTimeZone(TimeZone.getDefault());
 			formatted =  dateFormat.format(date);
     	}
     	return formatted;
@@ -783,8 +783,7 @@ public enum Utils {
     	String formatted = null;
     	if (date != null) {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-//			"yyyy-MM-dd'T'HH:mm:ss.SSSZ" 	2001-07-04T12:08:56.235-0700
-			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			dateFormat.setTimeZone(TimeZone.getDefault());
 			formatted =  dateFormat.format(date);
     	}
     	return formatted;
