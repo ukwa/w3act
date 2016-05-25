@@ -1,4 +1,4 @@
-@(crawlPermissionForm: Form[CrawlPermission], user: User, crawlPermissionStatuses: Map[String,String], targetId: Long, contactName: String, licenses: Map[String,String])
+@(crawlPermissionForm: Form[CrawlPermission], user: User, crawlPermissionStatuses: Map[String,String], targetId: Long, contactName: String, licenses: Map[String,String], permissionRequestTemplates: Map[String,String], acknowledgementTemplates: Map[String,String])
 
 @import helper._
 @import bootstrap._
@@ -167,7 +167,31 @@
 					</div>
 		     	</div>
 	     	</div>
-	     		          
+
+			<div class="row padding-10">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+					@select(field = crawlPermissionForm("mailtemplate_permission_request_id"), options = options(permissionRequestTemplates),
+						args =
+								'class -> "form-control",
+						'_label -> "Permission request template"
+					)(FieldConstructor(genericInput.f), lang)
+					</div>
+				</div>
+			</div>
+
+			<div class="row padding-10">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+					@select(field = crawlPermissionForm("mailtemplate_acknowledgement_id"), options = options(acknowledgementTemplates),
+						args =
+								'class -> "form-control",
+						'_label -> "Acknowledgement template"
+					)(FieldConstructor(genericInput.f), lang)
+					</div>
+				</div>
+			</div>
+
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">

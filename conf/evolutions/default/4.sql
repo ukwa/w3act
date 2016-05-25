@@ -16,7 +16,7 @@ INSERT INTO public.mail_template(
   text, updated_at)
 VALUES (nextval('mail_template_seq'), clock_timestamp(), 'BL Acknowledgement', 'THANK_YOU_ONLINE_PERMISSION_FORM',
         'British Library UKWA Licence Received', 'web-archivist@bl.uk', 'URL',
-        '1_BL.acknowledgement.txt', clock_timestamp());
+        '1_BL_acknowledgement.txt', clock_timestamp());
 
 INSERT INTO public.mail_template(
   id, created_at, name, ttype, subject, from_email, place_holders,
@@ -53,7 +53,17 @@ VALUES (nextval('mail_template_seq'), clock_timestamp(), 'NLS Permission to Harv
         'PERMISSION_REQUEST', 'UK Web Archive', 'web-archivist@bl.uk', 'URL, LINK',
         '6_NLS_nonUK_nonLD.txt', clock_timestamp());
 
+ALTER TABLE public.crawl_permission RENAME COLUMN mailtemplate_id TO mailtemplate_permission_request_id;
+ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_acknowledgement_id bigint;
+ALTER TABLE public.crawl_permission ADD CONSTRAINT fk_crawl_permission_mailtemplate_acknowledgement FOREIGN KEY (mailtemplate_acknowledgement_id)
+  REFERENCES public.mail_template (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION;
+
 # --- !Downs
+
+ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtemplate_acknowledgement;
+ALTER TABLE public.crawl_permission DROP mailtemplate_acknowledgement_id;
+ALTER TABLE public.crawl_permission RENAME COLUMN mailtemplate_permission_request_id TO mailtemplate_id;
 
 DELETE FROM public.mail_template
 WHERE name IN (

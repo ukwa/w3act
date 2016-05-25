@@ -123,8 +123,10 @@ public class LicenseController extends AbstractController {
      */
 	@Security.Authenticated(SecuredController.class)
     public static void sendAcknowledgementToSiteOwner(String ownerEmail, CrawlPermission permission) {
-    	MailTemplate mailTemplate = MailTemplate.findByName(Const.ACKNOWLEDGEMENT);
-    	if( mailTemplate == null ) {
+		MailTemplate mailTemplate = permission.acknowledgementMailTemplate != null ? permission.acknowledgementMailTemplate :
+				MailTemplate.findByName(Const.ACKNOWLEDGEMENT);
+
+		if( mailTemplate == null ) {
     		Logger.error("NO Acknowledgement template found!");
     		return;
     	}

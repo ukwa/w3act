@@ -126,7 +126,37 @@
 			</div>
      	</div>
    	</div>
-     		          
+
+	<div class="row padding-10">
+		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Permission request template</label>
+				<div class="col-sm-6">
+					<label for="valueStatus" class="col-sm-6 control-label">
+					@{
+						if(permission.getPermissionRequestMailTemplate != null) permission.getPermissionRequestMailTemplate.name else "<Default>"
+					}
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row padding-10">
+		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Acknowledgement template</label>
+				<div class="col-sm-6">
+					<label for="valueStatus" class="col-sm-6 control-label">
+					@{
+						if(permission.getAcknowledgementMailTemplate != null) permission.getAcknowledgementMailTemplate.name else "<Default>"
+					}
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
@@ -143,7 +173,7 @@
 			<div class="form-group">
 				<label for="inputTemplate" class="col-sm-6 control-label">Template </label>
 			    <div class="col-sm-6">
-					<label for="valueTemplate" class="col-sm-6 control-label">@permission.mailTemplate</label>
+					<label for="valueTemplate" class="col-sm-6 control-label">@permission.permissionRequestMailTemplate</label>
 				</div>
 			</div>
 		</div>
