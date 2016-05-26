@@ -8,6 +8,9 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -46,11 +49,15 @@ public class MailTemplate extends ActModel {
         	return value;
         }
 	}
-	
+
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="mailTemplate", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="permissionRequestMailTemplate", cascade=CascadeType.ALL)
     public List<CrawlPermission> crawlPermissions;
-     
+
+    //bi-directional one-to-many association to CrawlPermission
+    @OneToMany(mappedBy="acknowledgementMailTemplate", cascade=CascadeType.ALL)
+    public List<CrawlPermission> crawlPermissionsAcknowledgement;
+
     /**
      * The name of the e-mail.
      */
@@ -201,9 +208,25 @@ public class MailTemplate extends ActModel {
     
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+
+        // Add a default value as Play @selects don't provide this
+        options.put("", "<Default>");
+
         for(MailTemplate c: find.all()) {
             options.put(c.id.toString(), c.name);
         }
         return options;
-    }   
+    }
+
+    public static Map<String,String> options(TemplateType templateType) {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+
+        // Add a default value as Play @selects don't provide this
+        options.put("", "<Default>");
+
+        for(MailTemplate c: findByType(templateType.name())) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }
 }

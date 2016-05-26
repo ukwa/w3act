@@ -3,6 +3,7 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -119,9 +120,15 @@ public class CrawlPermissionController extends AbstractController {
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
 		filledForm = filledForm.fill(crawlPermission);
-		filledForm.data().put("license_id", ""+crawlPermission.getLicense().id);
-		
-        return ok(newForm.render(filledForm, user, crawlPermissionStatuses, targetId, null, License.options()));
+
+		if(crawlPermission.getLicense() != null) {
+			filledForm.data().put("license_id", "" + crawlPermission.getLicense().id);
+		}
+
+		Map<String, String> permissionRequestTemplates = MailTemplate.options(MailTemplate.TemplateType.PERMISSION_REQUEST);
+		Map<String, String> acknowledgementTemplates = MailTemplate.options(MailTemplate.TemplateType.THANK_YOU_ONLINE_PERMISSION_FORM);
+
+		return ok(newForm.render(filledForm, user, crawlPermissionStatuses, targetId, null, License.options(), permissionRequestTemplates, acknowledgementTemplates));
         
         
     }
@@ -140,10 +147,25 @@ public class CrawlPermissionController extends AbstractController {
 		crawlPermission.target.formUrl = crawlPermission.target.fieldUrl();
 		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
 		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
-    	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
+		Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
     	setupDefaultLicense(crawlPermission);
-    	crawlPermissionForm.data().put("license_id", ""+crawlPermission.getLicense().id);
-      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options(),crawlPermission));
+
+		if(crawlPermission.getLicense() != null) {
+			crawlPermissionForm.data().put("license_id", "" + crawlPermission.getLicense().id);
+		}
+
+		if(crawlPermission.permissionRequestMailTemplate != null) {
+			crawlPermissionForm.data().put("mailtemplate_permission_request_id", crawlPermission.permissionRequestMailTemplate.id.toString());
+		}
+
+		if(crawlPermission.acknowledgementMailTemplate != null) {
+			crawlPermissionForm.data().put("mailtemplate_acknowledgement_id", crawlPermission.acknowledgementMailTemplate.id.toString());
+		}
+
+		Map<String, String> permissionRequestTemplates = MailTemplate.options(MailTemplate.TemplateType.PERMISSION_REQUEST);
+		Map<String, String> acknowledgementTemplates = MailTemplate.options(MailTemplate.TemplateType.THANK_YOU_ONLINE_PERMISSION_FORM);
+
+		return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options(), permissionRequestTemplates, acknowledgementTemplates,crawlPermission));
     }
     
     public static Result view(Long id) {
@@ -155,7 +177,7 @@ public class CrawlPermissionController extends AbstractController {
     	Logger.debug("CrawlPermissionController.view contactPerson: " + crawlPermission.contactPerson);
     	Logger.debug("CrawlPermissionController.view user: " + crawlPermission.user);
     	Logger.debug("CrawlPermissionController.view license: " + crawlPermission.getLicense());
-    	Logger.debug("CrawlPermissionController.view mailTemplate: " + crawlPermission.mailTemplate);
+    	Logger.debug("CrawlPermissionController.view mailTemplate: " + crawlPermission.permissionRequestMailTemplate);
         return ok(view.render(crawlPermission, user));
     }
     
@@ -314,7 +336,7 @@ public class CrawlPermissionController extends AbstractController {
 	    	permission.user = User.findByName(getFormParam(Const.CREATOR_USER));
 	    }
 	    if (getFormParam(Const.TEMPLATE) != null) {
-	    	permission.mailTemplate.url = getFormParam(Const.TEMPLATE);
+	    	permission.permissionRequestMailTemplate.url = getFormParam(Const.TEMPLATE);
 	    }
 	    if (getFormParam(Const.STATUS) != null) {
 	    	permission.status = getFormParam(Const.STATUS);
@@ -338,13 +360,18 @@ public class CrawlPermissionController extends AbstractController {
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
     	CrawlPermission crawlPermission = CrawlPermission.findById(id);
 		Logger.debug("Info contactPerson: " + form.get().contactPerson.name);
-		return badRequest(edit.render(form, user, id, crawlPermissionStatuses, contactName, License.options(),crawlPermission));
+		Map<String, String> permissionRequestTemplates = MailTemplate.options(MailTemplate.TemplateType.PERMISSION_REQUEST);
+		Map<String, String> acknowledgementTemplates = MailTemplate.options(MailTemplate.TemplateType.THANK_YOU_ONLINE_PERMISSION_FORM);
+		return badRequest(edit.render(form, user, id, crawlPermissionStatuses, contactName, License.options(), permissionRequestTemplates, acknowledgementTemplates, crawlPermission));
     }
     
 	public static Result newInfo(Form<CrawlPermission> form, Long targetId, String contactName) {
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
 		User user = User.findByEmail(request().username());
-        return badRequest(newForm.render(form, user, crawlPermissionStatuses, targetId, contactName, License.options()));
+		Map<String, String> permissionRequestTemplates = MailTemplate.options(MailTemplate.TemplateType.PERMISSION_REQUEST);
+		Map<String, String> acknowledgementTemplates = MailTemplate.options(MailTemplate.TemplateType.THANK_YOU_ONLINE_PERMISSION_FORM);
+
+		return badRequest(newForm.render(form, user, crawlPermissionStatuses, targetId, contactName, License.options(), permissionRequestTemplates, acknowledgementTemplates));
 	}
 	
     public static Result update(Long id) {
@@ -459,6 +486,25 @@ public class CrawlPermissionController extends AbstractController {
 		        if( license_id != null ) {
 		        	filledForm.get().setLicense( License.findById(Long.parseLong(license_id)) );
 		        }
+
+				// Save the templates
+				String permissionRequestTemplateId = requestData.get("mailtemplate_permission_request_id");
+				if(StringUtils.isNotBlank(permissionRequestTemplateId)) {
+					filledForm.get().setPermissionRequestMailTemplate(MailTemplate.findById(Long.parseLong(permissionRequestTemplateId)));
+				}
+				else{
+					// Clear the template
+					filledForm.get().setPermissionRequestMailTemplate(new MailTemplate());
+				}
+
+				String acknowledgementTemplateId = requestData.get("mailtemplate_acknowledgement_id");
+				if(StringUtils.isNotBlank(acknowledgementTemplateId)) {
+					filledForm.get().setAcknowledgementMailTemplate(MailTemplate.findById(Long.parseLong(acknowledgementTemplateId)));
+				}
+				else{
+					// Clear the template
+					filledForm.get().setAcknowledgementMailTemplate(new MailTemplate());
+				}
     	        
 		        filledForm.get().update(id);
 		        flash("message", "Crawl Permission " + filledForm.get().name + " has been updated");
@@ -569,7 +615,17 @@ public class CrawlPermissionController extends AbstractController {
         if( license_id != null ) {
         	filledForm.get().setLicense( License.findById(Long.parseLong(license_id)) );
         }
-        
+
+		// Save the templates
+		String permissionRequestTemplateId = requestData.get("mailtemplate_permission_request_id");
+		if(StringUtils.isNotBlank(permissionRequestTemplateId)) {
+			filledForm.get().permissionRequestMailTemplate = MailTemplate.findById(Long.parseLong(permissionRequestTemplateId));
+		}
+		String acknowledgementTemplateId = requestData.get("mailtemplate_acknowledgement_id");
+		if(StringUtils.isNotBlank(acknowledgementTemplateId)) {
+			filledForm.get().acknowledgementMailTemplate = MailTemplate.findById(Long.parseLong(acknowledgementTemplateId));
+		}
+
         filledForm.get().save();
         
         return redirect(routes.CrawlPermissionController.view(filledForm.get().id));
@@ -753,8 +809,9 @@ public class CrawlPermissionController extends AbstractController {
      * This method sets status "PENDING" for selected crawl permissions.
      * If parameter all is true - do it for all queued permissions,
      * otherwise only selected by checkbox.
-     * @param all Type of email sending (all, selected)
-     * @param template The email template
+     * @param template The email template to override that defined for each crawl permission, or an empty string to
+	 *                 use the crawl permissions' defaults
+	 * @param permissionList The List of CrawlPermissions
      * @return true if sending successful, false otherwise
      */
     public static boolean setPendingSelectedCrawlPermissions(String template, List<CrawlPermission> permissionList) throws ActException {
@@ -771,7 +828,11 @@ public class CrawlPermissionController extends AbstractController {
     		String messageBody = Const.NONE_VALUE;
         	String messageSubject = Const.NONE_VALUE;
     		if (!template.equals(Const.NONE_VALUE)) {
-            	MailTemplate mailTemplate = MailTemplate.findByName(template);
+				MailTemplate mailTemplate = MailTemplate.findByName(
+						StringUtils.isNotEmpty(template) ? template :
+								permission.permissionRequestMailTemplate != null ? permission.permissionRequestMailTemplate.name :
+										Const.DEFAULT_TEMPLATE
+				);
             	messageSubject = mailTemplate.subject;
 //	                	messageBody = mailTemplate.text;
             	messageBody = mailTemplate.readTemplate();
@@ -831,8 +892,8 @@ public class CrawlPermissionController extends AbstractController {
 
     	
     	if (StringUtils.isNotBlank(action)) {
-		    String template = Const.DEFAULT_TEMPLATE;
-		    String temp = requestData.get("template");
+		    String template = "";
+		    String temp = requestData.get(Const.TEMPLATE);
 		    
 	        if (StringUtils.isNotBlank(temp)) {
 		    	template = temp;
@@ -888,7 +949,11 @@ public class CrawlPermissionController extends AbstractController {
 		        	if (StringUtils.isNotBlank(permissionValue)) {
 		        		Long permissionId = Long.valueOf(permissionValue);
 		        		crawlPermission = CrawlPermission.findById(permissionId);
-		            	MailTemplate mailTemplate = MailTemplate.findByName(template);
+		            	MailTemplate mailTemplate = MailTemplate.findByName(
+								StringUtils.isNotEmpty(template) ? template :
+										crawlPermission.permissionRequestMailTemplate != null ? crawlPermission.permissionRequestMailTemplate.name :
+												Const.DEFAULT_TEMPLATE
+						);
 		            	String toMails = crawlPermission.contactPerson.email;
 		            	String messageSubject = mailTemplate.subject;
 		            	String messageBody = mailTemplate.readTemplate();
@@ -907,7 +972,7 @@ public class CrawlPermissionController extends AbstractController {
 		            	
 				        res = ok(
 				            crawlpermissionpreview.render(
-					            	crawlPermission, User.findByEmail(request().username()), toMails, template, messageSubject, messageBody
+					            	crawlPermission, User.findByEmail(request().username()), toMails, mailTemplate.getName(), messageSubject, messageBody
 				            )
 				        );
 			        }

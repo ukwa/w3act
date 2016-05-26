@@ -104,9 +104,6 @@
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter crawl permission name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for crawl permission by name">Search</button>
-						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-							<a class="btn btn-primary" href="@routes.CrawlPermissionController.newForm()">Add</a>
-						}
 					</span>
 				</div>
 									
@@ -222,17 +219,18 @@
 
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		<div class="row padding-20 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
+     		<div class="col-xs-12">
 				<div class="form-group">
-	              	<label for="selectTemplate" class="col-sm-4 control-label">Template</label>
-				    <div class="col-sm-6">
-						<select name="template" value="General" class="form-control">
-							@for(template <- templates) {
-								<option value="@template.name" selected>@template.name</option>
-							}
-					  	</select>
-					</div>
+					<label for="selectTemplate" class="control-label">Template</label>
+
+					<select id="selectTemplate" name="template" value="General" class="form-control">
+							<option value="" selected>&lt;Use default&gt;</option>
+						@for(template <- templates) {
+							<option value="@template.name">@template.name</option>
+						}
+					</select>
 				</div>
+
 				<input type="hidden" id="statusValue" name="statusValue" value="@cur_status">
 				<input type="hidden" id="pageNo" name="pageNo" value="@currentPage.getPageIndex">
 

@@ -2,7 +2,6 @@ package models;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +63,13 @@ public class CrawlPermission extends ActModel {
     
 	//bi-directional many-to-one association to MailTemplate
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
-	@JoinColumn(name="mailTemplate_id")
-	public MailTemplate mailTemplate;
+	@JoinColumn(name="mailtemplate_permission_request_id")
+	public MailTemplate permissionRequestMailTemplate;
+
+	//bi-directional many-to-one association to MailTemplate
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
+	@JoinColumn(name="mailtemplate_acknowledgement_id")
+	public MailTemplate acknowledgementMailTemplate;
 	
 	//bi-directional many-to-one association to ContactPerson
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch=FetchType.EAGER)
@@ -183,8 +187,24 @@ public class CrawlPermission extends ActModel {
 	public void setLicense( License l ) {
 		this.license = l;
 	}
-	
-    /**
+
+	public MailTemplate getPermissionRequestMailTemplate() {
+		return permissionRequestMailTemplate;
+	}
+
+	public void setPermissionRequestMailTemplate(MailTemplate permissionRequestMailTemplate) {
+		this.permissionRequestMailTemplate = permissionRequestMailTemplate;
+	}
+
+	public MailTemplate getAcknowledgementMailTemplate() {
+		return acknowledgementMailTemplate;
+	}
+
+	public void setAcknowledgementMailTemplate(MailTemplate acknowledgementMailTemplate) {
+		this.acknowledgementMailTemplate = acknowledgementMailTemplate;
+	}
+
+	/**
      * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
      * @param subject
      * @return true if in list
@@ -254,7 +274,10 @@ public class CrawlPermission extends ActModel {
      * @return object 
      */
     public static CrawlPermission findById(Long id) {
-    	CrawlPermission res = find.where().eq(Const.ID, id).findUnique();
+    	CrawlPermission res = find
+				.fetch("permissionRequestMailTemplate") /* Don't know why this is necessary, but these entities are not fetched otherwise */
+				.fetch("acknowledgementMailTemplate")
+				.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
     
@@ -264,7 +287,12 @@ public class CrawlPermission extends ActModel {
 	public Long numberRequests;
 
 	public static CrawlPermission findByToken(String token) {
-    	CrawlPermission res = find.fetch("license").fetch("contactPerson").where().eq("token", token).findUnique();
+    	CrawlPermission res = find
+				.fetch("license")
+				.fetch("contactPerson")
+				.fetch("permissionRequestMailTemplate") /* Don't know why this is necessary, but these entities are not fetched otherwise */
+				.fetch("acknowledgementMailTemplate")
+				.where().eq("token", token).findUnique();
     	return res;
     }
     
@@ -503,8 +531,9 @@ public class CrawlPermission extends ActModel {
 
 	@Override
 	public String toString() {
-		return "CrawlPermission [target=" + ((target!=null) ? target.id : "NULL") + ", mailTemplate="
-				+ mailTemplate + ", contactPerson=" + contactPerson + ", name="
+		return "CrawlPermission [target=" + ((target!=null) ? target.id : "NULL") + ", permissionRequestMailTemplate="
+				+ permissionRequestMailTemplate + ", acknowledgementMailTemplate="
+				+ acknowledgementMailTemplate + ", contactPerson=" + contactPerson + ", name="
 				+ name + ", description=" + description
 				+ ", anyOtherInformation=" + anyOtherInformation + ", user="
 				+ user + ", status=" + status + ", license=" + license
