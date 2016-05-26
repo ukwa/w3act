@@ -14,50 +14,56 @@ ALTER TABLE watched_target ALTER COLUMN logout_url TYPE text;
 INSERT INTO public.mail_template(
   id, created_at, name, ttype, subject, from_email, place_holders,
   text, updated_at)
-VALUES (nextval('mail_template_seq'), clock_timestamp(), 'BL Acknowledgement', 'THANK_YOU_ONLINE_PERMISSION_FORM',
+VALUES (nextval('mail_template_seq'), CURRENT_TIMESTAMP, 'BL Acknowledgement', 'THANK_YOU_ONLINE_PERMISSION_FORM',
         'British Library UKWA Licence Received', 'web-archivist@bl.uk', 'URL',
-        '1_BL_acknowledgement.txt', clock_timestamp());
+        '1_BL_acknowledgement.txt', CURRENT_TIMESTAMP);
 
 INSERT INTO public.mail_template(
   id, created_at, name, ttype, subject, from_email, place_holders,
   text, updated_at)
-VALUES (nextval('mail_template_seq'), clock_timestamp(), 'NLS Acknowledgement', 'THANK_YOU_ONLINE_PERMISSION_FORM',
+VALUES (nextval('mail_template_seq'), CURRENT_TIMESTAMP, 'NLS Acknowledgement', 'THANK_YOU_ONLINE_PERMISSION_FORM',
         'British Library UKWA Licence Received', 'web-archivist@bl.uk', 'URL',
-        '2_NLS_acknowledgement.txt', clock_timestamp());
+        '2_NLS_acknowledgement.txt', CURRENT_TIMESTAMP);
 
 INSERT INTO public.mail_template(
   id, created_at, name, ttype, subject, from_email, place_holders,
   text, updated_at)
-VALUES (nextval('mail_template_seq'), clock_timestamp(), 'BL Open Access Permission Request (LD Content)',
+VALUES (nextval('mail_template_seq'), CURRENT_TIMESTAMP, 'BL Open Access Permission Request (LD Content)',
         'PERMISSION_REQUEST', 'UK Web Archive', 'web-archivist@bl.uk', 'URL, LINK',
-        '3_BL_LD_openAccess.txt', clock_timestamp());
+        '3_BL_LD_openAccess.txt', CURRENT_TIMESTAMP);
 
 INSERT INTO public.mail_template(
   id, created_at, name, ttype, subject, from_email, place_holders,
   text, updated_at)
-VALUES (nextval('mail_template_seq'), clock_timestamp(), 'NLS Open Access Permission Request (LD Content)',
+VALUES (nextval('mail_template_seq'), CURRENT_TIMESTAMP, 'NLS Open Access Permission Request (LD Content)',
         'PERMISSION_REQUEST', 'UK Web Archive', 'web-archivist@bl.uk', 'URL, LINK',
-        '4_NLS_LD_openAccess.txt', clock_timestamp());
+        '4_NLS_LD_openAccess.txt', CURRENT_TIMESTAMP);
 
 INSERT INTO public.mail_template(
   id, created_at, name, ttype, subject, from_email, place_holders,
   text, updated_at)
-VALUES (nextval('mail_template_seq'), clock_timestamp(), 'BL Permission to Harvest (non NPLD Content)',
+VALUES (nextval('mail_template_seq'), CURRENT_TIMESTAMP, 'BL Permission to Harvest (non NPLD Content)',
         'PERMISSION_REQUEST', 'UK Web Archive', 'web-archivist@bl.uk', 'URL, LINK',
-        '5_BL_nonUK_nonLD.txt', clock_timestamp());
+        '5_BL_nonUK_nonLD.txt', CURRENT_TIMESTAMP);
 
 INSERT INTO public.mail_template(
   id, created_at, name, ttype, subject, from_email, place_holders,
   text, updated_at)
-VALUES (nextval('mail_template_seq'), clock_timestamp(), 'NLS Permission to Harvest (non NPLD Content)',
+VALUES (nextval('mail_template_seq'), CURRENT_TIMESTAMP, 'NLS Permission to Harvest (non NPLD Content)',
         'PERMISSION_REQUEST', 'UK Web Archive', 'web-archivist@bl.uk', 'URL, LINK',
-        '6_NLS_nonUK_nonLD.txt', clock_timestamp());
+        '6_NLS_nonUK_nonLD.txt', CURRENT_TIMESTAMP);
 
 ALTER TABLE public.crawl_permission RENAME COLUMN mailtemplate_id TO mailtemplate_permission_request_id;
 ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_acknowledgement_id bigint;
 ALTER TABLE public.crawl_permission ADD CONSTRAINT fk_crawl_permission_mailtemplate_acknowledgement FOREIGN KEY (mailtemplate_acknowledgement_id)
   REFERENCES public.mail_template (id) MATCH SIMPLE
-  ON UPDATE NO ACTION ON DELETE NO ACTION;
+  ON UPDATE NO ACTION ON DELETE SET NULL;
+
+ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtempla_4;
+ALTER TABLE public.crawl_permission
+  ADD CONSTRAINT fk_crawl_permission_mailtempla_4 FOREIGN KEY (mailtemplate_permission_request_id)
+  REFERENCES public.mail_template (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE SET NULL;
 
 # --- !Downs
 
@@ -75,6 +81,12 @@ WHERE name IN (
   'NLS Permission to Harvest (non NPLD Content)'
 );
 
+ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtempla_4;
+ALTER TABLE public.crawl_permission
+  ADD CONSTRAINT fk_crawl_permission_mailtempla_4 FOREIGN KEY (mailtemplate_id)
+  REFERENCES public.mail_template (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION;
+
 ALTER TABLE document DROP md_ark;
 ALTER TABLE document DROP d_ark;
 ALTER TABLE document DROP mets_d_ark;
@@ -85,3 +97,4 @@ ALTER TABLE document ALTER COLUMN document_url TYPE varchar(255);
 ALTER TABLE watched_target ALTER COLUMN document_url_scheme TYPE varchar(255);
 ALTER TABLE watched_target ALTER COLUMN login_page_url TYPE varchar(255);
 ALTER TABLE watched_target ALTER COLUMN logout_url TYPE varchar(255);
+
