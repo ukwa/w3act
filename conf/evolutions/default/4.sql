@@ -59,11 +59,11 @@ ALTER TABLE public.crawl_permission DROP COLUMN mailtemplate_id;
 ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_permission_request_id bigint;
 ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_acknowledgement_id bigint;
 ALTER TABLE public.crawl_permission ADD CONSTRAINT fk_crawl_permission_mailtemplate_acknowledgement FOREIGN KEY (mailtemplate_acknowledgement_id)
-  REFERENCES public.mail_template (id) MATCH SIMPLE
+  REFERENCES public.mail_template (id)
   ON UPDATE NO ACTION ON DELETE SET NULL;
 ALTER TABLE public.crawl_permission
   ADD CONSTRAINT fk_crawl_permission_mailtempla_4 FOREIGN KEY (mailtemplate_permission_request_id)
-  REFERENCES public.mail_template (id) MATCH SIMPLE
+  REFERENCES public.mail_template (id)
   ON UPDATE NO ACTION ON DELETE SET NULL;
 
 # --- !Downs
@@ -86,7 +86,7 @@ WHERE name IN (
 ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_id bigint;
 ALTER TABLE public.crawl_permission
   ADD CONSTRAINT fk_crawl_permission_mailtempla_4 FOREIGN KEY (mailtemplate_id)
-  REFERENCES public.mail_template (id) MATCH SIMPLE
+  REFERENCES public.mail_template (id)
   ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 ALTER TABLE document DROP md_ark;
