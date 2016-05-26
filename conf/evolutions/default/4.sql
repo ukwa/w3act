@@ -53,13 +53,14 @@ VALUES (nextval('mail_template_seq'), CURRENT_TIMESTAMP, 'NLS Permission to Harv
         'PERMISSION_REQUEST', 'UK Web Archive', 'web-archivist@bl.uk', 'URL, LINK',
         '6_NLS_nonUK_nonLD.txt', CURRENT_TIMESTAMP);
 
-ALTER TABLE public.crawl_permission RENAME COLUMN mailtemplate_id TO mailtemplate_permission_request_id;
+ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtempla_4;
+ALTER TABLE public.crawl_permission DROP COLUMN mailtemplate_id;
+
+ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_permission_request_id bigint;
 ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_acknowledgement_id bigint;
 ALTER TABLE public.crawl_permission ADD CONSTRAINT fk_crawl_permission_mailtemplate_acknowledgement FOREIGN KEY (mailtemplate_acknowledgement_id)
   REFERENCES public.mail_template (id) MATCH SIMPLE
   ON UPDATE NO ACTION ON DELETE SET NULL;
-
-ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtempla_4;
 ALTER TABLE public.crawl_permission
   ADD CONSTRAINT fk_crawl_permission_mailtempla_4 FOREIGN KEY (mailtemplate_permission_request_id)
   REFERENCES public.mail_template (id) MATCH SIMPLE
@@ -67,9 +68,10 @@ ALTER TABLE public.crawl_permission
 
 # --- !Downs
 
+ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtempla_4;
 ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtemplate_acknowledgement;
 ALTER TABLE public.crawl_permission DROP mailtemplate_acknowledgement_id;
-ALTER TABLE public.crawl_permission RENAME COLUMN mailtemplate_permission_request_id TO mailtemplate_id;
+ALTER TABLE public.crawl_permission DROP COLUMN mailtemplate_permission_request_id;
 
 DELETE FROM public.mail_template
 WHERE name IN (
@@ -81,7 +83,7 @@ WHERE name IN (
   'NLS Permission to Harvest (non NPLD Content)'
 );
 
-ALTER TABLE public.crawl_permission DROP CONSTRAINT fk_crawl_permission_mailtempla_4;
+ALTER TABLE public.crawl_permission ADD COLUMN mailtemplate_id bigint;
 ALTER TABLE public.crawl_permission
   ADD CONSTRAINT fk_crawl_permission_mailtempla_4 FOREIGN KEY (mailtemplate_id)
   REFERENCES public.mail_template (id) MATCH SIMPLE
