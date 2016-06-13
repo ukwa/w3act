@@ -14,7 +14,7 @@ subjects:
     name: Economics
 
 - !!models.FastSubject
-    fastId: fst00971852
+    fastId: fst00976708
     name: International agencies
 
 - !!models.FastSubject
@@ -530,7 +530,7 @@ subjects:
     name: Subnational governments
 
 - !!models.FastSubject
-    fastId: fst00976708
+    fastId: fst00971852
     name: Industries
 
 - !!models.FastSubject
