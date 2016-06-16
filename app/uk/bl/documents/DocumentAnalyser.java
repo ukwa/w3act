@@ -50,6 +50,8 @@ import eu.scape_project.bitwiser.utils.SSDeep;
  *
  */
 public class DocumentAnalyser {
+	
+	public static final String DEFAULT_TITLE = "[untitled]";
 
 	public DocumentAnalyser() {
 	}
@@ -82,13 +84,17 @@ public class DocumentAnalyser {
 			// Pull in the text:
 			text = handler.toString();
 			// Use anything we find:
-			if( (StringUtils.isBlank(document.title) || "[untitled]".equals(document.title)) && 
+			if( (StringUtils.isBlank(document.title) || DEFAULT_TITLE.equals(document.title)) && 
 					StringUtils.isNotBlank(metadata.get(TikaCoreProperties.TITLE)) ) {
 				document.title = metadata.get(TikaCoreProperties.TITLE);
 			}
+			// Otherwise, use the filename:
+			if( StringUtils.isBlank(document.title)) {
+				document.title = document.filename;
+			}
 			// If that didn't work, set to [untitled] (rather than doing so in the upstream extractor)
 			if( StringUtils.isBlank(document.title)) {
-				document.title = "[untitled]";
+				document.title = DEFAULT_TITLE;
 			}
 			if( metadata.get(TikaCoreProperties.CREATED) != null ) {
 				Date created = metadata.getDate(TikaCoreProperties.CREATED);
