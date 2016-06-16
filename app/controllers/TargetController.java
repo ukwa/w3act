@@ -591,7 +591,7 @@ public class TargetController extends AbstractController {
         Logger.debug("Targets.subjectTargets()");
         return ok(
                 views.html.subjects.sites.render(
-                        Taxonomy.findById(subjectId),
+                        Subject.findById(subjectId),
                         User.findByEmail(request().username()),
                         filter,
                         Target.pageSubjectTargets(pageNo, 10, sortBy, order, filter, subjectId),
