@@ -96,7 +96,7 @@ public final class Const {
 	public static final String URL_PLACE_HOLDER   = "||URL||";
 	public static final String LINK_PLACE_HOLDER  = "||LINK||";
 	public static final String LICENCE_PLACE_HOLDER = "||licence||";
-	public static final String ACKNOWLEDGEMENT    = "Acknowledgement";
+	public static final String ACKNOWLEDGEMENT    = "BL Acknowledgement";
     public static final String HTTP_PREFIX        = "http://";
 	public static final String SERVER_NAME        = "server_name";
 	public static final String UND                = "und";
@@ -298,8 +298,8 @@ public final class Const {
 	public static final String PLACE_HOLDERS     = "placeHolders";
 	public static final String DEFAULT_EMAIL_FLAG = "defaultEmail";
 	public static final String TEMPLATES_PATH    = "conf" + System.getProperty("file.separator") +
-													"templates" + System.getProperty("file.separator");
-	public static final String DEFAULT_TEMPLATE  = "General";
+												   "templates" + System.getProperty("file.separator");
+	public static final String DEFAULT_TEMPLATE  = "BL Permission to Harvest (non NPLD Content)";
 	public static final String LICENCE_ACK       = "License";
 	public static final String WEBSITE_TITLE_ACK = "Title of Website";
 	public static final String WEB_ADDRESS_ACK   = "Web Address (URL)";
