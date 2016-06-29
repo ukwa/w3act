@@ -154,11 +154,11 @@
 						    <div class="col-sm-6">
 								<label class="radio-inline">
    						            <input name="content" id="radio1" value="1" type="radio"
-   						             @if( cp.thirdPartyContent ) { checked }@disabler> Yes
+   						             @if( Boolean.TRUE.equals(cp.thirdPartyContent) ) { checked }@disabler> Yes
 								</label>
 								<label class="radio-inline">
 							        <input name="content" id="radio2" value="2" type="radio"
-							         @if( !cp.thirdPartyContent ) { checked }@disabler> No
+							         @if( Boolean.FALSE.equals(cp.thirdPartyContent) ) { checked }@disabler> No
 								</label>
 							</div>
 						</div>
@@ -178,7 +178,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
 						    <div class="col-sm-6">
-				                <input type="checkbox" name="agree" @if( cp.agree ) { checked } @disabler/>
+				                <input type="checkbox" name="agree" @if( Boolean.TRUE.equals(cp.agree) ) { checked } @disabler/>
 							</div>
 						</div>
 					</div>
@@ -228,11 +228,11 @@
 						    <div class="col-sm-6">
 								<label class="radio-inline">
    						            <input name="publish" id="radio1" value="1" type="radio"
-   						              @if( cp.publish ) { checked }@disabler> Yes
+   						              @if( Boolean.TRUE.equals(cp.publish) ) { checked }@disabler> Yes
 								</label>
 								<label class="radio-inline">
 							        <input name="publish" id="radio2" value="2" type="radio"
-							          @if( !cp.publish ) { checked }@disabler> No
+							          @if( Boolean.FALSE.equals(cp.publish) ) { checked }@disabler> No
 								</label>
 							</div>
 						</div>
