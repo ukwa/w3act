@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import models.User;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -91,10 +92,14 @@ public class WaybackController extends Controller {
 		//for( Header h : response.getAllHeaders() ) {
 		//	response().setHeader(h.getName(), h.getValue());
 		//}
-		String contentType = response.getFirstHeader(CONTENT_TYPE).getValue();
-		Logger.debug("Response content type: " + contentType);
 		HttpEntity entity = response.getEntity();
-		return status(response.getStatusLine().getStatusCode(), entity.getContent()).as(contentType);
+		Header contentType = response.getFirstHeader(CONTENT_TYPE);
+		Logger.debug("Response content type: " + contentType);
+		if( contentType != null ) {
+			return status(response.getStatusLine().getStatusCode(), entity.getContent()).as(contentType.getValue());
+		} else {
+			return status(response.getStatusLine().getStatusCode(), entity.getContent());
+		}
 	}
 	
 	public static Result waybackRoot() throws ActException, ClientProtocolException, IOException {
