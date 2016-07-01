@@ -20,6 +20,7 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class supports the management of e-mail templates.
@@ -51,10 +52,12 @@ public class MailTemplate extends ActModel {
 	}
 
     //bi-directional one-to-many association to CrawlPermission
+	@JsonIgnore
     @OneToMany(mappedBy="permissionRequestMailTemplate", cascade=CascadeType.ALL)
     public List<CrawlPermission> crawlPermissions;
 
     //bi-directional one-to-many association to CrawlPermission
+	@JsonIgnore
     @OneToMany(mappedBy="acknowledgementMailTemplate", cascade=CascadeType.ALL)
     public List<CrawlPermission> crawlPermissionsAcknowledgement;
 
