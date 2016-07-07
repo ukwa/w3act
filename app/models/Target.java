@@ -1529,8 +1529,8 @@ public class Target extends Model {
 	/**
 	 * This method provides by-permission crawl exports for given crawl-frequency. Method
 	 * returns a list of Targets and associated crawl metadata.
-	 * 
-	 * NOTE Does not catch inherited licenses.
+	 *
+	 * FIXME Current inheritance check is very slow.
 	 * 
 	 * @param frequency
 	 *            The crawl frequency e.g. 'daily'
@@ -1552,7 +1552,7 @@ public class Target extends Model {
 			if( target.crawlEndDate == null || target.crawlEndDate.after(currentLo.getTime())) {
 				if( target.crawlStartDate != null && target.crawlStartDate.before(currentHi.getTime())) {
 					// This just includes the stuff that is Non-NPLD:
-					if (target.hasLicenses() && ! target.isInScopeAllWithoutLicense() ) {
+					if (target.indicateLicenses() && ! target.isInScopeAllOrInheritedWithoutLicense() ) {
 						result.add(target);
 					}
 				}
@@ -1566,7 +1566,7 @@ public class Target extends Model {
 	 * This method provides open-access crawl exports for given crawl-frequency. Method
 	 * returns a list of Targets and associated crawl metadata.
 	 * 
-	 * NOTE Does not catch inherited licenses.
+	 * NOTE Does not include inherited licenses, as the purpose is to define a SURT scope (and so the license will be inherited upon access).
 	 * 
 	 * @param frequency
 	 *            The crawl frequency e.g. 'daily'
