@@ -1022,6 +1022,25 @@ public class TargetController extends AbstractController {
     }
 
     /**
+     * @param frequency
+     * @return
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result crawlFeedOAFrequencyJson(String frequency) {
+        JsonNode jsonData = null;
+        if(frequency != null) {
+            List<Target> targets = new ArrayList<Target>();
+            targets = Target.exportOAFrequency(frequency);
+            List<CrawlFeedItem> targetIds = new ArrayList<CrawlFeedItem>();
+            for(Target t : targets) {
+                targetIds.add(new CrawlFeedItem(t));
+            }
+            jsonData = Json.toJson(targetIds);
+        }
+        return ok(jsonData);
+    }
+
+    /**
      * This method provides data exports for each possible crawl-frequency that are in legal deposit.
      * For each frequency this contains a list of Targets and associated
      * crawl metadata.

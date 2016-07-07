@@ -1530,6 +1530,8 @@ public class Target extends Model {
 	 * This method provides by-permission crawl exports for given crawl-frequency. Method
 	 * returns a list of Targets and associated crawl metadata.
 	 * 
+	 * NOTE Does not catch inherited licenses.
+	 * 
 	 * @param frequency
 	 *            The crawl frequency e.g. 'daily'
 	 * @return list of Target objects
@@ -1550,13 +1552,38 @@ public class Target extends Model {
 			if( target.crawlEndDate == null || target.crawlEndDate.after(currentLo.getTime())) {
 				if( target.crawlStartDate != null && target.crawlStartDate.before(currentHi.getTime())) {
 					// This just includes the stuff that is Non-NPLD:
-					if (target.indicateLicenses() && ! target.isInScopeAllOrInheritedWithoutLicense() ) {
+					if (target.hasLicenses() && ! target.isInScopeAllWithoutLicense() ) {
 						result.add(target);
 					}
 				}
 			}
 		}
 		Logger.debug("exportByFrequency() resulting list size: " + result.size());
+		return result;
+	}
+	
+	/**
+	 * This method provides open-access crawl exports for given crawl-frequency. Method
+	 * returns a list of Targets and associated crawl metadata.
+	 * 
+	 * NOTE Does not catch inherited licenses.
+	 * 
+	 * @param frequency
+	 *            The crawl frequency e.g. 'daily'
+	 * @return list of Target objects
+	 */
+	public static List<Target> exportOAFrequency(String frequency) {
+		// Get and filter down:
+		List<Target> result = new ArrayList<Target>();
+		Iterator<Target> itr = getByFrequency(frequency).iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+			// All licenced material:
+			if (target.hasLicenses() ) {
+				result.add(target);
+			}
+		}
+		Logger.debug("exportOAFrequency() resulting list size: " + result.size());
 		return result;
 	}
 	
