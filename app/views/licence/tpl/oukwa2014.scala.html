@@ -25,7 +25,6 @@
 					I / We the undersigned grant the British Library a licence to make any reproductions or communications of this web site as are reasonably necessary to preserve it over time and to make it available to the public:
 					(All fields marked <font color="red">*</font> are compulsory) 
 				</div>		     	
-	   
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -41,7 +40,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
@@ -52,7 +51,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
@@ -63,7 +62,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">LICENCE GRANTED BY:</label>
@@ -82,7 +81,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
@@ -93,7 +92,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
@@ -104,7 +103,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address: </label>
@@ -115,7 +114,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Contact Organisation: </label>
@@ -126,7 +125,7 @@
 					</div>
 		     	</div>
 
-	    		<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Tel:</label>
@@ -146,9 +145,9 @@
 							</div>
 						</div>
 					</div>
-		     	</div>	
+		     	</div>
 
-		     	<div class="row padding-10">
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Third-Party Content: <font color="red">*</font></label>
@@ -172,26 +171,26 @@
 							</div>
 						</div>
 					</div>
-		     	</div>	     
-	
-	    		<div class="row padding-20">
+		     	</div>
+
+				<div class="row padding-20">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							In consideration of the British Library archiving the website, and crediting me on the UK Web Archive, I confirm that I am authorised to grant this licence on behalf of all owners of copyright, database right or trade marks in the website; I further warrant that (i) nothing contained in this website infringes the copyright or other intellectual property rights of any third party; (ii) no claims have been made in respect of any part of the website; (iii) I am not aware of anything unlawful on the website; and I promise to notify the Library if I become aware that a claim is subsequently made in respect of any content on the website.
 						</div>
 					</div>
-		     	</div>	 
-		     	
-		     	<div class="row padding-10">
+		     	</div>
+
+				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
 						    <div class="col-sm-6">
-				                <input type="checkbox" name="agree" @if( cp.agree ) { checked } @disabler/>
+				                <input type="checkbox" name="agree" @if( (Option(cp.agree) getOrElse false).asInstanceOf[Boolean] ) { checked } @disabler/>
 							</div>
 						</div>
 					</div>
-		     	</div>	     
+		     	</div>
 
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -231,8 +230,8 @@
 							</div>
 						</div>
 					</div>
-		     	</div>	     
-	
+		     	</div>
+
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -246,7 +245,7 @@
 						</div>
 					</div>
 		     	</div>	 							 
-		     	
+
 			</div>		     		        
 		</div>
                         
