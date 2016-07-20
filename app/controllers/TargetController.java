@@ -1616,6 +1616,12 @@ public class TargetController extends AbstractController {
         }
         */
 
+        Result checkUrlsResult = validateUrls(requestData, id, filledForm);
+
+        if(checkUrlsResult != null) {
+            return checkUrlsResult;
+        }
+
         filledForm.get().runChecks();
 
         // Transaction start
@@ -1623,7 +1629,7 @@ public class TargetController extends AbstractController {
         try {
             // Lock the child field_url table to guard against a race condition that can result in duplicate URLs being created
             Ebean.createSqlUpdate("LOCK TABLE field_url;").execute();
-            Result checkUniqueUrlResult = validateCheckForExistingUrl(requestData, id, filledForm);
+            Result checkUniqueUrlResult = validateCheckForExistingUrl(id, filledForm);
 
             if(checkUniqueUrlResult != null) {
                 return checkUniqueUrlResult;
@@ -1684,7 +1690,7 @@ public class TargetController extends AbstractController {
         return redirect(routes.TargetController.view(filledForm.get().id));
     }
 
-    private static Result validateCheckForExistingUrl(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
+    private static Result validateUrls(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
         String fieldUrl = requestData.get("formUrl");
 
         Logger.debug("\n\nfieldUrl: " + fieldUrl);
@@ -1732,26 +1738,6 @@ public class TargetController extends AbstractController {
 
                 }
 
-                FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(trimmed);
-
-                Logger.debug("For url " + url);
-                Logger.debug("Found existing FieldUrl " + isExistingFieldUrl);
-                Logger.debug("Got filledForm.get().id: " + filledForm.get().id);
-
-                if(isExistingFieldUrl != null) {
-                    if(!isExistingFieldUrl.target.id.equals(id)) {
-                        Logger.debug("Found existing FieldUrl.target " + isExistingFieldUrl.target);
-                        String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
-                        ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with another Target <a href=\"" + duplicateUrl + "\">" + duplicateUrl + "</a>");
-                        filledForm.reject(ve);
-                        return info(filledForm, id);
-                    }
-                    else {
-                        if(isExistingFieldUrl.url.equals(trimmed)) {
-                            fu = isExistingFieldUrl;
-                        }
-                    }
-                }
                 Logger.debug("Adding url: " + trimmed + " at position " + position);
                 fu.position = position;
                 position++;
@@ -1761,6 +1747,31 @@ public class TargetController extends AbstractController {
             }
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
+        }
+
+        return null;
+    }
+
+    private static Result validateCheckForExistingUrl(Long id, Form<Target> filledForm) throws ActException {
+        List<FieldUrl> fieldUrls = filledForm.get().fieldUrls;
+
+        for(FieldUrl fieldUrl : fieldUrls) {
+
+            FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(fieldUrl.url);
+
+            Logger.debug("For url " + fieldUrl.url);
+            Logger.debug("Found existing FieldUrl " + isExistingFieldUrl);
+            Logger.debug("Got filledForm.get().id: " + filledForm.get().id);
+
+            if(isExistingFieldUrl != null) {
+                if(!isExistingFieldUrl.target.id.equals(id)) {
+                    Logger.debug("Found existing FieldUrl.target " + isExistingFieldUrl.target);
+                    String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
+                    ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with another Target <a href=\"" + duplicateUrl + "\">" + duplicateUrl + "</a>");
+                    filledForm.reject(ve);
+                    return info(filledForm, id);
+                }
+            }
         }
 
         return null;
