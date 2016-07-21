@@ -78,7 +78,10 @@ public class Document extends Model {
     
     @Column(columnDefinition = "text")
 	public String title;
-    
+
+	@Column(columnDefinition = "text")
+	public String title2;
+
 	public String doi;
 	
 	/* The Logical ARK for the Logical Document */
