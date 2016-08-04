@@ -1,4 +1,21 @@
-﻿The British Library would like to archive the following website:
+﻿Please scroll down for English.
+Hoffai Llyfrgell Genedlaethol Cymru archifo'r wefan ganlynol:
+||URL||
+Annwyl Sir/Fadam,
+Hoffai Llyfrgell Genedlaethol Cymru archifo'ch gwefan yn Archif We y Deyrnas Gyfunol a'i gwneud ar gael yn gyhoeddus. Sefydlwyd Archif We y DG yn 2004 er mwyn cipio ac archifo gwefannau parth gwe y DG ac ar draws y we, fel ymateb i her y gwagle digidol yng nghof y genedl. Mae'n cynnwys gwefannau a ddetholwyd yn benodol sy'n cynrychioli gwahanol agweddau ar dreftadaeth y DG ar y we, yn ogystal â digwyddiadau byd-eang pwysig. Gweithiwn yn agos â sefydliadau rhyngwladol er mwyn casglu a chadw'r we yn barhaol, a gellir gweld Archif We Agored y DG yma: http://www.webarchive.org.uk/.
+Os ydych yn fodlon i'ch safle gael ei archifo a'i wneud yn gyhoeddus, llanwch, os gwelch yn dda, ffurflen y drwydded ar-lein ||LINK|| a fydd yn caniatau inni barhau. Mae archifo yn rhad ac am ddim ac fel arfer nid oes angen unrhyw ymdrech ar eich rhan chi. Os oes gwefannau eraill o'ch eiddo yr hoffech inni ystyried eu harchifo, mae croeso ichi eu henwebu yma: www.webarchive.org.uk/ukwa/info/nominate.
+Mae gwybodaeth am hawlfraint a sut y bydd y wefan yn yr archif yn cael ei wneud yn gyhoeddus ar gael yn ein Cwestiynau Cyffredin, yma: www.webarchive.org.uk/ukwa/info/faq . Os bydd angen gwybodaeth bellach arnoch, cysylltwch â ni ar bob cyfrif.
+Edrychwn ymlaen at glywed oddi wrthych.
+Yn gywir
+Aled Betts
+Llyfrgellydd Cynorthwyol/Assistant Librarian
+Datblygu Casgliadau/ Collection Development
+Llyfrgell Genedlaethol Cymru/National Library of Wales Aberystwyth Ceredigion
+SY23 3BU
+Ffôn/Tel: 01970 632515
+alb@llgc.org.uk
+
+The National Library of Wales would like to archive the following website:
 ||URL||
 
 Dear Sir/Madam,
@@ -14,12 +31,10 @@ Kind regards
 
 Aled Betts
 
-Llyfrgellydd Cynorthwyol/Assistant Librarian 
-Datblygu Casgliadau/ Collection Development 
+Llyfrgellydd Cynorthwyol/Assistant Librarian
+Datblygu Casgliadau/ Collection Development
 Llyfrgell Genedlaethol Cymru/National Library of Wales Aberystwyth Ceredigion
 SY23 3BU
 
 Ffôn/Tel: 01970 632515
 alb@llgc.org.uk
-
-
