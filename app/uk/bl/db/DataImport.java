@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import models.Collection;
 import models.ContactPerson;
 import models.FastSubject;
+import models.FieldUrl;
 import models.Flag;
 import models.MailTemplate;
 import models.Organisation;
@@ -18,6 +19,7 @@ import models.Permission;
 import models.Role;
 import models.Subject;
 import models.Tag;
+import models.Target;
 import models.Taxonomy;
 import models.TaxonomyType;
 import models.User;
@@ -68,6 +70,11 @@ public enum DataImport {
 	        	this.importTags();
 	        	this.importFlags();
 			}
+			if (Ebean.find(Target.class).findRowCount() == 0) {
+				this.importTargets();
+			} else {
+				Logger.debug("Targets already exist!");
+			}
             Logger.debug("+++ Data import completed +++");
             
         } catch (Exception e) {
@@ -76,6 +83,7 @@ public enum DataImport {
 	}
 	
 	public static void importFastSubjects() {
+        Logger.debug("Loading Subjects");
     	if (Ebean.find(FastSubject.class).findRowCount() == 0) {
     		@SuppressWarnings("unchecked")
     		Map<String,List<FastSubject>> allFastSubjects = (Map<String,List<FastSubject>>)Yaml.load("fast-subjects.yml");
@@ -85,8 +93,9 @@ public enum DataImport {
 	}
 
 	public void importPermissions() {
+        Logger.debug("Loading Permissions");
 		@SuppressWarnings("unchecked")
-		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("accounts.yml");
+		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("testdata-accounts.yml");
 		List<Permission> permissions = allPermissions.get(Const.PERMISSIONS);
 		for (Permission permission : permissions) {
 			Permission existingPermission = Permission.findByName(permission.name);
@@ -97,8 +106,9 @@ public enum DataImport {
 	}
 	
 	public void importRoles() {
+        Logger.debug("Loading Roles");
 		@SuppressWarnings("unchecked")
-		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("accounts.yml");
+		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("testdata-accounts.yml");
 		List<Role> roles = allRoles.get(Const.ROLES);
 		for (Role role : roles) {
 	        Role existingRole = Role.findByName(role.name);
@@ -109,8 +119,9 @@ public enum DataImport {
 	}
 	
 	public void importAccounts() {
+        Logger.debug("Loading Accounts");
 		@SuppressWarnings("unchecked")
-		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("accounts.yml");
+		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("testdata-accounts.yml");
 		List<User> users = accounts.get(Const.USERS);
 		try {
 			for (User user : users) {
@@ -138,8 +149,9 @@ public enum DataImport {
 	}
 	
 	private void importTaxonomies() {
+        Logger.debug("Loading Taxonomies");
 		@SuppressWarnings("unchecked")
-		Map<String,List<Taxonomy>> allTaxonomies = (Map<String,List<Taxonomy>>)Yaml.load("taxonomies.yml");
+		Map<String,List<Taxonomy>> allTaxonomies = (Map<String,List<Taxonomy>>)Yaml.load("testdata-taxonomies.yml");
 		List<Taxonomy> taxonomies = allTaxonomies.get(Const.TAXONOMIES);
 		TaxonomyType tv = null;
 		for (Taxonomy taxonomy : taxonomies) {
@@ -169,8 +181,9 @@ public enum DataImport {
 	}
 	
 	private void importTags() { 
+        Logger.debug("Loading Tags");
 		@SuppressWarnings("unchecked")
-		Map<String,List<Tag>> allTags = (Map<String,List<Tag>>)Yaml.load("tags.yml");
+		Map<String,List<Tag>> allTags = (Map<String,List<Tag>>)Yaml.load("testdata-tags.yml");
 		List<Tag> tags = allTags.get(Const.TAGS);
 		for (Tag tag : tags) {
 			tag.url = Const.ACT_URL + Utils.INSTANCE.createId();
@@ -180,8 +193,9 @@ public enum DataImport {
 	}
 	
 	private void importFlags() {
+        Logger.debug("Loading Flags");
 		@SuppressWarnings("unchecked")
-		Map<String,List<Flag>> allFlags = (Map<String,List<Flag>>)Yaml.load("flags.yml");
+		Map<String,List<Flag>> allFlags = (Map<String,List<Flag>>)Yaml.load("testdata-flags.yml");
 		List<Flag> flags = allFlags.get(Const.FLAGS);
 		for (Flag flag : flags) {
 			flag.url = Const.ACT_URL + Utils.INSTANCE.createId();
@@ -191,8 +205,9 @@ public enum DataImport {
 	}
 
 	private void importMailTemplates() {
+        Logger.debug("Loading MailTemplates");
 		@SuppressWarnings("unchecked")
-		Map<String,List<MailTemplate>> allTemplates = (Map<String,List<MailTemplate>>)Yaml.load("mail-templates.yml");
+		Map<String,List<MailTemplate>> allTemplates = (Map<String,List<MailTemplate>>)Yaml.load("testdata-mail-templates.yml");
 		List<MailTemplate> mailTemplates = allTemplates.get(Const.MAILTEMPLATES);
 		for (MailTemplate mailTemplate : mailTemplates) {
 			mailTemplate.url = Const.ACT_URL + Utils.INSTANCE.createId();
@@ -202,8 +217,9 @@ public enum DataImport {
 	}
 	
 	private void importContactPersons() {
+        Logger.debug("Loading People");
 		@SuppressWarnings("unchecked")
-		Map<String,List<ContactPerson>> allContactPersons = (Map<String,List<ContactPerson>>)Yaml.load("contact-persons.yml");
+		Map<String,List<ContactPerson>> allContactPersons = (Map<String,List<ContactPerson>>)Yaml.load("testdata-contact-persons.yml");
 		List<ContactPerson> contactPersons = allContactPersons.get(Const.CONTACTPERSONS);
 		for (ContactPerson contactPerson : contactPersons) {
 			contactPerson.url = Const.ACT_URL + Utils.INSTANCE.createId();
@@ -213,14 +229,34 @@ public enum DataImport {
 	}
 	
 	private void importOrganisations() {
+        Logger.debug("Loading Organisations");
 		@SuppressWarnings("unchecked")
-		Map<String,List<Organisation>> allOrganisations = (Map<String,List<Organisation>>)Yaml.load("organisations.yml");
+		Map<String,List<Organisation>> allOrganisations = (Map<String,List<Organisation>>)Yaml.load("testdata-organisations.yml");
 		List<Organisation> organisations = allOrganisations.get(Const.ORGANISATIONS);
 		for (Organisation organisation : organisations) {
 			organisation.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			organisation.save();
 		}
         Logger.debug("Loaded Organisations");
+	}
+	
+	private void importTargets() {
+        Logger.debug("Loading Targets");
+		@SuppressWarnings("unchecked")
+		Map<String,List<Target>> map = (Map<String,List<Target>>)Yaml.load("testdata-targets.yml");
+		List<Target> list = map.get("targets");
+		Logger.info("Got "+list.size()+" targets");
+		for (Target i : list) {
+			i.url = Const.ACT_URL + Utils.INSTANCE.createId();
+			i.save();
+			/*
+			for( FieldUrl f : i.fieldUrls) {
+				f.save();
+			}
+			i.authorUser.save();
+			*/
+		}
+        Logger.debug("Loaded Targets");
 	}
 
 	public static void main(String[] args) {
