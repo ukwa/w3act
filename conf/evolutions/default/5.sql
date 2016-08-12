@@ -17,7 +17,15 @@ ALTER TABLE public.book ADD COLUMN  government_body3_subordinate_unit character 
 ALTER TABLE public.book ADD COLUMN  part_number character varying(255);
 ALTER TABLE public.book ADD COLUMN  part_name character varying(255);
 
+UPDATE public.mail_template
+SET subject = 'UKWA Licence Received', updated_at = CURRENT_TIMESTAMP
+WHERE subject = 'British Library UKWA Licence Received';
+
 # --- !Downs
+
+UPDATE public.mail_template
+SET subject = 'British Library UKWA Licence Received', updated_at = CURRENT_TIMESTAMP
+WHERE subject = 'UKWA Licence Received';
 
 ALTER TABLE public.book DROP COLUMN print_isbn;
 ALTER TABLE public.book DROP COLUMN  corporate_author_subordinate_unit;
@@ -35,3 +43,5 @@ ALTER TABLE public.book DROP COLUMN  part_number;
 ALTER TABLE public.book DROP COLUMN  part_name;
 
 ALTER TABLE public.document DROP COLUMN title2;
+
+

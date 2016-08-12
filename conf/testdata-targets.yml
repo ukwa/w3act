@@ -1,0 +1,97 @@
+# Users
+
+users:
+
+  - &bob !!models.User
+    email:      bob@example.com
+    name:       Bob
+    password:   secret
+
+# Open source license
+
+taxonomies:
+
+    - &apache !!models.License
+        ttype:        licenses
+        name:         Apache License
+
+# Field Urls
+
+fieldUrls:
+
+  - &fieldUrl1 !!models.FieldUrl
+    url:   http://acid.matkelly.com/
+
+  - &fieldUrl2 !!models.FieldUrl
+    url:   http://crawl-test-site/crawl-test-site/
+ 
+  - &fieldUrl3 !!models.FieldUrl
+    url:   http://example.org
+
+
+# Collections
+
+collections:
+  - &collection1 !!models.Collection
+    id:             600
+    name:           Crawler Test Sites
+    createdAt:      2012-02-01
+    
+  - &collection2 !!models.Collection
+    id:             1050
+    name:           UKWA Test Sites
+    createdAt:      2012-02-01
+    parent:         *collection1
+
+
+# Targets
+
+targets: 
+
+  - &target1 !!models.Target
+    id:             1
+    title:          The Archival Acid Test
+    crawlFrequency: DAILY
+    crawlStartDate: 2016-01-01
+    depth:          "CAPPED_LARGE"
+    scope:          "root"
+    ignoreRobotsTxt: False
+    fieldUrls:      [*fieldUrl1]
+    authorUser:     *bob
+    createdAt:      2012-02-01
+    active:         True
+    collections:    [*collection1]
+    licenses:       [*apache]
+    licenseStatus:  GRANTED
+
+  - &target2 !!models.Target
+    id:             2
+    title:          UKWA Crawl Test Site
+    crawlFrequency: DAILY
+    crawlStartDate: 2016-01-01
+    depth:          "DEEP"
+    scope:          "root"
+    ignoreRobotsTxt: False
+    fieldUrls:      [*fieldUrl2]
+    authorUser:     *bob
+    active:         True
+    createdAt:      2012-02-01
+    collections:    [*collection1,*collection2]
+    professionalJudgement: True
+    professionalJudgementExp: UKWA content.
+
+  - &target3 !!models.Target
+    id:             3
+    title:          example.org
+    crawlFrequency: DAILY
+    crawlStartDate: 2016-01-01
+    depth:          "CAPPED"
+    scope:          "root"
+    ignoreRobotsTxt: False
+    fieldUrls:      [*fieldUrl3]
+    authorUser:     *bob
+    active:         True
+    createdAt:      2012-02-01
+    collections:    [*collection1]
+    professionalJudgement: True
+    professionalJudgementExp: Open content and web stardard test site.

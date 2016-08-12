@@ -33,7 +33,7 @@ GET     /ukwa/licenseform/:token            controllers.LicenseController.form(t
 GET     /ukwa/licenseformview/:token        controllers.LicenseController.formview(token)
 
 GET     /licenses                           controllers.LicenseController.indexFilter()
-POST    /licenses/filter/                   controllers.LicenseController.filter()
+POST    /licenses/filter                    controllers.LicenseController.filter()
 GET    	/licenses/filterbyjson/:name	    controllers.LicenseController.filterByJson(name)
 
 GET     /licences/list                      controllers.LicencesController.list()
@@ -225,11 +225,11 @@ GET     /reports/consistencyChecks/rur          controllers.ReportController.rem
 GET    	/reports/qa                         	controllers.ReportController.qa()
 GET    	/reportscreation               	        controllers.ReportController.indexCreation() 
 GET    	/reportscreation/search                 controllers.ReportController.searchCreation()
-GET    	/reportscreation/targets/               controllers.ReportController.targets(p:Int ?= 0, s ?= "name", o ?= "asc", curator:Long ?= 0, organisation:Long ?= 0, startDate ?= "", endDate ?= "", npld ?= "", crawlFrequency ?= "", tld ?= "")
+GET    	/reportscreation/targets                controllers.ReportController.targets(p:Int ?= 0, s ?= "name", o ?= "asc", curator:Long ?= 0, organisation:Long ?= 0, startDate ?= "", endDate ?= "", npld ?= "", crawlFrequency ?= "", tld ?= "")
 GET    	/reportsqa                  	        controllers.ReportQaController.index() 
 GET    	/reportsqa/search            	        controllers.ReportQaController.search()
 GET    	/reportsqa/switchReportQaTab/:name      controllers.ReportQaController.switchReportQaTab(name) 
-GET    	/reportsqa/targets/                  	controllers.ReportQaController.targets(p:Int ?= 0, s ?= "name", o ?= "asc", status ?= "", curatorId:Long ?= 0, organisationId:Long ?= 0, startDate ?= "", endDate ?= "", collectionId:Long ?= 0)
+GET    	/reportsqa/targets                   	controllers.ReportQaController.targets(p:Int ?= 0, s ?= "name", o ?= "asc", status ?= "", curatorId:Long ?= 0, organisationId:Long ?= 0, startDate ?= "", endDate ?= "", collectionId:Long ?= 0)
 
 GET     /mailtemplates                       	controllers.MailTemplateController.index()
 GET     /mailtemplates/search               	controllers.MailTemplateController.search()
@@ -255,7 +255,7 @@ GET    	/targets/new                 		controllers.TargetController.newForm(titl
 
 GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, pageSize:Int ?= 50, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= 0)
 #GET    	/targets/collectiontargets/:id/json controllers.TargetController.collectionTargetsAsJson(id:Long)
-GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisationId:Long)
+GET    	/targets/organisationtargets        controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisationId:Long)
 GET    	/targets/usertargets           		controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", userId:Long, subjectId:Long ?= 0, collectionId:Long ?= 0)
 GET    	/targets/subjecttargets	        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subjectId:Long ?= 0)
 GET    	/targets/export/ld/:frequency		controllers.TargetController.exportLdFrequencyJson(frequency)
