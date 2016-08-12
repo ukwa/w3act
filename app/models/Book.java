@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -34,9 +35,27 @@ public class Book extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "id_bl_collection_subset", referencedColumnName="id") })
 	public List<BlCollectionSubset> blCollectionSubsets = new ArrayList<>();
 	public String isbn;
+	public String printIsbn;
 	public String corporateAuthor;
-	public String series;
+    public String corporateAuthorSubordinateUnit;
+    public String corporateAuthor2;
+    @Column(name = "corporate_author2_subordinate_unit")
+    public String corporateAuthor2SubordinateUnit;
+    public String corporateAuthor3;
+    @Column(name = "corporate_author3_subordinate_unit")
+    public String corporateAuthor3SubordinateUnit;
+    public String governmentBody;
+    public String governmentBodySubordinateUnit;
+    public String governmentBody2;
+    @Column(name = "government_body2_subordinate_unit")
+    public String governmentBody2SubordinateUnit;
+    public String governmentBody3;
+    @Column(name = "government_body3_subordinate_unit")
+    public String governmentBody3SubordinateUnit;
+    public String series;
 	public String seriesNumber;
+    public String partNumber;
+    public String partName;
 	@Required
 	public String publisher;
 	public String edition;

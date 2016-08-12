@@ -244,6 +244,7 @@
 			<input type="hidden" name="watchedTarget.target.title" value="@form("watchedTarget.target.title").value">
 			
 			@inputText(form("title"), editable, '_label -> docTitleLabel(document.isJournalIssue))
+			@inputText(form("title2"), editable, '_label -> "")
 			@inputText(form("doi"), editable, '_label -> "DOI (Digital Object Identifier)")
 			@inputText(form("publicationDate"), editable, '_label -> "Publication Date", 'onchange -> "fillYear()")
 			@inputText(form("publicationYear"), editable, '_label -> "Year of Publication")
@@ -291,12 +292,28 @@
 					}
 				}
 				@inputText(form("book.isbn"), editable, '_label -> "ISBN")
-				@inputText(form("book.corporateAuthor"), editable, '_label -> "Corporate Author")
+				@inputText(form("book.printIsbn"), editable, '_label -> "Print ISBN")
+
+				@nameInputText(form("book.corporateAuthor"), form("book.corporateAuthorSubordinateUnit"), editable,
+                    '_label -> "Corporate Author(s)", 'placeHolderFirst -> "main name", 'placeHolderLast -> "subordinate unit")
+                @nameInputText(form("book.corporateAuthor2"), form("book.corporateAuthor2SubordinateUnit"), editable,
+                    '_label -> "", 'placeHolderFirst -> "main name", 'placeHolderLast -> "subordinate unit")
+                @nameInputText(form("book.corporateAuthor3"), form("book.corporateAuthor3SubordinateUnit"), editable,
+                    '_label -> "", 'placeHolderFirst -> "main name", 'placeHolderLast -> "subordinate unit")
+
+                @nameInputText(form("book.governmentBody"), form("book.governmentBodySubordinateUnit"), editable,
+                    '_label -> "Government Body(-ies)", 'placeHolderFirst -> "jurisdiction", 'placeHolderLast -> "subordinate unit")
+                @nameInputText(form("book.governmentBody2"), form("book.governmentBody2SubordinateUnit"), editable,
+                    '_label -> "", 'placeHolderFirst -> "jurisdiction", 'placeHolderLast -> "subordinate unit")
+                @nameInputText(form("book.governmentBody3"), form("book.governmentBody3SubordinateUnit"), editable,
+                    '_label -> "", 'placeHolderFirst -> "jurisdiction", 'placeHolderLast -> "subordinate unit")
 			</div>
 			<div id="book">
 				@inputText(form("book.series"), editable, '_label -> "Series")
 				@inputText(form("book.seriesNumber"), editable, '_label -> "Series Number")
-				@inputText(form("book.publisher"), editable, '_label -> "Publisher")
+				@inputText(form("book.partName"), editable, '_label -> "Part Name")
+                @inputText(form("book.partNumber"), editable, '_label -> "Part Number")
+                @inputText(form("book.publisher"), editable, '_label -> "Publisher")
 				@inputText(form("book.edition"), editable, '_label -> "Edition")
 			</div>
 			<div id="journal_general">
