@@ -916,21 +916,23 @@
                         </div>
                     </div>
                 } else {
-                    <div class="row padding-10">
-                        <div class="col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group">
-                                <label class="col-sm-6 control-label" for="crawlFrequency">
-                                    Crawl Frequency (How often should this site be archived?):
-                                    <font color="red">*</font>
-                                </label>
-                                <div class="col-sm-6">
-                                    <select id="crawlFrequency" class="form-control" name="crawlFrequency">
-                                        <option value="DOMAINCRAWL">Domain Crawl Only</option>
-                                    </select>
+                        @if(id == null) {
+                            <div class="row padding-10">
+                                <div class="col-md-12 col-xs-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-6 control-label" for="crawlFrequency">
+                                            Crawl Frequency (How often should this site be archived?):
+                                            <font color="red">*</font>
+                                        </label>
+                                        <div class="col-sm-6">
+                                            <select id="crawlFrequency" class="form-control" name="crawlFrequency">
+                                                <option value="DOMAINCRAWL">Domain Crawl Only</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        }
                 }
 
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
