@@ -1331,83 +1331,86 @@ public class TargetController extends AbstractController {
             }
         }
 
-        String crawlStartDate = requestData.get("crawlStartDateText");
-        if(StringUtils.isNotEmpty(crawlStartDate)) {
-            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-            try {
-                Date date = formatter.parse(crawlStartDate);
-                filledForm.get().crawlStartDate = date;
-                Logger.debug("crawlStartDate:::::::: " + date);
-                if(date.before(Calendar.getInstance().getTime())) {
-                    flash("warning", "<b>Warning! The crawl start date is in the past!</b><br/>This is normal for existing targets, but should not be the case for new targets.");
+        String crawlFrequency = filledForm.get().crawlFrequency;
+
+        if(StringUtils.isNotEmpty(crawlFrequency)) {
+            String crawlStartDate = requestData.get("crawlStartDateText");
+
+            if(StringUtils.isNotEmpty(crawlStartDate)) {
+                DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+                try {
+                    Date date = formatter.parse(crawlStartDate);
+                    filledForm.get().crawlStartDate = date;
+                    Logger.debug("crawlStartDate:::::::: " + date);
+                    if(date.before(Calendar.getInstance().getTime())) {
+                        flash("warning", "<b>Warning! The crawl start date is in the past!</b><br/>This is normal for existing targets, but should not be the case for new targets.");
+                    }
+                }
+                catch(ParseException e) {
+                    e.printStackTrace();
+                    return info(filledForm, id);
                 }
             }
-            catch(ParseException e) {
-                e.printStackTrace();
-                return info(filledForm, id);
+            else {
+                if(id != null) {
+                    Ebean.createUpdate(Target.class, "update target SET crawl_start_date=null where id=:id")
+                            .setParameter("id", id).execute();
+                }
             }
-        }
-        else {
-            if(id != null) {
-                Ebean.createUpdate(Target.class, "update target SET crawl_start_date=null where id=:id")
-                        .setParameter("id", id).execute();
-            }
-        }
 
-        String crawlFrequency = filledForm.get().crawlFrequency;
-        Logger.debug("crawl frequency: " + crawlFrequency);
-        Logger.debug("crawlStartDate: " + crawlStartDate);
-        if(!crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
-            if(StringUtils.isEmpty(crawlStartDate)) {
+            Logger.debug("crawl frequency: " + crawlFrequency);
+            Logger.debug("crawlStartDate: " + crawlStartDate);
+
+            if(!CrawlFrequency.DOMAINCRAWL.name().equals(crawlFrequency) && StringUtils.isEmpty(crawlStartDate)) {
                 ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when any crawl frequency other than 'Domain Crawl Only' is selected");
                 filledForm.reject(ve);
                 return info(filledForm, id);
             }
-        }
-        // Don't let non-archivists add or remove NEVERCRAWL status:
-        if(original != null && CrawlFrequency.NEVERCRAWL.name().equals(original.crawlFrequency)) {
-            // Do not remove:
-            if((!CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency))
-                    && !(currentUser.isArchivist() || currentUser.isSysAdmin())
-                    ) {
-                ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency from 'never crawl' to something else.");
-                filledForm.reject(ve);
-                return info(filledForm, id);
-            }
-        }
-        else {
-            // Do not add:
-            if((CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency))
-                    && !(currentUser.isArchivist() || currentUser.isSysAdmin())
-                    ) {
-                ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency to 'never crawl'.");
-                filledForm.reject(ve);
-                return info(filledForm, id);
-            }
-        }
 
-        String crawlEndDate = requestData.get("crawlEndDateText");
-        if(StringUtils.isNotEmpty(crawlEndDate)) {
-            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-            try {
-                Date date = formatter.parse(crawlEndDate);
-                filledForm.get().crawlEndDate = date;
-                Logger.debug("crawlEndDate in date:::::::: " + date);
+            // Don't let non-archivists add or remove NEVERCRAWL status:
+            if(original != null && CrawlFrequency.NEVERCRAWL.name().equals(original.crawlFrequency)) {
+                // Do not remove:
+                if((!CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency))
+                        && !(currentUser.isArchivist() || currentUser.isSysAdmin())
+                        ) {
+                    ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency from 'never crawl' to something else.");
+                    filledForm.reject(ve);
+                    return info(filledForm, id);
+                }
             }
-            catch(ParseException e) {
-                e.printStackTrace();
-                return info(filledForm, id);
+            else {
+                // Do not add:
+                if((CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency))
+                        && !(currentUser.isArchivist() || currentUser.isSysAdmin())
+                        ) {
+                    ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency to 'never crawl'.");
+                    filledForm.reject(ve);
+                    return info(filledForm, id);
+                }
             }
-        }
-        else {
-            if(id != null) {
-                Ebean.createUpdate(Target.class, "update target SET crawl_end_date=null where id=:id")
-                        .setParameter("id", id).execute();
-            }
-        }
 
+            String crawlEndDate = requestData.get("crawlEndDateText");
+            if(StringUtils.isNotEmpty(crawlEndDate)) {
+                DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+                try {
+                    Date date = formatter.parse(crawlEndDate);
+                    filledForm.get().crawlEndDate = date;
+                    Logger.debug("crawlEndDate in date:::::::: " + date);
+                }
+                catch(ParseException e) {
+                    e.printStackTrace();
+                    return info(filledForm, id);
+                }
+            }
+            else {
+                if(id != null) {
+                    Ebean.createUpdate(Target.class, "update target SET crawl_end_date=null where id=:id")
+                            .setParameter("id", id).execute();
+                }
+            }
+        }
 
         List<Tag> newTags = new ArrayList<Tag>();
         String[] tagValues = formParams.get("tagsList");
