@@ -6,6 +6,6 @@ Feature: List only the Collection Categories for a Target
 Scenario: Get me only the collection categories
   Given I have a target ID of 1
   When I choose to see the collection categories
-  Then I should see a collection category with the name "UK General Election 2015"
+  Then I should see a collection category with the name "Crawler Test Sites"
   And should only be 1 category returned
 
