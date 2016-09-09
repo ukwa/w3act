@@ -36,7 +36,7 @@ public class ListCategoryTargets {
 			@Override
 			@SuppressWarnings("unchecked")
 			public void run() {
-				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("targets.yml");		
+				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("testdata-targets.yml");
 				List<Target> targs = allTargets.get("targets");
 				for (Target target : targs) {
 					Logger.debug("collection categories: " + target.collections.size());
