@@ -34,14 +34,7 @@ public class ListCategoryTargets {
 	public void i_choose_to_see_to_get_the_targets() throws Throwable {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			@Override
-			@SuppressWarnings("unchecked")
 			public void run() {
-				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("testdata-targets.yml");
-				List<Target> targs = allTargets.get("targets");
-				for (Target target : targs) {
-					Logger.debug("collection categories: " + target.collections.size());
-					target.save();
-				}
 				Collection categoryFound = Collection.findById(categoryId);
 				Logger.debug("categoryFound: " + categoryFound);
 				targets = categoryFound.targets;

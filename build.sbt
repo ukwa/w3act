@@ -33,6 +33,8 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" notTransitive()
 
+libraryDependencies += "org.julienrf" %% "play-jsmessages" % "1.6.2"
+
 resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
 
 javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProperties).map{ case (key,value) => "-D" + key + "=" +value }.toSeq

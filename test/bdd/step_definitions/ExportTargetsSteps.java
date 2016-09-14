@@ -29,7 +29,7 @@ public class ExportTargetsSteps {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			@Override
 			public void run() {
-				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("testdata-targets.yml");
+				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("testdata-targets.yml");		
 				targets = allTargets.get("targets");
 				Logger.debug("targets: " + targets);
 			}

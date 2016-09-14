@@ -26,28 +26,6 @@ public class QaWaybackTest {
 	}
 
 
-	//	 @Test 
-	//	  public void testLogin() {
-	//	      running(fakeApplication(additionalConfigurations.asMap()), new Runnable() {
-	//			
-	//			@Override
-	//			public void run() {
-	//				// TODO Auto-generated method stub
-	//				
-	//				@SuppressWarnings("unchecked")
-	//				Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("accounts.yml");
-	//				List<User> users = accounts.get(Const.USERS);
-	//				for (User user : users) {
-	//					User existingUser = User.findByEmail(user.email);
-	//					Logger.info("USERS:::: "+existingUser.email.toString()+" - "+existingUser.password.toString()+" - "+existingUser.affiliation.toString());
-	//				}
-	//				
-	//				
-	//			}
-	//		});
-	//	 }
-
-
 	@Test
 	public void runInBrowser() {
 		running(testServer(3333, fakeApplication()), HTMLUNIT, new Callback<TestBrowser>() {

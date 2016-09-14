@@ -3,6 +3,7 @@ package controllers;
 import java.util.List;
 import java.util.Set;
 
+import jsmessages.JsMessages;
 import org.apache.commons.lang3.StringUtils;
 
 import models.CommunicationLog;
@@ -18,6 +19,7 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
+import play.libs.Scala;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -29,9 +31,6 @@ import uk.bl.scope.EmailHelper;
 import views.html.licence.licences;
 import views.html.licence.ukwalicence;
 import views.html.licence.ukwalicenceresult;
-//import views.html.licence.view;
-
-
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,7 +39,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Support for adding owner licence.
  */
 public class LicenseController extends AbstractController {
-  
+
     /**
      * Display the licence form.
      */
@@ -68,6 +67,23 @@ public class LicenseController extends AbstractController {
     		return notFound("There is no License with ID "+id);
     	}
     }
+
+    /**
+     * Returns JavaScript containing i18n messages for the license view
+     * @return Response
+     */
+    public static Result messagesJs(){
+        // See https://github.com/julienrf/play-jsmessages
+        JsMessages jsMessages = JsMessages.filtering (play.Play.application(), new play.libs.F.Function<String, Boolean>(){
+            @Override
+            public Boolean apply(String key) {
+                return key.startsWith("license.") || key.startsWith("form.");
+            }
+        });
+
+        return ok(jsMessages.generateAll(Scala.Option("window.Messages").get())).as("application/javascript");
+    }
+
     /**
      * This method presents licence form for selected premission request
      * that is identified by the given permission URL. 

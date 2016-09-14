@@ -1,7 +1,7 @@
 #### Production values
 application.name=w3act
 application.context="/act"
-application.langs="en"
+application.langs="en,cy"
 
 # Secret key
 # The secret key is used to secure cryptographics functions.

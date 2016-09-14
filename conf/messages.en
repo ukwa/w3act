@@ -17,3 +17,31 @@ resetpassword.new.password=New password :
 error.technical=Technical Error, please Retry
 error.expiredresetlink=This password reset has expired.
 resetpassword.success=Your password has been reset.
+
+form.markedfieldscompulsory.html=(All fields marked <font color="red">*</font> are compulsory)
+form.submit=Submit
+
+license.ldukwa2016.webarchiveaccesslicense=Web Archive Access Licence
+license.ldukwa2016.licensegrantparagraph=I/We the undersigned grant the UK Legal Deposit Libraries<sup>1</sup> a licence to provide public access to the copies of my/our website that have been collected under Legal Deposit legislation.  We understand that public access will apply to copies of the website and associated content that are collected over time.
+license.ldukwa2016.titleofwebsite=Title of Website:
+license.ldukwa2016.webaddress=Web Address (URL):
+license.ldukwa2016.licensegrantedby=LICENCE GRANTED BY:
+license.ldukwa2016.name=Name (organisation or individual):
+license.ldukwa2016.contactname=Contact Name:
+license.ldukwa2016.position=Position:
+license.ldukwa2016.email=E-mail:
+license.ldukwa2016.postaladdress=Postal Address:
+license.ldukwa2016.phone=Tel:
+license.ldukwa2016.anyotherinformation=Any other information:
+license.ldukwa2016.thirdpartycontent=Third-Party Content:
+license.ldukwa2016.thirdpartycontent.caption=Is any content on this website subject to copyright and/or database rights held by another party?
+license.ldukwa2016.thirdpartycontent.yes=Yes
+license.ldukwa2016.thirdpartycontent.no=No
+license.ldukwa2016.confirmauthorisedparagraph=I confirm that I am authorised to grant this licence on behalf of all the owners of copyright, database right and trade marks in the website.  I further warrant that (i) nothing contained in this website infringes the copyright or other intellectual property rights of any third party; (ii) no claims have been made in respect of any part of the website; (iii) I am not aware of anything unlawful on the website; and I promise to notify the Libraries if I become aware that a claim is subsequently made in respect of any content on the website
+license.ldukwa2016.agree=I / We agree:
+license.ldukwa2016.agree.yes=Yes
+license.ldukwa2016.date=Date
+license.ldukwa2016.allowpublicity=Would you allow the archived website to be used in any future publicity for the Web Archive?
+license.ldukwa2016.allowpublicity.yes=Yes
+license.ldukwa2016.allowpublicity.no=No
+license.ldukwa2016.legaldepositlibrariesfootnote=The Legal Deposit Libraries are: the British Library; the National Library of Scotland; the National Library of Wales; Bodleian Libraries, Oxford; University Library, Cambridge; and the Library of Trinity College, Dublin
