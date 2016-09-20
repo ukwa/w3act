@@ -734,22 +734,8 @@ public enum Utils {
     }
     
     public boolean validUrl(String url) {
-//    	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
-//    	String urlRegex = "^(?:(?:https?|ftp):\\/\\/)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))(?::\\d{2,5})?(?:\\/\\S*)?$/i";
-//    	String urlRegex = "/^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$/";
-//    	return url.matches(urlRegex);
-    	
-//        String urlRegex = "\\b(https?|ftp|file|ldap)://"
-//                + "[-A-Za-z0-9+&@#/%?=~_|!:,.;]"
-//                + "*[-A-Za-z0-9+&@#/%=~_|]";
-       
-//        urlRegex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?"
-        String urlRegex = "https?:\\/\\/(www)?+[\\w\\d.-]+\\.[\\w]{2,}(/.*)?";
+        String urlRegex = "https?:\\/\\/(www)?+[\\w\\d.-]+\\.[\\w]{2,}(:\\d{1,5})?(\\/.*)?";
     	return url.matches(urlRegex);
-//    	Pattern p = Pattern.compile(urlRegex);  
-//        Matcher m = p.matcher(url);
-//        return m.matches();
-    	
     }
     
     public boolean validDomain(String domain) {
