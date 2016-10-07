@@ -217,73 +217,125 @@ public class Documents extends AbstractController {
 		} else {
 			Ebean.save(document);
 		}
-		
-		// Choose the save dir:
-		final String saveDir;
+
+        final String fileName = "_sip_" + id;
+
+        // Choose the save dir:
+		final File saveDir;
+
 		if( document.isJournalArticleOrIssue() ) {
-			saveDir = Play.application().configuration().getString("dls.documents.ejournal.sip.dir");
-		} else {
-			saveDir = Play.application().configuration().getString("dls.documents.ebook.sip.dir");
+			saveDir = new File(Play.application().configuration().getString("dls.documents.ejournal.sip.dir"));
 		}
+		else {
+            // eBooks have a holding directory for each submission. Create a temporary one until the copy is known to have succeeded.
+			saveDir = new File(Play.application().configuration().getString("dls.documents.ebook.sip.dir"), fileName);
+            saveDir.mkdir();
+        }
 
-		// Download it to a local file.
-		String url = routes.DocumentSIPController.sip(id).absoluteURL(request());
-		Logger.info("Downloading "+url);
-		final Promise<File> filePromise = WS.url(url).get().map( 
-				new Function<WSResponse, File>() {
-					@Override
-					public File apply(WSResponse response) throws Throwable {
+        if(saveDir.exists()) {
+            // Download it to a local file.
+            String url = routes.DocumentSIPController.sip(id).absoluteURL(request());
+            Logger.info("Downloading " + url);
+            final Promise<File> filePromise = WS.url(url).get().map(
+                    new Function<WSResponse, File>() {
+                        @Override
+                        public File apply(WSResponse response) throws Throwable {
+                            final File file = new File(saveDir, fileName + ".xml");
+                            InputStream responseStream = null;
+                            OutputStream fileStream = null;
 
-						String fileName = "_sip_"+id+".xml";
-						final File file = new File(saveDir, fileName);
-						try {
-							IOUtils.copy(response.getBodyAsStream(), new FileOutputStream(file));
-						} catch (IOException e) {
-							Logger.error("Exception while downloading file: "+e.getMessage(),e);
-							return null;
-						}
+                            try {
+                                IOUtils.copy(responseStream = response.getBodyAsStream(), fileStream = new FileOutputStream(file));
+                            }
+                            catch(IOException e) {
+                                Logger.error("Exception while downloading file: " + e.getMessage(), e);
+                                return null;
+                            }
+                            finally {
+                                try {
+                                    if(responseStream != null) {
+                                        responseStream.close();
+                                    }
+                                }
+                                catch(Exception e){
+                                    Logger.warn("Failed to close stream on download.", e);
+                                }
 
-						return file;
-					}
-				});
-		// Wait for the file to download, up to thirty seconds:
-		File file = filePromise.get(30, TimeUnit.SECONDS);
-		// Check it's good:
-		if (file != null && file.exists() && file.isFile() && file.length()!= 0){
-			// Make a copy (in case something goes wrong:
-			String copyDir = Play.application().configuration().getString("dls.documents.sip.copy.dir");
-			if( ! StringUtils.isEmpty(copyDir) ) {
-				Calendar cal = Calendar.getInstance();
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				String dateStr = dateFormat.format(cal.getTime());
-				String copyFilename = dateStr+"_"+document.type.toLowerCase().replace(' ','_')+"_sip_"+id+".xml";
-				File copyFile = new File(copyDir, copyFilename);
-				try {
-					FileUtils.copyFile(file, copyFile);
-					if( copyFile.length() != file.length()) {
-						throw new IOException("Copy failed - lengths to not match.");
-					}
-				} catch (IOException e) {
-					Logger.error("Exception while copying SIP xml: "+e.getMessage(),e);
-					FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
-							"SIP XML could not be copied!");
-					downloadError.send();
-					return redirect(routes.Documents.view(id));
-				}
-			}
-			// And rename, this initiation submission:
-			String newFileName = "sip_"+id+".xml";
-			file.renameTo(new File(saveDir, newFileName));
-		} else {
-			if( file != null && file.exists()) {
-				file.delete();
-			}
-			FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
-					"SIP XML could not be downloaded for submission!");
-			downloadError.send();
-			return redirect(routes.Documents.view(id));
-		}
-		
+                                try {
+                                    if(fileStream != null) {
+                                        fileStream.close();
+                                    }
+                                }
+                                catch(Exception e) {
+                                    Logger.warn("Failed to close stream on file.", e);
+                                }
+                            }
+
+                            return file;
+                        }
+                    });
+
+            // Wait for the file to download, up to thirty seconds:
+            File file = filePromise.get(30, TimeUnit.SECONDS);
+
+            // Check it's good:
+            if(file != null && file.exists() && file.isFile() && file.length() != 0) {
+                // Make a copy (in case something goes wrong:
+                String copyDir = Play.application().configuration().getString("dls.documents.sip.copy.dir");
+
+                if(!StringUtils.isEmpty(copyDir)) {
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String dateStr = dateFormat.format(cal.getTime());
+                    String copyFilename = dateStr + "_" + document.type.toLowerCase().replace(' ', '_') + "_sip_" + id + ".xml";
+                    File copyFile = new File(copyDir, copyFilename);
+                    try {
+                        FileUtils.copyFile(file, copyFile);
+                        if(copyFile.length() != file.length()) {
+                            throw new IOException("Copy failed - lengths to not match.");
+                        }
+                    }
+                    catch(IOException e) {
+                        Logger.error("Exception while copying SIP xml: " + e.getMessage(), e);
+                        FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
+                                "SIP XML could not be copied!");
+                        downloadError.send();
+                        return redirect(routes.Documents.view(id));
+                    }
+                }
+
+                // And rename, this initiation submission:
+                String newFileName = "sip_" + id;
+
+                Boolean renameSuccess = file.renameTo(new File(saveDir, newFileName + ".xml"));
+
+                // Rename the holding directory, if an eBook submission
+                if(!document.isJournalArticleOrIssue()) {
+                    renameSuccess &= saveDir.renameTo(new File(Play.application().configuration().getString("dls.documents.ebook.sip.dir"), newFileName));
+                }
+
+                if(!renameSuccess){
+                    FlashMessage error = new FlashMessage(FlashMessage.Type.ERROR, "Could not rename the temporary download file.");
+                    error.send();
+                    return redirect(routes.Documents.view(id));
+                }
+            }
+            else {
+                if(file != null && file.exists()) {
+                    file.delete();
+                }
+                FlashMessage downloadError = new FlashMessage(FlashMessage.Type.ERROR,
+                        "SIP XML could not be downloaded for submission!");
+                downloadError.send();
+                return redirect(routes.Documents.view(id));
+            }
+        }
+        else {
+            FlashMessage error = new FlashMessage(FlashMessage.Type.ERROR, "XML save directory does not exist.");
+            error.send();
+            return redirect(routes.Documents.view(id));
+        }
+
 		// Record success:
 		document.setStatus(Document.Status.SUBMITTED);
 		Ebean.save(document);
