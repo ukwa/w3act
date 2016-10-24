@@ -23,7 +23,7 @@ fieldUrls:
     url:   http://acid.matkelly.com/
 
   - &fieldUrl2 !!models.FieldUrl
-    url:   http://crawl-test-site/crawl-test-site/
+    url:   http://crawl-test-site:4000/crawl-test-site/
  
   - &fieldUrl3 !!models.FieldUrl
     url:   http://example.org
