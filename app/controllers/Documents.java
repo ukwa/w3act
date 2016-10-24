@@ -307,11 +307,17 @@ public class Documents extends AbstractController {
                 // And rename, this initiation submission:
                 String newFileName = "sip_" + id;
 
-                Boolean renameSuccess = file.renameTo(new File(saveDir, newFileName + ".xml"));
+                File targetFile = new File(saveDir, newFileName + ".xml");
+                Logger.info("Renaming "+file.getAbsolutePath()+" to "+targetFile);
+                Boolean renameSuccess = file.renameTo(targetFile);
 
                 // Rename the holding directory, if an eBook submission
                 if(!document.isJournalArticleOrIssue()) {
-                    renameSuccess &= saveDir.renameTo(new File(Play.application().configuration().getString("dls.documents.ebook.sip.dir"), newFileName));
+                	File targetDir = new File(Play.application().configuration().getString("dls.documents.ebook.sip.dir"), newFileName);
+                	Logger.info("Attempt to rename "+saveDir.getAbsolutePath()+" to "+ targetDir);
+                    renameSuccess &= saveDir.renameTo(targetDir);
+                } else {
+                	Logger.info("Not attemting any further rename of " + newFileName);
                 }
 
                 if(!renameSuccess){
