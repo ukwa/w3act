@@ -79,6 +79,7 @@ targets:
     collections:    [*collection1,*collection2]
     professionalJudgement: True
     professionalJudgementExp: UKWA content.
+    watchedTarget:  *watchedTarget1
 
   - &target3 !!models.Target
     id:             3
@@ -95,3 +96,12 @@ targets:
     collections:    [*collection1]
     professionalJudgement: True
     professionalJudgementExp: Open content and web stardard test site.
+
+
+# Watched Target
+
+watchedTargets:
+
+    - &watchedTarget1 !!models.WatchedTarget
+    - id:           1
+    - target:       *target2
