@@ -23,6 +23,7 @@ import models.Target;
 import models.Taxonomy;
 import models.TaxonomyType;
 import models.User;
+import models.WatchedTarget;
 
 import com.avaje.ebean.Ebean;
 
@@ -241,7 +242,7 @@ public enum DataImport {
 	}
 	
 	private void importTargets() {
-        Logger.debug("Loading Targets");
+        Logger.debug("Loading Targets...");
 		@SuppressWarnings("unchecked")
 		Map<String,List<Target>> map = (Map<String,List<Target>>)Yaml.load("testdata-targets.yml");
 		List<Target> list = map.get("targets");
@@ -249,6 +250,11 @@ public enum DataImport {
 		for (Target i : list) {
 			i.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			i.save();
+			// WatchedTargets do not cascade automatically:
+			if( i.watchedTarget != null) {
+				i.watchedTarget.target = i;
+				i.watchedTarget.save();
+			}
 			/*
 			for( FieldUrl f : i.fieldUrls) {
 				f.save();

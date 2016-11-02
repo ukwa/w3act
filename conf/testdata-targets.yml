@@ -43,6 +43,14 @@ collections:
     createdAt:      2012-02-01
     parent:         *collection1
 
+# Watched Target
+
+watchedTargets:
+
+  - &watchedTarget1 !!models.WatchedTarget
+    id:             1
+    target:         &target2
+
 
 # Targets
 
@@ -96,12 +104,3 @@ targets:
     collections:    [*collection1]
     professionalJudgement: True
     professionalJudgementExp: Open content and web stardard test site.
-
-
-# Watched Target
-
-watchedTargets:
-
-    - &watchedTarget1 !!models.WatchedTarget
-    - id:           1
-    - target:       *target2
