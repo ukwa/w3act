@@ -3,9 +3,11 @@
 users:
 
   - &bob !!models.User
-    email:      bob@example.com
-    name:       Bob
-    password:   secret
+    email:       bob@example.com
+    name:        Bob
+    password:    secret
+    affiliation: BL
+    roleHolder:  expert_user
 
 # Open source license
 
