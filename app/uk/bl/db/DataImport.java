@@ -255,11 +255,12 @@ public enum DataImport {
 				i.watchedTarget.target = i;
 				i.watchedTarget.save();
 			}
+			// Users do not cascade automatically:
+			i.authorUser.save();
 			/*
 			for( FieldUrl f : i.fieldUrls) {
 				f.save();
 			}
-			i.authorUser.save();
 			*/
 		}
         Logger.debug("Loaded Targets");

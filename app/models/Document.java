@@ -156,6 +156,9 @@ public class Document extends Model {
 	public boolean isJournalArticleOrIssue() { return isJournalArticle() || isJournalIssue(); }
 	
 	public boolean isOwnedBy(User user) {
+		if( user == null || this.watchedTarget.target.authorUser == null) {
+			return (this.watchedTarget.target.authorUser == null);
+		}
 		return user.id.equals(watchedTarget.target.authorUser.id);
 	}
 	
