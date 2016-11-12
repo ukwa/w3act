@@ -87,6 +87,8 @@ public class DocumentAnalyser {
 			if( (StringUtils.isBlank(document.title) || DEFAULT_TITLE.equals(document.title)) && 
 					StringUtils.isNotBlank(metadata.get(TikaCoreProperties.TITLE)) ) {
 				document.title = metadata.get(TikaCoreProperties.TITLE);
+				// Strip out any NULL characters:
+				document.title = document.title.replaceAll("\0+", "");
 			}
 			// Otherwise, use the filename:
 			if( StringUtils.isBlank(document.title)) {
