@@ -11,7 +11,7 @@ RUN         cd /tmp && \
             wget -q http://downloads.typesafe.com/typesafe-activator/$ACTIVATOR_VERSION/typesafe-activator-$ACTIVATOR_VERSION.zip && \
             unzip -q typesafe-activator-$ACTIVATOR_VERSION.zip -d /usr/local
 RUN         mv /usr/local/activator-dist-$ACTIVATOR_VERSION /usr/local/activator && \
-            rm typesafe-activator-$ACTIVATOR_VERSION.zip
+            rm /tmp/typesafe-activator-$ACTIVATOR_VERSION.zip
 
 COPY . /w3act
 
