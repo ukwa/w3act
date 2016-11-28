@@ -35,6 +35,12 @@ libraryDependencies += "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" notTransitiv
 
 libraryDependencies += "org.julienrf" %% "play-jsmessages" % "1.6.2"
 
+
+// Excluding this as there are problems downloading it under Debian (SSL CA problem?)
+excludeDependencies ++= Seq(
+  SbtExclusionRule("org.tukaani", "xz")
+)
+
 resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
 
 javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProperties).map{ case (key,value) => "-D" + key + "=" +value }.toSeq
