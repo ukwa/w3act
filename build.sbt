@@ -11,6 +11,8 @@ libraryDependencies ++= Seq(
   javaEbean,
   cache,
   javaWs,
+  // Excluding this as there are problems downloading it under Debian (SSL CA problem?)
+  "org.apache.commons" % "commons-compress" % "1.7" exclude("org.tukaani", "xz"),
   "org.apache.commons" % "commons-email" % "1.3.2",
   "org.apache.commons" % "commons-lang3" % "3.3.2",
   "commons-validator" % "commons-validator" % "1.5.1",
@@ -34,12 +36,6 @@ libraryDependencies ++= Seq(
 libraryDependencies += "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" notTransitive()
 
 libraryDependencies += "org.julienrf" %% "play-jsmessages" % "1.6.2"
-
-
-// Excluding this as there are problems downloading it under Debian (SSL CA problem?)
-excludeDependencies ++= Seq(
-  SbtExclusionRule("org.tukaani", "xz")
-)
 
 resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
 
