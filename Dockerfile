@@ -19,9 +19,11 @@ COPY . /w3act
 WORKDIR /w3act
 
 # Try to clean and build and ignore errors (to handle transient download failures):
+# (this really should not be needed, but for some reason the downloads fail in a deterministic pattern)
 RUN /usr/local/activator/bin/activator clean; exit 0
 RUN /usr/local/activator/bin/activator stage; exit 0
-RUN /usr/local/activator/bin/activator stage
+RUN rm -fr target
+RUN /usr/local/activator/bin/activator clean stage
 
 EXPOSE 9000
 
