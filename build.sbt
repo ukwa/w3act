@@ -18,7 +18,7 @@ libraryDependencies ++= Seq(
   "commons-validator" % "commons-validator" % "1.5.1",
   "commons-io" % "commons-io" % "2.3",
   "org.apache.tika" % "tika-core" % "1.11",
-  "org.apache.tika" % "tika-parsers" % "1.11",
+  "org.apache.tika" % "tika-parsers" % "1.11" exclude("org.tukaani", "xz"),
   "org.apache.httpcomponents" % "httpclient" % "4.3.6",
   "org.apache.httpcomponents" % "httpcore" % "4.3.3",
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
@@ -47,5 +47,7 @@ EclipseKeys.preTasks := Seq(compile in Compile)
 parallelExecution in Test := false
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")
+
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
