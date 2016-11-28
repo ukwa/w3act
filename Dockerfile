@@ -1,4 +1,4 @@
-FROM java:openjdk-8-jdk
+FROM openjdk:7
 
 ENV         ACTIVATOR_VERSION 1.3.11
 ARG         USER_HOME_DIR="/root"
