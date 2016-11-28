@@ -1,4 +1,4 @@
-FROM openjdk:7
+FROM openjdk:8
 
 ENV         ACTIVATOR_VERSION 1.3.11
 ARG         USER_HOME_DIR="/root"
@@ -18,7 +18,10 @@ COPY . /w3act
 
 WORKDIR /w3act
 
-RUN /usr/local/activator/bin/activator -Dconfig.file=/w3act/conf/dev.conf stage
+# Try to clean and build and ignore errors (to handle transient download failures):
+RUN /usr/local/activator/bin/activator clean; exit 0
+RUN /usr/local/activator/bin/activator stage; exit 0
+RUN /usr/local/activator/bin/activator stage
 
 EXPOSE 9000
 

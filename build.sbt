@@ -37,7 +37,12 @@ libraryDependencies += "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" notTransitiv
 
 libraryDependencies += "org.julienrf" %% "play-jsmessages" % "1.6.2"
 
-resolvers += "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
+resolvers ++=Seq(
+    Resolver.sonatypeRepo("public"),
+    Resolver.mavenLocal,
+    "Apache Repository" at "https://repository.apache.org/content/repositories/releases/",
+    "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
+)
 
 javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProperties).map{ case (key,value) => "-D" + key + "=" +value }.toSeq
 
