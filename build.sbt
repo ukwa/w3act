@@ -48,6 +48,4 @@ parallelExecution in Test := false
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")
 
-addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
-
 net.virtualvoid.sbt.graph.Plugin.graphSettings
