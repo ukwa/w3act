@@ -19,7 +19,14 @@ COPY .git /w3act/.git
 
 WORKDIR /w3act
 
+# Patch in the version tag:
 RUN git fetch -t && export VERSION=`git describe` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt && exit 0
+
+# Run without failing to try to download all dependencies:
+RUN /usr/local/activator/bin/activator stage && exit 0
+RUN /usr/local/activator/bin/activator stage && exit 0
+
+# Perform a full clean build:
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
