@@ -18,6 +18,7 @@ COPY . /w3act
 
 WORKDIR /w3act
 
+RUN export VERSION=`git describe` && sed -E -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
