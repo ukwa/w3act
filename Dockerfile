@@ -18,10 +18,6 @@ COPY . /w3act
 
 WORKDIR /w3act
 
-# Try to clean and build and ignore errors (to handle transient download failures):
-# (this really should not be needed, but for some reason the downloads fail in a deterministic pattern)
-RUN /usr/local/activator/bin/activator clean; exit 0
-RUN /usr/local/activator/bin/activator stage; exit 0
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
@@ -29,5 +25,5 @@ EXPOSE 9000
 
 #VOLUME "$USER_HOME_DIR/.ivy2"
 
-CMD /w3act/target/universal/stage/bin/w3act -Dconfig.file=/w3act/conf/dev.conf -Dpidfile.path=/dev/null
+CMD /w3act/target/universal/stage/bin/w3act -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
 
