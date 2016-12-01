@@ -15,6 +15,7 @@ RUN         mv /usr/local/activator-dist-$ACTIVATOR_VERSION /usr/local/activator
             rm /tmp/typesafe-activator-$ACTIVATOR_VERSION.zip
 
 COPY . /w3act
+COPY .git /w3act/.git
 
 WORKDIR /w3act
 
