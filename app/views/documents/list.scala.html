@@ -1,3 +1,4 @@
+
 @(user: User, filterForm: Form[DocumentFilter], searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String, filters: Boolean)
 
 @import helper.options
@@ -176,7 +177,8 @@
 						@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
 						@header("documentUrl", "Document", currentSortBy, currentOrder, link)
 						@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
-                        @header("type", "Type", currentSortBy, currentOrder, link)
+						@header("updatedAt", "Last Updated", currentSortBy, currentOrder, link)
+						@header("type", "Type", currentSortBy, currentOrder, link)
 						<th>Action</th>
 					</tr>
 				</thead>
@@ -191,7 +193,8 @@
 						</td>
                         <td>@archiveAndLive(document.landingPageUrl, "_blank", document.waybackTimestamp)</td>
                         <td>@archiveAndLive(document.documentUrl, "_blank", document.waybackTimestamp)</td>
-						<td>@WatchedTargets.dayCount(document.waybackTimestamp)</td>
+						<td>@uk.bl.api.Utils.INSTANCE.dayCount(document.waybackTimestamp)</td>
+						<td>@uk.bl.api.Utils.INSTANCE.dayCount(document.updatedAt)</td>
 						<td>@document.getType()</td>
 							<td>
 								@if(document.isEditableFor(user)) {
