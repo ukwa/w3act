@@ -30,6 +30,7 @@ import java.util.UUID;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlUpdate;
 
+import com.github.kevinsawicki.timeago.TimeAgo;
 import play.Logger;
 import uk.bl.Const;
 import uk.bl.exception.ActException;
@@ -48,8 +49,35 @@ import org.postgresql.util.PGInterval;
 public enum Utils {
 
 	INSTANCE;
-	
-	/**
+
+	public String dayCount(Date timestamp){
+        try {
+            TimeAgo time = new TimeAgo();
+            return time.timeAgo(timestamp.getTime());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public String dayCount(String timestamp) {
+    	if (timestamp == null || timestamp.length() < 14) return timestamp;
+
+		try {
+	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			Date d2 = sdf.parse(timestamp);
+			TimeAgo time = new TimeAgo();
+
+			return time.timeAgo(d2.getTime());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "ERR!";
+		}
+    }
+
+    /**
 	 * This method generates random Long ID.
 	 * @return new ID as Long value
 	 */

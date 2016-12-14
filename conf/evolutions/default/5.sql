@@ -21,7 +21,13 @@ UPDATE public.mail_template
 SET subject = 'UKWA Licence Received', updated_at = CURRENT_TIMESTAMP
 WHERE subject = 'British Library UKWA Licence Received';
 
+ALTER TABLE public.document ADD COLUMN updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+CREATE INDEX ix_updated_at ON public.document(updated_at);
+
 # --- !Downs
+
+DROP INDEX public.ix_updated_at;
+ALTER TABLE public.document DROP COLUMN updated_at;
 
 UPDATE public.mail_template
 SET subject = 'British Library UKWA Licence Received', updated_at = CURRENT_TIMESTAMP
