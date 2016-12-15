@@ -2,6 +2,7 @@ package models;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,7 +50,10 @@ public class Document extends Model {
 	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_watched_target")
 	public WatchedTarget watchedTarget;
-	
+
+	@Version
+	public Timestamp updatedAt;
+
 	public String waybackTimestamp;
 	public Status status;
 	public Date currentStatusSet;

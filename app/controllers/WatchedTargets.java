@@ -149,26 +149,8 @@ public class WatchedTargets extends AbstractController {
     	String minute = waybackTimestamp.substring(10, 12);
     	return day + "-" + month + "-" + year + " " + hour + ":" + minute;
     }
-    
-    public static String dayCount(String waybackTimestamp) {
-    	if (waybackTimestamp == null || waybackTimestamp.length() < 14) return waybackTimestamp;
-    	
-		try {
-	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-			Date d2 = sdf.parse(waybackTimestamp);
-			
-			TimeAgo time = new TimeAgo();
-			
-			return time.timeAgo(d2.getTime());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "ERR!";
-		}
-		
-    }
-    
-    public static Result filterByJson(String title) {
+
+	public static Result filterByJson(String title) {
         JsonNode jsonData = null;
         if (title != null) {
 	        List<WatchedTarget> watchedTargets = WatchedTarget.find.where().join("target")

@@ -122,7 +122,7 @@
 					</td>
 					<td><a href="@routes.UserController.view(watchedTarget.target.authorUser.id)">@watchedTarget.target.authorUser.name</a></td>
 					<td><a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(watchedTarget.id))">@watchedTarget.documents.size</a></td>
-					<td>@WatchedTargets.dayCount(watchedTarget.waybackTimestamp)</td>
+					<td>@uk.bl.api.Utils.INSTANCE.dayCount(watchedTarget.waybackTimestamp)</td>
 					<td><abbr title="@watchedTarget.target.getNextScheduledCrawlDate()">@watchedTarget.target.getNextScheduledCrawlDateAsString()</abbr></td>
 				</tr>
 			}

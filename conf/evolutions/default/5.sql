@@ -28,6 +28,9 @@ ALTER TABLE target ADD COLUMN login_page_url text;
 ALTER TABLE target ADD COLUMN logout_url text;
 ALTER TABLE target ADD COLUMN secret_id integer;
 
+ALTER TABLE public.document ADD COLUMN updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP;
+CREATE INDEX ix_updated_at ON public.document(updated_at);
+
 # --- !Downs
 
 UPDATE public.mail_template
@@ -58,3 +61,5 @@ ALTER TABLE watched_target ADD COLUMN login_page_url text;
 ALTER TABLE watched_target ADD COLUMN logout_url text;
 ALTER TABLE watched_target ADD COLUMN secret_id integer;
 
+DROP INDEX public.ix_updated_at;
+ALTER TABLE public.document DROP COLUMN updated_at;
