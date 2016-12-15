@@ -1,4 +1,4 @@
-@(form: Form[WatchedTarget], user: User)
+@(form: Form[Target], user: User)
 
 @import templates.inputText
 
@@ -8,7 +8,7 @@
 	<div class="page-header">
     	<h1>
     		<a href="@routes.TargetController.index()">Targets</a> >
-			<a href="@routes.TargetController.view(new Long(form("target.id").value))#watchedTarget">@form("target.title").value</a> >
+			<a href="@routes.TargetController.view(new Long(form("id").value))#crawlpolicy">@form("title").value</a> >
 			@if(form("secretId").value == null) {Add} else {Change} Login Credentials
 		</h1>
 	</div>

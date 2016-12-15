@@ -42,17 +42,16 @@ public class CrawlFeedItem {
 		List<CrawlSchedule> scheds = new ArrayList<CrawlSchedule>();
 		scheds.add(new CrawlSchedule(t.crawlStartDate, t.crawlEndDate, t.crawlFrequency));
 		this.schedules = scheds;
+		
+		this.loginPageUrl = t.loginPageUrl;
+		this.logoutUrl = t.logoutUrl;
+		this.secretId = t.secretId;
+		
 		this.watched = t.isWatched();
 		if( t.watchedTarget != null ) {
 			this.documentUrlScheme = t.watchedTarget.documentUrlScheme;
-			this.loginPageUrl = t.watchedTarget.loginPageUrl;
-			this.logoutUrl = t.watchedTarget.logoutUrl;
-			this.secretId = t.watchedTarget.secretId;
 		} else {
 			this.documentUrlScheme = null;
-			this.loginPageUrl = null;
-			this.logoutUrl = null;
-			this.secretId = null;
 		}
 	}
 }

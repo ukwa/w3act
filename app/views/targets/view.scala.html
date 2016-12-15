@@ -816,6 +816,22 @@
 					</div>
 				</div>
 	     	</div>	
+	     	<div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label">Login Credentials</label>
+                            <div class="col-sm-6">
+                                @if(target.secretId != null) {
+                                    yes
+                                } else {
+                                    no
+                                }
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+	     	
 		     	
         </div>
 	        
@@ -937,21 +953,6 @@
 										@fastSubject.name
 									</div>
 								}
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Login Credentials</label>
-						    <div class="col-sm-6">
-								@if(target.watchedTarget.secretId != null) {
-									yes
-								} else {
-									no
-								}
-								
 							</div>
 						</div>
 					</div>

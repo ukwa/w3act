@@ -21,6 +21,13 @@ UPDATE public.mail_template
 SET subject = 'UKWA Licence Received', updated_at = CURRENT_TIMESTAMP
 WHERE subject = 'British Library UKWA Licence Received';
 
+ALTER TABLE watched_target DROP COLUMN login_page_url;
+ALTER TABLE watched_target DROP COLUMN logout_url;
+ALTER TABLE watched_target DROP COLUMN secret_id;
+ALTER TABLE target ADD COLUMN login_page_url text;
+ALTER TABLE target ADD COLUMN logout_url text;
+ALTER TABLE target ADD COLUMN secret_id integer;
+
 # --- !Downs
 
 UPDATE public.mail_template
@@ -44,4 +51,10 @@ ALTER TABLE public.book DROP COLUMN  part_name;
 
 ALTER TABLE public.document DROP COLUMN title2;
 
+ALTER TABLE target DROP COLUMN login_page_url;
+ALTER TABLE target DROP COLUMN logout_url;
+ALTER TABLE target DROP COLUMN secret_id;
+ALTER TABLE watched_target ADD COLUMN login_page_url text;
+ALTER TABLE watched_target ADD COLUMN logout_url text;
+ALTER TABLE watched_target ADD COLUMN secret_id integer;
 

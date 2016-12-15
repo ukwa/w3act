@@ -53,9 +53,6 @@ public class WatchedTarget extends Model {
 	public String archivistNotesWT;
 	
 	public String waybackTimestamp;
-	public String loginPageUrl;
-	public String logoutUrl;
-	public Integer secretId;
 	public String getName() { return target.fieldUrls.get(0).url; }
 	public static final String SEARCH_FIELD = "target.fieldUrls.url";
 	
@@ -103,8 +100,7 @@ public class WatchedTarget extends Model {
 				+ ", journalTitles=" + journalTitles + ", fastSubjects="
 				+ fastSubjects + ", documentUrlScheme=" + documentUrlScheme
 				+ ", archivistNotesWT=" + archivistNotesWT
-				+ ", waybackTimestamp=" + waybackTimestamp + ", loginPageUrl="
-				+ loginPageUrl + ", logoutUrl=" + logoutUrl + ", secretId="
-				+ secretId + ", target_id=" + target_id + "]";
+				+ ", waybackTimestamp=" + waybackTimestamp 
+				+ ", target_id=" + target_id + "]";
 	}
 }

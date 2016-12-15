@@ -6,9 +6,10 @@ import com.thesecretserver.PasswordManager;
 
 import models.FlashMessage;
 import models.User;
-import models.WatchedTarget;
+import models.Target;
 import play.Logger;
 import play.Play;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
 import play.mvc.Result;
@@ -27,22 +28,24 @@ public class LoginCredentialsController extends AbstractController {
 	}
 	
 	public static Result edit(Long id) {
-		WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-		Form<WatchedTarget> watchedTargetForm = Form.form(WatchedTarget.class).fill(watchedTarget);
+		Target target = Target.find.byId(id);
+		Form<Target> TargetForm = Form.form(Target.class).fill(target);
 		
-		return ok(edit.render(watchedTargetForm,
+		return ok(edit.render(TargetForm,
 				User.findByEmail(request().username())));
 	}
 	
 	public static Result save(Long id) {
-		Form<WatchedTarget> watchedTargetForm = Form.form(WatchedTarget.class).bindFromRequest();
-		WatchedTarget watchedTarget = watchedTargetForm.get();
-		String username = watchedTargetForm.field("username").value();
-		String password = watchedTargetForm.field("password").value();
-		if(!watchedTarget.loginPageUrl.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
-			LoginCredentials loginCredentials = new LoginCredentials(watchedTarget.loginPageUrl, username, password);
+		DynamicForm requestData = Form.form().bindFromRequest();
+		Target target = Target.find.byId(id);
+		target.loginPageUrl = requestData.field("loginPageUrl").value();
+		target.logoutUrl    = requestData.field("logoutUrl").value();
+		String username = requestData.field("username").value();
+		String password = requestData.field("password").value();
+		if(!target.loginPageUrl.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
+			LoginCredentials loginCredentials = new LoginCredentials(target.loginPageUrl, username, password);
 			try {
-				watchedTarget.secretId = passwordManager.addLoginCredentials(WatchedTarget.find.byId(id).target.title, loginCredentials);
+				target.secretId = passwordManager.addLoginCredentials(Target.find.byId(id).title, loginCredentials);
 				new FlashMessage(FlashMessage.Type.SUCCESS, "The credentials were successfully saved to the Secret Server.").send();
 			} catch(Exception e) {
 				String msg = "Can't store username and password because there is no connection to the Secret Server.";
@@ -52,7 +55,7 @@ public class LoginCredentialsController extends AbstractController {
 		} else if (username.isEmpty() && password.isEmpty()) {
 			FlashMessage.updateSuccess.send();
 		}
-		Ebean.update(watchedTarget);
+		Ebean.update(target);
 		return redirect(routes.LoginCredentialsController.edit(id));
 	}
 	

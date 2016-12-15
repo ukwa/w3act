@@ -488,6 +488,10 @@ public class Target extends Model {
 
 	@Transient
 	private OverallLicenseStatus overallLicenseStatus;
+	
+	public String loginPageUrl;
+	public String logoutUrl;
+	public Integer secretId;
 
 	@JsonProperty
 	public boolean isWatched() {
@@ -2532,7 +2536,9 @@ public class Target extends Model {
 				+ ", field_notes=" + field_notes + ", title=" + title
 				+ ", edit_url=" + edit_url + ", language=" + language
 				+ ", revision=" + revision + ", id=" + id
-				+ ", url=" + url + ", watched=" + isWatched() 
+				+ ", url=" + url + ", loginPageUrl="
+				+ loginPageUrl + ", logoutUrl=" + logoutUrl + ", secretId="
+				+ secretId + ", watched=" + isWatched() 
 				+ ", watchedTarget=" + watchedTarget + "]";
 	}
 	
