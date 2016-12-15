@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="Description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="ScriptId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="SecretDependencyId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="SSHKeySecretId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -50,7 +51,8 @@ import javax.xml.bind.annotation.XmlType;
     "additionalInfo",
     "description",
     "scriptId",
-    "secretDependencyId"
+    "secretDependencyId",
+    "sshKeySecretId"
 })
 public class Dependency {
 
@@ -78,6 +80,8 @@ public class Dependency {
     protected int scriptId;
     @XmlElement(name = "SecretDependencyId")
     protected int secretDependencyId;
+    @XmlElement(name = "SSHKeySecretId", required = true, type = Integer.class, nillable = true)
+    protected Integer sshKeySecretId;
 
     /**
      * Gets the value of the secretId property.
@@ -301,6 +305,30 @@ public class Dependency {
      */
     public void setSecretDependencyId(int value) {
         this.secretDependencyId = value;
+    }
+
+    /**
+     * Gets the value of the sshKeySecretId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getSSHKeySecretId() {
+        return sshKeySecretId;
+    }
+
+    /**
+     * Sets the value of the sshKeySecretId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setSSHKeySecretId(Integer value) {
+        this.sshKeySecretId = value;
     }
 
 }

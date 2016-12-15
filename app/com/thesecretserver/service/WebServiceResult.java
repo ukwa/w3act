@@ -32,9 +32,15 @@ import javax.xml.bind.annotation.XmlType;
     "errors"
 })
 @XmlSeeAlso({
+    UpdateUserScriptResult.class,
+    GetUserScriptsResult.class,
+    SSHCredentialsResult.class,
     FileDownloadResult.class,
+    SecretPolicyResult.class,
+    SecretPolicyForSecretResult.class,
+    GetUserScriptResult.class,
     CreateFolderResult.class,
-    SSHCredentialsResult.class
+    SearchSecretPoliciesResult.class
 })
 public class WebServiceResult {
 

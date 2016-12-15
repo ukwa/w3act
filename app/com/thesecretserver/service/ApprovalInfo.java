@@ -43,6 +43,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class ApprovalInfo {
 
     @XmlElement(name = "Status", required = true)
+    @XmlSchemaType(name = "string")
     protected SecretAccessRequestStatus status;
     @XmlElement(name = "Responder")
     protected String responder;

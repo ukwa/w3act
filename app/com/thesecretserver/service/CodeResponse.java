@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="ErrorCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="AdditionalComment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TicketSystemId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CodeResponse", propOrder = {
     "errorCode",
     "comment",
-    "additionalComment"
+    "additionalComment",
+    "ticketSystemId"
 })
 public class CodeResponse {
 
@@ -42,6 +44,8 @@ public class CodeResponse {
     protected String comment;
     @XmlElement(name = "AdditionalComment")
     protected String additionalComment;
+    @XmlElement(name = "TicketSystemId", required = true, type = Integer.class, nillable = true)
+    protected Integer ticketSystemId;
 
     /**
      * Gets the value of the errorCode property.
@@ -113,6 +117,30 @@ public class CodeResponse {
      */
     public void setAdditionalComment(String value) {
         this.additionalComment = value;
+    }
+
+    /**
+     * Gets the value of the ticketSystemId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getTicketSystemId() {
+        return ticketSystemId;
+    }
+
+    /**
+     * Sets the value of the ticketSystemId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setTicketSystemId(Integer value) {
+        this.ticketSystemId = value;
     }
 
 }

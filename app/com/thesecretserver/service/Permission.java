@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="View" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="Edit" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="Owner" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="SecretAccessRoleName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SecretAccessRoleId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +36,9 @@ import javax.xml.bind.annotation.XmlType;
     "userOrGroup",
     "view",
     "edit",
-    "owner"
+    "owner",
+    "secretAccessRoleName",
+    "secretAccessRoleId"
 })
 public class Permission {
 
@@ -46,6 +50,10 @@ public class Permission {
     protected boolean edit;
     @XmlElement(name = "Owner")
     protected boolean owner;
+    @XmlElement(name = "SecretAccessRoleName")
+    protected String secretAccessRoleName;
+    @XmlElement(name = "SecretAccessRoleId", required = true, type = Integer.class, nillable = true)
+    protected Integer secretAccessRoleId;
 
     /**
      * Gets the value of the userOrGroup property.
@@ -117,6 +125,54 @@ public class Permission {
      */
     public void setOwner(boolean value) {
         this.owner = value;
+    }
+
+    /**
+     * Gets the value of the secretAccessRoleName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSecretAccessRoleName() {
+        return secretAccessRoleName;
+    }
+
+    /**
+     * Sets the value of the secretAccessRoleName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSecretAccessRoleName(String value) {
+        this.secretAccessRoleName = value;
+    }
+
+    /**
+     * Gets the value of the secretAccessRoleId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getSecretAccessRoleId() {
+        return secretAccessRoleId;
+    }
+
+    /**
+     * Sets the value of the secretAccessRoleId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setSecretAccessRoleId(Integer value) {
+        this.secretAccessRoleId = value;
     }
 
 }

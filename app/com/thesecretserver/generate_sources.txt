@@ -26,3 +26,18 @@ they are not needed for SOAP, but only for alternative HTTP GET and POST request
 - generate sources
 
 wsimport -keep -p com.thesecretserver.service -wsdllocation https://blsps.ad.bl.uk/secretserver/webservices/sswebservice.asmx sswebservice.asmx
+
+
+Regenerating the service stubbs.
+
+e.g. 
+
+    curl -O "https://blsps.ad.bl.uk/secretserver/webservices/sswebservice.asmx/VersionGet"
+    curl -o sswebservice.asmx "https://blsps.ad.bl.uk/secretserver/webservices/sswebservice.asmx?WSDL"
+
+Then edited out the soap import (didn't seem to need to remove the StringArray references under JDK 8), then, in the `app` folder.
+
+    rm -fr com/thesecretserver/service
+    /cygdrive/c/Program\ Files/Java/jdk1.8.0_65/bin/wsimport  -keep -p com.thesecretserver.service -wsdllocation https://blsps.ad.bl.uk/secretserver/webservices/sswebservice.asmx sswebservice.asmx
+
+Note that these stubs indicate there is a HTTP REST API, which might be a better integration idea.

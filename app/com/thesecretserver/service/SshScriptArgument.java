@@ -4,6 +4,7 @@ package com.thesecretserver.service;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -19,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Value" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SshType" type="{urn:thesecretserver.com}SshArgumentType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,7 +32,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SshScriptArgument", propOrder = {
     "name",
-    "value"
+    "value",
+    "sshType"
 })
 public class SshScriptArgument {
 
@@ -38,6 +41,9 @@ public class SshScriptArgument {
     protected String name;
     @XmlElement(name = "Value")
     protected String value;
+    @XmlElement(name = "SshType", required = true)
+    @XmlSchemaType(name = "string")
+    protected SshArgumentType sshType;
 
     /**
      * Gets the value of the name property.
@@ -85,6 +91,30 @@ public class SshScriptArgument {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Gets the value of the sshType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link SshArgumentType }
+     *     
+     */
+    public SshArgumentType getSshType() {
+        return sshType;
+    }
+
+    /**
+     * Sets the value of the sshType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link SshArgumentType }
+     *     
+     */
+    public void setSshType(SshArgumentType value) {
+        this.sshType = value;
     }
 
 }

@@ -1,9 +1,11 @@
 
 package com.thesecretserver.service;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -23,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="SecretTypeId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="FolderId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsWebLauncher" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="Active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutMinutesRemaining" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsCheckedOut" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutUserDisplayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -33,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="OutOfSyncReason" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="SecretSettings" type="{urn:thesecretserver.com}SecretSettings" minOccurs="0"/>
  *         &lt;element name="SecretPermissions" type="{urn:thesecretserver.com}SecretPermissions" minOccurs="0"/>
+ *         &lt;element name="Active" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -49,7 +51,6 @@ import javax.xml.bind.annotation.XmlType;
     "secretTypeId",
     "folderId",
     "isWebLauncher",
-    "active",
     "checkOutMinutesRemaining",
     "isCheckedOut",
     "checkOutUserDisplayName",
@@ -58,7 +59,8 @@ import javax.xml.bind.annotation.XmlType;
     "isRestricted",
     "outOfSyncReason",
     "secretSettings",
-    "secretPermissions"
+    "secretPermissions",
+    "active"
 })
 public class Secret {
 
@@ -74,8 +76,6 @@ public class Secret {
     protected int folderId;
     @XmlElement(name = "IsWebLauncher")
     protected boolean isWebLauncher;
-    @XmlElement(name = "Active")
-    protected boolean active;
     @XmlElement(name = "CheckOutMinutesRemaining", required = true, type = Integer.class, nillable = true)
     protected Integer checkOutMinutesRemaining;
     @XmlElement(name = "IsCheckedOut", required = true, type = Boolean.class, nillable = true)
@@ -94,6 +94,8 @@ public class Secret {
     protected SecretSettings secretSettings;
     @XmlElement(name = "SecretPermissions")
     protected SecretPermissions secretPermissions;
+    @XmlElementRef(name = "Active", namespace = "urn:thesecretserver.com", type = JAXBElement.class, required = false)
+    protected JAXBElement<Boolean> active;
 
     /**
      * Gets the value of the name property.
@@ -205,22 +207,6 @@ public class Secret {
      */
     public void setIsWebLauncher(boolean value) {
         this.isWebLauncher = value;
-    }
-
-    /**
-     * Gets the value of the active property.
-     * 
-     */
-    public boolean isActive() {
-        return active;
-    }
-
-    /**
-     * Sets the value of the active property.
-     * 
-     */
-    public void setActive(boolean value) {
-        this.active = value;
     }
 
     /**
@@ -437,6 +423,30 @@ public class Secret {
      */
     public void setSecretPermissions(SecretPermissions value) {
         this.secretPermissions = value;
+    }
+
+    /**
+     * Gets the value of the active property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link Boolean }{@code >}
+     *     
+     */
+    public JAXBElement<Boolean> getActive() {
+        return active;
+    }
+
+    /**
+     * Sets the value of the active property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link Boolean }{@code >}
+     *     
+     */
+    public void setActive(JAXBElement<Boolean> value) {
+        this.active = value;
     }
 
 }

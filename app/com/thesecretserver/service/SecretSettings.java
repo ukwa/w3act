@@ -22,9 +22,14 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="RequiresComment" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutChangePasswordEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="ProxyEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="SessionRecordingEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="RestrictSshCommands" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="AllowOwnersUnrestrictedSshCommands" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="PrivilegedSecretId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="AssociatedSecretIds" type="{urn:thesecretserver.com}ArrayOfInt" minOccurs="0"/>
  *         &lt;element name="Approvers" type="{urn:thesecretserver.com}ArrayOfGroupOrUserRecord" minOccurs="0"/>
+ *         &lt;element name="SshCommandMenuAccessPermissions" type="{urn:thesecretserver.com}ArrayOfSshCommandMenuAccessPermission" minOccurs="0"/>
  *         &lt;element name="IsChangeToSettings" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -41,9 +46,14 @@ import javax.xml.bind.annotation.XmlType;
     "requiresComment",
     "checkOutEnabled",
     "checkOutChangePasswordEnabled",
+    "proxyEnabled",
+    "sessionRecordingEnabled",
+    "restrictSshCommands",
+    "allowOwnersUnrestrictedSshCommands",
     "privilegedSecretId",
     "associatedSecretIds",
     "approvers",
+    "sshCommandMenuAccessPermissions",
     "isChangeToSettings"
 })
 public class SecretSettings {
@@ -58,12 +68,22 @@ public class SecretSettings {
     protected Boolean checkOutEnabled;
     @XmlElement(name = "CheckOutChangePasswordEnabled", required = true, type = Boolean.class, nillable = true)
     protected Boolean checkOutChangePasswordEnabled;
+    @XmlElement(name = "ProxyEnabled", required = true, type = Boolean.class, nillable = true)
+    protected Boolean proxyEnabled;
+    @XmlElement(name = "SessionRecordingEnabled", required = true, type = Boolean.class, nillable = true)
+    protected Boolean sessionRecordingEnabled;
+    @XmlElement(name = "RestrictSshCommands", required = true, type = Boolean.class, nillable = true)
+    protected Boolean restrictSshCommands;
+    @XmlElement(name = "AllowOwnersUnrestrictedSshCommands", required = true, type = Boolean.class, nillable = true)
+    protected Boolean allowOwnersUnrestrictedSshCommands;
     @XmlElement(name = "PrivilegedSecretId", required = true, type = Integer.class, nillable = true)
     protected Integer privilegedSecretId;
     @XmlElement(name = "AssociatedSecretIds")
     protected ArrayOfInt associatedSecretIds;
     @XmlElement(name = "Approvers")
     protected ArrayOfGroupOrUserRecord approvers;
+    @XmlElement(name = "SshCommandMenuAccessPermissions")
+    protected ArrayOfSshCommandMenuAccessPermission sshCommandMenuAccessPermissions;
     @XmlElement(name = "IsChangeToSettings")
     protected boolean isChangeToSettings;
 
@@ -188,6 +208,102 @@ public class SecretSettings {
     }
 
     /**
+     * Gets the value of the proxyEnabled property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isProxyEnabled() {
+        return proxyEnabled;
+    }
+
+    /**
+     * Sets the value of the proxyEnabled property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setProxyEnabled(Boolean value) {
+        this.proxyEnabled = value;
+    }
+
+    /**
+     * Gets the value of the sessionRecordingEnabled property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isSessionRecordingEnabled() {
+        return sessionRecordingEnabled;
+    }
+
+    /**
+     * Sets the value of the sessionRecordingEnabled property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setSessionRecordingEnabled(Boolean value) {
+        this.sessionRecordingEnabled = value;
+    }
+
+    /**
+     * Gets the value of the restrictSshCommands property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isRestrictSshCommands() {
+        return restrictSshCommands;
+    }
+
+    /**
+     * Sets the value of the restrictSshCommands property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setRestrictSshCommands(Boolean value) {
+        this.restrictSshCommands = value;
+    }
+
+    /**
+     * Gets the value of the allowOwnersUnrestrictedSshCommands property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isAllowOwnersUnrestrictedSshCommands() {
+        return allowOwnersUnrestrictedSshCommands;
+    }
+
+    /**
+     * Sets the value of the allowOwnersUnrestrictedSshCommands property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setAllowOwnersUnrestrictedSshCommands(Boolean value) {
+        this.allowOwnersUnrestrictedSshCommands = value;
+    }
+
+    /**
      * Gets the value of the privilegedSecretId property.
      * 
      * @return
@@ -257,6 +373,30 @@ public class SecretSettings {
      */
     public void setApprovers(ArrayOfGroupOrUserRecord value) {
         this.approvers = value;
+    }
+
+    /**
+     * Gets the value of the sshCommandMenuAccessPermissions property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ArrayOfSshCommandMenuAccessPermission }
+     *     
+     */
+    public ArrayOfSshCommandMenuAccessPermission getSshCommandMenuAccessPermissions() {
+        return sshCommandMenuAccessPermissions;
+    }
+
+    /**
+     * Sets the value of the sshCommandMenuAccessPermissions property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ArrayOfSshCommandMenuAccessPermission }
+     *     
+     */
+    public void setSshCommandMenuAccessPermissions(ArrayOfSshCommandMenuAccessPermission value) {
+        this.sshCommandMenuAccessPermissions = value;
     }
 
     /**
