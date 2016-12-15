@@ -53,6 +53,7 @@ public class LoginCredentialsController extends AbstractController {
 				Logger.error(msg, e);
 			}
 		} else if (username.isEmpty() && password.isEmpty()) {
+			target.secretId = null;
 			FlashMessage.updateSuccess.send();
 		}
 		Ebean.update(target);

@@ -1084,18 +1084,24 @@ public class TargetController extends AbstractController {
 
     /**
      * @param frequency
+     * @param whether to generate the paywall feed or not - i.e. this can exclude paywalled Targets, or be composed only of paywalled Targets.
      * @return
      * @throws ActException
      */
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result crawlFeedLdFrequencyJson(String frequency) {
+    public static Result crawlFeedLdFrequencyJson(String frequency, boolean generatePaywallFeed) {
         JsonNode jsonData = null;
         if(frequency != null) {
             List<Target> targets = new ArrayList<Target>();
             targets = Target.exportLdFrequency(frequency);
             List<CrawlFeedItem> targetIds = new ArrayList<CrawlFeedItem>();
             for(Target t : targets) {
-                targetIds.add(new CrawlFeedItem(t));
+            	// Only add 
+            	if(!generatePaywallFeed && t.secretId == null) {
+            		targetIds.add(new CrawlFeedItem(t));
+            	} else if( generatePaywallFeed && t.secretId != null) {
+            		targetIds.add(new CrawlFeedItem(t));
+            	}
             }
             jsonData = Json.toJson(targetIds);
         }

@@ -384,7 +384,8 @@ GET    	/api/targets/bycollection/:id       controllers.TargetController.collect
 GET    	/api/targets/:id/categories        	controllers.TargetController.getTargetCategories(id:Long)
 GET     /api/crawl/ids/ld/:frequency        controllers.TargetController.idsToCrawlLdFrequencyJson(frequency)
 GET     /api/crawl/ids/by/:frequency        controllers.TargetController.idsToCrawlByFrequencyJson(frequency)
-GET     /api/crawl/feed/ld/:frequency       controllers.TargetController.crawlFeedLdFrequencyJson(frequency)
+GET     /api/crawl/feed/ld/:frequency       controllers.TargetController.crawlFeedLdFrequencyJson(frequency, generatePaywallFeed: Boolean = false)
+GET     /api/crawl/feed/pw/:frequency       controllers.TargetController.crawlFeedLdFrequencyJson(frequency, generatePaywallFeed: Boolean = true)
 GET     /api/crawl/feed/by/:frequency       controllers.TargetController.crawlFeedByFrequencyJson(frequency)
 GET     /api/crawl/feed/oa/:frequency       controllers.TargetController.crawlFeedOAFrequencyJson(frequency)
 
