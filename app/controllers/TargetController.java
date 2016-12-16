@@ -121,9 +121,9 @@ public class TargetController extends AbstractController {
             url = url.replace("https://", "");
         }
 
-        if(url.startsWith("www.")) {
-            url = url.replace("www.", "");
-        }
+        //if(url.startsWith("www.")) {
+        //    url = url.replace("www.", "");
+        //}
 
         if(url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
@@ -216,9 +216,9 @@ public class TargetController extends AbstractController {
             url = url.replace("https://", "");
         }
 
-        if(url.startsWith("www.")) {
-            url = url.replace("www.", "");
-        }
+        //if(url.startsWith("www.")) {
+        //    url = url.replace("www.", "");
+        //}
 
         if(url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
@@ -338,9 +338,9 @@ public class TargetController extends AbstractController {
             url = url.replace("https://", "");
         }
 
-        if(url.startsWith("www.")) {
-            url = url.replace("www.", "");
-        }
+        //if(url.startsWith("www.")) {
+        //    url = url.replace("www.", "");
+        //}
 
         if(url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);

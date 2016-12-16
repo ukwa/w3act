@@ -45,9 +45,9 @@ abstract class UrlModel extends Model {
 	
 	private static String normalizeUrl(String url, boolean slash) {
 		if (url != null && url.length() > 0) {
-	        if (!url.contains(WWW) && !url.contains(HTTP) && !url.contains(HTTPS)) {
-	        	url = WWW + url;
-	        }
+	        //if (!url.contains(WWW) && !url.contains(HTTP) && !url.contains(HTTPS)) {
+	        //	url = WWW + url;
+	        //}
 	        if (!url.contains(HTTP)) {
 		        if (!url.contains(HTTPS)) {
 		        	url = HTTP + url;

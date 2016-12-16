@@ -220,9 +220,9 @@ public enum Scope {
 	public static String normalizeUrl(String url, boolean slash) {
 		String res = url;
 		if (res != null && res.length() > 0) {
-	        if (!res.contains(WWW) && !res.contains(HTTP) && !res.contains(HTTPS)) {
-	        	res = WWW + res;
-	        }
+	        //if (!res.contains(WWW) && !res.contains(HTTP) && !res.contains(HTTPS)) {
+	        //	res = WWW + res;
+	        //}
 	        if (!res.contains(HTTP)) {
 		        if (!res.contains(HTTPS)) {
 		        	res = HTTP + res;
@@ -389,7 +389,7 @@ public enum Scope {
 			String domain = uri.getHost();
 			Logger.debug("getDomainFromUrl GOT: "+domain);
 			if (StringUtils.isNotEmpty(domain)) {
-				return domain.startsWith("www.") ? domain.substring(4) : domain;
+				return domain.startsWith(WWW) ? domain.substring(4) : domain;
 			}
 		} catch (MalformedURLException e) {
 			throw new ActException(e);
