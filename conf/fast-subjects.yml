@@ -1,683 +1,529 @@
-# FAST subjects
-
 subjects:
-- !!models.FastSubject
-    fastId: fst00842262
-    name: Business
-
-- !!models.FastSubject
-    fastId: fst01007141
-    name: Management
-
-- !!models.FastSubject
-    fastId: fst00902116
-    name: Economics
-
-- !!models.FastSubject
-    fastId: fst00976708
-    name: International agencies
-
-- !!models.FastSubject
-    fastId: fst00924738
-    name: Financial services industry
-
-- !!models.FastSubject
-    fastId: fst00924349
-    name: Finance
-
-- !!models.FastSubject
-    fastId: fst00994701
-    name: Leadership
-
-- !!models.FastSubject
-    fastId: fst01058797
-    name: Personnel management
-
-- !!models.FastSubject
-    fastId: fst00842819
-    name: Business planning
-
-- !!models.FastSubject
-    fastId: fst01047828
-    name: Organizational change
-
-- !!models.FastSubject
-    fastId: fst01081592
-    name: Psychology, Industrial
-
-- !!models.FastSubject
-    fastId: fst01047878
-    name: Organizational sociology
-
-- !!models.FastSubject
-    fastId: fst00842519
-    name: Business enterprises
-
-- !!models.FastSubject
-    fastId: fst00901785
-    name: Economic development
-
-- !!models.FastSubject
-    fastId: fst00901974
-    name: Economic history
-
-- !!models.FastSubject
-    fastId: fst00902025
-    name: Economic policy
-
-- !!models.FastSubject
-    fastId: fst00909323
-    name: Employment
-
-- !!models.FastSubject
-    fastId: fst00936003
-    name: Full employment policies
-
-- !!models.FastSubject
-    fastId: fst01161213
-    name: Unemployment
-
-- !!models.FastSubject
-    fastId: fst00990036
-    name: Labor market
-
-- !!models.FastSubject
-    fastId: fst01010167
-    name: Marketing
-
-- !!models.FastSubject
-    fastId: fst01010284
-    name: Marketing research
-
-- !!models.FastSubject
-    fastId: fst00797511
-    name: Advertising
-
-- !!models.FastSubject
-    fastId: fst00977128
-    name: International trade
-
-- !!models.FastSubject
-    fastId: fst01155007
-    name: Transportation
-
-- !!models.FastSubject
-    fastId: fst00902499
-    name: Education
-
-- !!models.FastSubject
-    fastId: fst01095153
-    name: Research
-
-- !!models.FastSubject
-    fastId: fst00876705
-    name: Continuing education
-
-- !!models.FastSubject
-    fastId: fst00797275
-    name: Adult education
-
-- !!models.FastSubject
-    fastId: fst00903005
-    name: Education, Higher
-
-- !!models.FastSubject
-    fastId: fst00997341
-    name: Libraries
-
-- !!models.FastSubject
-    fastId: fst00894188
-    name: Diplomacy
-
-- !!models.FastSubject
-    fastId: fst01055902
-    name: Peace-building
-
-- !!models.FastSubject
-    fastId: fst00993678
-    name: Law
-
-- !!models.FastSubject
-    fastId: fst00985154
-    name: Justice, Administration of
-
-- !!models.FastSubject
-    fastId: fst01001300
-    name: Local government
-
-- !!models.FastSubject
-    fastId: fst01069410
-    name: Political parties
-
-- !!models.FastSubject
-    fastId: fst01069781
-    name: Political science
-
-- !!models.FastSubject
-    fastId: fst00995690
-    name: Legislative bodies
-
-- !!models.FastSubject
-    fastId: fst01131943
-    name: State, The
-
-- !!models.FastSubject
-    fastId: fst00945690
-    name: Governmental investigations
-
-- !!models.FastSubject
-    fastId: fst01014893
-    name: Medicine
-
-- !!models.FastSubject
-    fastId: fst00952743
-    name: Health
-
-- !!models.FastSubject
-    fastId: fst00806153
-    name: Alternative medicine
-
-- !!models.FastSubject
-    fastId: fst00895158
-    name: Diseases
-
-- !!models.FastSubject
-    fastId: fst01013753
-    name: Medical care
-
-- !!models.FastSubject
-    fastId: fst01149694
-    name: Therapeutics
-
-- !!models.FastSubject
-    fastId: fst00898761
-    name: Drugs
-
-- !!models.FastSubject
-    fastId: fst01082238
-    name: Public health
-
-- !!models.FastSubject
-    fastId: fst01745346
-    name: Public safety
-
-- !!models.FastSubject
-    fastId: fst00971664
-    name: Industrial safety
-
-- !!models.FastSubject
-    fastId: fst01108176
-    name: Science
-
-- !!models.FastSubject
-    fastId: fst00973089
-    name: Information technology
-
-- !!models.FastSubject
-    fastId: fst00885059
-    name: Culture
-
-- !!models.FastSubject
-    fastId: fst00862898
-    name: Civilization
-
-- !!models.FastSubject
-    fastId: fst01122498
-    name: Social history
-
-- !!models.FastSubject
-    fastId: fst01430092
-    name: Communities
-
-- !!models.FastSubject
-    fastId: fst00972767
-    name: Information society
-
-- !!models.FastSubject
-    fastId: fst00930458
-    name: Food
-
-- !!models.FastSubject
-    fastId: fst00831042
-    name: Beverages
-
-- !!models.FastSubject
-    fastId: fst01122778
-    name: Social problems
-
-- !!models.FastSubject
-    fastId: fst01123192
-    name: Social service
-
-- !!models.FastSubject
-    fastId: fst01123875
-    name: Sociology
-
-- !!models.FastSubject
-    fastId: fst00810196
-    name: Anthropology
-
-- !!models.FastSubject
-    fastId: fst01071476
-    name: Population
-
-- !!models.FastSubject
-    fastId: fst01091713
-    name: Recreation
-
-- !!models.FastSubject
-    fastId: fst01130432
-    name: Sports
-
-- !!models.FastSubject
-    fastId: fst01153142
-    name: Tourism
-
-- !!models.FastSubject
-    fastId: fst01155558
-    name: Travel
-
-- !!models.FastSubject
-    fastId: fst00795379
-    name: Accounting
-
-- !!models.FastSubject
-    fastId: fst00798462
-    name: Aeronautics, Commercial
-
-- !!models.FastSubject
-    fastId: fst00801355
-    name: Agriculture
-
-- !!models.FastSubject
-    fastId: fst00802378
-    name: Air forces
-
-- !!models.FastSubject
-    fastId: fst00809209
-    name: Animal health
-
-- !!models.FastSubject
-    fastId: fst00814586
-    name: Armed Forces
-
-- !!models.FastSubject
-    fastId: fst00814802
-    name: Armies
-
-- !!models.FastSubject
-    fastId: fst00817721
-    name: Arts
-
-- !!models.FastSubject
-    fastId: fst00840551
-    name: Building
-
-- !!models.FastSubject
-    fastId: fst00852404
-    name: Charities
-
-- !!models.FastSubject
-    fastId: fst00854835
-    name: Children
-
-- !!models.FastSubject
-    fastId: fst00862177
-    name: City planning
-
-- !!models.FastSubject
-    fastId: fst00862730
-    name: Civil service
-
-- !!models.FastSubject
-    fastId: fst00864229
-    name: Climatic changes
-
-- !!models.FastSubject
-    fastId: fst00869279
-    name: Commerce
-
-- !!models.FastSubject
-    fastId: fst00870958
-    name: Community health services
-
-- !!models.FastSubject
-    fastId: fst00883965
-    name: Crops
-
-- !!models.FastSubject
-    fastId: fst00885002
-    name: Cultural industries
-
-- !!models.FastSubject
-    fastId: fst00889920
-    name: Delegated legislation
-
-- !!models.FastSubject
-    fastId: fst00898480
-    name: Drug abuse
-
-- !!models.FastSubject
-    fastId: fst00901592
-    name: Economic assistance
-
-- !!models.FastSubject
-    fastId: fst00908690
-    name: Emigration and immigration
-
-- !!models.FastSubject
-    fastId: fst00910200
-    name: Energy policy
-
-- !!models.FastSubject
-    fastId: fst00913250
-    name: Environmental policy
-
-- !!models.FastSubject
-    fastId: fst00918345
-    name: Expenditures, Public
-
-- !!models.FastSubject
-    fastId: fst01728849
-    name: Families
-
-- !!models.FastSubject
-    fastId: fst00920540
-    name: Family violence
-
-- !!models.FastSubject
-    fastId: fst00921161
-    name: Farm produce
-
-- !!models.FastSubject
-    fastId: fst00924477
-    name: Finance, Public
-
-- !!models.FastSubject
-    fastId: fst00926051
-    name: Fisheries
-
-- !!models.FastSubject
-    fastId: fst00932632
-    name: Forests and forestry
-
-- !!models.FastSubject
-    fastId: fst00945538
-    name: Government purchasing
-
-- !!models.FastSubject
-    fastId: fst00959445
-    name: Homeless persons
-
-- !!models.FastSubject
-    fastId: fst00961166
-    name: Hospitals
-
-- !!models.FastSubject
-    fastId: fst00962432
-    name: Housing policy
-
-- !!models.FastSubject
-    fastId: fst00963285
-    name: Human rights
-
-- !!models.FastSubject
-    fastId: fst00963360
-    name: Human services
-
-- !!models.FastSubject
-    fastId: fst00977184
-    name: Internet
-
-- !!models.FastSubject
-    fastId: fst00985320
-    name: Juvenile delinquency
-
-- !!models.FastSubject
-    fastId: fst00989798
-    name: Labor
-
-- !!models.FastSubject
-    fastId: fst00994081
-    name: Law reform
-
-- !!models.FastSubject
-    fastId: fst01011219
-    name: Mass media
-
-- !!models.FastSubject
-    fastId: fst01014407
-    name: Medical personnel
-
-- !!models.FastSubject
-    fastId: fst01016498
-    name: Mental health services
-
-- !!models.FastSubject
-    fastId: fst01016699
-    name: Mentally ill
-
-- !!models.FastSubject
-    fastId: fst00814030
-    name: Archives
-
-- !!models.FastSubject
-    fastId: fst01030128
-    name: Museums
-
-- !!models.FastSubject
-    fastId: fst00903161
-    name: Education, Preschool
-
-- !!models.FastSubject
-    fastId: fst01107958
-    name: Schools
-
-- !!models.FastSubject
-    fastId: fst01128842
-    name: Special education
-
-- !!models.FastSubject
-    fastId: fst01168486
-    name: Vocational education
-
-- !!models.FastSubject
-    fastId: fst01081976
-    name: Public administration
-
-- !!models.FastSubject
-    fastId: fst01075954
-    name: Pressure groups
-
-- !!models.FastSubject
-    fastId: fst00990260
-    name: Labor unions
-
-- !!models.FastSubject
-    fastId: fst01095299
-    name: Research institutes
-
-- !!models.FastSubject
-    fastId: fst00862627
-    name: Civil Rights
-
-- !!models.FastSubject
-    fastId: fst00882984
-    name: Crime
-
-- !!models.FastSubject
-    fastId: fst00883566
-    name: Criminology
-
-- !!models.FastSubject
-    fastId: fst00883246
-    name: Criminal justice, Administration of
-
-- !!models.FastSubject
-    fastId: fst01068398
-    name: Police
-
-- !!models.FastSubject
-    fastId: fst01077326
-    name: Prisons
-
-- !!models.FastSubject
-    fastId: fst00880260
-    name: Corrections
-
-- !!models.FastSubject
-    fastId: fst01136685
-    name: Subnational governments
-
-- !!models.FastSubject
-    fastId: fst00971852
-    name: Industries
-
-- !!models.FastSubject
-    fastId: fst00977053
-    name: International relations
-
-- !!models.FastSubject
-    fastId: fst01021386
-    name: Military policy
-
-- !!models.FastSubject
-    fastId: fst01023088
-    name: Minorities
-
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01033565
     name: National health services
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01033994
     name: Natural disasters
 
-- !!models.FastSubject
-    fastId: fst01035077
-    name: Navies
-
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01199093
     name: Older people
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01055758
     name: Peace
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01057086
     name: Pensions
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01057245
     name: People with disabilities
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01057383
     name: People with mental disabilities
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01057887
     name: Performing arts
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01070069
     name: Pollution
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01076319
     name: Primary care (Medicine)
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01078136
     name: Produce trade
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01083250
     name: Public welfare
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01085009
     name: Quality of life
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01088711
     name: Railroads
 
-- !!models.FastSubject
+- !!models.FastSubject 
+    fastId: fst01091713
+    name: Recreation
+
+- !!models.FastSubject 
     fastId: fst01092797
     name: Refugees
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01092888
     name: Refuse and refuse disposal
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01093291
     name: Rehabilitation
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01098511
     name: Roads
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01101498
     name: Rural development
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01116352
     name: Shipping
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01122550
     name: Social integration
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01123077
     name: Social security
 
-- !!models.FastSubject
+- !!models.FastSubject 
+    fastId: fst01130432
+    name: Sports
+
+- !!models.FastSubject 
     fastId: fst01132103
     name: Statistics
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01143876
     name: Taxation
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01144565
     name: Teaching
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01145830
     name: Telecommunication
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01148101
     name: Terrorism
 
-- !!models.FastSubject
+- !!models.FastSubject 
+    fastId: fst01153142
+    name: Tourism
+
+- !!models.FastSubject 
     fastId: fst01161152
     name: Unemployed
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01165977
     name: Veterinary medicine
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01168976
     name: Voluntarism
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01169492
     name: Wages
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01170328
     name: War
 
-- !!models.FastSubject
+- !!models.FastSubject 
     fastId: fst01173635
     name: Welfare recipients
+
+- !!models.FastSubject 
+    fastId: fst00797275
+    name: Adult education
+
+- !!models.FastSubject 
+    fastId: fst00814030
+    name: Archives
+
+- !!models.FastSubject 
+    fastId: fst00842519
+    name: Business enterprises
+
+- !!models.FastSubject 
+    fastId: fst00842262
+    name: Business
+
+- !!models.FastSubject 
+    fastId: fst01430092
+    name: Communities
+
+- !!models.FastSubject 
+    fastId: fst00876705
+    name: Continuing education
+
+- !!models.FastSubject 
+    fastId: fst00880260
+    name: Corrections
+
+- !!models.FastSubject 
+    fastId: fst00882984
+    name: Crime
+
+- !!models.FastSubject 
+    fastId: fst00883246
+    name: Criminal justice, Administration of
+
+- !!models.FastSubject 
+    fastId: fst00885059
+    name: Culture
+
+- !!models.FastSubject 
+    fastId: fst00895158
+    name: Diseases
+
+- !!models.FastSubject 
+    fastId: fst00901785
+    name: Economic development
+
+- !!models.FastSubject 
+    fastId: fst00902025
+    name: Economic policy
+
+- !!models.FastSubject 
+    fastId: fst00902116
+    name: Economics
+
+- !!models.FastSubject 
+    fastId: fst00902499
+    name: Education
+
+- !!models.FastSubject 
+    fastId: fst00903005
+    name: Education, Higher
+
+- !!models.FastSubject 
+    fastId: fst00903161
+    name: Education, Preschool
+
+- !!models.FastSubject 
+    fastId: fst00924349
+    name: Finance
+
+- !!models.FastSubject 
+    fastId: fst00924738
+    name: Financial services industry
+
+- !!models.FastSubject 
+    fastId: fst00930458
+    name: Food
+
+- !!models.FastSubject 
+    fastId: fst00952743
+    name: Health
+
+- !!models.FastSubject 
+    fastId: fst00971852
+    name: Industries
+
+- !!models.FastSubject 
+    fastId: fst00976708
+    name: International agencies
+
+- !!models.FastSubject 
+    fastId: fst00977053
+    name: International relations
+
+- !!models.FastSubject 
+    fastId: fst00977128
+    name: International trade
+
+- !!models.FastSubject 
+    fastId: fst00985154
+    name: Justice, Administration of
+
+- !!models.FastSubject 
+    fastId: fst00990036
+    name: Labor market
+
+- !!models.FastSubject 
+    fastId: fst00990260
+    name: Labor unions
+
+- !!models.FastSubject 
+    fastId: fst00993678
+    name: Law
+
+- !!models.FastSubject 
+    fastId: fst00997341
+    name: Libraries
+
+- !!models.FastSubject 
+    fastId: fst01001300
+    name: Local government
+
+- !!models.FastSubject 
+    fastId: fst01007141
+    name: Management
+
+- !!models.FastSubject 
+    fastId: fst01013753
+    name: Medical care
+
+- !!models.FastSubject 
+    fastId: fst01014893
+    name: Medicine
+
+- !!models.FastSubject 
+    fastId: fst01030128
+    name: Museums
+
+- !!models.FastSubject 
+    fastId: fst01068398
+    name: Police
+
+- !!models.FastSubject 
+    fastId: fst01077326
+    name: Prisons
+
+- !!models.FastSubject 
+    fastId: fst01081976
+    name: Public administration
+
+- !!models.FastSubject 
+    fastId: fst01082238
+    name: Public health
+
+- !!models.FastSubject 
+    fastId: fst01745346
+    name: Public safety
+
+- !!models.FastSubject 
+    fastId: fst01095153
+    name: Research
+
+- !!models.FastSubject 
+    fastId: fst01107958
+    name: Schools
+
+- !!models.FastSubject 
+    fastId: fst01108176
+    name: Science
+
+- !!models.FastSubject 
+    fastId: fst01122778
+    name: Social problems
+
+- !!models.FastSubject 
+    fastId: fst01123192
+    name: Social service
+
+- !!models.FastSubject 
+    fastId: fst01128842
+    name: Special education
+
+- !!models.FastSubject 
+    fastId: fst01155007
+    name: Transportation
+
+- !!models.FastSubject 
+    fastId: fst01168486
+    name: Vocational education
+
+- !!models.FastSubject 
+    fastId: fst00798462
+    name: Aeronautics, Commercial
+
+- !!models.FastSubject 
+    fastId: fst00801355
+    name: Agriculture
+
+- !!models.FastSubject 
+    fastId: fst00802378
+    name: Air forces
+
+- !!models.FastSubject 
+    fastId: fst00795379
+    name: Accounting
+
+- !!models.FastSubject 
+    fastId: fst00809209
+    name: Animal health
+
+- !!models.FastSubject 
+    fastId: fst00814586
+    name: Armed Forces
+
+- !!models.FastSubject 
+    fastId: fst00814802
+    name: Armies
+
+- !!models.FastSubject 
+    fastId: fst00817721
+    name: Arts
+
+- !!models.FastSubject 
+    fastId: fst00840551
+    name: Building
+
+- !!models.FastSubject 
+    fastId: fst00852404
+    name: Charities
+
+- !!models.FastSubject 
+    fastId: fst00854835
+    name: Children
+
+- !!models.FastSubject 
+    fastId: fst00862177
+    name: City planning
+
+- !!models.FastSubject 
+    fastId: fst00862730
+    name: Civil service
+
+- !!models.FastSubject 
+    fastId: fst00864229
+    name: Climatic changes
+
+- !!models.FastSubject 
+    fastId: fst00869279
+    name: Commerce
+
+- !!models.FastSubject 
+    fastId: fst00870958
+    name: Community health services
+
+- !!models.FastSubject 
+    fastId: fst00883965
+    name: Crops
+
+- !!models.FastSubject 
+    fastId: fst00885002
+    name: Cultural industries
+
+- !!models.FastSubject 
+    fastId: fst00889920
+    name: Delegated legislation
+
+- !!models.FastSubject 
+    fastId: fst00898480
+    name: Drug abuse
+
+- !!models.FastSubject 
+    fastId: fst00901592
+    name: Economic assistance
+
+- !!models.FastSubject 
+    fastId: fst00908690
+    name: Emigration and immigration
+
+- !!models.FastSubject 
+    fastId: fst00910200
+    name: Energy policy
+
+- !!models.FastSubject 
+    fastId: fst00913250
+    name: Environmental policy
+
+- !!models.FastSubject 
+    fastId: fst00918345
+    name: Expenditures, Public
+
+- !!models.FastSubject 
+    fastId: fst01728849
+    name: Families
+
+- !!models.FastSubject 
+    fastId: fst00920540
+    name: Family violence
+
+- !!models.FastSubject 
+    fastId: fst00921161
+    name: Farm produce
+
+- !!models.FastSubject 
+    fastId: fst00924477
+    name: Finance, Public
+
+- !!models.FastSubject 
+    fastId: fst00926051
+    name: Fisheries
+
+- !!models.FastSubject 
+    fastId: fst00932632
+    name: Forests and forestry
+
+- !!models.FastSubject 
+    fastId: fst00945538
+    name: Government purchasing
+
+- !!models.FastSubject 
+    fastId: fst00959445
+    name: Homeless persons
+
+- !!models.FastSubject 
+    fastId: fst00961166
+    name: Hospitals
+
+- !!models.FastSubject 
+    fastId: fst00096243
+    name: Housing policy
+
+- !!models.FastSubject 
+    fastId: fst00963285
+    name: Human rights
+
+- !!models.FastSubject 
+    fastId: fst00963360
+    name: Human services
+
+- !!models.FastSubject 
+    fastId: fst00977184
+    name: Internet
+
+- !!models.FastSubject 
+    fastId: fst00985320
+    name: Juvenile delinquency
+
+- !!models.FastSubject 
+    fastId: fst00989798
+    name: Labor
+
+- !!models.FastSubject 
+    fastId: fst00994081
+    name: Law reform
+
+- !!models.FastSubject 
+    fastId: fst01011219
+    name: Mass media
+
+- !!models.FastSubject 
+    fastId: fst01014407
+    name: Medical personnel
+
+- !!models.FastSubject 
+    fastId: fst01016498
+    name: Mental health services
+
+- !!models.FastSubject 
+    fastId: fst01016699
+    name: Mentally ill
+
+- !!models.FastSubject 
+    fastId: fst01021386
+    name: Military policy
+
+- !!models.FastSubject 
+    fastId: fst01023088
+    name: Minorities
+
+- !!models.FastSubject 
+    fastId: fst01035077
+    name: Navies
 
