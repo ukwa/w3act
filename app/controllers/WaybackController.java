@@ -46,10 +46,6 @@ public class WaybackController extends Controller {
 		return prefix;
 	}
 	
-	public static String getWaybackQueryEndpoint() {
-		return Play.application().configuration().getString("application.wayback.query.path");
-	}
-
 	@Security.Authenticated(SecuredController.class)
 	public static Result wayback(String url) throws ActException, ClientProtocolException, IOException {
 		

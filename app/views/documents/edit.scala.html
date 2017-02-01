@@ -277,10 +277,13 @@
 					}
 				</div>
 			}
+			<!-- Only eBooks available at present.
+                options(List("", Document.Type.BOOK.toString,
+                    Document.Type.JOURNAL_ARTICLE.toString,
+                    Document.Type.JOURNAL_ISSUE.toString)),
+			 -->
 			@select(form("type"),
-				options(List("", Document.Type.BOOK.toString,
-					Document.Type.JOURNAL_ARTICLE.toString,
-					Document.Type.JOURNAL_ISSUE.toString)),
+                options(List("", Document.Type.BOOK.toString)),
 				editable,
 				'_label -> "Submission Type", 'onchange -> "toggleVisibility()")
 			<div id="book_general">
