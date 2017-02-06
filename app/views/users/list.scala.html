@@ -111,7 +111,8 @@
 					@header("name", "Name")
 					@header("email", "Email")
 					@header("roles.name", "Role")
-					@header("organisation.title", "Organisation")
+                    @header("organisation.title", "Organisation")
+                    @header("ddhaptUser", "Access DDHAPT?")
 				</tr>
 			</thead>
 			<tbody>
@@ -127,6 +128,7 @@
 					} else {
 					  <td></td>
 					}
+					<td>@if( curator.ddhaptUser ) { yes } else { no }</td>
                 </tr>
                 }
 			}

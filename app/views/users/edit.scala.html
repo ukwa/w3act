@@ -132,7 +132,7 @@
 	     	</div>
 	     	
 	     	@if((admin.hasRole("sys_admin") || admin.hasRole("archivist") ) && ApplicationController.getDDHAPTStatus()) {
-			@templates.checkbox(userForm("ddhaptUser"), true, '_label -> "show DDHAPT start page")(
+			@templates.checkbox(userForm("ddhaptUser"), true, '_label -> "Can access DDHAPT? (also sets DDHAPT as the start page)")(
 				helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 			)
 			}
