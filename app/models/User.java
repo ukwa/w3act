@@ -259,6 +259,27 @@ public class User extends ActModel {
 
     @JsonIgnore
     public boolean isLDLMember() {
+    	String orgstr = getUserOrg();
+		if ( orgstr.equals("BL") || orgstr.equals("NLW") || 
+				orgstr.equals("NLS") || orgstr.equals("Bodleian") || 
+				orgstr.equals("CAM") || orgstr.equals("TCD") ) {
+			return true;
+		}
+
+    	return false;
+    }
+
+    @JsonIgnore
+    public boolean isBLMember() {
+		if ( getUserOrg().equals("BL") ) {
+			return true;
+		}
+
+    	return false;
+    }
+    
+    @JsonIgnore
+    private String getUserOrg() {
     	String orgstr = "";
     	if( organisation != null ) {
     		orgstr = organisation.field_abbreviation;
@@ -267,13 +288,7 @@ public class User extends ActModel {
     		Logger.warn("Using user.affiliation rather than user.organisation (which is null)...");
     	}
 		Logger.debug("organisation ::::::::::::::"+ orgstr);
-		if ( orgstr.equals("BL") || orgstr.equals("NLW") || 
-				orgstr.equals("NLS") || orgstr.equals("Bodleian") || 
-				orgstr.equals("CAM") || orgstr.equals("TCD") ) {
-			return true;
-		}
-
-    	return false;
+		return orgstr;
     }
 
     /**

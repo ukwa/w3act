@@ -98,7 +98,7 @@
 								<li><a href="@routes.PasswordController.edit()">Change Password</a></li>
 							</ul>
 						</li>
-						@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.isLDLMember() && ApplicationController.getDDHAPTStatus()) {
+						@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.ddhaptUser && user.isBLMember() && ApplicationController.getDDHAPTStatus()) {
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Document Harvesting<b class="caret"></b></a>
 							<ul class="dropdown-menu">
