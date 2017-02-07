@@ -273,6 +273,14 @@ public class User extends ActModel {
     	}
     	return false;
     }
+    
+    @JsonIgnore
+    public boolean canWatchTarget(Target target) {
+    	if( canUseDDHAPT() && target.authorUser != null && target.authorUser.id.equals(this.id) ) {
+    		return true;
+    	}
+    	return false;
+    }
 
     @JsonIgnore
     public boolean isLDLMember() {

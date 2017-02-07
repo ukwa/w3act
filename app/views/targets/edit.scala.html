@@ -236,9 +236,7 @@
                   }
                 }
             </a></li>
-            @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.isLDLMember() && ApplicationController.getDDHAPTStatus()) {
-               <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
-            }
+            <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
         </ul>
     </div>
 
@@ -1157,13 +1155,17 @@
          @if( id != null ){
          @defining(Target.find.byId(id)) { target =>
             <div class="tab-pane fade" id="watchedTarget">
-                @if(!target.hasDocuments() && ( user.hasArchivistRights() || ( user.hasExpertUserRights() && user.id.equals(target.authorUser.id) ) ) ) {
+                
+                <p>Note that you can only edit these settings if your account has been permitted access to the Document Harvester, and if you own this target.</p>
+                        
+                @if(!target.hasDocuments() &&  user.canWatchTarget(target) ) {
                     @checkbox(targetForm("watched"), true, '_label -> "Watched?", '_id -> "watched", 'onclick -> "javascript:display();")
                 } else {
                     @checkbox(targetForm("watched"), false, '_label -> "Watched?", '_id -> "watched")
                 }
             <div id="division">
-            @inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> Html("Document URL Scheme:<br/>(it should not be necessary to set a document URL scheme, but this can be used to limit the scope of the document detection process. It cannot be used to grow the scope of the crawl)"))
+            
+            @inputText(targetForm("watchedTarget.documentUrlScheme"), user.canWatchTarget(target), '_label -> Html("Document URL Scheme:<br/>(it should not be necessary to set a document URL scheme, but this can be used to limit the scope of the document detection process. It cannot be used to grow the scope of the crawl)"))
 
           @if(Target.findById(id).watchedTarget != null) {
           <div class="row padding-10">
@@ -1174,7 +1176,7 @@
                                 <table>
                                     @for(journalTitle <- target.watchedTarget.journalTitles) {
                                         <tr>
-                                            @if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasExpertUserRights())) {
+                                            @if(user.canWatchTarget(target)) {
                                                 <td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
                                             } else {
                                                 @journalTitle.title
@@ -1182,7 +1184,7 @@
                                         </tr>
                                     }
                                 </table>
-                                @if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasExpertUserRights())) {
+                                @if(user.canWatchTarget(target)) {
                                     <a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">
                                         New Journal Title
                                     </a>
@@ -1198,7 +1200,7 @@
                             <label class="col-sm-6 control-label">Journal Titles</label>
                             <div class="col-sm-6">
 
-                                @if(target.authorUser != null && (target.authorUser.id.equals(user.id) || user.hasExpertUserRights())) {
+                                @if(user.canWatchTarget(target)) {
                                         <a class="btn btn-success" disabled>New Journal Title</a>
                                 }
                             </div>
@@ -1216,7 +1218,7 @@
                 @helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
                     <div class="scroll-box">
                         @for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
-                            @checkbox2(targetForm(fastSubject.fastId), true, '_label -> fastSubject.name)(
+                            @checkbox2(targetForm(fastSubject.fastId), user.canWatchTarget(target), '_label -> fastSubject.name)(
                                 helper.FieldConstructor(templates.checkboxFieldConstructor.f)
                             )
                         }
