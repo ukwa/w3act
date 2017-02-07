@@ -88,7 +88,7 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Users & Agencies<b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li><a href="@routes.OrganisationController.index()">Organisations</a></li>
-								<li><a href="@routes.UserController.index()">Curators</a></li>
+								<li><a href="@routes.UserController.index()">Users</a></li>
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 									<li><a href="@routes.RoleController.index()">Roles</a></li>
 								}
@@ -98,7 +98,7 @@
 								<li><a href="@routes.PasswordController.edit()">Change Password</a></li>
 							</ul>
 						</li>
-						@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.ddhaptUser && user.isBLMember() && ApplicationController.getDDHAPTStatus()) {
+						@if(user.canUseDDHAPT()) {
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Document Harvesting<b class="caret"></b></a>
 							<ul class="dropdown-menu">
@@ -108,7 +108,8 @@
 							</ul>
 						</li>
 						}
-						<li><a href="@routes.ContactController.index">Contact</a></li>
+                        <li><a href="@routes.ApplicationController.index">About</a></li>
+                        <li><a href="@routes.ContactController.index">Contact</a></li>
 					</ul>
 					<div class="navbar-right">
 						<span class="navbar-text white-text">@user.name (@user.email)&nbsp;&nbsp;</span> 

@@ -43,6 +43,8 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import controllers.ApplicationController;
+
 /**
  * User entity managed by Ebean
  */
@@ -256,6 +258,21 @@ public class User extends ActModel {
     public boolean hasExpertUserRights() { return hasArchivistRights() || isExpertUser(); }
     @JsonIgnore
     public boolean hasUserRights() { return hasExpertUserRights() || isUser(); }
+    
+    @JsonIgnore
+    public boolean canUseDDHAPT() {
+    	// If DDHAPT is enabled:
+    	if( ApplicationController.getDDHAPTStatus() ) {
+    		// Check the user's role permits DDHAPT access (maybe allow all users?):
+        	if((hasRole("sys_admin") || hasRole("archivist") || hasRole("expert_user"))) {
+        		// If user us flagged as a DDHAPT user, and is a member of the British Library (to be opened up to isLDLMember later):
+        		if( ddhaptUser && isBLMember() ) {
+        			return true;
+        		}
+        	}
+    	}
+    	return false;
+    }
 
     @JsonIgnore
     public boolean isLDLMember() {
