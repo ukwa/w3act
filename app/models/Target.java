@@ -2087,7 +2087,7 @@ public class Target extends Model {
 	public Date getNextScheduledCrawlDate() throws Exception {
 		Calendar now = Calendar.getInstance();
 		// Cases where no crawl is scheduled:
-		if( this.crawlEndDate != null && now.after(this.crawlEndDate)) {
+		if( this.crawlEndDate != null && now.getTime().after(this.crawlEndDate)) {
 			return null;
 		}
 		if( this.crawlStartDate == null || Const.CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency) || 
