@@ -244,7 +244,7 @@
 			<input type="hidden" name="watchedTarget.target.title" value="@form("watchedTarget.target.title").value">
 			
 			@inputText(form("title"), editable, '_label -> docTitleLabel(document.isJournalIssue))
-			@inputText(form("title2"), editable, '_label -> "")
+			@inputText(form("title2"), editable, '_label -> "Sub-title")
 			@inputText(form("doi"), editable, '_label -> "DOI (Digital Object Identifier)")
 			@inputText(form("publicationDate"), editable, '_label -> "Publication Date", 'onchange -> "fillYear()")
 			@inputText(form("publicationYear"), editable, '_label -> "Year of Publication")
