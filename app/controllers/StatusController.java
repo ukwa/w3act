@@ -86,6 +86,8 @@ public class StatusController extends AbstractController {
 			URL obj = new URL(url);
 			HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
 			connection.setRequestMethod("HEAD");
+			connection.setConnectTimeout(10*1000);
+			connection.setReadTimeout(10*1000);
 			return connection.getResponseCode() == 200;
 		} catch (IOException e) {
 			return false;
