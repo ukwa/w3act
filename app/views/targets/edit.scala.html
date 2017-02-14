@@ -996,8 +996,8 @@
                                 } else {
                                     yes
                                 }
-                                <br>
-                                @if( id != null ) {
+                                <br><!-- N.B. DISABLE FOR NOW -->
+                                @if( id != null && false ) {
                                     <a class="btn btn-success" href="@routes.LoginCredentialsController.edit(id)">
                                         @if(! "".equals(targetForm("secretId").value) ) {Add} else {Change} Login Credentials
                                     </a>

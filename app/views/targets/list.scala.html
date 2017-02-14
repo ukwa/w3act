@@ -298,7 +298,8 @@
 									<!-- @header("created", "Created")	                
 									@header("qa_status", "Open UKWA Licence status")	
 									 -->
-									<td>Next Crawl Date</td>
+                                    @header("crawlFrequency", "Crawl Frequency")
+                                    <td>Scheduled for crawl?</td>
 				                </tr>
 							</thead>
 							<tbody>
@@ -318,7 +319,8 @@
 											N/A
 										}
 									</td>
-									<td><abbr title="@target.getNextScheduledCrawlDate()">@target.getNextScheduledCrawlDateAsString()</abbr></td>
+									<td>@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue</td>
+									<td><abbr title="Start Date: @target.getCrawlStartDateText()">@target.isScheduledToCrawl()</abbr></td>
 				                </tr>
 				                }
 							</tbody>

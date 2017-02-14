@@ -2083,18 +2083,27 @@ public class Target extends Model {
 		return crawlEndDateISO;
 	}
 	
-	@JsonIgnore
-	public Date getNextScheduledCrawlDate() throws Exception {
+	@JsonIgnore 
+	public boolean isScheduledToCrawl() {
 		Calendar now = Calendar.getInstance();
 		// Cases where no crawl is scheduled:
 		if( this.crawlEndDate != null && now.getTime().after(this.crawlEndDate)) {
-			return null;
+			return false;
 		}
 		if( this.crawlStartDate == null || Const.CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency) || 
 				Const.CrawlFrequency.DOMAINCRAWL.name().equals(crawlFrequency)) {
-			return null;
+			return false;
 		}
+		
+		return true;
+	}
+	
+	@JsonIgnore
+	public Date getNextScheduledCrawlDate() throws Exception {
+		// Skip if not scheduled:
+		if( ! this.isScheduledToCrawl()) return null;
 		// Otherwise, determine the next scheduled launch:
+		Calendar now = Calendar.getInstance();
 		Calendar scheduled = Calendar.getInstance();
 		scheduled.setTime(crawlStartDate);
 		// Ensure move to a recent year if the start date is a long time ago:
