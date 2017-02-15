@@ -546,7 +546,7 @@ public class TargetController extends AbstractController {
     /**
      * @return
      */
-    public static Result allTargetsAsJson() {
+    public static Result allTargetsIDsAsJson() {
         List<Target> targets = Target.findAllActive();
         Logger.debug("all targets: " + targets.size());
         List<Long> target_ids = new ArrayList<Long>(targets.size());
@@ -554,6 +554,23 @@ public class TargetController extends AbstractController {
             target_ids.add(t.id);
         }
         return ok(Json.toJson(target_ids));
+    }
+
+    /**
+     * @return
+     */
+    public static Result allTargetsAsJson(int pageNo, int pageLength) {
+        List<Target> targets = Target.findAllActive();
+        int offset = pageNo * pageLength;
+        if( offset > targets.size()) {
+        	return notFound("There are only "+targets.size()+" targets!");
+        }
+        List<Target> targets_page = new ArrayList<Target>(pageLength);
+        for(int i = 0; i < pageLength; i++) {
+        	if( offset+i >= targets.size()) break;
+        	targets_page.add(targets.get(offset+i));
+        }
+        return ok(Json.toJson(targets_page));
     }
 
     /**
@@ -963,6 +980,27 @@ public class TargetController extends AbstractController {
     }
 
     /**
+     * Lists IDs for all targets of a given frequency, no matter what the status/schedule:
+     *
+     * @param frequency
+     * @return
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result idsForFrequencyJson(String frequency) {
+        JsonNode jsonData = null;
+        if(frequency != null) {
+            List<Target> targets = new ArrayList<Target>();
+            targets = Target.getByFrequency(frequency);
+            List<Long> targetIds = new ArrayList<Long>();
+            for(Target t : targets) {
+                targetIds.add(t.id);
+            }
+            jsonData = Json.toJson(targetIds);
+        }
+        return ok(jsonData);
+    }
+    
+    /**
      * This method provides data exports for each possible crawl-frequency.
      * For each frequency this contains a list of Targets and associated
      * crawl metadata.
@@ -980,7 +1018,7 @@ public class TargetController extends AbstractController {
         }
         return ok(jsonData);
     }
-
+    
     /**
      * As above, but only lists IDs
      *

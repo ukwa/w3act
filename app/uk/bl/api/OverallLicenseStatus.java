@@ -230,9 +230,14 @@ public class OverallLicenseStatus {
 			return nurl.startsWith(pnurl);
 		} else if( ScopeType.subdomains.name().equals(scope)) {
 			String pdom = parent.domain;
-			pdom = pdom.replaceFirst("^www\\.", "");
-			Logger.debug("Checking domain scope for: "+child.domain+" under "+pdom);
-			return child.domain.endsWith(pdom);
+			if( pdom != null) {
+				pdom = pdom.replaceFirst("^www\\.", "");
+				Logger.debug("Checking domain scope for: "+child.domain+" under "+pdom);
+				return child.domain.endsWith(pdom);
+			} else {
+				Logger.error("The DOMAIN should not be null for " + parent);
+				return false;
+			}
 		} else {
 			Logger.error("UNSUPPORTED SCOPE "+scope);
 		}

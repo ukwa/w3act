@@ -1475,7 +1475,7 @@ public class Target extends Model {
 	 * @param frequency
 	 * @return
 	 */
-	private static List<Target> getByFrequency(String frequency) {
+	public static List<Target> getByFrequency(String frequency) {
 		//
 		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
 		if( frequency.equalsIgnoreCase("all") ) {
