@@ -162,7 +162,7 @@ public class Target extends Model {
 //    @OrderBy("createdAt DESC")
 	public List<CrawlPermission> crawlPermissions;
 
-	@JsonProperty
+	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<Instance> instances;
 
@@ -171,10 +171,23 @@ public class Target extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
 	public List<License> licenses;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
 	public List<Subject> subjects;
+    
+    @JsonProperty
+    @Transient
+    public List<Long> getSubjectIds() {
+    	List<Long> sids = new ArrayList<Long>();
+    	if( this.subjects != null ) {
+    		for( Subject s : subjects) {
+    			sids.add(s.id);
+    		}
+    	}
+    	return sids;
+    }
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
@@ -802,7 +815,7 @@ public class Target extends Model {
 	public static List<Target> findAllActive() {
 		List<Target> res = new ArrayList<Target>();
 		ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true);
-		res = ll.findList();
+		res = ll.orderBy(Const.UPDATED_AT + " " + Const.DESC).findList();
 		return res;
 	}
 

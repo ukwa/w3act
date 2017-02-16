@@ -90,6 +90,7 @@ public class Taxonomy extends ActModelMappedSuperClass {
     public List<Highlight> highlights;
 
 	// Used during import:
+	@JsonIgnore
     @Transient
     public String parentName;
 	

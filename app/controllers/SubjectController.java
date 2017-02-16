@@ -275,17 +275,30 @@ public class SubjectController extends AbstractController {
      */
     public static Result sites(Long id) {
         return redirect(routes.TargetController.subjectTargets(0, Const.TITLE, Const.ASC, "", id));
-    }  
+    }
     
-
+    /**
+     * 
+     * @return
+     */
+	@BodyParser.Of(BodyParser.Json.class)
+    public static Result getAllSubjects() {
+    	List<Subject> subjects = Subject.getFirstLevelSubjects();
+    	if( subjects == null || subjects.size() == 0 ) {
+    		Logger.info("No subjects found!");
+    		return notFound("No subjects in database!");
+    	}
+    	Logger.info("Found " + subjects.size() + " subjects.");
+    	JsonNode jsonData = Json.toJson(subjects);
+        return ok(jsonData);
+    }    
     
-
     /**
      * This method presents subjects in a tree form.
      * @param url
      * @return
      */
-    private static JsonNode getSubjectsTree(String url) {
+    private static JsonNode getSubjectsTreeByUrl(String url) {
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
