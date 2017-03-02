@@ -121,9 +121,10 @@ public class TargetController extends AbstractController {
             url = url.replace("https://", "");
         }
 
-        //if(url.startsWith("www.")) {
-        //    url = url.replace("www.", "");
-        //}
+        // Re-enable www-ignoring part of search for lookup:
+        if(url.startsWith("www.")) {
+            url = url.replace("www.", "");
+        }
 
         if(url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
@@ -216,6 +217,7 @@ public class TargetController extends AbstractController {
             url = url.replace("https://", "");
         }
 
+        // The list page does NOT match so easily, www prefix NOT ignored:
         //if(url.startsWith("www.")) {
         //    url = url.replace("www.", "");
         //}
@@ -338,6 +340,7 @@ public class TargetController extends AbstractController {
             url = url.replace("https://", "");
         }
 
+        // Leave this out for now, making AJAX matches more precise:
         //if(url.startsWith("www.")) {
         //    url = url.replace("www.", "");
         //}
