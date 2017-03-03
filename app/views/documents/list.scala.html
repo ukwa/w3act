@@ -177,7 +177,8 @@
 						@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
 						@header("documentUrl", "Document", currentSortBy, currentOrder, link)
 						@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
-						@header("updatedAt", "Last Updated", currentSortBy, currentOrder, link)
+                        @header("updatedAt", "Last Updated", currentSortBy, currentOrder, link)
+                        @header("publicationDate", "Publication Date", currentSortBy, currentOrder, link)
 						@header("type", "Type", currentSortBy, currentOrder, link)
 						<th>Action</th>
 					</tr>
@@ -195,6 +196,7 @@
                         <td>@archiveAndLive(document.documentUrl, "_blank", document.waybackTimestamp)</td>
 						<td>@uk.bl.api.Utils.INSTANCE.dayCount(document.waybackTimestamp)</td>
 						<td>@uk.bl.api.Utils.INSTANCE.dayCount(document.updatedAt)</td>
+                        <td>@document.publicationDate</td>
 						<td>@document.getType()</td>
 							<td>
 								@if(document.isEditableFor(user)) {
