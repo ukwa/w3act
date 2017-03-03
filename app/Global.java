@@ -17,9 +17,13 @@ import play.libs.F.*;
 import static play.mvc.Results.*;
 
 public class Global extends GlobalSettings {
+	
+	private String app_context = "/act";
     
     @Override
 	public void onStart(Application app) {
+		// Record context:
+		app_context = play.Play.application().configuration().getString("application.context");
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
     	Boolean omitInstances = play.Play.application().configuration().getBoolean("application.data.omit_instances");
@@ -79,9 +83,16 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onHandlerNotFound(RequestHeader request) {
-        return Promise.<Result>pure(notFound(
-            views.html.notFoundPage.render(request.uri())
-        ));
+    	if( request.path().equals(app_context+"/")) {
+    		Logger.warn("Redirecting " + request.path());
+    		return  Promise.<Result>pure(
+    					movedPermanently(app_context)
+    				);
+    	} else {
+    		return Promise.<Result>pure(notFound(
+    				views.html.notFoundPage.render(request.uri())
+    				));
+    	}
     }
     
     @Override
