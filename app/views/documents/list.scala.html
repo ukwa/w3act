@@ -196,7 +196,7 @@
                         <td>@archiveAndLive(document.documentUrl, "_blank", document.waybackTimestamp)</td>
 						<td>@uk.bl.api.Utils.INSTANCE.dayCount(document.waybackTimestamp)</td>
 						<td>@uk.bl.api.Utils.INSTANCE.dayCount(document.updatedAt)</td>
-                        <td>@document.publicationDate</td>
+                        <td>@uk.bl.api.Utils.INSTANCE.convertToDateString(document.publicationDate)</td>
 						<td>@document.getType()</td>
 							<td>
 								@if(document.isEditableFor(user)) {
