@@ -3,7 +3,8 @@
 # ~~~~
 
 # Catch trailing "/", we'll redirect them - h/t http://stackoverflow.com/a/13196239
-GET     /*path/                             controllers.ApplicationController.untrail(path: String)
+# ANJ: This plays havoc with Wayback playback, so disabling for now.
+#GET     /*path/                             controllers.ApplicationController.untrail(path: String)
 
 # The home page
 GET     /                                   controllers.ApplicationController.home()
