@@ -5,1087 +5,1142 @@
 @import monitrix.monitrix_link
 
 @script = {
-	<script>
-    // This is the code that switches to the other page.
-    // We do this via JavaScript, and not a normal hyperlink,
-    // because that way we can communicate the current nav pill status as part of the link URL.
-    function switchPage() {
-      var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
-      var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
-      
-      // And finally we just attach the href to view.html and forward the browser. 
-      // An example URL would be: 'view.html#npld-scope'
-      window.location.href="@routes.TargetController.edit(target.id)" + href;
-    }
-  
-    $(document).ready(function() {
-      // This happens right after the document is loaded.
-      // Our nav pills won't do anything by themselves, so we need to make sure we
-      // check if the current URL has a #-component and if so, we activate the
-      // appropriate pill.
-      var hash = window.location.hash;
-      if (hash.indexOf('#') == 0) {
-        // We have a hash - let's see if it matches with nav pill href
-        var el = $('#myNavbar a[href=' + hash + ']');
-      
-        // We have an <a> with this ID, and it has a parent node that's an <li>
-        if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
-          // So we activate this nav pill
-          $(el).tab('show');
-          window.scrollTo(0, 0);
-        }
-      }
-      
-      // This is completely optional!! But it keeps the hash in our current URL bar
-      // in sync with the tab we have selected, so the pages stay nice and bookmarkable
-      $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        window.location.hash = ($(e.target).attr('href'));
-        window.scrollTo(0, 0);
-      })
-      
-		wayBackLoader();
-      
-    });	
-	</script>
+    <script>
+            // This is the code that switches to the other page.
+            // We do this via JavaScript, and not a normal hyperlink,
+            // because that way we can communicate the current nav pill status as part of the link URL.
+            function switchPage() {
+                var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
+                var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+
+                // And finally we just attach the href to view.html and forward the browser.
+                // An example URL would be: 'view.html#npld-scope'
+                window.location.href = "@routes.TargetController.edit(target.id)" + href;
+            }
+
+            $(document).ready(function () {
+                // This happens right after the document is loaded.
+                // Our nav pills won't do anything by themselves, so we need to make sure we
+                // check if the current URL has a #-component and if so, we activate the
+                // appropriate pill.
+                var hash = window.location.hash;
+                if (hash.indexOf('#') == 0) {
+                    // We have a hash - let's see if it matches with nav pill href
+                    var el = $('#myNavbar a[href=' + hash + ']');
+
+                    // We have an <a> with this ID, and it has a parent node that's an <li>
+                    if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
+                        // So we activate this nav pill
+                        $(el).tab('show');
+                        window.scrollTo(0, 0);
+                    }
+                }
+
+                // This is completely optional!! But it keeps the hash in our current URL bar
+                // in sync with the tab we have selected, so the pages stay nice and bookmarkable
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    window.location.hash = ($(e.target).attr('href'));
+                    window.scrollTo(0, 0);
+                })
+
+                wayBackLoader();
+
+            });
+    </script>
 }
 
 @style = {
     <style>
-    #tab-content {
-      padding:20px;
-    }
-    
-    .tab-pane {
-      padding:20px 0;
-    }
+            #tab-content {
+                padding: 20px;
+            }
+
+            .tab-pane {
+                padding: 20px 0;
+            }
     </style>
 }
-    
+
 @main("Target %s".format(target.title), user, script, style) {
-   	<div class="page-header">
-	    <h1><a href="@routes.TargetController.index()">Targets > </a>@target.title</h1>
-	</div>
+    <div class="page-header">
+        <h1><a href="@routes.TargetController.index()">Targets > </a>@target.title</h1>
+    </div>
 
-	@if(target.active != null && !target.active) {    	
-	<div class="padding-20">
-		<div class="alert alert-info">
-			Please be aware that this is not the current version of this record.
-			<a href="@routes.TargetController.view(target.id)">Click here for the most recent revision</a></li>
-		</div>
-	</div>	
-	}
-	
-	<div class="row">
-	  <div class="col-md-8 col-sm-8 col-xs-12">
-	
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="#">View</a></li>
-		@if(user.hasArchivistRights || user.hasExpertUserRights ||
-				(user.isUser && target.authorUser != null && user.id == target.authorUser.id)) {
-			<li><a onclick="switchPage(); return false;" href="id">Edit</a></li>
-		}
-	</ul>
-	      
-	@warningmessage(flash)
-	
-	<div class="tab-content padding-20">
+    @if(target.active != null && !target.active) {
+        <div class="padding-20">
+            <div class="alert alert-info">
+                Please be aware that this is not the current version of this record.
+                <a href="@routes.TargetController.view(target.id)">Click here for the most recent revision</a></li>
+            </div>
+        </div>
+    }
 
-		<ul class="nav nav-pills" id="myNavbar">
-        	<li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
-		   	<li><a href="#metadata" data-toggle="tab">Metadata</a></li>
-        	<li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
-			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-				@if(target.isInScopeAllOrInheritedWithoutLicense()) {
-					<font color="green">(+)</font>
-				} else {
-					<font color="red">(-)</font>
-				}		        
-			</a></li>
-		    <li><a href="#licensing" data-toggle="tab">UKWA Licencing
-		    	@if(target.indicateLicenses()) {
-					<font color="green">(+)</font>
-				} else {
-				  @if( target.getOverallLicenseStatus().pendingIncludingInherited ) {
-					<font color="orange">(~)</font>
-				  } else {
-					<font color="red">(-)</font>
-				  }
-				}		        
-		    </a></li>
-		    @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.isLDLMember() && ApplicationController.getDDHAPTStatus()) {
-		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
-		    }
-      	</ul>
-	</div>
-	
-	<div id="myTabContent" class="tab-content">
-		<div class="tab-pane padding-20 fade active in" id="overview">
-		
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
-						    <div class="col-sm-6">
-				            	@target.title
-							</div>
-						</div>
-					</div>
-		     	</div>
+    <div class="row">
+        <div class="col-md-8 col-sm-8 col-xs-12">
 
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								Seed URL(s) <font color="red">*</font>
-							</label>
-						    <div class="col-sm-6">
-								@for((fieldUrl,index) <- target.fieldUrls.zipWithIndex) {
-									@if( index == 0 ) {<strong>}
-									<a href="@fieldUrl.url">@fieldUrl.url</a>
-									@if( index == 0 ) {</strong>}@if( index == 0 && target.fieldUrls.size > 1 ){&nbsp;(primary seed)}
-									<br/>
-								}
-							</div>
-						</div>
-					</div>
-		     	</div>	 
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#">View</a></li>
+                @if(user.hasArchivistRights || user.hasExpertUserRights ||
+                        (user.isUser && target.authorUser != null && user.id == target.authorUser.id)) {
+                    <li><a onclick="switchPage();
+                    return false;" href="id">Edit</a></li>
+                }
+            </ul>
 
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="Aliases" class="col-sm-6 control-label">Aliases:</label>
-						    <div class="col-sm-6">
-		 				  		@target.synonyms
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label for="" class="col-sm-6 control-label">
-                              Record creation date:
-                            </label>
-                            <div class="col-sm-6">
-                            @target.toCreatedAtString
+            @warningmessage(flash)
+
+            <div class="tab-content padding-20">
+
+                <ul class="nav nav-pills" id="myNavbar">
+                    <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
+                    <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
+                    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+                    <li><a href="#crawlpermission" data-toggle="tab">NPLD scope
+                        @if(target.isInScopeAllOrInheritedWithoutLicense()) {
+                            <font color="green">(+)</font>
+                        } else {
+                            <font color="red">(-)</font>
+                        }
+                    </a></li>
+                    <li><a href="#licensing" data-toggle="tab">UKWA Licencing
+                        @if(target.indicateLicenses()) {
+                            <font color="green">(+)</font>
+                        } else {
+                            @if(target.getOverallLicenseStatus().pendingIncludingInherited) {
+                                <font color="orange">(~)</font>
+                            } else {
+                                <font color="red">(-)</font>
+                            }
+                        }
+                    </a></li>
+                    @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) && user.isLDLMember() && ApplicationController.getDDHAPTStatus()) {
+                        <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
+                    }
+                </ul>
+            </div>
+
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane padding-20 fade active in" id="overview">
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputTitle" class="col-sm-6 control-label">Title</label>
+                                <div class="col-sm-6">
+                                @target.title
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>          
-    
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								Record last updated at:
-							</label>
-						    <div class="col-sm-6">
-						        @target.toUpdatedAtString
-							</div>
-						</div>
-					</div>
-		     	</div>	     	
-	
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label for="" class="col-sm-6 control-label">
-                              Is this Record active?
-                            </label>
-                            <div class="col-sm-6">
-                            @target.active
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputUrls" class="col-sm-6 control-label">
+                                    Seed URL(s)
+                                </label>
+                                <div class="col-sm-6">
+                                @for((fieldUrl, index) <- target.fieldUrls.zipWithIndex) {
+                                    @if(index == 0) {
+                                        <strong>}
+                                    <a href="@fieldUrl.url">@fieldUrl.url</a>
+                                    @if(index == 0) {</strong>} @if(index == 0 && target.fieldUrls.size > 1) {
+                                            &nbsp;(primary seed)
+                                    }
+                                    <br/>
+                                }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>          
-    
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								Owned by:
-							</label>
-						    <div class="col-sm-6">
-				  @if(target.authorUser != null) {
-  					<a href="@routes.UserController.view(target.authorUser.id)">@target.authorUser.name</a>
-  				  } else {
-  					Target has no owner
-  				  }
-							</div>
-						</div>
-					</div>
-		     	</div>	     	
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">QA Status</label>
-						    <div class="col-sm-6">
-						        @if(target.qaIssue != null) {
-						  			@Taxonomy.findQAStatusById(target.qaIssue.id)
-						        } else {
-						        	none
-								}
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
-						    <div class="col-sm-6">
-						    	@if(target.liveSiteStatus != null && uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
-						    		@if(uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
-	    								@uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus).getValue
-	    							} else {
-	    								None
-	    							}
-								} else {
-							     	None
-						        }
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Hidden <small class="text-center">(Is this target hidden from public)</small></label>
-						    <div class="col-sm-6">
-				                @if(target.hidden != null && target.hidden) {  
-				                   yes           
-				                } else {
-				                   no
-				                }
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
-						    <div class="col-sm-6">
-				                @if(target.keySite != null && target.keySite) {  
-				                   yes           
-				                } else {
-				                   no
-				                }
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
-						    <div class="col-sm-6">
-			              		@target.wctId
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
-						    <div class="col-sm-6">
-			              		@target.sptId
-							</div>
-						</div>
-					</div>
-		     	</div>
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="keywords" class="col-sm-6 control-label">Keywords: Free text keywords, private to you</label>
-						    <div class="col-sm-6">
-		 				  		@target.keywords
-							</div>
-						</div>
-					</div>
-		     	</div>
 
-		</div>
-		
-		<div class="tab-pane fade padding-20" id="metadata">
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Description <small class="text-center">(A description of this web site)</small></label>
-						    <div class="col-sm-6">
-				            	@target.description
-							</div>
-						</div>
-					</div>
-		     	</div>		    
-		    	     		    
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Browse Subject</label>
-			              	 <div class="col-sm-6">
-			              	 	@if(target.subjectsAsString.length > 0) {
-				              	 	@target.subjectsAsString
-  								} else {
-  								    none
-  								}
-			              	</div>
-						</div>
-					</div>
-		     	</div>	
-		     		    
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-						    <div class="col-sm-6">
-						        @if(target.collectionsAsString.length > 0) {
-						        	@target.collectionsAsString
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site)</small></label>
-						    <div class="col-sm-6">
-						        @if(target.organisation != null) {
-  									@target.organisation.title
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="Aliases" class="col-sm-6 control-label">Aliases/Synonims</label>
+                                <div class="col-sm-6">
+                                @target.synonyms
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="originating_organisation" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
-						    <div class="col-sm-6">
-			            		@target.originatingOrganisation
-							</div>
-						</div>
-					</div>
-		     	</div>		    		    
-     			     		
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site)</small></label>
-						    <div class="col-sm-6">
-						        @if(target.authorUser != null) {
-  									@target.authorUser.name
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>	
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(the predominant language in which the page is written)</small></label>
-						    <div class="col-sm-6">
-						        @if(target.language != null && target.language.length > 0) {
-  									@uk.bl.Const.TargetLanguage.getLanguage(target.language).getValue
-  								} else {
-  								    None
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		  
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="status" class="col-sm-6 control-label">Second Language <small class="text-center">(the second language in which the page is written)</small></label>
-						    <div class="col-sm-6">
-						        @if(target.secondLanguage != null && target.secondLanguage.length > 0) {
-  									@uk.bl.Const.TargetLanguage.getLanguage(target.secondLanguage).getValue
-  								} else {
-  								    None
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputAuthors" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
-						    <div class="col-sm-6">
-						    	@if(target.authors != null && target.authors.length > 0) {
-						    		@target.authors
-						    	} else {
-						    		None
-						    	}
-							</div>
-						</div>
-					</div>
-		     	</div>		    		    
-     			     	
-		   		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Flag(s): To flag record for attention by a web archivist.</label>
-						    <div class="col-sm-6">
-						    	@target.flagsAsString()
-							</div>
-						</div>
-					</div>
-		     	</div>	     		
 
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
-						    <div class="col-sm-6">
-				            	@target.flagNotes
-							</div>
-						</div>
-					</div>
-		     	</div>		    
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="" class="col-sm-6 control-label">
+                                    Record creation date
+                                </label>
+                                <div class="col-sm-6">
+                                @target.toCreatedAtString
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-				<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Date of publication</label>
-						    <div class="col-sm-6">
-	 							@target.getDateOfPublicationText()
-	                		</div>
-						</div>
-					</div>
-		     	</div>			     	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputUrls" class="col-sm-6 control-label">
+                                    Record last update
+                                </label>
+                                <div class="col-sm-6">
+                                @target.toUpdatedAtString
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			    <div id="archivistArea" class="revision">
-			   		<div class="row padding-10">
-			     		<div class="col-md-12 col-xs-12 col-sm-12">
-							<div class="form-group">
-								<label class="col-sm-6 control-label">Archivist Notes</label>
-							    <div class="col-sm-6">
-					            	@target.archivistNotes
-								</div>
-							</div>
-						</div>
-			     	</div>	
-				</div>
-				
-	    	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
-						    <div class="col-sm-6">
-						        @if(target.selectionType != null) {
-						        	@uk.bl.Const.SelectionType.getSelectionType(target.selectionType).getValue
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-		     			     
-		     			     			     			     			     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(Any further notes on the record for the use of the web archive team, not already captured under Justification.)</small></label>
-						    <div class="col-sm-6">
-				            	@target.selectorNotes
-							</div>
-						</div>
-					</div>
-		     	</div>	
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="legacy_site_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
-						    <div class="col-sm-6">
-			              		@target.legacySiteId
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	
-		   		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="tags" class="col-sm-6 control-label">Tag(s): keywords common to all users, controlled centrally and visible to other users</label>
-						    <div class="col-sm-6">
-								@target.tagsAsString()						    
-							</div>
-						</div>
-					</div>
-		     	</div>	
-				
-			</div>
-			
-		<div class="tab-pane fade" id="crawlpermission">
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
-					</div>
-				</div>
-	     	</div>
-			<div class="padding-20">
-				<div class="alert alert-info">
-					In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
-				</div>
-			</div>		     	
-			@if(target.indicateNpldStatus()) {    	
-				<div class="padding-20">
-					<div class="alert alert-info">
-						NB. There are other records within this domain for which data has already been provided.
-						@for(t <- target.getNpldStatusList()) {
-							<p><a href="@routes.TargetController.view(t.id)">@t.title @t.fieldUrl()</a></p>
-						}
-					</div>
-				</div>	
-			} else {
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputUrls" class="col-sm-6 control-label">
-							UK Hosting (automated check)
-						</label>
-					    <div class="col-sm-6">
-							@if(target.isUkHosting) {
-				            	<font id="isInScope" style="color: green">yes</font>
-							} else {
-								<font id="isInScope" style="color: red">no</font>
-							}
-						</div>
-					</div>
-				</div>
-	     	</div>	     	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="" class="col-sm-6 control-label">
+                                    Is this Record active?
+                                </label>
+                                <div class="col-sm-6">
+                                @target.active
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
-						</label>
-					    <div class="col-sm-6">
-							@if(target.isTopLevelDomain) {
-				            	<font id="isInScope" style="color: green">yes</font>
-							} else {
-								<font id="isInScope" style="color: red">no</font>
-							}
-						</div>
-					</div>
-				</div>
-	     	</div>	     	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputUrls" class="col-sm-6 control-label">
+                                    Owned by
+                                </label>
+                                <div class="col-sm-6">
+                                @if(target.authorUser != null) {
+                                    <a href="@routes.UserController.view(target.authorUser.id)">@target.authorUser.name</a>
+                                } else {
+                                    Target has no owner
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputUrls" class="col-sm-6 control-label">
-							UK Registration (automated check)
-						</label>
-					    <div class="col-sm-6">
-							@if(target.isUkRegistration) {
-				            	<font id="isInScope" style="color: green">yes</font>
-							} else {
-								<font id="isInScope" style="color: red">no</font>
-							}
-						</div>
-					</div>
-				</div>
-	     	</div>	     	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">QA Status</label>
+                                <div class="col-sm-6">
+                                @if(target.qaIssue != null) {
+                                    @Taxonomy.findQAStatusById(target.qaIssue.id)
+                                } else {
+                                    none
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
-					    <div class="col-sm-6">
-			                @if(Boolean.TRUE.equals(target.ukPostalAddress)) {
-				                yes
-			                } else {
-				                no
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>		     				     	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Live Site Status</label>
+                                <div class="col-sm-6">
+                                @if(target.liveSiteStatus != null && uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
+                                    @if(uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
+                                        @uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus).getValue
+                                    } else {
+                                        None
+                                    }
+                                } else {
+                                    None
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
-					    <div class="col-sm-6">
-	 						@target.ukPostalAddressUrl
-						</div>
-					</div>
-				</div>
-	     	</div>
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
-					    <div class="col-sm-6">
-			                @if(Boolean.TRUE.equals(target.viaCorrespondence)) {             
-				                yes
-			                } else {
-				                no
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>		
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Hidden</label>
+                                <div class="col-sm-6">
+                                @if(target.hidden != null && target.hidden) {
+                                    yes
+                                } else {
+                                    no
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Via Correspondence: Notes <small class="text-center">(Please record details of correspondence with site owner)</small></label>
-					    <div class="col-sm-6">
-	 						@target.value
-						</div>
-					</div>
-				</div>
-	     	</div>	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Key Site</label>
+                                <div class="col-sm-6">
+                                @if(target.keySite != null && target.keySite) {
+                                    yes
+                                } else {
+                                    no
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
-					    <div class="col-sm-6">
-			                @if(Boolean.TRUE.equals(target.professionalJudgement)) {             
-				                yes
-			                } else {
-				                no
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>	
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
-					    <div class="col-sm-6">
-		 					@target.professionalJudgementExp
-						</div>
-					</div>
-				</div>
-	     	</div>
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
+                                <div class="col-sm-6">
+                                @target.wctId
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
-					    <div class="col-sm-6">
-			                @if(Boolean.TRUE.equals(target.noLdCriteriaMet)) {             
-				                yes
-			                } else {
-			                	no
-			                }
-                		</div>
-					</div>
-				</div>
-	     	</div>
-	     	}
-	</div>	
-        
-        <div class="tab-pane fade" id="crawlpolicy">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
+                                <div class="col-sm-6">
+                                @target.sptId
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Scope:<font color="red">*</font> <small class="text-center">Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
-					    <div class="col-sm-6">
-			                @if(target.scope != null && target.scope.length > 0) {             
-								@uk.bl.Const.ScopeType.getScopeType(target.scope).getValue
-			                } else {
-				                All URLs that start like this.
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>
-		     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Depth:<font color="red">*</font> <small class="text-center">Determines the depth of the crawl. Most crawls will be capped at 500MB</small></label>
-					    <div class="col-sm-6">
-			                @if(target.depth != null && target.depth.length > 0) {             
-				                @uk.bl.Const.DepthType.getDepthType(target.depth).getValue
-			                } else {
-				                Capped (small - 500MB)
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="keywords" class="col-sm-6 control-label">Keywords</label>
+                                <div class="col-sm-6">
+                                @target.keywords
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
-					    <div class="col-sm-6">
-			                @if(target.ignoreRobotsTxt != null && target.ignoreRobotsTxt) {             
-				                yes
-			                } else {
-				                no
-			                }
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."><font color="red">*</font></span> <small class="text-center">(How often should this site be archived?)</small></label>
-					    <div class="col-sm-6">
-					    	@if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
-	 							@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
-	 						} else {
-	 							Domain Crawl Only
-	 						}
-						</div>
-					</div>
-				</div>
-	     	</div>	
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Start date</label>
-					    <div class="col-sm-6">
-	 						@target.getCrawlStartDateText()
-                		</div>
-					</div>
-				</div>
-	     	</div>	
+                <div class="tab-pane fade padding-20" id="metadata">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputDescription" class="col-sm-6 control-label">
+                                    Description <small class="text-center">(A description of this web site)</small></label>
+                                <div class="col-sm-6">
+                                @target.description
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">End date</label>
-					    <div class="col-sm-6">
-	 						@target.getCrawlEndDateText()
-                		</div>
-					</div>
-				</div>
-	     	</div>	
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputDescription" class="col-sm-6 control-label">Browse Subject</label>
+                                <div class="col-sm-6">
+                                @if(target.subjectsAsString.length > 0) {
+                                    @target.subjectsAsString
+                                } else {
+                                    none
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">White list: (Archivist use only)</label>
-					    <div class="col-sm-6">
-	 						@target.whiteList
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Black list: (Archivist use only)</label>
-					    <div class="col-sm-6">
-	 						@target.blackList
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-	     	<div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label">Login Credentials</label>
-                            <div class="col-sm-6">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="suggestions-collections" class="col-sm-6 control-label">
+                                    Collections <small class="text-center">
+                                    (Special collections that you think this web site should appear in)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.collectionsAsString.length > 0) {
+                                    @target.collectionsAsString
+                                } else {
+                                    none
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="mySel" class="col-sm-6 control-label">
+                                    Nominating Organisation <small class="text-center">
+                                    (The organisation that nominated this web site)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.organisation != null) {
+                                    @target.organisation.title
+                                } else {
+                                    none
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="originating_organisation" class="col-sm-6 control-label">
+                                    Originating Organisation <small class="text-center">
+                                    (the organisation(s) responsible for creating the content)</small></label>
+                                <div class="col-sm-6">
+                                @target.originatingOrganisation
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="userSel" class="col-sm-6 control-label">Selector <font color="red">
+                                    *</font> <small class="text-center">
+                                    (The user that nominated this web site)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.authorUser != null) {
+                                    @target.authorUser.name
+                                } else {
+                                    none
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="status" class="col-sm-6 control-label">Language <small class="text-center">
+                                    (the predominant language in which the page is written)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.language != null && target.language.length > 0) {
+                                    @uk.bl.Const.TargetLanguage.getLanguage(target.language).getValue
+                                } else {
+                                    None
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="status" class="col-sm-6 control-label">
+                                    Second Language <small class="text-center">
+                                    (the second language in which the page is written)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.secondLanguage != null && target.secondLanguage.length > 0) {
+                                    @uk.bl.Const.TargetLanguage.getLanguage(target.secondLanguage).getValue
+                                } else {
+                                    None
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputAuthors" class="col-sm-6 control-label">
+                                    Author(s) <small class="text-center">
+                                    (A named individual responsible for creating the content)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.authors != null && target.authors.length > 0) {
+                                    @target.authors
+                                } else {
+                                    None
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">
+                                    Flag(s): To flag record for attention by a web archivist.</label>
+                                <div class="col-sm-6">
+                                @target.flagsAsString()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputFlagNotes" class="col-sm-6 control-label">
+                                    Flag notes <small class="text-center">
+                                    (More details about the flagged issue)</small></label>
+                                <div class="col-sm-6">
+                                @target.flagNotes
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Date of publication</label>
+                                <div class="col-sm-6">
+                                @target.getDateOfPublicationText()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="archivistArea" class="revision">
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">Archivist Notes</label>
+                                    <div class="col-sm-6">
+                                    @target.archivistNotes
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="selection_type" class="col-sm-6 control-label">
+                                    Selection Type <font color="red">*</font> <small class="text-center">
+                                    (This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
+                                <div class="col-sm-6">
+                                @if(target.selectionType != null) {
+                                    @uk.bl.Const.SelectionType.getSelectionType(target.selectionType).getValue
+                                } else {
+                                    none
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Selector Notes <small class="text-center">
+                                    (Any further notes on the record for the use of the web archive team, not already captured under Justification.)</small></label>
+                                <div class="col-sm-6">
+                                @target.selectorNotes
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="legacy_site_id" class="col-sm-6 control-label">
+                                    Legacy site ID <small class="text-center">
+                                    (ID used to identify paper licences.)</small></label>
+                                <div class="col-sm-6">
+                                @target.legacySiteId
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="tags" class="col-sm-6 control-label">
+                                    Tag(s): keywords common to all users, controlled centrally and visible to other users</label>
+                                <div class="col-sm-6">
+                                @target.tagsAsString()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="crawlpermission">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Legal Deposit Criteria</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="padding-20">
+                        <div class="alert alert-info">
+                            In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
+                        </div>
+                    </div>
+                    @if(target.indicateNpldStatus()) {
+                        <div class="padding-20">
+                            <div class="alert alert-info">
+                                NB. There are other records within this domain for which data has already been provided.
+                                @for(t <- target.getNpldStatusList()) {
+                                    <p><a href="@routes.TargetController.view(t.id)">@t.title @t.fieldUrl()</a></p>
+                                }
+                            </div>
+                        </div>
+                    } else {
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="inputUrls" class="col-sm-6 control-label">
+                                        UK Hosting (automated check)
+                                    </label>
+                                    <div class="col-sm-6">
+                                    @if(target.isUkHosting) {
+                                        <font id="isInScope" style="color: green">yes</font>
+                                    } else {
+                                        <font id="isInScope" style="color: red">no</font>
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="inputUrls" class="col-sm-6 control-label">
+                                        UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
+                                    </label>
+                                    <div class="col-sm-6">
+                                    @if(target.isTopLevelDomain) {
+                                        <font id="isInScope" style="color: green">yes</font>
+                                    } else {
+                                        <font id="isInScope" style="color: red">no</font>
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="inputUrls" class="col-sm-6 control-label">
+                                        UK Registration (automated check)
+                                    </label>
+                                    <div class="col-sm-6">
+                                    @if(target.isUkRegistration) {
+                                        <font id="isInScope" style="color: green">yes</font>
+                                    } else {
+                                        <font id="isInScope" style="color: red">no</font>
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">UK Postal Address <small class="text-center">
+                                        (The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
+                                    <div class="col-sm-6">
+                                    @if(Boolean.TRUE.equals(target.ukPostalAddress)) {
+                                        yes
+                                    } else {
+                                        no
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">Postal Address URL <small class="text-center">
+                                        (The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
+                                    <div class="col-sm-6">
+                                    @target.ukPostalAddressUrl
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">Via Correspondence <small class="text-center">
+                                        (Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
+                                    <div class="col-sm-6">
+                                    @if(Boolean.TRUE.equals(target.viaCorrespondence)) {
+                                        yes
+                                    } else {
+                                        no
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">
+                                        Via Correspondence: Notes <small class="text-center">
+                                        (Please record details of correspondence with site owner)</small></label>
+                                    <div class="col-sm-6">
+                                    @target.value
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">
+                                        Professional Judgement <small class="text-center">
+                                        (In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
+                                    <div class="col-sm-6">
+                                    @if(Boolean.TRUE.equals(target.professionalJudgement)) {
+                                        yes
+                                    } else {
+                                        no
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">
+                                        Professional Judgement Explanation <small class="text-center">
+                                        (Please describe the rational behind this decision, indicating any evidence used)</small></label>
+                                    <div class="col-sm-6">
+                                    @target.professionalJudgementExp
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">
+                                        (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+                                    <div class="col-sm-6">
+                                    @if(Boolean.TRUE.equals(target.noLdCriteriaMet)) {
+                                        yes
+                                    } else {
+                                        no
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="tab-pane fade" id="crawlpolicy">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Scope:<font color="red">
+                                    *</font> <small class="text-center">
+                                    Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.scope != null && target.scope.length > 0) {
+                                    @uk.bl.Const.ScopeType.getScopeType(target.scope).getValue
+                                } else {
+                                    All URLs that start like this.
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Depth:<font color="red">
+                                    *</font> <small class="text-center">
+                                    Determines the depth of the crawl. Most crawls will be capped at 500MB</small></label>
+                                <div class="col-sm-6">
+                                @if(target.depth != null && target.depth.length > 0) {
+                                    @uk.bl.Const.DepthType.getDepthType(target.depth).getValue
+                                } else {
+                                    Capped (small - 500MB)
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">
+                                    (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.ignoreRobotsTxt != null && target.ignoreRobotsTxt) {
+                                    yes
+                                } else {
+                                    no
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">
+                                    Crawl Frequency<span class="form-required" title="This field is required."><font color="red">
+                                    *</font></span> <small class="text-center">
+                                    (How often should this site be archived?)</small></label>
+                                <div class="col-sm-6">
+                                @if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
+                                    @uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
+                                } else {
+                                    Domain Crawl Only
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Start date</label>
+                                <div class="col-sm-6">
+                                @target.getCrawlStartDateText()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">End date</label>
+                                <div class="col-sm-6">
+                                @target.getCrawlEndDateText()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">White list: (Archivist use only)</label>
+                                <div class="col-sm-6">
+                                @target.whiteList
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Black list: (Archivist use only)</label>
+                                <div class="col-sm-6">
+                                @target.blackList
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Login Credentials</label>
+                                <div class="col-sm-6">
                                 @if(target.secretId != null) {
                                     yes
                                 } else {
                                     no
                                 }
-                                
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="tab-pane fade padding-20" id="licensing">
+
+                    @if(target.getOverallLicenseStatus().inheritedLicenseOrPending) {
+
+                        <div class="padding-20">
+                            <div class="alert alert-info">
+                                NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+                                @for(target <- target.getUkwaLicenceStatusList) {
+                                    <p><a href="@routes.TargetController.view(target.id)">@target.id
+                                        - @target.fieldUrl()</a>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+
+                    } else {
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="edit-field-license-und" class="col-sm-6 control-label">
+                                        Licence <small class="text-center">
+                                        (The licence terms under which this site is archived and made available)</small></label>
+                                    <div class="col-sm-6">
+                                    @target.licensesAsString
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">
+                                        Open UKWA licence requests <small class="text-center">
+                                        (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open Licence Request' button)</small></label>
+                                    <div class="col-sm-6">
+                                    @if(target.licenseStatus != null && target.licenseStatus.length > 0) {
+                                        @License.LicenseStatus.getLicenseStatus(target.licenseStatus).getValue
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputBody" class="col-sm-6 control-label">Web form information</label>
+                                <div class="col-sm-6">
+                                @target.webFormInfo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="inputBody" class="col-sm-6 control-label">Web form date</label>
+                                <div class="col-sm-6">
+                                @target.getWebFormDateText()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane fade" id="watchedTarget">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">watched</label>
+                                <div class="col-sm-6">
+                                @if(target.isWatched) {
+                                    yes
+                                } else {
+                                    no
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if(target.watchedTarget != null) {
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">Document URL Scheme</label>
+                                    <div class="col-sm-6">
+                                        <input readonly type="text" value="@target.watchedTarget.documentUrlScheme" size="60" maxlength="2048" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">Journal Titles</label>
+                                    <div class="col-sm-6">
+                                        <table>
+                                        @for(journalTitle <- target.watchedTarget.journalTitles) {
+                                            <tr>
+                                                <td>@journalTitle.title</td>
+                                            </tr>
+                                        }
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">Subjects</label>
+                                    <div class="col-sm-6">
+                                    @for(fastSubject <- target.watchedTarget.fastSubjects) {
+                                        <div>
+                                        @fastSubject.name
+                                        </div>
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="archivistArea" class="revision">
+                            <div class="row padding-10">
+                                <div class="col-md-12 col-xs-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-6 control-label">Archivist Notes</label>
+                                        <div class="col-sm-6">
+                                        @target.watchedTarget.archivistNotesWT
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <hr>
+
+            <div id="revisionArea" class="revision">
+                <div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
+                            <label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
+                            <div class="col-sm-6">
+                            @target.revision
                             </div>
                         </div>
                     </div>
                 </div>
-	     	
-		     	
-        </div>
-	        
-		<div class="tab-pane fade padding-20" id="licensing">
-		
-				@if(target.getOverallLicenseStatus().inheritedLicenseOrPending) {
-					
-					<div class="padding-20">
-						<div class="alert alert-info">
-							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-							@for(target <- target.getUkwaLicenceStatusList) { 
-								<p><a href="@routes.TargetController.view(target.id)">@target.id - @target.fieldUrl()</a></p>
-							}
-						</div>
-					</div>	
-				
-				} else {
-				
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="edit-field-license-und" class="col-sm-6 control-label">Licence <small class="text-center">(The licence terms under which this site is archived and made available)</small></label>
-			              	<div class="col-sm-6">
-								@target.licensesAsString
-			              	</div>
-						</div>
-					</div>
-		     	</div>	
-				
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Open UKWA licence requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open Licence Request' button)</small></label>
-						    <div class="col-sm-6">
-						    	@if(target.licenseStatus != null && target.licenseStatus.length > 0) {
-						    		@License.LicenseStatus.getLicenseStatus(target.licenseStatus).getValue
-		 						}
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	}
-		     			      
-   		 <div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-	              	<label for="inputBody" class="col-sm-6 control-label">Web form information</label>
-				    <div class="col-sm-6">
-              			@target.webFormInfo
-					</div>
-				</div>
-			</div>
-     	</div>
-     	 <div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-	              	<label for="inputBody" class="col-sm-6 control-label">Web form date</label>
-				    <div class="col-sm-6">
-              			@target.getWebFormDateText()
-					</div>
-				</div>
-			</div>
-     	</div>
-	
-		</div>
-		
-		<div class="tab-pane fade" id="watchedTarget">
-				<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">watched</label>
-						    <div class="col-sm-6">
-		 						@if(target.isWatched) {             
-					                yes
-				                } else {
-					                no
-				                }
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     @if(target.watchedTarget != null) {
-     	
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Document URL Scheme</label>
-						    <div class="col-sm-6">
-		 						<input readonly type="text" value="@target.watchedTarget.documentUrlScheme" size="60" maxlength="2048" class="form-control" />
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Journal Titles</label>
-						    <div class="col-sm-6">
-		 						<table>
-									@for(journalTitle <- target.watchedTarget.journalTitles) {
-										<tr>										
-												<td>@journalTitle.title</td>																					
-										</tr>
-									}
-								</table>
-								
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Subjects</label>
-						    <div class="col-sm-6">
-								@for(fastSubject <- target.watchedTarget.fastSubjects) {
-									<div>
-										@fastSubject.name
-									</div>
-								}
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	 <div id="archivistArea" class="revision">
-			   		<div class="row padding-10">
-			     		<div class="col-md-12 col-xs-12 col-sm-12">
-							<div class="form-group">
-								<label class="col-sm-6 control-label">Archivist Notes</label>
-							    <div class="col-sm-6">
-					            	@target.watchedTarget.archivistNotesWT
-								</div>
-							</div>
-						</div>
-			     	</div>	
-				</div>
-			}
-		</div>
-	</div>
+            </div>
 
-	<hr>
-	
-    <div id="revisionArea" class="revision">
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-	              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
-				    <div class="col-sm-6">
-              			@target.revision
-					</div>
-				</div>
-			</div>
-     	</div>
-	</div>
-	
-	
-	<div class="padding-20">
-		<div class="panel-group" id="accordion2">
-			<div class="panel panel-primary" id="panels">
-				<div class="panel-heading">
-	  				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseRevisions" style="color:#fff;">
-	      				Target revisions
-	      			</a>
-	      		</div>
-				<div id="collapseRevisions" class="panel-collapse collapse">
-	       			@for(prevTarget <- Target.findRevisions(target.url)) {
-	       			<div class="panel-footer">
-	       				<a class="brand" href="@routes.TargetController.viewrevision(prevTarget.id)">
-	         				(@prevTarget.id) &nbsp; @prevTarget.revision &nbsp; @prevTarget.updatedAt</a>
-	       			</div>
-	       			}
-	     		</div>
-	    	</div>
-		</div>
-	</div>
-	
-    </div>
-	<div class="col-md-4 col-sm-4 col-xs-12">
-
-	<div class="padding-20">
-		<div class="panel-group">
-			<div class="panel panel-primary" id="wayback-instances-panel">
-				<div class="panel-heading">
-			        	Instances
-				</div>
-				<div id="collapseInstances" class="panel-body">
-					@for(fieldUrl <- target.fieldUrls) {
-						<div class="padding-10">
-							<strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
-						</div>
-						<ul>
-						<!-- 
-						    <li>
-									<a class="brand" target="_blank" href="@routes.InstanceController.showByTarget(target.id)">Instances</a>
-						    </li>
-                         -->
-							<li>
-									<a class="brand" target="_blank" href="@{routes.WaybackController.wayback("*/" + fieldUrl.url)}">Search QA Wayback</a>
-							</li>
-							<li>
-						        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">Search Open UK Web Archive</a>
-							</li>
-							<li>
-									<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">Search Other Web Archives</a>
-							</li>
-                        <!-- 
-							<li>
-						        	<a class="brand" target="_blank" href="@fieldUrl.url">View Live Site</a>
-							</li>
-                         -->
-						</ul>
-					}
-				</div>
-			</div>
-
-            <div class="panel panel-primary" id="crawl-log-panel">
-                <div class="panel-heading">
-                        Crawl Logs
-                </div>
-                <div id="collapseLogs" class="panel-body">
-                    @for(fieldUrl <- target.fieldUrls) {
-                        <div class="padding-10">
-                            <strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
+            <div class="padding-20">
+                <div class="panel-group" id="accordion2">
+                    <div class="panel panel-primary" id="panels">
+                        <div class="panel-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseRevisions" style="color: #fff;">
+                                Target revisions
+                            </a>
                         </div>
-                        <ul>
-                            <li>@monitrix_link(fieldUrl.url, MonitrixController.Query.EXACT)</li>
-                            <li>@monitrix_link(fieldUrl.url, MonitrixController.Query.PREFIX)</li>
-                        </ul>
-                    }
+                        <div id="collapseRevisions" class="panel-collapse collapse">
+                        @for(prevTarget <- Target.findRevisions(target.url)) {
+                            <div class="panel-footer">
+                                <a class="brand" href="@routes.TargetController.viewrevision(prevTarget.id)">
+	         				(@prevTarget.id) &nbsp; @prevTarget.revision &nbsp; @prevTarget.updatedAt</a>
+                            </div>
+                        }
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <!-- DISABLE FOR NOW
+
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-12">
+
+            <div class="padding-20">
+                <div class="panel-group">
+                    <div class="panel panel-primary" id="wayback-instances-panel">
+                        <div class="panel-heading">
+                            Instances
+                        </div>
+                        <div id="collapseInstances" class="panel-body">
+                        @for(fieldUrl <- target.fieldUrls) {
+                            <div class="padding-10">
+                                <strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
+                            </div>
+                            <ul>
+                                    <!--
+						    <li>
+									<a class="brand" target="_blank" href=" @routes.InstanceController.showByTarget(target.id)
+                                    ">Instances
+                                </a>
+                                </li>
+                                -->
+                                <li>
+                                    <a class="brand" target="_blank" href="@{
+                                        routes.WaybackController.wayback("*/" + fieldUrl.url)
+                                    }">Search QA Wayback</a>
+                                </li>
+                                <li>
+                                    <a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">Search Open UK Web Archive</a>
+                                </li>
+                                <li>
+                                    <a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">Search Other Web Archives</a>
+                                </li>
+                                    <!--
+							<li>
+						        	<a class="brand" target="_blank" href=" @fieldUrl.url
+                                    ">View Live Site
+                                </a>
+                                </li>
+                                -->
+                            </ul>
+                        }
+                        </div>
+                    </div>
+
+                    <div class="panel panel-primary" id="crawl-log-panel">
+                        <div class="panel-heading">
+                            Crawl Logs
+                        </div>
+                        <div id="collapseLogs" class="panel-body">
+                        @for(fieldUrl <- target.fieldUrls) {
+                            <div class="padding-10">
+                                <strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
+                            </div>
+                            <ul>
+                                <li>@monitrix_link(fieldUrl.url, MonitrixController.Query.EXACT)</li>
+                                <li>@monitrix_link(fieldUrl.url, MonitrixController.Query.PREFIX)</li>
+                            </ul>
+                        }
+                        </div>
+                    </div>
+
+                        <!-- DISABLE FOR NOW
             <div class="panel panel-primary" id="crawl-schedule-panel">
                 <div class="panel-heading">
                         Crawl Schedule
                 </div>
                 <div id="collapseNow" class="panel-body">
-                Next crawl due to launch <abbr title="@target.getNextScheduledCrawlDate()">@target.getNextScheduledCrawlDateAsString()</abbr>.
-            @if(target.isInScopeAllOrInheritedWithoutLicense() && false ) {
-                            <a class="btn btn-success" role="button" href="@routes.TargetController.archive(target.id)">
-                                Archive This Now
-                            </a>
-            }
-            
+                Next crawl due to launch <abbr title="@target.getNextScheduledCrawlDate()">@target.getNextScheduledCrawlDateAsString()</abbr>
+                    .
+                    @if(target.isInScopeAllOrInheritedWithoutLicense() && false) {
+                        <a class="btn btn-success" role="button" href="@routes.TargetController.archive(target.id)">
+                            Archive This Now
+                        </a>
+                    }
+
                 </div>
             </div>
-             -->
-            
-		</div>
-	</div>
-	
-	</div>
-</div>
-	
+            -->
+
+        </div>
+    </div>
+
+    </div>
+    </div>
 }
