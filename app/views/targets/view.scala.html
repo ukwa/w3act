@@ -137,7 +137,7 @@
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 <label for="inputUrls" class="col-sm-6 control-label">
-                                    Seed URL(s)
+                                    Seed URL(s) <small>(One or more URLs, separated by commas, including the http://)</small>
                                 </label>
                                 <div class="col-sm-6">
                                 @for((fieldUrl, index) <- target.fieldUrls.zipWithIndex) {
@@ -157,7 +157,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label for="Aliases" class="col-sm-6 control-label">Aliases/Synonyms</label>
+                                <label for="Aliases" class="col-sm-6 control-label">Aliases/Synonyms <small>(If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com)</small></label>
                                 <div class="col-sm-6">
                                 @target.synonyms
                                 </div>
@@ -195,19 +195,6 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label for="" class="col-sm-6 control-label">
-                                    Is this Record active?
-                                </label>
-                                <div class="col-sm-6">
-                                @target.active
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row padding-10">
-                        <div class="col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group">
                                 <label for="inputUrls" class="col-sm-6 control-label">
                                     Owned by
                                 </label>
@@ -221,6 +208,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
@@ -240,7 +228,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Live Site Status</label>
+                                <label class="col-sm-6 control-label">Live Site Status <small>(If known, please add the current status of the site)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.liveSiteStatus != null && uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
                                     @if(uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
@@ -259,7 +247,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Hidden</label>
+                                <label class="col-sm-6 control-label">Hidden <small>(Is this target hidden from public)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.hidden != null && target.hidden) {
                                     yes
@@ -274,7 +262,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Key Site</label>
+                                <label class="col-sm-6 control-label">Key Site <small>(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.keySite != null && target.keySite) {
                                     yes
@@ -311,7 +299,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label for="keywords" class="col-sm-6 control-label">Keywords</label>
+                                <label for="keywords" class="col-sm-6 control-label">Keywords <small>(Free text keywords, private to you)</small></label>
                                 <div class="col-sm-6">
                                 @target.keywords
                                 </div>
@@ -398,8 +386,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label for="userSel" class="col-sm-6 control-label">Selector <font color="red">
-                                    *</font> <small class="text-center">
+                                <label for="userSel" class="col-sm-6 control-label">Owner <small class="text-center">
                                     (The user that nominated this web site)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.authorUser != null) {
@@ -516,7 +503,7 @@
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 <label for="selection_type" class="col-sm-6 control-label">
-                                    Selection Type <font color="red">*</font> <small class="text-center">
+                                    Selection Type <small class="text-center">
                                     (This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
                                 <div class="col-sm-6">
                                 @if(target.selectionType != null) {
@@ -593,8 +580,8 @@
                         <div class="row padding-10">
                             <div class="col-md-12 col-xs-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="inputUrls" class="col-sm-6 control-label">
-                                        UK Hosting (automated check)
+                                    <label class="col-sm-6 control-label">
+                                        UK Hosting <small style="color:#f00;">(automated check)</small>
                                     </label>
                                     <div class="col-sm-6">
                                     @if(target.isUkHosting) {
@@ -610,8 +597,8 @@
                         <div class="row padding-10">
                             <div class="col-md-12 col-xs-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="inputUrls" class="col-sm-6 control-label">
-                                        UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
+                                    <label class="col-sm-6 control-label">
+                                        UK top-level domain <small class="text-center">(Includes .uk, .london, .scot, .wales and .cymru domains)</small><small style="color:#f00;"> (automated check)</small>
                                     </label>
                                     <div class="col-sm-6">
                                     @if(target.isTopLevelDomain) {
@@ -627,8 +614,8 @@
                         <div class="row padding-10">
                             <div class="col-md-12 col-xs-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="inputUrls" class="col-sm-6 control-label">
-                                        UK Registration (automated check)
+                                    <label class="col-sm-6 control-label">
+                                        UK Registration <small style="color:#f00;">(automated check)</small>
                                     </label>
                                     <div class="col-sm-6">
                                     @if(target.isUkRegistration) {
@@ -750,9 +737,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Scope:<font color="red">
-                                    *</font> <small class="text-center">
-                                    Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
+                                <label class="col-sm-6 control-label">Scope:<small class="text-center"> Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.scope != null && target.scope.length > 0) {
                                     @uk.bl.Const.ScopeType.getScopeType(target.scope).getValue
@@ -767,9 +752,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Depth:<font color="red">
-                                    *</font> <small class="text-center">
-                                    Determines the depth of the crawl. Most crawls will be capped at 500MB</small></label>
+                                <label class="col-sm-6 control-label">Depth: <small class="text-center">Determines the depth of the crawl. Most crawls will be capped at 500MB</small></label>
                                 <div class="col-sm-6">
                                 @if(target.depth != null && target.depth.length > 0) {
                                     @uk.bl.Const.DepthType.getDepthType(target.depth).getValue
@@ -801,9 +784,7 @@
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 <label class="col-sm-6 control-label">
-                                    Crawl Frequency<span class="form-required" title="This field is required."><font color="red">
-                                    *</font></span> <small class="text-center">
-                                    (How often should this site be archived?)</small></label>
+                                    Crawl Frequency <span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
                                     @uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
@@ -952,7 +933,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">watched</label>
+                                <label class="col-sm-6 control-label">Watched</label>
                                 <div class="col-sm-6">
                                 @if(target.isWatched) {
                                     yes
