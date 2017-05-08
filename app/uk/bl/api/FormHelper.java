@@ -230,7 +230,7 @@ public enum FormHelper {
 	public String getUpdatedAtDate(Long targetId) throws WhoisException {
 		Target target = Target.findById(targetId);
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-		if( target == null ) return null;
+		if( target == null ) return "No updates";
 		return dateFormat.format(target.updatedAt);
 	}
 
