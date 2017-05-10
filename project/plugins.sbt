@@ -1,3 +1,6 @@
+// Disable hash checks as there are problems with Maven Central for jetty-parent
+checksums in update := Nil
+
 // Comment to get more information during initialization
 //logLevel := Level.Warn
 logLevel := Level.Info
