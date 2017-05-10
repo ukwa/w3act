@@ -6,9 +6,13 @@
 @import templates.checkbox
 @import templates.checkbox2
 @import templates.inputText
+@import templates.inputRadioGroup2
 @import targets.tpl._
 
-@implicitField = @{ helper.FieldConstructor(templates.ratio6to6FieldConstructor.f) }
+
+
+
+@implicitField = @{ FieldConstructor(templates.ratio6to6FieldConstructor.f) }
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
     if( data == null ) {
@@ -27,156 +31,156 @@
 }
 
 @pageTitle(targetTitle: String) = @{
-  if( targetTitle == null ) {
-    "Editing new target";
-  } else {
-    "Editing %s".format(targetTitle);
-  }
-} 
+    if( targetTitle == null ) {
+        "Editing new target";
+    } else {
+        "Editing %s".format(targetTitle);
+    }
+}
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/time-picker.js")" type="text/javascript"></script>
 
     <script>
-        // This is the code that switches to the other page.
-        // We do this via JavaScript, and not a normal hyperlink,
-        // because that way we can communicate the current nav pill status as part of the link URL.
-        function switchPage() {
-            var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
-            var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+            // This is the code that switches to the other page.
+            // We do this via JavaScript, and not a normal hyperlink,
+            // because that way we can communicate the current nav pill status as part of the link URL.
+            function switchPage() {
+                var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
+                var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
 
-            // pass the current tab to the save method in order to load page in the same tab
-            document.getElementById('tabstatus').value = activeTab.find('a').attr('href');
-            //alert(document.getElementById('tabstatus').value);
+                // pass the current tab to the save method in order to load page in the same tab
+                document.getElementById('tabstatus').value = activeTab.find('a').attr('href');
+                //alert(document.getElementById('tabstatus').value);
 
-            // And finally we just attach the href to view.html and forward the browser.
-            // An example URL would be: 'view.html#npld-scope'
-            @if(id != null) {
+                // And finally we just attach the href to view.html and forward the browser.
+                // An example URL would be: 'view.html#npld-scope'
+                @if(id != null) {
                 window.location.href="@routes.TargetController.view(id)" + href;
+                }
             }
-        }
 
-        (function(){
-            var
-                    idle_timeout,
-                    SCOPE_URI = '@routes.TargetController.isInScope("")',
-                    MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
-                    TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
-	        		IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+            (function(){
+                var
+                        idle_timeout,
+                        SCOPE_URI = '@routes.TargetController.isInScope("")',
+                        MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+                        TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+                        IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
 
-            // Restarts the keyboard-idleness timeout
-            var
-                restartIdleTimeout = function(){
-                    if(idle_timeout) {
-                        window.clearTimeout(idle_timeout);
-                    }
+                // Restarts the keyboard-idleness timeout
+                var
+                        restartIdleTimeout = function(){
+                            if(idle_timeout) {
+                                window.clearTimeout(idle_timeout);
+                            }
 
-                    idle_timeout = window.setTimeout(function(){
+                            idle_timeout = window.setTimeout(function(){
+                                var text = $('input[name=formUrl]').val();
+
+                                if(text.length > MIN_TEXT_LENGTH) {
+                                    doScope(text);
+                                }
+                            }, IDLE_THRESHOLD);
+                        },
+
+                        // Does the Scope lookup
+                        doScope = function(text){
+                            $.getJSON(SCOPE_URI + encodeURIComponent(text), function(data){
+                                var $isInScope = $('.isInScope');
+
+                                if(data) {
+                                    $isInScope.html('yes');
+                                    $isInScope.css('color', 'green');
+                                }
+                                else {
+                                    $isInScope.html('no');
+                                    $isInScope.css('color', 'red');
+                                }
+                            })
+                                    .fail(function(jqxhr, textStatus, error){
+                                        console.log("Request failed: " + textStatus + ", " + error);
+                                    });
+                        };
+
+                $(document).ready(function(){
+                    $('#fieldUrls').keyup(function(){
                         var text = $('input[name=formUrl]').val();
 
-                        if(text.length > MIN_TEXT_LENGTH) {
+                        if(text.length > MIN_TEXT_LENGTH && TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1) {
                             doScope(text);
                         }
-                    }, IDLE_THRESHOLD);
-                },
-
-                // Does the Scope lookup
-                doScope = function(text){
-                    $.getJSON(SCOPE_URI + encodeURIComponent(text), function(data){
-                        var $isInScope = $('.isInScope');
-
-                        if(data) {
-                            $isInScope.html('yes');
-                            $isInScope.css('color', 'green');
-                        }
                         else {
-                            $isInScope.html('no');
-                            $isInScope.css('color', 'red');
+                            restartIdleTimeout();
                         }
-                    })
-                            .fail(function(jqxhr, textStatus, error){
-                                console.log("Request failed: " + textStatus + ", " + error);
-                            });
-                };
+                    });
 
-            $(document).ready(function(){
-                $('#fieldUrls').keyup(function(){
-                    var text = $('input[name=formUrl]').val();
-
-                    if(text.length > MIN_TEXT_LENGTH && TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1) {
-                        doScope(text);
-                    }
-                    else {
-                        restartIdleTimeout();
-                    }
-                });
-
-                @if(collectionData != null){
+                    @if(collectionData != null){
                     showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 2);
-                }
-                @if(subjectData != null){
-                    showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);
-                }
-
-                // This happens right after the document is loaded.
-                // Our nav pills won't do anything by themselves, so we need to make sure we
-                // check if the current URL has a #-component and if so, we activate the
-                // appropriate pill.
-                var hash = window.location.hash;
-                if(hash.indexOf('#') == 0) {
-                    // We have a hash - let's see if it matches with nav pill href
-                    var el = $('#myNavbar a[href=' + hash + ']');
-
-                    // pass the current tab to the save method in order to load page in the same tab
-                    document.getElementById('tabstatus').value = hash;
-
-                    // We have an <a> with this ID, and it has a parent node that's an <li>
-                    if(el && el.parent() && el.parent().prop('tagName') == 'LI') {
-                        // So we activate this nav pill
-                        $(el).tab('show');
-                        window.scrollTo(0, 0);
                     }
-                }
-                else {
-                    //console.log('tabstatus after validation: ' + document.getElementById('tabstatus').value);
-                    var valtab = document.getElementById('tabstatus').value;
-                    //console.log(valtab);
-                    if(valtab.indexOf('#') == 0) {
+                    @if(subjectData != null){
+                    showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);
+                    }
+
+                    // This happens right after the document is loaded.
+                    // Our nav pills won't do anything by themselves, so we need to make sure we
+                    // check if the current URL has a #-component and if so, we activate the
+                    // appropriate pill.
+                    var hash = window.location.hash;
+                    if(hash.indexOf('#') == 0) {
                         // We have a hash - let's see if it matches with nav pill href
-                        var valel = $('#myNavbar a[href=' + valtab + ']');
+                        var el = $('#myNavbar a[href=' + hash + ']');
+
+                        // pass the current tab to the save method in order to load page in the same tab
+                        document.getElementById('tabstatus').value = hash;
 
                         // We have an <a> with this ID, and it has a parent node that's an <li>
-                        if(valel && valel.parent() && valel.parent().prop('tagName') == 'LI') {
+                        if(el && el.parent() && el.parent().prop('tagName') == 'LI') {
                             // So we activate this nav pill
-                            $(valel).tab('show');
+                            $(el).tab('show');
                             window.scrollTo(0, 0);
                         }
                     }
+                    else {
+                        //console.log('tabstatus after validation: ' + document.getElementById('tabstatus').value);
+                        var valtab = document.getElementById('tabstatus').value;
+                        //console.log(valtab);
+                        if(valtab.indexOf('#') == 0) {
+                            // We have a hash - let's see if it matches with nav pill href
+                            var valel = $('#myNavbar a[href=' + valtab + ']');
+
+                            // We have an <a> with this ID, and it has a parent node that's an <li>
+                            if(valel && valel.parent() && valel.parent().prop('tagName') == 'LI') {
+                                // So we activate this nav pill
+                                $(valel).tab('show');
+                                window.scrollTo(0, 0);
+                            }
+                        }
+                    }
+
+                    // This is completely optional!! But it keeps the hash in our current URL bar
+                    // in sync with the tab we have selected, so the pages stay nice and bookmarkable
+                    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+                        window.location.hash = ($(e.target).attr('href'));
+                        document.getElementById('tabstatus').value = ($(e.target).attr('href'));
+                        window.scrollTo(0, 0);
+                    })
+
+                    targetDateTime();
+                    wayBackLoader();
+                });
+            })();
+
+            function display() {
+                var div = document.getElementById('division');
+                if(document.getElementById('watched').checked){
+                    div.style.display = 'block';
+                }else{
+                    div.style.display = 'none';
                 }
 
-                // This is completely optional!! But it keeps the hash in our current URL bar
-                // in sync with the tab we have selected, so the pages stay nice and bookmarkable
-                $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
-                    window.location.hash = ($(e.target).attr('href'));
-                    document.getElementById('tabstatus').value = ($(e.target).attr('href'));
-                    window.scrollTo(0, 0);
-                })
-
-                targetDateTime();
-                wayBackLoader();
-            });
-        })();
-
-    function display() {
-        var div = document.getElementById('division');
-        if(document.getElementById('watched').checked){
-            div.style.display = 'block';
-            }else{
-            div.style.display = 'none';
             }
-
-        }
 
 
     </script>
@@ -184,18 +188,18 @@
 
 @styles = {
     <style>
-        #tab-content {
-          padding:20px;
-        }
+            #tab-content {
+                padding:20px;
+            }
 
-        .tab-pane {
-          padding:20px 0;
-        }
+            .tab-pane {
+                padding:20px 0;
+            }
     </style>
 }
 
 @main(pageTitle(targetForm("title").value), user, scripts, styles) {
-    
+
     <div class="page-header">
         <h1><a href="@routes.TargetController.index()">Targets > </a>Target @targetForm("title").value</h1>
     </div>
@@ -205,8 +209,8 @@
             <li><a onclick="switchPage(); return false;" href="@routes.TargetController.view(id)">View</a></li>
         }
         @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))
-            || (user.hasRole("user") && targetForm("authorUser.id").value != null
-            && user.id == Long.valueOf(targetForm("authorUser.id").value))) {
+                || (user.hasRole("user") && targetForm("authorUser.id").value != null
+                && user.id == Long.valueOf(targetForm("authorUser.id").value))) {
             <li class="active"><a href="#">Edit</a></li>
         }
     </ul>
@@ -218,22 +222,22 @@
             <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
             <li>
                 <a href="#crawlpermission" data-toggle="tab">NPLD scope
-                @if(FormHelper.INSTANCE.isInScopeAllWithoutLicense(id)) {
-                    <font color="green">(+)</font>
-                } else {
-                    <font color="red">(-)</font>
-                }
+                    @if(FormHelper.INSTANCE.isInScopeAllWithoutLicense(id)) {
+                        <font color="green">(+)</font>
+                    } else {
+                        <font color="red">(-)</font>
+                    }
                 </a>
             </li>
             <li><a href="#licensing" data-toggle="tab">UKWA Licencing
                 @if(FormHelper.INSTANCE.hasGrantedLicense(id)) {
                     <font color="green">(+)</font>
                 } else {
-                  @if( FormHelper.INSTANCE.licensingUnderway(id) ) {
-                    <font color="orange">(~)</font>
-                  } else {
-                    <font color="red">(-)</font>
-                  }
+                    @if( FormHelper.INSTANCE.licensingUnderway(id) ) {
+                        <font color="orange">(~)</font>
+                    } else {
+                        <font color="red">(-)</font>
+                    }
                 }
             </a></li>
             <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
@@ -261,7 +265,7 @@
         <input type="hidden" id=targetForm name="id" value="@id">
         <input type="hidden" id="currentUrls" name="currentUrls" value="@targetForm("fieldUrl").value">
 
-@editsection_save(targetForm, user, id, "top-")
+        @editsection_save(targetForm, user, id, "top-")
 
         <div id="myTabContent" class="tab-content">
 
@@ -270,15 +274,15 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("title"),
-                                '_label -> "Title:",
-                                'id -> "inputTitle",
-                                'class -> "form-control",
-                                'placeholder -> "Title",
-                                'spellcheck -> "true",
-                                'contenteditable -> "true",
-                                '_error -> targetForm("name").error.map(_.withMessage("Enter Title"))
-                            )(FieldConstructor(genericMandatoryInput.f), lang)
+                        @helper.inputText(targetForm("title"),
+                            '_label -> "Title",
+                            'id -> "inputTitle",
+                            'class -> "form-control",
+                            'placeholder -> "Title",
+                            'spellcheck -> "true",
+                            'contenteditable -> "true",
+                            '_error -> targetForm("name").error.map(_.withMessage("Enter Title"))
+                        )(FieldConstructor(genericMandatoryInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -286,13 +290,15 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("formUrl"),
-                                '_label -> "Seed URLs: 'One or more URLs, separated by commas, including the http://",
-                                'id -> "fieldUrls",
-                                'class -> "form-control",
-                                'placeholder -> "url1, url2",
-                                '_error -> targetForm("formUrl").error.map(_.withMessage("Enter URLs"))
-                            )(FieldConstructor(genericMandatoryInput.f), lang)
+                        @helper.inputText(targetForm("formUrl"),
+                            '_label -> "Seed URL(s) ",
+                            'id -> "fieldUrls",
+                            'class -> "form-control",
+                            'placeholder -> "url1, url2",
+                            '_description -> "(One or more URLs, separated by commas, including the http://)",
+                            '_error -> targetForm("formUrl").error.map(_.withMessage("Enter URLs"))
+
+                        )(FieldConstructor(genericMandatoryInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -300,26 +306,24 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("synonyms"),
-                                '_label -> "Synonyms: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com",
-                                'class -> "form-control"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @helper.inputText(targetForm("synonyms"),
+                            '_label -> "Aliases/Synonyms ",
+                            'class -> "form-control",
+                            '_description -> "(If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com)"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
 
+
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            <label for="inputUrls" class="col-sm-6 control-label">
-                                UK Hosting (automated check)
+                            <label for="" class="col-sm-6 control-label">
+                                Record creation date
                             </label>
                             <div class="col-sm-6">
-                                @if(FormHelper.INSTANCE.isUkHosting(id)) {
-                                    <span class="isInScope" style="color: green">yes</span>
-                                } else {
-                                    <span class="isInScope" style="color: red">no</span>
-                                }
+                            @FormHelper.INSTANCE.getCreatedAtDate(id)
                             </div>
                         </div>
                     </div>
@@ -329,47 +333,27 @@
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
                             <label for="inputUrls" class="col-sm-6 control-label">
-                                UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
+                                Record last update
                             </label>
                             <div class="col-sm-6">
-                                @if(FormHelper.INSTANCE.isTopLevelDomain(id)) {
-                                    <span class="isInScope" style="color: green">yes</span>
-                                } else {
-                                    <span class="isInScope" style="color: red">no</span>
-                                }
+                            @FormHelper.INSTANCE.getUpdatedAtDate(id)
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label for="inputUrls" class="col-sm-6 control-label">
-                                UK Registration (automated check)
-                            </label>
-                            <div class="col-sm-6">
-                                @if(FormHelper.INSTANCE.isUkRegistration(id)) {
-                                    <span class="isInScope" style="color: green">yes</span>
-                                } else {
-                                    <span class="isInScope" style="color: red">no</span>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @select(field = targetForm("qaIssue.id"), options = options(qaIssues),
-                                        args =
+                            @select(field = targetForm("qaIssue.id"),
+                                options = options(qaIssues),
+                                args =
                                         'class -> "form-control",
-                                        '_label -> "QA Status:",
-                                        '_default -> "-- Choose a QA Status --",
-                                        '_showConstraints -> false
-                                )(FieldConstructor(genericInput.f), lang)
+                                '_label -> "QA Status",
+                                '_default -> "-- Choose a QA Status --"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
@@ -378,49 +362,53 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @inputRadioGroup(
-                                field = targetForm("liveSiteStatus"),
-                                options = options(siteStatuses),
-                                args =
-                                '_label -> "Live Site Status (If known, please add the current status of the site):"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @inputRadioGroup2(
+                            field = targetForm("liveSiteStatus"),
+                            options = options(siteStatuses),
+                            args =
+                                    '_label -> "Live Site Status ",
+                            '_description -> "(If known, please add the current status of the site)"
+                        )(FieldConstructor(genericInput.f))
                         </div>
                     </div>
                 </div>
+
                 @if(targetForm("authorUser.id").value != null && (Long.valueOf(targetForm("authorUser.id").value).equals(user.id) || user.hasRole("sys_admin") || user.hasRole("archivist"))) {
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
                             @helper.checkbox(targetForm("hidden"),
                                 args =
-                                '_label -> "Hidden (Is this target hidden from public):"
+                                        '_label -> "Hidden ",
+                                '_description -> "(Is this target hidden from public)"
                             )(FieldConstructor(genericInput.f), lang)
+                            </div>
                         </div>
                     </div>
-                </div>
                 }
 
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
                             @helper.checkbox(targetForm("keySite"),
                                 args =
-                                '_label -> "Key Site (Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management):"
+                                        '_label -> "Key Site ",
+                                '_description -> "(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)"
                             )(FieldConstructor(genericInput.f), lang)
+                            </div>
                         </div>
                     </div>
-                </div>
                 }
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("wctId"),
-                                '_label -> "WCT ID :",
-                                'id -> "inputWCT",
-                                'class -> "form-control",
-                                'placeholder -> "0"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @helper.inputText(targetForm("wctId"),
+                            '_label -> "WCT ID",
+                            'id -> "inputWCT",
+                            'class -> "form-control",
+                            'placeholder -> "0"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -428,12 +416,12 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("sptId"),
-                                '_label -> "SPT ID :",
-                                'id -> "inputSPT",
-                                'class -> "form-control",
-                                'placeholder -> "0"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @helper.inputText(targetForm("sptId"),
+                            '_label -> "SPT ID",
+                            'id -> "inputSPT",
+                            'class -> "form-control",
+                            'placeholder -> "0"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -441,12 +429,13 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("keywords"),
-                                '_label -> "Keywords: Free text keywords, private to you",
-                                'id -> "keywords",
-                                'class -> "form-control",
-                                'placeholder -> "0"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @helper.inputText(targetForm("keywords"),
+                            '_label -> "Keywords ",
+                            'id -> "keywords",
+                            'class -> "form-control",
+                            'placeholder -> "0",
+                            '_description -> "(Free text keywords, private to you)"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -457,12 +446,13 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @textarea(field = targetForm("description"),
-                                args = 'rows -> 1, 'cols -> 100,
-                                '_label -> "Description (A description of this web site):",
-                                'id -> "inputDescription",
-                                'class -> "form-control"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @textarea(field = targetForm("description"),
+                            args = 'rows -> 1, 'cols -> 100,
+                            '_label -> "Description ",
+                            '_description -> "(A description of this web site)",
+                            'id -> "inputDescription",
+                            'class -> "form-control"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -494,15 +484,16 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @select(
-                                targetForm("organisation.id"),
-                                    options(organisations),
-                                    args =
+                        @select(
+                            targetForm("organisation.id"),
+                            options(organisations),
+                            args =
                                     'class -> "form-control",
-                                    '_label -> "Nominating Organisation (The organisation that nominated this web site):",
-                                    '_default -> "-- None --",
-                                    '_showConstraints -> false
-                            )(FieldConstructor(genericInput.f), lang)
+                            '_label -> "Nominating Organisation ",
+                            '_description -> "(The organisation that nominated this web site)",
+                            '_default -> "-- None --",
+                            '_showConstraints -> false
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -510,43 +501,36 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @textarea(field = targetForm("originatingOrganisation"),
-                                args = 'rows -> 1, 'cols -> 100,
-                                '_label -> "Originating Organisation (the organisation(s) responsible for creating the content):",
-                                'id -> "originating_organisation",
-                                'class -> "form-control"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @textarea(field = targetForm("originatingOrganisation"),
+                            args = 'rows -> 1, 'cols -> 100,
+                            '_label -> "Originating Organisation ",
+                            '_description -> "(the organisation(s) responsible for creating the content)",
+                            'id -> "originating_organisation",
+                            'class -> "form-control"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
 
+                <div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
                 @if(user.hasArchivistRights) {
-                    @templates.select(
+                    @select(
                         targetForm("authorUser.id"),
                         options(authors),
-                        true,
-                        '_label -> "Selector (The user that is responsible for this target record and manages publisher relationship):",
-                        '_showConstraints -> true)
+                        args =
+                                'class -> "form-control",
+                        '_label -> "Owner ",
+                        '_description -> "(The user that is responsible for this target record and manages publisher relationship)",
+                        '_showConstraints -> true)(FieldConstructor(genericMandatoryInput.f), lang)
                 } else {
                     @input(targetForm("authorUser.id"),
-                            '_label -> "Selector (The user that nominated this web site):") { (id, name, value, args) =>
+                        '_label -> "Owner (The user that nominated this web site):") { (id, name, value, args) =>
                         <input type="hidden" name="@name" id="@id" value="@value">
-                        @targetForm("authorUser.name").value
+                    @targetForm("authorUser.name").value
                     }
                 }
-
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            @select(
-                                targetForm("language"),
-                                    options(languages),
-                                    args =
-                                    'class -> "form-control",
-                                    '_label -> "Language (The predominant language in which the page is written):",
-                                    '_default -> "-- None --",
-                                    '_showConstraints -> false
-                            )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -554,15 +538,33 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @select(
-                                targetForm("secondLanguage"),
-                                    options(languages),
-                                    args =
+                        @select(
+                            targetForm("language"),
+                            options(languages),
+                            args =
                                     'class -> "form-control",
-                                    '_label -> "Second Language (The second language in which the page is written):",
-                                    '_default -> "-- None --",
-                                    '_showConstraints -> false
-                            )(FieldConstructor(genericInput.f), lang)
+                            '_label -> "Language ",
+                            '_description -> "(The predominant language in which the page is written)",
+                            '_default -> "-- None --",
+                            '_showConstraints -> false
+                        )(FieldConstructor(genericInput.f), lang)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
+                        @select(
+                            targetForm("secondLanguage"),
+                            options(languages),
+                            args =
+                                    'class -> "form-control",
+                            '_label -> "Second Language ",
+                            '_description -> "(The second language in which the page is written)",
+                            '_default -> "-- None --",
+                            '_showConstraints -> false
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -571,12 +573,13 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @textarea(field = targetForm("authors"),
-                                    args = 'rows -> 1, 'cols -> 100,
-                                    '_label -> "Author(s) (A named individual responsible for creating the content):",
-                                    'id -> "authors",
-                                    'class -> "form-control"
-                                )(FieldConstructor(genericInput.f), lang)
+                            @textarea(field = targetForm("authors"),
+                                args = 'rows -> 1, 'cols -> 100,
+                                '_label -> "Author(s) ",
+                                '_description -> "(A named individual responsible for creating the content)",
+                                'id -> "authors",
+                                'class -> "form-control"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
@@ -584,14 +587,14 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Flag(s): To flag record for attention by a web archivist.</label>
+                                <label class="col-sm-6 control-label">Flag(s)  <small class="text-center">To flag record for attention by a web archivist.</small></label>
                                 <div class="col-sm-6">
-                                    @for((flag, index) <- flags.zipWithIndex) {
-                                        <label class="checkbox-inline">
-                                            <input type="checkbox" name="flagsList" value="@flag.id" @if(targetFlags != null && targetFlags.contains(flag)) {checked} />
-                                                 @flag.name
-                                        </label>
-                                    }
+                                @for((flag, index) <- flags.zipWithIndex) {
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="flagsList" value="@flag.id" @if(targetFlags != null && targetFlags.contains(flag)) {checked} />
+                                        @flag.name
+                                    </label>
+                                }
                                 </div>
                             </div>
                         </div>
@@ -600,11 +603,12 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @textarea(field = targetForm("flagNotes"),
-                                    args = 'rows -> 1, 'cols -> 100,
-                                    '_label -> "Flag notes (More details about the flagged issue):",
-                                    'class -> "form-control"
-                                )(FieldConstructor(genericInput.f), lang)
+                            @textarea(field = targetForm("flagNotes"),
+                                args = 'rows -> 1, 'cols -> 100,
+                                '_label -> "Flag notes ",
+                                '_description -> "(More details about the flagged issue)",
+                                'class -> "form-control"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
@@ -613,11 +617,11 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("dateOfPublicationText"),
-                                '_label -> "Date of publication:",
-                                'class -> "form-control",
-                                'id -> "date_of_publication"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @helper.inputText(targetForm("dateOfPublicationText"),
+                            '_label -> "Date of publication:",
+                            'class -> "form-control",
+                            'id -> "date_of_publication"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -626,30 +630,31 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @textarea(field = targetForm("archivistNotes"),
-                                    args = 'rows -> 1, 'cols -> 100,
-                                    '_label -> "Archivist Notes (This field should include any information provided by curators justifying the creation of the record. This field is NOT public.):",
-                                    '_id -> "input_archivist_notes",
-                                    'class -> "form-control"
-                                )(FieldConstructor(genericInput.f), lang)
+                            @textarea(field = targetForm("archivistNotes"),
+                                args = 'rows -> 1, 'cols -> 100,
+                                '_label -> "Archivist Notes ",
+                                '_description -> "(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)",
+                                '_id -> "input_archivist_notes",
+                                'class -> "form-control"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
                 </div>
 
-
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @select(
-                                targetForm("selectionType"),
-                                    options(selectionTypes),
-                                    args =
+                        @select(
+                            targetForm("selectionType"),
+                            options(selectionTypes),
+                            args =
                                     'class -> "form-control",
-                                    '_label -> "Selection Type (This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User)):",
-                                    '_id -> "selectionType",
-                                    '_showConstraints -> false
-                            )(FieldConstructor(genericMandatoryInput.f), lang)
+                            '_label -> "Selection Type ",
+                            '_description -> "(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))",
+                            '_id -> "selectionType",
+                            '_showConstraints -> false
+                        )(FieldConstructor(genericMandatoryInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -657,12 +662,13 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @textarea(field = targetForm("selectorNotes"),
-                                            args = 'rows -> 1, 'cols -> 100,
-                                            '_label -> "Selector Notes (Any further notes on the record for the use of the web archive team, not already captured under Justification):",
-                                            'id -> "input_selector_notes",
-                                            'class -> "form-control"
-                                        )(FieldConstructor(genericInput.f), lang)
+                        @textarea(field = targetForm("selectorNotes"),
+                            args = 'rows -> 1, 'cols -> 100,
+                            '_label -> "Selector Notes ",
+                            '_description -> "(Any further notes on the record for the use of the web archive team, not already captured under Justification)",
+                            'id -> "input_selector_notes",
+                            'class -> "form-control"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -670,11 +676,12 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            @helper.inputText(targetForm("legacySiteId"),
-                                '_label -> "Legacy site ID (ID used to identify paper licences.):",
-                                'class -> "form-control",
-                                'id -> "legacy_site_id"
-                            )(FieldConstructor(genericInput.f), lang)
+                        @helper.inputText(targetForm("legacySiteId"),
+                            '_label -> "Legacy site ID ",
+                            '_description -> "(ID used to identify paper licences.)",
+                            'class -> "form-control",
+                            'id -> "legacy_site_id"
+                        )(FieldConstructor(genericInput.f), lang)
                         </div>
                     </div>
                 </div>
@@ -682,14 +689,14 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            <label class="col-sm-6 control-label">Tag(s): keywords common to all users, controlled centrally and visible to other users</label>
+                            <label class="col-sm-6 control-label">Tag(s) <small class="text-center">keywords common to all users, controlled centrally and visible to other users</small></label>
                             <div class="col-sm-6">
-                                @for((tag, index) <- tags.zipWithIndex) {
-                                    <label class="checkbox-inline">
+                            @for((tag, index) <- tags.zipWithIndex) {
+                                <label class="checkbox-inline">
                                     <input type="checkbox" name="tagsList" value="@tag.id" @if(targetTags != null && targetTags.contains(tag)) {checked} />
-                                         @tag.name
-                                    </label>
-                                }
+                                    @tag.name
+                                </label>
+                            }
                             </div>
                         </div>
                     </div>
@@ -723,152 +730,158 @@
                     </div>
                 } else {
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label for="inputUrls" class="col-sm-6 control-label">
-                                UK Hosting (automated check)
-                            </label>
-                            <div class="col-sm-6">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">
+                                    UK Hosting <small style="color:#f00;">(automated check)</small>
+                                </label>
+                                <div class="col-sm-6">
                                 @if(FormHelper.INSTANCE.isUkHosting(id)) {
                                     <font id="isInScope" style="color: green">yes</font>
                                 } else {
                                     <font id="isInScope" style="color: red">no</font>
                                 }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label for="inputUrls" class="col-sm-6 control-label">
-                                UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
-                            </label>
-                            <div class="col-sm-6">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">
+                                    UK top-level domain <small class="text-center">(Includes .uk, .london, .scot, .wales and .cymru domains)</small><small style="color:#f00;"> (automated check)</small>
+                                </label>
+                                <div class="col-sm-6">
                                 @if(FormHelper.INSTANCE.isTopLevelDomain(id)) {
                                     <font id="isInScope" style="color: green">yes</font>
                                 } else {
                                     <font id="isInScope" style="color: red">no</font>
                                 }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label for="inputUrls" class="col-sm-6 control-label">
-                                UK Registration (automated check)
-                            </label>
-                            <div class="col-sm-6">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label  class="col-sm-6 control-label">
+                                    UK Registration <small style="color:#f00;">(automated check)</small>
+                                </label>
+                                <div class="col-sm-6">
                                 @if(FormHelper.INSTANCE.isUkRegistration(id)) {
                                     <font id="isInScope" style="color: green">yes</font>
                                 } else {
                                     <font id="isInScope" style="color: red">no</font>
                                 }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
                             @helper.checkbox(targetForm("ukPostalAddress"),
-                                '_label -> "UK Postal Address (The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box)):"
+                                '_label -> "UK Postal Address ",
+                                '_description -> "(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))"
                             )(FieldConstructor(genericInput.f), lang)
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
                             @helper.inputText(targetForm("ukPostalAddressUrl"),
-                                '_label -> "Postal Address URL (The URL on the site that contains the postal address used to determine that the site is in the UK):",
+                                '_label -> "Postal Address URL ",
+                                '_description -> "(The URL on the site that contains the postal address used to determine that the site is in the UK)",
                                 'class -> "form-control",
                                 'id -> "legacy_site_id"
                             )(FieldConstructor(genericInput.f), lang)
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
                             @helper.checkbox(targetForm("viaCorrespondence"),
-                                '_label -> "Via Correspondence (Previous correspondence with the web site owner by a Curator contains evidence of a UK address):"
+                                '_label -> "Via Correspondence ",
+                                '_description -> "(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)"
                             )(FieldConstructor(genericInput.f), lang)
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
                             @textarea(field = targetForm("value"),
                                 args = 'rows -> 1, 'cols -> 100,
-                                '_label -> "Via Correspondence: Notes (Please record details of correspondence with site owner):",
+                                '_label -> "Via Correspondence: Notes ",
+                                '_description -> "(Please record details of correspondence with site owner)",
                                 'class -> "form-control"
                             )(FieldConstructor(genericInput.f), lang)
-                        </div>
-                    </div>
-                </div>
-
-
-                @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-
-                    <div class="row padding-10">
-                        <div class="col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group">
-                                @helper.checkbox(targetForm("professionalJudgement"),
-                                    '_label -> "Professional Judgement (In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below):"
-                                )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
 
-                    <div class="row padding-10">
-                        <div class="col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group">
+                    @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                @helper.checkbox(targetForm("professionalJudgement"),
+                                    '_label -> "Professional Judgement ",
+                                    '_description -> "(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)"
+                                )(FieldConstructor(genericInput.f), lang)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
                                 @textarea(field = targetForm("professionalJudgementExp"),
                                     args = 'rows -> 1, 'cols -> 100,
-                                    '_label -> "Professional Judgement Explanation (Please describe the rational behind this decision, indicating any evidence used):",
+                                    '_label -> "Professional Judgement Explanation ",
+                                    '_description -> "(Please describe the rational behind this decision, indicating any evidence used)",
                                     'class -> "form-control"
                                 )(FieldConstructor(genericInput.f), lang)
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                            @helper.checkbox(targetForm("noLdCriteriaMet"),
+                                '_label -> "No LD Criteria Met ",
+                                '_description -> "(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
-                }
-
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            @helper.checkbox(targetForm("noLdCriteriaMet"),
-                                '_label -> "No LD Criteria Met (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):"
-                            )(FieldConstructor(genericInput.f), lang)
-                        </div>
-                    </div>
-                </div>
                 }
 
             </div>
 
             <div class="tab-pane fade" id="crawlpolicy">
-
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 @select(
                                     targetForm("scope"),
-                                        options(scopeTypes),
-                                        args =
-                                        '_label -> "Scope: Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
-                                        '_showConstraints -> false
+                                    options(scopeTypes),
+                                    args =
+                                            'class -> "form-control",
+                                            '_label -> "Scope ",
+                                '_description -> "(Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
+                                '_showConstraints -> false
                                 )(FieldConstructor(genericMandatoryInput.f), lang)
                             </div>
                         </div>
@@ -877,25 +890,29 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @select(
-                                    targetForm("depth"),
-                                        options(depthTypes),
-                                        args =
-                                        '_label -> "Depth: (Determines the depth of the crawl. Most crawls will be capped at 500MB)",
-                                        '_showConstraints -> false
-                                )(FieldConstructor(genericMandatoryInput.f), lang)
+                            @select(
+                                targetForm("depth"),
+                                options(depthTypes),
+                                args =
+                                        'class -> "form-control",
+                                        '_label -> "Depth ",
+                                '_description -> "(Determines the depth of the crawl. Most crawls will be capped at 500MB)",
+                                '_showConstraints -> false
+                            )(FieldConstructor(genericMandatoryInput.f), lang)
                             </div>
                         </div>
                     </div>
                 }
-                    @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+                @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
                             @helper.checkbox(field = targetForm("ignoreRobotsTxt"),
-                                        '_label -> "Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems):",
-                                        '_showConstraints -> false
-                                )(FieldConstructor(genericMandatoryInput.f), lang)
+
+                                '_label -> "Ignore Robots.txt ",
+                                '_description -> "(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)",
+                                '_showConstraints -> false
+                            )(FieldConstructor(genericMandatoryInput.f), lang)
                             </div>
                         </div>
                     </div>
@@ -903,45 +920,47 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @select(
-                                    targetForm("crawlFrequency"),
-                                        options(crawlFrequencies),
-                                        args =
-                                        '_label -> "Crawl Frequency (How often should this site be archived?):",
-                                        '_showConstraints -> false
-                                )(FieldConstructor(genericMandatoryInput.f), lang)
+                            @select(
+                                targetForm("crawlFrequency"),
+                                options(crawlFrequencies),
+                                args =
+                                        'class -> "form-control",
+                                        '_label -> "Crawl Frequency ",
+                                '_description -> "(How often should this site be archived?)",
+                                '_showConstraints -> false
+                            )(FieldConstructor(genericMandatoryInput.f), lang)
                             </div>
                         </div>
                     </div>
                 } else {
-                        @if(id == null) {
-                            <div class="row padding-10">
-                                <div class="col-md-12 col-xs-12 col-sm-12">
-                                    <div class="form-group">
-                                        <label class="col-sm-6 control-label" for="crawlFrequency">
-                                            Crawl Frequency (How often should this site be archived?):
-                                            <font color="red">*</font>
-                                        </label>
-                                        <div class="col-sm-6">
-                                            <select id="crawlFrequency" class="form-control" name="crawlFrequency">
-                                                <option value="DOMAINCRAWL">Domain Crawl Only</option>
-                                            </select>
-                                        </div>
+                    @if(id == null) {
+                        <div class="row padding-10">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="crawlFrequency">
+                                        Crawl Frequency (How often should this site be archived?):
+                                        <font color="red">*</font>
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <select id="crawlFrequency" class="form-control" name="crawlFrequency">
+                                            <option value="DOMAINCRAWL">Domain Crawl Only</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                        }
+                        </div>
+                    }
                 }
 
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @helper.inputText(targetForm("crawlStartDateText"),
-                                    '_label -> "Start date:",
-                                    'class -> "form-control",
-                                    'id -> "start-date-time"
-                                )(FieldConstructor(genericInput.f), lang)
+                            @helper.inputText(targetForm("crawlStartDateText"),
+                                '_label -> "Start date:",
+                                'class -> "form-control",
+                                'id -> "start-date-time"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
@@ -949,11 +968,11 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @helper.inputText(targetForm("crawlEndDateText"),
-                                    '_label -> "End date:",
-                                    'class -> "form-control",
-                                    'id -> "end-date-time"
-                                )(FieldConstructor(genericInput.f), lang)
+                            @helper.inputText(targetForm("crawlEndDateText"),
+                                '_label -> "End date:",
+                                'class -> "form-control",
+                                'id -> "end-date-time"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
@@ -963,10 +982,11 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @helper.inputText(targetForm("whiteList"),
-                                    '_label -> "White list: (Archivist use only)",
-                                    'class -> "form-control"
-                                )(FieldConstructor(genericInput.f), lang)
+                            @helper.inputText(targetForm("whiteList"),
+                                '_label -> "White list ",
+                                '_description -> "(Archivist use only)",
+                                'class -> "form-control"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
@@ -974,58 +994,57 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                @helper.inputText(targetForm("blackList"),
-                                    '_label -> "Black list: (Archivist use only)",
-                                    'class -> "form-control"
-                                )(FieldConstructor(genericInput.f), lang)
+                            @helper.inputText(targetForm("blackList"),
+                                '_label -> "Black list ",
+                                '_description -> "(Archivist use only)",
+                                'class -> "form-control"
+                            )(FieldConstructor(genericInput.f), lang)
                             </div>
                         </div>
                     </div>
-
                 }
-                
- 
-                  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+
+                @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
                     <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label">Login Credentials</label>
-                            <div class="col-sm-6">
-                                @if(targetForm("secretId").value == null || "".equals(targetForm("secretId").value) ) {
-                                    no
-                                } else {
-                                    yes
-                                }
-                                <br><!-- N.B. DISABLE FOR NOW -->
-                                @if( id != null && false ) {
-                                    <a class="btn btn-success" href="@routes.LoginCredentialsController.edit(id)">
-                                        @if(! "".equals(targetForm("secretId").value) ) {Add} else {Change} Login Credentials
-                                    </a>
-                                }
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Login Credentials</label>
+                                <div class="col-sm-6">
+                                    @if(targetForm("secretId").value == null || "".equals(targetForm("secretId").value) ) {
+                                        no
+                                    } else {
+                                        yes
+                                    }
+                                    <br><!-- N.B. DISABLE FOR NOW -->
+                                    @if( id != null && false ) {
+                                        <a class="btn btn-success" href="@routes.LoginCredentialsController.edit(id)">
+                                            @if(! "".equals(targetForm("secretId").value) ) {Add} else {Change} Login Credentials
+                                        </a>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                  } else {
+                } else {
                     <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label">Login Credentials</label>
-                            <div class="col-sm-6">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">Login Credentials</label>
+                                <div class="col-sm-6">
 
-                                     <a class="btn btn-success" disabled>Login Credentials</a>
+                                    <a class="btn btn-success" disabled>Login Credentials</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-             <div class="padding-20">
-                <div class="alert alert-info">
-                    You do not have permission to add Login Credentials.
-                </div>
-            </div>
-                  }
-                
+                    <div class="padding-20">
+                        <div class="alert alert-info">
+                            You do not have permission to add Login Credentials.
+                        </div>
+                    </div>
+                }
+
             </div>
 
             <div class="tab-pane fade" id="licensing">
@@ -1041,237 +1060,236 @@
                     </div>
                 } else {
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label" for="license">
-                                Licence (The licence terms under which this site is archived and made available)
-                            </label>
-                            <div class="col-sm-6">
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label" for="license">
+                                    Licence <small class="text-center">(The licence terms under which this site is archived and made available)</small>
+                                </label>
+                                <div class="col-sm-6">
+                                    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+                                        <select name="licensesList" id="license" class="form-control" multiple>
+                                            <option value="">-- None--</option>
+                                            @for(license <- licenses) {
+                                                <option value="@license.id" @if(targetLicenses != null && targetLicenses.contains(license)) {selected} >@license.name</option>
+                                            }
+                                        </select>
+                                    } else {
+                                        <select name="licensesList" id="license" class="form-control" multiple>
+                                            <option disabled value="">-- None--</option>
+                                            @for(license <- licenses) {
+                                                <option disabled value="@license.id" @if(targetLicenses != null && targetLicenses.contains(license)) {selected} >@license.name</option>
+                                            }
+                                        </select>
+                                    }
+                                    @for(license <- licenses) {
+                                        @if(license.name == "Open UKWA Licence (2014-)" && targetLicenses != null && targetLicenses.contains(license)) {
+                                            <input type="hidden" id="openUkwaLicense" name="openUkwaLicense" value="@license.name">
+                                            }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
                                 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-                                    <select name="licensesList" id="license" class="form-control" multiple>
-                                        <option value="">-- None--</option>
-                                        @for(license <- licenses) {
-                                            <option value="@license.id" @if(targetLicenses != null && targetLicenses.contains(license)) {selected} >@license.name</option>
-                                        }
-                                    </select>
+                                    @select(
+                                        targetForm("licenseStatus"),
+                                        options(licenseStatuses),
+                                        args =
+                                                'class -> "form-control",
+                                        '_label -> "Open UKWA licence requests ",
+                                        '_description -> "(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open Licence Request' button)",
+                                        '_showConstraints -> false
+                                    )(FieldConstructor(genericInput.f), lang)
                                 } else {
-                                    <select name="licensesList" id="license" class="form-control" multiple>
-                                        <option disabled value="">-- None--</option>
-                                        @for(license <- licenses) {
-                                            <option disabled value="@license.id" @if(targetLicenses != null && targetLicenses.contains(license)) {selected} >@license.name</option>
-                                        }
-                                    </select>
-                                }
-                                @for(license <- licenses) {
-                                    @if(license.name == "Open UKWA Licence (2014-)" && targetLicenses != null && targetLicenses.contains(license)) {
-                                        <input type="hidden" id="openUkwaLicense" name="openUkwaLicense" value="@license.name">
+                                    @if(targetForm("licenseStatus") != null && targetForm("licenseStatus").value != null) {
+                                        @targetForm("licenseStatus").value
+                                    } else {
+                                        <i>None</i>
                                     }
                                 }
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label" for="license">
-                                Open UKWA licence requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open Licence Request' button):
-                            </label>
-                            <div class="col-sm-6">
-                            @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-                                @select(
-                                    targetForm("licenseStatus"),
-                                        options(licenseStatuses),
-                                        args =
-                                        'class -> "form-control",
-                                        '_label -> "Licence Status - In case something goes wrong with the licencing process.",
-                                        '_showConstraints -> false
-                                )(FieldConstructor(genericInput.f), lang)
-                            } else {
-                                @if(targetForm("licenseStatus") != null && targetForm("licenseStatus").value != null) {
-                                    @targetForm("licenseStatus").value
-                                } else {
-                                    <i>None</i>
-                                }
-                            }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label"></label>
-                            <div class="col-sm-6">
-                                @if(FormHelper.INSTANCE.enableLicenseCreation(id) || ((user.hasRole("sys_admin") || user.hasRole("archivist")) && FormHelper.INSTANCE.hasInvalidLicenses(id))) {
-                                    <button type="submit" name="action" value="request" class="btn btn-success">Open Licence Request</button>
-                                } else {
-                                    <button disabled type="submit" name="action" value="request" class="btn btn-success">Open Licence Request</button>
-                                    <div class="padding-20">
-                                        <div class="alert alert-info">
-                                            Before you can request an Open UKWA licence, you need to save the target record.
-                                            Also, note that you cannot open a new licence request if a request is already queued.
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label"></label>
+                                <div class="col-sm-6">
+                                    @if(FormHelper.INSTANCE.enableLicenseCreation(id) || ((user.hasRole("sys_admin") || user.hasRole("archivist")) && FormHelper.INSTANCE.hasInvalidLicenses(id))) {
+                                        <button type="submit" name="action" value="request" class="btn btn-success">Open Licence Request</button>
+                                    } else {
+                                        <button disabled type="submit" name="action" value="request" class="btn btn-success">Open Licence Request</button>
+                                        <div class="padding-20">
+                                            <div class="alert alert-info">
+                                                Before you can request an Open UKWA licence, you need to save the target record.
+                                                Also, note that you cannot open a new licence request if a request is already queued.
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                @if(id != null && (user.hasRole("sys_admin") || user.hasRole("archivist"))) {
-                                    <a href="@routes.CrawlPermissionController.showCrawlPermissions(id)">Crawl Permissions</a>
-                                }
+                                    }
+                                    @if(id != null && (user.hasRole("sys_admin") || user.hasRole("archivist"))) {
+                                        <a href="@routes.CrawlPermissionController.showCrawlPermissions(id)">Crawl Permissions</a>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 }
 
-            <div class="row padding-10">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                    <div class="form-group">
+                <div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
                         @textarea(field = targetForm("webFormInfo"),
                             '_label -> "Web form information",
                             '_id -> "webFormInfo",
                             'class -> "form-control"
                         )(FieldConstructor(genericInput.f), lang)
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row padding-10">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                    <div class="form-group">
+                <div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
                         @helper.inputText(targetForm("webFormDateText"),
                             '_label -> "Web form date",
                             '_id -> "webFormDate",
                             'class -> "form-control"
                         )(FieldConstructor(genericInput.f), lang)
+                        </div>
                     </div>
                 </div>
             </div>
 
-            </div>
+            @if( id != null ){
+                @defining(Target.find.byId(id)) { target =>
+                    <div class="tab-pane fade" id="watchedTarget">
 
-         @if( id != null ){
-         @defining(Target.find.byId(id)) { target =>
-            <div class="tab-pane fade" id="watchedTarget">
-                
-                <p>Note that you can only edit these settings if your account has been permitted access to the Document Harvester, and if you own this target.</p>
-                        
-                @if(!target.hasDocuments() &&  user.canWatchTarget(target) ) {
-                    @checkbox(targetForm("watched"), true, '_label -> "Watched?", '_id -> "watched", 'onclick -> "javascript:display();")
-                } else {
-                    @checkbox(targetForm("watched"), false, '_label -> "Watched?", '_id -> "watched")
-                }
-            <div id="division">
-            
-            @inputText(targetForm("watchedTarget.documentUrlScheme"), user.canWatchTarget(target), '_label -> Html("Document URL Scheme:<br/>(it should not be necessary to set a document URL scheme, but this can be used to limit the scope of the document detection process. It cannot be used to grow the scope of the crawl)"))
+                        <p>Note that you can only edit these settings if your account has been permitted access to the Document Harvester, and if you own this target.</p>
 
-          @if(Target.findById(id).watchedTarget != null) {
-          <div class="row padding-10">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label">Journal Titles</label>
-                            <div class="col-sm-6">
-                                <table>
-                                    @for(journalTitle <- target.watchedTarget.journalTitles) {
-                                        <tr>
+                        @if(!target.hasDocuments() &&  user.canWatchTarget(target) ) {
+                            @checkbox(targetForm("watched"), true, '_label -> "Watched?", '_id -> "watched", 'onclick -> "javascript:display();")
+                        } else {
+                            @checkbox(targetForm("watched"), false, '_label -> "Watched?", '_id -> "watched")
+                        }
+                        <div id="division">
+
+                            @inputText(
+                                targetForm("watchedTarget.documentUrlScheme"),
+                                user.canWatchTarget(target),
+                                '_label -> Html("Document URL Scheme<br/>"),
+                                '_description -> "(it should not be necessary to set a document URL scheme, but this can be used to limit the scope of the document detection process. It cannot be used to grow the scope of the crawl)"
+                            )
+
+                            @if(Target.findById(id).watchedTarget != null) {
+                                <div class="row padding-10">
+                                    <div class="col-md-12 col-xs-12 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-6 control-label">Journal Titles</label>
+                                            <div class="col-sm-6">
+                                                <table>
+                                                @for(journalTitle <- target.watchedTarget.journalTitles) {
+                                                    <tr>
+                                                    @if(user.canWatchTarget(target)) {
+                                                        <td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
+                                                    } else {
+                                                        @journalTitle.title
+                                                    }
+                                                    </tr>
+                                                }
+                                                </table>
+                                                @if(user.canWatchTarget(target)) {
+                                                    <a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">
+                                                        New Journal Title
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            } else {
+                                <div class="row padding-10">
+                                    <div class="col-md-12 col-xs-12 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-6 control-label">Journal Titles</label>
+                                            <div class="col-sm-6">
+
                                             @if(user.canWatchTarget(target)) {
-                                                <td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
-                                            } else {
-                                                @journalTitle.title
+                                                <a class="btn btn-success" disabled>New Journal Title</a>
                                             }
-                                        </tr>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="padding-20">
+                                    <div class="alert alert-info">
+                                        Before you can create a new Journal Title, you need to tick the watched checkbox and save the target record.
+                                    </div>
+                                </div>
+                            }
+
+                            @helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
+                                <div class="scroll-box">
+                                    @for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
+                                        @checkbox2(targetForm(fastSubject.fastId), user.canWatchTarget(target), '_label -> fastSubject.name)(
+                                            helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+                                        )
                                     }
-                                </table>
-                                @if(user.canWatchTarget(target)) {
-                                    <a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">
-                                        New Journal Title
-                                    </a>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            } else {
-                <div class="row padding-10">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label">Journal Titles</label>
-                            <div class="col-sm-6">
+                                </div>
+                            }
 
-                                @if(user.canWatchTarget(target)) {
-                                        <a class="btn btn-success" disabled>New Journal Title</a>
-                                }
-                            </div>
-                        </div>
+                        <div id="archivistArea" class="revision">
+                            <div class="row padding-10">
+                                <div class="col-md-12 col-xs-12 col-sm-12">
+                                    <div class="form-group">
+                                    @textarea(field = targetForm("watchedTarget.archivistNotesWT"),
+                                        '_label -> Html("Archivist Notes<br/>"),
+                                        '_description -> "(this field should include any information provided by curators justifying the creation of the record. This field is NOT public.)",
+                                        '_id -> "archivistNotesWT",
+                                        'class -> "form-control"
+                                    )(FieldConstructor(genericInput.f), lang)
+                    </div>
+                    </div>
+                    </div>
                     </div>
                     </div>
 
-            <div class="padding-20">
-                <div class="alert alert-info">
-                    Before you can create a new Journal Title, you need to tick the watched checkbox and save the target record.
-                </div>
-            </div>
+                }
             }
 
-                @helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
-                    <div class="scroll-box">
-                        @for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
-                            @checkbox2(targetForm(fastSubject.fastId), user.canWatchTarget(target), '_label -> fastSubject.name)(
-                                helper.FieldConstructor(templates.checkboxFieldConstructor.f)
-                            )
-                        }
-                    </div>
-                }
-
-                 <div id="archivistArea" class="revision">
-            <div class="row padding-10">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                    <div class="form-group">
-                        @textarea(field = targetForm("watchedTarget.archivistNotesWT"),
-                            '_label -> Html("Archivist Notes:<br/>(this field should include any information provided by curators justifying the creation of the record. This field is NOT public.)"),
-                            '_id -> "archivistNotesWT",
-                            'class -> "form-control"
-                        )(FieldConstructor(genericInput.f), lang)
-                    </div>
-                </div>
-            </div>
         </div>
         </div>
 
-          }
-          }
-
-            </div>
-        </div>
-                        
-
-         @if( id != null ){
-       
-        <div id="revisionArea" class="revision">
-            <div class="row padding-10">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                    <div class="form-group">
+        @if( id != null ){
+            <div id="revisionArea" class="revision">
+                <div class="row padding-10">
+                    <div class="col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group">
                         @textarea(field = targetForm("revision"),
-                            '_label -> "Revision log message:",
+                            '_label -> "Revision log message",
                             '_id -> "inputRevision",
                             'class -> "form-control"
                         )(FieldConstructor(genericInput.f), lang)
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="padding-20">
-            <div class="panel-group" id="accordion">
-                <div class="panel panel-primary" id="panels">
-                    <div class="panel-heading">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
-                            Instances
-                        </a>
-                    </div>
-                    <div id="collapseInstances" class="panel-collapse collapse">
+            <div class="padding-20">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-primary" id="panels">
+                        <div class="panel-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
+                                Instances
+                            </a>
+                        </div>
+                        <div id="collapseInstances" class="panel-collapse collapse">
                         @for(fieldUrl <- FormHelper.INSTANCE.fieldUrls(id)) {
                             <div class="padding-10">
                                 <strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
@@ -1299,20 +1317,17 @@
                                 </li>
                             </ul>
                         }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="padding-20">
-            <div class="alert alert-info">
-                Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+            <div class="padding-20">
+                <div class="alert alert-info">
+                    Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+                </div>
             </div>
-        </div>
-
         }
-
-@editsection_save(targetForm, user, id, "bottom-")
-
-        }
+        @editsection_save(targetForm, user, id, "bottom-")
     }
+}

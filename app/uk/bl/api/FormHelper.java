@@ -2,8 +2,11 @@ package uk.bl.api;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
@@ -215,5 +218,20 @@ public enum FormHelper {
 		if( target == null ) return null;
 		return target.fieldUrls;
 	}
-	
+
+
+	public String getCreatedAtDate(Long targetId) throws WhoisException {
+		Target target = Target.findById(targetId);
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		if( target == null ) return null;
+		return dateFormat.format(target.createdAt);
+	}
+
+	public String getUpdatedAtDate(Long targetId) throws WhoisException {
+		Target target = Target.findById(targetId);
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+		if( target == null ) return null;
+		return dateFormat.format(target.updatedAt);
+	}
+
 }
