@@ -175,6 +175,7 @@
 		      <subfield code="y">Collection item</subfield>
 		  </datafield>
             	  }
+	      }
           </record>
         </collection>
       </mets:xmlData>
