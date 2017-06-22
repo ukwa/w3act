@@ -68,6 +68,7 @@ public class WatchedTarget extends Model {
 		ExpressionList<WatchedTarget> el = find.fetch("target").where();
 		
 		if (userId != null) {
+			/*
 			if (children) {
 				List<Target> ownedTargets = Target.find.where().eq(Const.ACTIVE, true).eq("author_id", userId).findList();						
 				Expression expr = Expr.eq("target.authorUser.id", userId);
@@ -82,8 +83,9 @@ public class WatchedTarget extends Model {
 				}
 				el = el.add(expr);			
 			} else {
-				el = el.eq("target.authorUser.id", userId);
-			}
+			*/				
+			el = el.eq("target.authorUser.id", userId);
+			//}
 		}
 		
         return el.icontains(SEARCH_FIELD, filter)
