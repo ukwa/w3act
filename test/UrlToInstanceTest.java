@@ -20,7 +20,7 @@ public class UrlToInstanceTest {
 	@Test
 	public void test() {
 		try {
-            String urlValue = "http://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?url=http://www.bl.uk/bibliographic/ukmarc.html";
+            String urlValue = "https://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?url=http://www.bl.uk/bibliographic/ukmarc.html";
 			Wayback wayback = WaybackExport.INSTANCE.export(urlValue);
             assertNotNull(wayback);
 		} catch (ActException e) {

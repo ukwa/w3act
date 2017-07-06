@@ -1924,7 +1924,7 @@ public class Target extends Model {
 		*/
 		// Build up the field string:
 		for (FieldUrl fieldUrl : fieldUrls) {
-			Logger.info("Adding URL to string: "+fieldUrl.id+":"+fieldUrl.url+" "+fieldUrl.position);
+			Logger.debug("Adding URL to string: "+fieldUrl.id+":"+fieldUrl.url+" "+fieldUrl.position);
 			urls.add(fieldUrl.url);
 		}
 		return StringUtils.join(urls, ", ");

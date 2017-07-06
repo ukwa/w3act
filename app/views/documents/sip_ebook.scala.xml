@@ -169,7 +169,13 @@
                       <subfield code="a">Priority cataloguing</subfield>
                   </datafield>
                   }
-            }
+	      	  @if(document.globalAccessDocumentUrl != null && !document.globalAccessDocumentUrl.isEmpty) {
+		  <datafield tag="856" ind1="4" ind2="0">
+		      <subfield code="u">@document.globalAccessDocumentUrl</subfield>
+		      <subfield code="y">Collection item</subfield>
+		  </datafield>
+            	  }
+	      }
           </record>
         </collection>
       </mets:xmlData>
