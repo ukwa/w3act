@@ -289,4 +289,28 @@ public class OrganisationController extends AbstractController {
 		}
     	return null;
     }
+
+	/**
+	 * This method gets full list of organisations.
+	 * @return
+	 */
+	public static List<Organisation> getOrganisationList() {
+		return Organisation.find.all();
+	}
+
+	/**
+	 * This method returns title of organisations by user id.
+	 * @return
+	 * @param id
+	 */
+	public static String getTitle(Long id) {
+		Organisation target = Organisation.findById(id);
+		if(target != null) {
+			return target.title;
+		}
+		else {
+			return "Blank Organisation";
+		}
+	}
+
 }

@@ -65,20 +65,23 @@ public class CrawlPermissionController extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-        routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL)
+			routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "-1", Const.SELECT_ALL)
     );
     
     /**
      * Display the paginated list of crawl permissions.
      *
-     * @param page Current page number (starts from 0)
+     * @param pageNo Current page number (starts from 0)
      * @param sortBy Column to be sorted
      * @param order Sort order (either asc or desc)
-     * @param filter Filter applied on target urls
-     */
-    public static Result list(int pageNo, String sortBy, String order, String filter, String status, String sel) {
-    	Logger.debug("CrawlPermissions.list() " + "\npageNo - " + pageNo + "\nsortby - " + sortBy + "\norder - " + order + "\nfilter - " + filter + "\nstatus - " + status +  "\nsel - " + sel);
-    	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status);
+	 * @param filter Filter applied on target urls
+	 * @param status The status of crawl permission request (e.g. QUEUED, PENDING...)
+	 * @param organisation The id of organisation the target belongs to (e.g. 1 - (BL), ...)
+	 * @param sel sql query type and scope
+	 * */
+    public static Result list(int pageNo, String sortBy, String order, String filter, String status, String organisation, String sel) {
+		Logger.debug("CrawlPermissions.list() " + "\npageNo - " + pageNo + "\nsortby - " + sortBy + "\norder - " + order + "\nfilter - " + filter + "\nstatus - " + status + "\norganisation - " + organisation +  "\nsel - " + sel);
+    	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status, organisation);
 
     	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
     	List<MailTemplate> templates = MailTemplate.findByType(MailTemplate.TemplateType.PERMISSION_REQUEST.name());
@@ -93,6 +96,7 @@ public class CrawlPermissionController extends AbstractController {
         			sortBy, 
         			order,
         			status,
+					organisation,
         			sel,
         			crawlPermissionStatuses, templates)
         	);
@@ -189,6 +193,7 @@ public class CrawlPermissionController extends AbstractController {
      */
     public static Result showCrawlPermissions(Long targetId) {
     	String status = "";
+		String organisation = "";
     	
 		Page<CrawlPermission> pages = CrawlPermission.targetPager(0, 20, Const.NAME, Const.ASC, targetId);
 
@@ -208,6 +213,7 @@ public class CrawlPermissionController extends AbstractController {
             			Const.NAME, 
             			Const.ASC,
             			status,
+            			organisation,
             			"",
             			crawlPermissionStatuses, templates)
             	);
@@ -223,24 +229,28 @@ public class CrawlPermissionController extends AbstractController {
     	String action = form.get("action");
     	String name = form.get(Const.NAME);
         String status = form.get(Const.STATUS);
+		String organisation = form.get(Const.ORGANISATION);
         
         if (status == null) {
         	status = Const.DEFAULT_CRAWL_PERMISSION_STATUS;
         }
+		if (organisation == null) {
+			organisation = "-1";
+		}
 
 //        List<CrawlPermission> resList = processFilterCrawlPermissions(name, status, "");
 
         if (StringUtils.isBlank(name)) {
 			Logger.debug("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
-	    	return redirect(routes.CrawlPermissionController.list(0, "updatedAt", Const.ASC, name, status, Const.SELECT_ALL));
+	    	return redirect(routes.CrawlPermissionController.list(0, "updatedAt", Const.ASC, name, status, organisation, Const.SELECT_ALL));
 		}
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (action.equals("search")) {
-    	    	return redirect(routes.CrawlPermissionController.list(0, "updatedAt", Const.ASC, name, status, Const.SELECT_ALL));
+    	    	return redirect(routes.CrawlPermissionController.list(0, "updatedAt", Const.ASC, name, status, organisation, Const.SELECT_ALL));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -902,6 +912,9 @@ public class CrawlPermissionController extends AbstractController {
 	        String status = requestData.get("statusValue");
 	    	Logger.debug("status: " + status);
 
+			String organisation = requestData.get("organisationValue");
+			Logger.debug("organisationValue: " + organisation);
+
 	        int pageNo = Integer.parseInt(requestData.get("pageNo"));
 		    Logger.debug("pageNo: " + pageNo);
 	
@@ -937,7 +950,7 @@ public class CrawlPermissionController extends AbstractController {
 		        	Logger.debug("crawlPermissions.size(): " + crawlPermissions.size() + " - " + status);
 	    			flash("message", "Please select only one email to preview");
 		        	res = redirect(routes.CrawlPermissionController.list(
-		        			0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
+		        			0, Const.NAME, Const.ASC, "", status, organisation, Const.SELECT_ALL));
 	    	    	return res;
 	        	}
 	        	
@@ -988,12 +1001,12 @@ public class CrawlPermissionController extends AbstractController {
 	        if (action.equals("selectall")) {
 	        	Logger.debug("select all listed in page crawl permissions");
 	        	res = redirect(routes.CrawlPermissionController.list(
-	        			pageNo, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
+	        			pageNo, Const.NAME, Const.ASC, "", status, organisation, Const.SELECT_ALL));
 	        }
 	        if (action.equals("deselectall")) {
 	        	Logger.debug("deselect all listed in page crawl permissions");				
 	        	res = redirect(routes.CrawlPermissionController.list(
-	        			pageNo, Const.NAME, Const.ASC, "", status, Const.DESELECT_ALL));
+	        			pageNo, Const.NAME, Const.ASC, "", status, organisation, Const.DESELECT_ALL));
 	        }
     	}
         return res;
