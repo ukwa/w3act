@@ -479,18 +479,22 @@ public class CrawlPermission extends ActModel {
      * @param sortBy Crawl permission property used for sorting
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
-     * @param status The status of crawl permission request (e.g. QUEUED, PENDING...)
-     * @param target The field URL
+	 * @param status The status of crawl permission request (e.g. QUEUED, PENDING...)
+	 * @param organisation The id of organisation the target belongs to (e.g. 1 - (BL), ...)
      */
     public static Page<CrawlPermission> page(int page, int pageSize, String sortBy, String order, String filter, 
-    		String status) {
+    		String status, String organisation) {
     	// Set up query:
     	ExpressionList<CrawlPermission> q = find.where().icontains("name", filter);
     	// Add optional status filter:
     	if( ! "-1".equals(status)) {
     		q = q .eq("status", status);
     	}
-    	// Strip out NULLs when sorting by these dates:
+		// Add optional organisation filter:
+		if( ! "-1".equals(organisation)) {
+			q = q .eq("user.organisation.id", Integer.valueOf(organisation));
+		}
+		// Strip out NULLs when sorting by these dates:
     	if( "grantedAt".equals(sortBy) ||"requestedAt".equals(sortBy) ) {
     		q = q.isNotNull(sortBy);
     	}
