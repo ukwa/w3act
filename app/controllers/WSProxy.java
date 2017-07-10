@@ -25,23 +25,14 @@ import play.mvc.Security;
 public class WSProxy extends Controller {
 	
 	// Build up URL and copy over query parameters:		
-	public static Result passthrough(String url) throws ClientProtocolException, IOException {
-		
-		// Build up the wayback query:
-		String urlBuilder = url;
-		String q = ctx()._requestHeader().rawQueryString();
-		if( q != null && q.length() > 0 ) {
-			Logger.info("Passing through raw Query String: "+q);
-			urlBuilder += "?"+q;
-		}
-		final String nurl = urlBuilder;		
-		Logger.info("Proxing "+nurl);
+	public static Result passthrough(String url) throws ClientProtocolException, IOException {		
+		Logger.info("Proxing "+url);
 		
 		// Set up the GET:
 		CloseableHttpClient httpclient = HttpClientBuilder.create()
 			    .disableRedirectHandling()
 			    .build();
-		HttpGet httpGet = new HttpGet(nurl);
+		HttpGet httpGet = new HttpGet(url);
 		CloseableHttpResponse response = httpclient.execute(httpGet);
 		
 		// If this looks like a redirect, return that:
