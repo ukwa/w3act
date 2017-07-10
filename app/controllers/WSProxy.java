@@ -26,6 +26,12 @@ public class WSProxy extends Controller {
 	
 	// Build up URL and copy over query parameters:		
 	public static Result passthrough(String url) throws ClientProtocolException, IOException {		
+		
+		// Check the url is allowed:
+		if( ! url.startsWith(models.Document.getPdf2HtmlEndpoint()) ) {
+			Logger.info("Rejecting request to proxy "+url);
+			return badRequest();
+		}
 		Logger.info("Proxing "+url);
 		
 		// Set up the GET:
@@ -33,6 +39,8 @@ public class WSProxy extends Controller {
 			    .disableRedirectHandling()
 			    .build();
 		HttpGet httpGet = new HttpGet(url);
+		
+		// Start the GET:
 		CloseableHttpResponse response = httpclient.execute(httpGet);
 		
 		// If this looks like a redirect, return that:
