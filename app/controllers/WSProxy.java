@@ -6,6 +6,7 @@ package controllers;
 import java.io.IOException;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -39,6 +40,8 @@ public class WSProxy extends Controller {
 			    .disableRedirectHandling()
 			    .build();
 		HttpGet httpGet = new HttpGet(url);
+		// Force HTTP 1.1:
+		httpGet.setProtocolVersion(HttpVersion.HTTP_1_1);
 		
 		// Start the GET:
 		CloseableHttpResponse response = httpclient.execute(httpGet);
