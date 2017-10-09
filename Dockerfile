@@ -34,5 +34,5 @@ EXPOSE 9000
 
 #VOLUME "$USER_HOME_DIR/.ivy2"
 
-CMD /w3act/target/universal/stage/bin/w3act -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
+CMD /w3act/target/universal/stage/bin/w3act -Dconfig.file=/w3act/conf/dev.conf -Dpidfile.path=/dev/null
 
