@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8 AS build-env
 
 ENV         ACTIVATOR_VERSION 1.3.11
 ARG         USER_HOME_DIR="/root"
@@ -30,9 +30,12 @@ RUN /usr/local/activator/bin/activator stage || exit 0
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
+# And patch onto a smaller image:
+FROM openjdk:8-jre
+
+COPY --from=build-env /w3act/target/universal/stage /w3act
+
 EXPOSE 9000
 
-#VOLUME "$USER_HOME_DIR/.ivy2"
-
-CMD /w3act/target/universal/stage/bin/w3act -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
+CMD /w3act/bin/w3act -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
 
