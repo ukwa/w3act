@@ -20,7 +20,7 @@ COPY .git /w3act/.git
 WORKDIR /w3act
 
 # Patch in the version tag:
-RUN git fetch -t && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt || exit 0
+RUN git fetch --tags --force && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt || exit 0
 
 # Run without failing to try to download all dependencies:
 RUN /usr/local/activator/bin/activator stage || exit 0
@@ -37,5 +37,7 @@ COPY --from=build-env /w3act/target/universal/stage /w3act
 
 EXPOSE 9000
 
-CMD /w3act/bin/w3act -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
+
+# Use larger heap, and add experimental option: forcing restart on OOM:
+CMD /w3act/bin/w3act -J-Xmx2g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
 
