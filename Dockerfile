@@ -37,6 +37,8 @@ COPY --from=build-env /w3act/target/universal/stage /w3act
 
 EXPOSE 9000
 
+# Have to use this as the working directory or it fails to find the email templates!
+WORKDIR /w3act
 
 # Use larger heap, and add experimental option: forcing restart on OOM:
 CMD /w3act/bin/w3act -J-Xmx2g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
