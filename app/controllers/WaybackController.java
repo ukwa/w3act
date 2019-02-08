@@ -7,8 +7,6 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import models.User;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -17,9 +15,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import models.User;
 import play.Logger;
 import play.Play;
 import play.mvc.Controller;
@@ -78,6 +76,7 @@ public class WaybackController extends Controller {
 			    .build();
 		//
 		HttpGet httpGet = new HttpGet(wayback);
+        httpGet.addHeader("Host", "beta.webarchive.org.uk");
 		CloseableHttpResponse response = httpclient.execute(httpGet);
 		// If this looks like a redirect, return that:
 		if ( response.getFirstHeader(LOCATION) != null ) {
