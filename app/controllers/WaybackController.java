@@ -76,7 +76,6 @@ public class WaybackController extends Controller {
 			    .build();
 		//
 		HttpGet httpGet = new HttpGet(wayback);
-        httpGet.addHeader("Host", "beta.webarchive.org.uk");
 		CloseableHttpResponse response = httpclient.execute(httpGet);
 		// If this looks like a redirect, return that:
 		if ( response.getFirstHeader(LOCATION) != null ) {
