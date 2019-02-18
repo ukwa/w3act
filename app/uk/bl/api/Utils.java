@@ -762,7 +762,7 @@ public enum Utils {
     }
     
     public boolean validUrl(String url) {
-        String urlRegex = "https?:\\/\\/(www)?+[\\w\\d.-]+\\.[\\w]{2,}(:\\d{1,5})?(\\/.*)?";
+		String urlRegex = "(http(s)?://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ;,./?%&=]*)?";
     	return url.matches(urlRegex);
     }
     
