@@ -198,7 +198,7 @@ POST    /flags                              controllers.FlagController.save()
 POST    /flags/:id                          controllers.FlagController.update(id:Long)
 
 GET     /crawlpermissions                       controllers.CrawlPermissionController.index()
-GET     /crawlpermissions/list                  controllers.CrawlPermissionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", status ?= "QUEUED", sel ?= "selectall")
+GET     /crawlpermissions/list                  controllers.CrawlPermissionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", status ?= "QUEUED", organisation ?= "ANY", sel ?= "selectall")
 GET     /crawlpermissions/search                controllers.CrawlPermissionController.search()
 GET     /crawlpermissions/filterbyjson/:name    controllers.CrawlPermissionController.filterByJson(name)
 GET     /crawlpermissions/new                   controllers.CrawlPermissionController.newForm(targetId:Long ?= -1)
@@ -427,6 +427,6 @@ GET     /monitrix/target/:id                controllers.MonitrixController.forTa
 GET     /monitrix/all                       controllers.MonitrixController.all()
 
 # Authenticated access to internal services:
-GET     /site/*url                      controllers.WSProxy.passthrough(url)
+GET     /site                               controllers.WSProxy.passthrough(url)
 
 

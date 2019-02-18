@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8 AS build-env
 
 ENV         ACTIVATOR_VERSION 1.3.11
 ARG         USER_HOME_DIR="/root"
@@ -20,7 +20,7 @@ COPY .git /w3act/.git
 WORKDIR /w3act
 
 # Patch in the version tag:
-RUN git fetch -t && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt || exit 0
+RUN git fetch --tags --force --no-recurse-submodules && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt
 
 # Run without failing to try to download all dependencies:
 RUN /usr/local/activator/bin/activator stage || exit 0
@@ -30,9 +30,16 @@ RUN /usr/local/activator/bin/activator stage || exit 0
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
+# And patch onto a smaller image:
+FROM openjdk:8-jre
+
+COPY --from=build-env /w3act/target/universal/stage /w3act
+
 EXPOSE 9000
 
-#VOLUME "$USER_HOME_DIR/.ivy2"
+# Have to use this as the working directory or it fails to find the email templates!
+WORKDIR /w3act
 
-CMD /w3act/target/universal/stage/bin/w3act -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
+# Use larger heap, and add experimental option: forcing restart on OOM:
+CMD /w3act/bin/w3act -J-Xmx2g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
 

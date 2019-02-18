@@ -233,8 +233,8 @@ public class Documents extends AbstractController {
         }
 
         if(saveDir.exists()) {
-            // Download it to a local file.
-            String url = routes.DocumentSIPController.sip(id).absoluteURL(request());
+            // Download it to a local file (hard-coded but acceptable as we are running under Docker).
+            String url = "http://localhost:9000" + routes.DocumentSIPController.sip(id).url();
             Logger.info("Downloading " + url);
             final Promise<File> filePromise = WS.url(url).get().map(
                     new Function<WSResponse, File>() {
