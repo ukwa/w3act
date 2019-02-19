@@ -20,10 +20,14 @@ Scenario: Checking if it's there my URL is malformed
       | https://www.nicelife.wales   			| yes		| 
       | htt://www.nicelife   				| no		| 
       | nicelife   					| no		| 
-      | http://www.nicelife   				| yes		| 
+      | http://www.nicelife   				| no		| 
       | https://www.bbc.co.uk/test1&query=1&terri=2   	| yes    	| 
       | https://www.bbc.co.uk/test1&query=1&terri=2/   	| yes    	|
       | https://www.bbc.co.uk/test1/   			| yes    	|
       | http://www.bbc.co.uk/test1			| yes    	|
       | htt://www.nicolaagain.co.uk			| no    	|
-	  	  	  
+      | https://mysticalmoments.shop/			| yes    	|
+      | https://emshort.blog/				| yes    	|
+      | https://worldrugbymuseum.blog/			| yes    	|
+      | https://www.pissarro.art/			| yes    	|
+      | https://lastposts.blog/				| yes    	|
