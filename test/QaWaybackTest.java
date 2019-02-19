@@ -56,7 +56,7 @@ public class QaWaybackTest {
 				// Check we can now access Wayback:
 				Logger.info("Going to Wayback page now we are logged in...");
 				browser.goTo(fullTestUrl);
-				assertThat(browser.pageSource()).contains("Take Me Back");
+				assertThat(browser.pageSource()).contains("Welcome to nginx");
 				assertThat(browser.pageSource()).doesNotContain("form action=\"/act/login\"");
 
 
