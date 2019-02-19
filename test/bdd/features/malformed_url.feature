@@ -20,7 +20,7 @@ Scenario: Checking if it's there my URL is malformed
       | https://www.nicelife.wales   			| yes		| 
       | htt://www.nicelife   				| no		| 
       | nicelife   					| no		| 
-      | http://www.nicelife   				| no		| 
+      | http://www.nicelife   				| yes		| 
       | https://www.bbc.co.uk/test1&query=1&terri=2   	| yes    	| 
       | https://www.bbc.co.uk/test1&query=1&terri=2/   	| yes    	|
       | https://www.bbc.co.uk/test1/   			| yes    	|
