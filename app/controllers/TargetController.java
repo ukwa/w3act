@@ -1752,24 +1752,20 @@ public class TargetController extends AbstractController {
                     uri = new URI(trimmed).normalize().toURL();
                 }
                 catch(MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again 3");
+                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     return info(filledForm, id);
                 }
 
                 UrlValidator urlValidator = new UrlValidator();
                 if(!urlValidator.isValid(trimmed)) {
-
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again 4");
+                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     return info(filledForm, id);
                 }
 
-
                 String extFormUrl = uri.toExternalForm();
-
                 FieldUrl fu = new FieldUrl(extFormUrl.trim());
-
                 boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
                 Logger.debug("valid? " + isValidUrl);
                 if(!isValidUrl) {
@@ -1777,20 +1773,16 @@ public class TargetController extends AbstractController {
                     filledForm.reject(ve);
                     flash("message", "Invalid URL.");
                     return redirect(routes.TargetController.edit(id));
-
                 }
-
                 Logger.debug("Adding url: " + trimmed + " at position " + position);
                 fu.position = position;
                 position++;
                 Logger.debug("extFormUrl: " + extFormUrl);
                 fieldUrls.add(fu);
-
             }
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
         }
-
         return null;
     }
 
