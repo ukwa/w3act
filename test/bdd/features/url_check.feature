@@ -17,6 +17,6 @@ Scenario: Checking if it's there is an existing URL
       | input 											| output  	| 
       | http://acid.matkelly.com/               	    | yes		| 
       | http://example.org     				            | yes    	| 
-      | http://www.shelter.org.uk/   					| no    	| 
+      | http://www.shelter.org.uk/   					| no    	|
       | http://www.shelter.org.uk   					| no    	| 
       | https://www.bbc.co.uk/test1&query=1&terri=2   	| no    	| 
