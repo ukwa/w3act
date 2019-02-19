@@ -25,7 +25,6 @@ public class QaWaybackTest {
 	public void setUp() throws ActException {	
 	}
 
-
 	@Test
 	public void runInBrowser() {
 		running(testServer(3333, fakeApplication()), HTMLUNIT, new Callback<TestBrowser>() {
