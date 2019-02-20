@@ -36,5 +36,5 @@ Scenario: Checking if it's there my URL is malformed
       | https://webarchive.org.uk/en/ukwa/search?text=test&search_location=full_text&reset_filters=false&content_type=Web+Page				| yes    	|
       | https://webarchive.org.uk/en/ukwa/search?text=test/   	| no    	|
       | http://example.com:3000/pathname?search=test   	| yes    	|
-      | http://example.com:3000/pathname/?search=test#hash   	| yes    	|
+      | http://example.com:3000/pathname/?search=test#hash   	| no    	|
       | http://example.com:3000   	| yes    	|

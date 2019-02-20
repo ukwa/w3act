@@ -762,7 +762,7 @@ public enum Utils {
     }
     
     public boolean validUrl(String url) {
-        String urlRegex = "^((ftp|http|https):\\/\\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\\.[a-zA-Z]+)+((\\/)[\\w#]|/+)?([^?]+)*(\\/\\w+\\?[a-zA-Z0-9_]+=\\w+(&[a-zA-Z0-9_]+=[a-zA-Z0-9!@#$&-+_#]+)*)?$";
+        String urlRegex = "^((ftp|http|https):\\/\\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\\.[a-zA-Z]+)+((\\/)[\\w#]|/+)?([^?]+)*(\\/\\w+\\?[a-zA-Z0-9_]+=\\w+(&[a-zA-Z0-9_]+=[a-zA-Z0-9!@#$&-+_]+)*)?$";
     	return url.matches(urlRegex);
     }
     
