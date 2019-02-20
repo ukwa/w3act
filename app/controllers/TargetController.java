@@ -132,8 +132,9 @@ public class TargetController extends AbstractController {
 
         Logger.debug("After processing Filter::" + url);
 
-        Query<FieldUrl> query = FieldUrl.find.fetch("target").fetch("target.organisation").where()
-                .add(Expr.or(Expr.icontains("url", url), Expr.icontains("target.title", url))).query();
+        Query<FieldUrl> query = FieldUrl.find.fetch("target").fetch("target.organisation").setDistinct(true)
+                .where().add(Expr.or(Expr.icontains("target.synonyms", url), Expr.or(Expr.icontains("url", url), Expr.icontains("target.title", url)))).query();
+
         // Set up the sorting:
         if("title".equals(sortBy)) {
             query = query.orderBy("target.title" + " " + order);
