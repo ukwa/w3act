@@ -316,11 +316,15 @@
 											@for(fieldUrl <- target.fieldUrls) {
 											    @shortLink(fieldUrl.url, "_blank")<br />
 											}
-										} else {
-											N/A
 										}
 									</td>
-									<td>@target.licenseStatus</td>
+                                    <td>
+                                        @if(target.licenseStatus != null){
+                                            @target.licenseStatus
+                                        } else {
+                                            NULL
+                                        }
+                                    </td>
 									<td>@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue</td>
 									<td><abbr title="Start Date: @target.getCrawlStartDateText()">@target.isScheduledToCrawl()</abbr></td>
 				                </tr>
