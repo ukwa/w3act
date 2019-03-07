@@ -1070,9 +1070,12 @@ public class Target extends Model {
 		if (StringUtils.isNotEmpty(depthName)) {
 			exp = exp.eq("depth", depthName);
 		}
-		if (licenseId != 0) {
-			exp = exp.eq("licenses.id", licenseId);
-		}
+        if (licenseId != 0) {
+            if (licenseId == -1)
+                exp = exp.eq("t0.license_status", null);
+            else
+                exp = exp.eq("licenses.id", licenseId);
+        }
 		if (flagId != 0) {
 			exp = exp.eq("flags.id", flagId);
 		}
