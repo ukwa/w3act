@@ -196,7 +196,7 @@
 							            	<label for="license" class="col-md-4 col-sm-4 control-label">Licence</label>
 							            	<div class="col-md-8 col-sm-8">
 												<select name="license" class="form-control target-form-control" id="license">
-													<option value="0">None</option>
+                                                    <option value="0">None</option>
 										            @for(license <- licenses) {
 								                 		@if(license.id == licenseId) {
 									                		<option value="@license.id" selected>@license.name</option>
@@ -204,7 +204,12 @@
 									                		<option value="@license.id">@license.name</option>
 									                	}
 													}
-												</select>
+                                                    @if(licenseId == -1) {
+                                                        <option value="-1" selected>No License</option>
+                                                    } else {
+                                                        <option value="-1">No License</option>
+                                                    }
+                                                </select>
 											</div>
 							         	</div>
 										<div class="form-group">
@@ -316,11 +321,15 @@
 											@for(fieldUrl <- target.fieldUrls) {
 											    @shortLink(fieldUrl.url, "_blank")<br />
 											}
-										} else {
-											N/A
 										}
 									</td>
-									<td>@target.licenseStatus</td>
+                                    <td>
+                                        @if(target.licenseStatus != null){
+                                            @target.licenseStatus
+                                        } else {
+                                            NONE
+                                        }
+                                    </td>
 									<td>@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue</td>
 									<td><abbr title="Start Date: @target.getCrawlStartDateText()">@target.isScheduledToCrawl()</abbr></td>
 				                </tr>
