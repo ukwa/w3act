@@ -20,7 +20,7 @@ COPY .git /w3act/.git
 WORKDIR /w3act
 
 # Patch in the version tag:
-RUN git fetch --tags --force --no-recurse-submodules https://github.com/ukwa/w3act.git && git fetch --unshallow https://github.com/ukwa/w3act.git && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt
+RUN git fetch --tags --force --no-recurse-submodules https://github.com/ukwa/w3act.git && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt
 
 # Run without failing to try to download all dependencies:
 RUN /usr/local/activator/bin/activator stage || exit 0
