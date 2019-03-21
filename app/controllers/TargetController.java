@@ -553,20 +553,40 @@ public class TargetController extends AbstractController {
     }
 
     /**
+     * Optional flag parameter - if true, then sync all active targets (includes runChecks and Update for each, may take more than 2hrs with 80K targets)
+     * Run example http://localhost:9000/act/api/targets/true
      * @return
      */
-    public static Result allTargetsAsJson(int pageNo, int pageLength) {
+    public static Result allTargetsAsJson(int pageNo, int pageLength, boolean flag) {
         List<Target> targets = Target.findAllActive();
-        int offset = pageNo * pageLength;
-        if( offset > targets.size()) {
-        	return notFound("There are only "+targets.size()+" targets!");
+        if (flag) {
+            Logger.debug("Starting Sync for All active targets. Target size = " + targets.size());
+            // Transaction start
+            Ebean.beginTransaction();
+            try {
+                targets.forEach(target -> {
+                    target.runChecks();
+                    target.update();
+                });
+                Ebean.commitTransaction();
+            } finally {
+                Ebean.endTransaction();
+            }
+            // Transaction end
+            return ok("OK. Active Target Sync was done successfully.");
         }
-        List<Target> targets_page = new ArrayList<Target>(pageLength);
-        for(int i = 0; i < pageLength; i++) {
-        	if( offset+i >= targets.size()) break;
-        	targets_page.add(targets.get(offset+i));
+        else { //flag == false
+            int offset = pageNo * pageLength;
+            if( offset > targets.size()) {
+                return notFound("There are only "+targets.size()+" targets!");
+            }
+            List<Target> targets_page = new ArrayList<Target>(pageLength);
+            for (int i = 0; i < pageLength; i++) {
+                if (offset + i >= targets.size()) break;
+                targets_page.add(targets.get(offset + i));
+            }
+            return ok(Json.toJson(targets_page));
         }
-        return ok(Json.toJson(targets_page));
     }
 
     /**
