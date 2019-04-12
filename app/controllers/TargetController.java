@@ -560,7 +560,7 @@ public class TargetController extends AbstractController {
     public static Result allTargetsAsJson(int pageNo, int pageLength, boolean flag) {
         List<Target> targets = Target.findAllActive();
         if (flag) {
-            Logger.debug("Starting Sync for All active targets. Target size = " + targets.size());
+            Logger.debug("Starting Sync for All active targets. Targets size = " + targets.size());
             // Transaction start
             Ebean.beginTransaction();
             try {
@@ -1644,21 +1644,25 @@ public class TargetController extends AbstractController {
         // Run scoping checks:
         filledForm.get().runChecks();
 
+
+        // noLdCriteriaMet
+        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
+        if (Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)) {//Check form - if it was set to TRUE (manually)
+            filledForm.get().noLdCriteriaMet = Boolean.TRUE;
+        }
         // Check if those checks invalidate the noLDmet:
-        if((Boolean.TRUE.equals(filledForm.get().isUkHosting) ||
+        else if((Boolean.TRUE.equals(filledForm.get().isUkHosting) ||
                 Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) ||
                 Boolean.TRUE.equals(filledForm.get().isUkRegistration) ||
                 Boolean.TRUE.equals(filledForm.get().ukPostalAddress) ||
                 Boolean.TRUE.equals(filledForm.get().viaCorrespondence) ||
                 Boolean.TRUE.equals(filledForm.get().professionalJudgement))
-                && Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+                && Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet) //Check form value
                 ) {
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and click Save again");
             filledForm.reject(ve);
             return info(filledForm, id);
         }
-
-        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
         if(filledForm.get().noLdCriteriaMet == null) {
             filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
