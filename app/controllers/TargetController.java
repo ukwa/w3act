@@ -1644,12 +1644,13 @@ public class TargetController extends AbstractController {
         // Run scoping checks:
         filledForm.get().runChecks();
 
-
         // noLdCriteriaMet
         Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
-        if (Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)) {//Check form - if it was set to TRUE (manually)
-            filledForm.get().noLdCriteriaMet = Boolean.TRUE;
+        if (!Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)) {//Check form noLdCriteriaMet field value
+            //if FALSE or NULL
+            filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
+        /*
         // Check if those checks invalidate the noLDmet:
         else if((Boolean.TRUE.equals(filledForm.get().isUkHosting) ||
                 Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) ||
@@ -1663,9 +1664,10 @@ public class TargetController extends AbstractController {
             filledForm.reject(ve);
             return info(filledForm, id);
         }
-        if(filledForm.get().noLdCriteriaMet == null) {
+        else if(filledForm.get().noLdCriteriaMet == null) {
             filledForm.get().noLdCriteriaMet = Boolean.FALSE;
-        }
+        //}
+        */
 
         //Updating licence status
         // ANJ: Note that manual changes at this top-level should not modify the existing CrawlPermissions.
