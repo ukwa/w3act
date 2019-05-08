@@ -31,7 +31,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import controllers.Portals;
 import controllers.Users;
 import controllers.WaybackController;
-import controllers.routes;
 import play.Play;
 import play.data.format.Formats.DateTime;
 import play.data.validation.Constraints.Required;
@@ -255,8 +254,9 @@ public class Document extends Model {
 	}
 	
 	protected String internalWaybackUrl() {
-		return WaybackController.getWaybackEndpoint() +
-				waybackTimestamp + "/" + documentUrl;
+        // Add 'id_' to avoid re-writing or re-framing of the document:
+        return WaybackController.getWaybackEndpoint() + waybackTimestamp
+                + "id_/" + documentUrl;
 	}
 	
 	public String globalAccessDocumentUrl() {
