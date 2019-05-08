@@ -29,13 +29,13 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")">
         <script src="@routes.Assets.at("bootstrap/dist/js/bootstrap.min.js")"></script>
 
-@if{ play.api.Play.current.configuration.getString("application.navbar.background-color") != null ) {
-		<style>
-		.navbar-default {
-		    background-color: @{play.api.Play.current.configuration.getString("application.navbar.background-color")} !important;
-		}
-		</style>
-}
+        @if( play.api.Play.current.configuration.getString("application.navbar.background-color") != null ) {
+		  <style>
+		    .navbar-default {
+		      background-color: @{play.api.Play.current.configuration.getString("application.navbar.background-color")} !important;
+		    }
+		  </style>
+        }
 
         @scripts
         @styles
