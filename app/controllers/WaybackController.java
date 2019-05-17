@@ -28,13 +28,19 @@ import uk.bl.exception.ActException;
 public class WaybackController extends Controller {
 
     /* BIGCDX Server*/
-    private static String bigcdx_url = "http://bigcdx:8080/";
-    private static String bigcdx_query_path = "data-heritrix?q=url:";
-    private static String bigcdx_query_type_urlquery = "+type:urlquery";
-    private static String bigcdx_query_type_uprefixquery = "+type:prefixquery";
+    private static String cdx_server_query_path = "?q=url:";
+    private static String cdx_server_query_type_urlquery = "+type:urlquery";
+    private static String cdx_server_query_type_prefixquery = "+type:prefixquery";
 
 	private static URL wayback_url;
 
+    public static String getCdxServerEndpoint() {
+        String prefix = Play.application().configuration().getString("application.cdxserver.endpoint");
+        if( prefix.endsWith("/")) {
+            prefix.charAt(prefix.length() - 1);
+        }
+        return prefix;
+    }
     public static String getWaybackEndpoint() {
 		String prefix = Play.application().configuration().getString("application.wayback.url");
 		if( ! prefix.endsWith("/")) {
@@ -120,7 +126,7 @@ public class WaybackController extends Controller {
 
             /***Check the http status code***/
 
-            wayback_url = new URL(bigcdx_url + bigcdx_query_path + url + bigcdx_query_type_uprefixquery);
+            wayback_url = new URL(getCdxServerEndpoint() + cdx_server_query_path + url + cdx_server_query_type_prefixquery);
 
             HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
@@ -158,7 +164,7 @@ public class WaybackController extends Controller {
 
 			/***Check the http status code***/
 
-            wayback_url = new URL(bigcdx_url + bigcdx_query_path + url + bigcdx_query_type_urlquery);
+            wayback_url = new URL(getCdxServerEndpoint() + cdx_server_query_path + url + cdx_server_query_type_urlquery);
 
 			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
