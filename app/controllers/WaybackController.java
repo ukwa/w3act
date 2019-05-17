@@ -26,10 +26,16 @@ import play.mvc.Security;
 import uk.bl.exception.ActException;
 
 public class WaybackController extends Controller {
-	
+
+    /* BIGCDX Server*/
+    private static String bigcdx_url = "http://bigcdx:8080/";
+    private static String bigcdx_query_path = "data-heritrix?q=url:";
+    private static String bigcdx_query_type_urlquery = "+type:urlquery";
+    private static String bigcdx_query_type_uprefixquery = "+type:prefixquery";
+
 	private static URL wayback_url;
 
-	public static String getWaybackEndpoint() {
+    public static String getWaybackEndpoint() {
 		String prefix = Play.application().configuration().getString("application.wayback.url");
 		if( ! prefix.endsWith("/")) {
 			prefix = prefix + "/";
@@ -110,14 +116,13 @@ public class WaybackController extends Controller {
 		Logger.debug("getTotalCrawledUrls url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			String wayBackUrl = getWaybackEndpoint();
-			DocumentBuilder db = dbf.newDocumentBuilder();
+            DocumentBuilder db = dbf.newDocumentBuilder();
 
-			/***Check the http status code***/
+            /***Check the http status code***/
 
-			wayback_url = new URL(wayBackUrl+"xmlquery.jsp?type=prefixquery&url="+url);
+            wayback_url = new URL(bigcdx_url + bigcdx_query_path + url + bigcdx_query_type_uprefixquery);
 
-			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
+            HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
 			http.connect();
 
@@ -149,12 +154,11 @@ public class WaybackController extends Controller {
 		Logger.debug("getTotalCrawledInstances url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			String wayBackUrl = getWaybackEndpoint();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			/***Check the http status code***/
 
-			wayback_url = new URL(wayBackUrl + "xmlquery.jsp?type=urlquery&url=" + url);
+            wayback_url = new URL(bigcdx_url + bigcdx_query_path + url + bigcdx_query_type_urlquery);
 
 			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
