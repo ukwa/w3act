@@ -553,13 +553,12 @@ public class TargetController extends AbstractController {
     }
 
     /**
-     * Optional flag parameter - if true, then sync all active targets (includes runChecks and Update for each, may take more than 2hrs with 80K targets)
-     * Run example http://localhost:9000/act/api/targets/true
+     * Optional flag parameter - allow it to be overridden as a query parameter. Default is false. If true, then sync all active targets (includes runChecks and Update for each, may take more than 2hrs with 80K targets)
      * @return
      */
     public static Result allTargetsAsJson(int pageNo, int pageLength, boolean flag) {
         List<Target> targets = Target.findAllActive();
-        if (flag) {
+        if(!flag) {
             Logger.debug("Starting Sync for All active targets. Targets size = " + targets.size());
             // Transaction start
             Ebean.beginTransaction();
