@@ -6,6 +6,7 @@ package controllers;
 import java.io.IOException;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,23 +26,24 @@ import play.mvc.Security;
 public class WSProxy extends Controller {
 	
 	// Build up URL and copy over query parameters:		
-	public static Result passthrough(String url) throws ClientProtocolException, IOException {
+	public static Result passthrough(String url) throws ClientProtocolException, IOException {		
 		
-		// Build up the wayback query:
-		String urlBuilder = url;
-		String q = ctx()._requestHeader().rawQueryString();
-		if( q != null && q.length() > 0 ) {
-			Logger.info("Passing through raw Query String: "+q);
-			urlBuilder += "?"+q;
+		// Check the url is allowed:
+		if( ! url.startsWith(models.Document.getPdf2HtmlEndpoint()) ) {
+			Logger.info("Rejecting request to proxy "+url);
+			return badRequest();
 		}
-		final String nurl = urlBuilder;		
-		Logger.info("Proxing "+nurl);
+		Logger.info("Proxing "+url);
 		
 		// Set up the GET:
 		CloseableHttpClient httpclient = HttpClientBuilder.create()
 			    .disableRedirectHandling()
 			    .build();
-		HttpGet httpGet = new HttpGet(nurl);
+		HttpGet httpGet = new HttpGet(url);
+		// Force HTTP 1.1:
+		httpGet.setProtocolVersion(HttpVersion.HTTP_1_1);
+		
+		// Start the GET:
 		CloseableHttpResponse response = httpclient.execute(httpGet);
 		
 		// If this looks like a redirect, return that:

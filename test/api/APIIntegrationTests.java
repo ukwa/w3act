@@ -9,6 +9,7 @@ import models.FieldUrl;
 import models.Target;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -46,6 +47,7 @@ public class APIIntegrationTests {
 	public void initialize() {
 	}
 
+	@Ignore
     @Test
     public void testInServer() {
         final String defaultUser = "wa-sysadm@bl.uk";

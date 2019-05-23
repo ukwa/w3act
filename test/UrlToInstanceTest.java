@@ -17,7 +17,8 @@ public class UrlToInstanceTest {
 	public void setUp() throws Exception {
 	}
 
-	@Test
+	//@Test
+        // Disabling this test as it depends on old Wayback and also we don't do anything with instances right now.
 	public void test() {
 		try {
             String urlValue = "https://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?url=http://www.bl.uk/bibliographic/ukmarc.html";

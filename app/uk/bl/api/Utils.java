@@ -762,15 +762,13 @@ public enum Utils {
     }
     
     public boolean validUrl(String url) {
-        String urlRegex = "https?:\\/\\/(www)?+[\\w\\d.-]+\\.[\\w]{2,}(:\\d{1,5})?(\\/.*)?";
+        String urlRegex = "^((ftp|http|https):\\/\\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\\.[a-zA-Z]+)+((\\/)[\\w#]|/+)?([^?]+)*(\\/\\w+\\?[a-zA-Z0-9_]+=\\w+(&[a-zA-Z0-9_]+=[a-zA-Z0-9!@#$&-+_]+)*)?$";
     	return url.matches(urlRegex);
     }
     
     public boolean validDomain(String domain) {
-
         String domainRegex = "^((?!-)[a-z0-9-]{1,63}(?<!-)\\.)+[a-z]{2,6}$";
     	return domain.matches(domainRegex);
-
     }
 
     public String convertToDateString(Date date) {

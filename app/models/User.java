@@ -28,6 +28,13 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import com.avaje.ebean.Expr;
+import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import controllers.ApplicationController;
 import play.Logger;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
@@ -36,14 +43,6 @@ import uk.bl.Const;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.models.FieldModel;
 import uk.bl.exception.ActException;
-
-import com.avaje.ebean.Expr;
-import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Page;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import controllers.ApplicationController;
 
 /**
  * User entity managed by Ebean
@@ -266,7 +265,7 @@ public class User extends ActModel {
     		// Check the user's role permits DDHAPT access (maybe allow all users?):
         	if((hasRole("sys_admin") || hasRole("archivist") || hasRole("expert_user"))) {
         		// If user us flagged as a DDHAPT user, and is a member of the British Library (to be opened up to isLDLMember later):
-        		if( ddhaptUser && isBLMember() ) {
+                if (ddhaptUser && isLDLMember()) {
         			return true;
         		}
         	}

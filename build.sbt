@@ -1,6 +1,6 @@
 name := "w3act"
 
-version := "w3act-v1.0.2-776-g7c5c22f"
+version := "2.0.10"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-compress" % "1.7" exclude("org.tukaani", "xz"),
   "org.apache.commons" % "commons-email" % "1.3.2",
   "org.apache.commons" % "commons-lang3" % "3.3.2",
-  "commons-validator" % "commons-validator" % "1.5.1",
+  "commons-validator" % "commons-validator" % "1.6",
   "commons-io" % "commons-io" % "2.3",
   "org.apache.tika" % "tika-core" % "1.11",
   "org.apache.tika" % "tika-parsers" % "1.11" exclude("org.tukaani", "xz"),

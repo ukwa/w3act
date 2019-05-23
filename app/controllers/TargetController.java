@@ -132,8 +132,9 @@ public class TargetController extends AbstractController {
 
         Logger.debug("After processing Filter::" + url);
 
-        Query<FieldUrl> query = FieldUrl.find.fetch("target").fetch("target.organisation").where()
-                .add(Expr.or(Expr.icontains("url", url), Expr.icontains("target.title", url))).query();
+        Query<FieldUrl> query = FieldUrl.find.fetch("target").fetch("target.organisation").setDistinct(true)
+                .where().add(Expr.or(Expr.icontains("target.synonyms", url), Expr.or(Expr.icontains("url", url), Expr.icontains("target.title", url)))).query();
+
         // Set up the sorting:
         if("title".equals(sortBy)) {
             query = query.orderBy("target.title" + " " + order);
@@ -483,19 +484,11 @@ public class TargetController extends AbstractController {
 
             // check url
 
+            Logger.debug("Query: " + query);
             boolean isValidUrl = Utils.INSTANCE.validUrl(query);
 
             Logger.debug("valid? " + isValidUrl);
             if(!isValidUrl) {
-                ValidationError ve = new ValidationError("formUrl", "Invalid URL");
-                form.reject(ve);
-                flash("message", "The URL entered is not valid. Please check and correct it, and click Search again");
-                return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
-            }
-
-            UrlValidator urlValidator = new UrlValidator();
-            if(!urlValidator.isValid(query)) {
-
                 ValidationError ve = new ValidationError("formUrl", "Invalid URL");
                 form.reject(ve);
                 flash("message", "The URL entered is not valid. Please check and correct it, and click Search again");
@@ -560,20 +553,39 @@ public class TargetController extends AbstractController {
     }
 
     /**
+     * Optional flag parameter - allow it to be overridden as a query parameter. Default is false. If true, then sync all active targets (includes runChecks and Update for each, may take more than 2hrs with 80K targets)
      * @return
      */
-    public static Result allTargetsAsJson(int pageNo, int pageLength) {
+    public static Result allTargetsAsJson(int pageNo, int pageLength, boolean flag) {
         List<Target> targets = Target.findAllActive();
-        int offset = pageNo * pageLength;
-        if( offset > targets.size()) {
-        	return notFound("There are only "+targets.size()+" targets!");
+        if(!flag) {
+            Logger.debug("Starting Sync for All active targets. Targets size = " + targets.size());
+            // Transaction start
+            Ebean.beginTransaction();
+            try {
+                targets.forEach(target -> {
+                    target.runChecks();
+                    target.update();
+                });
+                Ebean.commitTransaction();
+            } finally {
+                Ebean.endTransaction();
+            }
+            // Transaction end
+            return ok("OK. Active Target Sync was done successfully.");
         }
-        List<Target> targets_page = new ArrayList<Target>(pageLength);
-        for(int i = 0; i < pageLength; i++) {
-        	if( offset+i >= targets.size()) break;
-        	targets_page.add(targets.get(offset+i));
+        else { //flag == false
+            int offset = pageNo * pageLength;
+            if( offset > targets.size()) {
+                return notFound("There are only "+targets.size()+" targets!");
+            }
+            List<Target> targets_page = new ArrayList<Target>(pageLength);
+            for (int i = 0; i < pageLength; i++) {
+                if (offset + i >= targets.size()) break;
+                targets_page.add(targets.get(offset + i));
+            }
+            return ok(Json.toJson(targets_page));
         }
-        return ok(Json.toJson(targets_page));
     }
 
     /**
@@ -1631,24 +1643,30 @@ public class TargetController extends AbstractController {
         // Run scoping checks:
         filledForm.get().runChecks();
 
+        // noLdCriteriaMet
+        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
+        if (!Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)) {//Check form noLdCriteriaMet field value
+            //if FALSE or NULL
+            filledForm.get().noLdCriteriaMet = Boolean.FALSE;
+        }
+        /*
         // Check if those checks invalidate the noLDmet:
-        if((Boolean.TRUE.equals(filledForm.get().isUkHosting) ||
+        else if((Boolean.TRUE.equals(filledForm.get().isUkHosting) ||
                 Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) ||
                 Boolean.TRUE.equals(filledForm.get().isUkRegistration) ||
                 Boolean.TRUE.equals(filledForm.get().ukPostalAddress) ||
                 Boolean.TRUE.equals(filledForm.get().viaCorrespondence) ||
                 Boolean.TRUE.equals(filledForm.get().professionalJudgement))
-                && Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+                && Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet) //Check form value
                 ) {
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and click Save again");
             filledForm.reject(ve);
             return info(filledForm, id);
         }
-
-        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
-        if(filledForm.get().noLdCriteriaMet == null) {
+        else if(filledForm.get().noLdCriteriaMet == null) {
             filledForm.get().noLdCriteriaMet = Boolean.FALSE;
-        }
+        //}
+        */
 
         //Updating licence status
         // ANJ: Note that manual changes at this top-level should not modify the existing CrawlPermissions.
@@ -1767,38 +1785,30 @@ public class TargetController extends AbstractController {
 
                 UrlValidator urlValidator = new UrlValidator();
                 if(!urlValidator.isValid(trimmed)) {
-
                     ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     return info(filledForm, id);
                 }
 
-
                 String extFormUrl = uri.toExternalForm();
-
                 FieldUrl fu = new FieldUrl(extFormUrl.trim());
-
                 boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
                 Logger.debug("valid? " + isValidUrl);
                 if(!isValidUrl) {
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again 5");
                     filledForm.reject(ve);
                     flash("message", "Invalid URL.");
                     return redirect(routes.TargetController.edit(id));
-
                 }
-
                 Logger.debug("Adding url: " + trimmed + " at position " + position);
                 fu.position = position;
                 position++;
                 Logger.debug("extFormUrl: " + extFormUrl);
                 fieldUrls.add(fu);
-
             }
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
         }
-
         return null;
     }
 

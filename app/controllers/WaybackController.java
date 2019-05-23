@@ -7,8 +7,6 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import models.User;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -17,9 +15,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import models.User;
 import play.Logger;
 import play.Play;
 import play.mvc.Controller;
@@ -28,10 +26,22 @@ import play.mvc.Security;
 import uk.bl.exception.ActException;
 
 public class WaybackController extends Controller {
-	
+
+    /* BIGCDX Server*/
+    private static String cdx_server_query_path = "?q=url:";
+    private static String cdx_server_query_type_urlquery = "+type:urlquery";
+    private static String cdx_server_query_type_prefixquery = "+type:prefixquery";
+
 	private static URL wayback_url;
 
-	public static String getWaybackEndpoint() {
+    public static String getCdxServerEndpoint() {
+        String prefix = Play.application().configuration().getString("application.cdxserver.endpoint");
+        if( prefix.endsWith("/")) {
+            prefix.charAt(prefix.length() - 1);
+        }
+        return prefix;
+    }
+    public static String getWaybackEndpoint() {
 		String prefix = Play.application().configuration().getString("application.wayback.url");
 		if( ! prefix.endsWith("/")) {
 			prefix = prefix + "/";
@@ -112,14 +122,13 @@ public class WaybackController extends Controller {
 		Logger.debug("getTotalCrawledUrls url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			String wayBackUrl = getWaybackEndpoint();
-			DocumentBuilder db = dbf.newDocumentBuilder();
+            DocumentBuilder db = dbf.newDocumentBuilder();
 
-			/***Check the http status code***/
+            /***Check the http status code***/
 
-			wayback_url = new URL(wayBackUrl+"xmlquery.jsp?type=prefixquery&url="+url);
+            wayback_url = new URL(getCdxServerEndpoint() + cdx_server_query_path + url + cdx_server_query_type_prefixquery);
 
-			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
+            HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
 			http.connect();
 
@@ -151,12 +160,11 @@ public class WaybackController extends Controller {
 		Logger.debug("getTotalCrawledInstances url:"+url);
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			String wayBackUrl = getWaybackEndpoint();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			/***Check the http status code***/
 
-			wayback_url = new URL(wayBackUrl + "xmlquery.jsp?type=urlquery&url=" + url);
+            wayback_url = new URL(getCdxServerEndpoint() + cdx_server_query_path + url + cdx_server_query_type_urlquery);
 
 			HttpURLConnection http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
