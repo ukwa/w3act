@@ -2,97 +2,57 @@ version: '3.2'
 
 services:
 
-  # PyWB for QA
-  pywb:
-    image: ukwa/ukwa-pywb:1.0.5
-    environment:
-      WEBHDFS_USER: "access"
-      UKWA_INDEX: "xmlquery+http://192.168.45.21:8080/data-heritrix"
-      UKWA_ARCHIVE: "webhdfs://192.168.45.13:14000"
-      SCRIPT_NAME: "/act/wayback"
-    volumes:
-      - ./pywb-config.yaml:/webarchive/config.yaml
-
-  # NGINX for PYWB
-  # To ensure pywb gets proxied behind the right location, we use
-  # this NGINX instance to set the deployment scheme, hostname and path
-  # (unfortunately there does not seem to be a way to tell pywb this directly)
-  nginx:
-    image: nginx:1.13-alpine
-    volumes:
-      - ${PYWB_NGINX_CONF}:/etc/nginx/conf.d/pywb.conf:ro
-    ports:
-      - "${WAYBACK_PORT}:8100"
-    depends_on:
-      - pywb
-
-
-  # PDF to HTML service
-  pdf2htmlex:
-    image: ukwa/pdf2htmlex:1.0.1
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: '2G'
-    depends_on:
-      - nginx
-      - pywb
-
   # W3ACT
   w3act:
-    image: ukwa/w3act:${W3ACT_VERSION}
-    command: /w3act/bin/w3act -J-Xmx4g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
+    build: .
     environment:
-      - "APPLICATION_NAVBAR_COLOR=${APPLICATION_NAVBAR_COLOR}"
-      - "APPLICATION_SECRET=${APPLICATION_SECRET}"
-      - "SECRET_SERVER_USER=${SECRET_SERVER_USER}"
-      - "SECRET_SERVER_PASSWORD=${SECRET_SERVER_PASSWORD}"
+      - "APPLICATION_SECRET=dhfoewwfwjovinjerv"
+      - "SECRET_SERVER_USER=dummy"
+      - "SECRET_SERVER_PASSWORD=dummy"
       - "DB_DRIVER=org.postgresql.Driver"
-      - "DB_URI=postgres://w3act:${W3ACT_PSQL_PASSWORD}@postgres/w3act"
+      - "DB_URI=postgres://w3act:w3act@postgres/w3act"
       - "USE_TEST_DATA=false"
       - "ENABLE_DDHAPT=true"
-      - "SMTP_SERVER=juno.bl.uk"
+      - "SMTP_SERVER=purple.bl.uk"
       - "WAYBACK_URL=http://nginx:8100/"
       - "CDXSERVER_ENDPOINT=http://192.168.45.21:8080/data-heritrix"
       - "MONITRIX_URI=http://monitrix:5601/app/kibana"
       - "PDFTOHTMLEX_URI=http://pdf2htmlex:5000/convert?url="
       - "AMQP_HOST=amqp"
-      - "SERVER_NAME=${W3ACT_SERVER_NAME}"
-      - "PII_URI=${PII_URL}"
+      - "SERVER_NAME=localhost"
+      - "PII_URI=dummy"
       - "ACCESS_RESOLVER_URI=https://www.webarchive.org.uk/access/resolve/"
       - "ENABLE_EVOLUTIONS=false"
       - "APPLY_EVOLUTIONS=false"
       - "APPLY_DOWN_EVOLUTIONS=false" # WARNING DOWNS ARE POTENTIALLY DESTRUCTIVE
-    volumes:
-      - "${DDHAPT_SIPS_SUBMITTED_DIR}:/opt/data/dls_sips_copy"
-      - "${DDHAPT_EBOOKS_SUBMISSION_DIR}:/opt/data/w3act/ebooks:shared"
-      - "${DDHAPT_EJOURNALS_SUBMISSION_DIR}:/opt/data/w3act/ejournals:shared"
     ports:
-      - "${W3ACT_PORT}:9000"
-    depends_on:
-      - nginx
-      - pywb
-      - pdf2htmlex
-    extra_hosts:
-      - "blsps.ad.bl.uk:194.66.238.125"
-      - "pii.ad.bl.uk:172.16.101.47" 
-      - "v8b-dlsebk01.ad.bl.uk:192.168.242.115"
-      - "v8b-dlseco01.ad.bl.uk:192.168.242.107"
-      - "piiirc.ad.bl.uk:192.168.225.236"
-      - "crawler03.bl.uk:127.0.0.1"
+      - "9000:9000"
+    restart: on-failure
+    depends_on: 
+      - postgres
 
   # PostgreSQL
   postgres:
     image: postgres:9.6.2
     environment:
       - "POSTGRES_USER=w3act"
-      - "POSTGRES_PASSWORD=${W3ACT_PSQL_PASSWORD}"
+      - "POSTGRES_PASSWORD=w3act"
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5432:5432"
+
+  # Used to force a DB restore of the production DB
+  pg_restore:
+    image: postgres:9.6.2
+    command: pg_restore -d w3act --exit-on-error /var/lib/postgresql/backups/w3act.pgdump
+    environment:
+      - "PGHOST=postgres"
+      - "PGUSER=w3act"
+      - "PGPASSWORD=w3act"
     volumes:
-      - ":/var/lib/postgresql/data"
-      - "./test/data:/var/lib/postgresql/backups"
+      - "./integration-test/pgdump:/var/lib/postgresql/backups"
+    restart: on-failure
+    depends_on: 
+      - postgres
 
 
 
