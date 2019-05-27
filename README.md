@@ -171,7 +171,11 @@ $ git submodule update
 Running an Multi-service Integration Test
 -----------------------------------------
 
-If you place a copy of a recent W3ACT database dump to `integration-test/pgdump/w3act.pgdump` you should be able to use the provided Docker Compose file to build and run your development version. First setup the database:
+If you place a copy of a recent W3ACT database dump to `integration-test/pgdump/w3act.pgdump` you should be able to use the provided Docker Compose file to build and run your development version. 
+
+** NOTE that we cannot include a copy of the W3ACT database here as it contains personal information from third-parties! **
+
+First setup the database:
 
 ```bash
 # Run PostgreSQL in the background:
