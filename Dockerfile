@@ -4,8 +4,7 @@ ENV         ACTIVATOR_VERSION 1.3.11
 ARG         USER_HOME_DIR="/root"
 
 # Add cerificates that ensure download of dependencies works:
-RUN         apt-get install -y ca-certificates-java && \
-            update-ca-certificates
+RUN apt-get install -y --no-install-recommends ca-certificates
 
 # Install Typesafe Activator
 RUN         cd /tmp && \
@@ -30,14 +29,14 @@ RUN /usr/local/activator/bin/activator stage || exit 0
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
+# Install GeoIP:
+RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && gunzip GeoLite2-City.mmdb.gz
+
+
 # And patch onto a smaller image:
 FROM openjdk:8-jre
 
 COPY --from=build-env /w3act/target/universal/stage /w3act
-
-# Install GeoIP:
-RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && gunzip GeoLite2-City.mmdb.gz
-
 
 EXPOSE 9000
 
