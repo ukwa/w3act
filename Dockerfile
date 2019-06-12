@@ -27,7 +27,8 @@ RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
 # Install GeoIP:
-RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && mv GeoLite2-City.mmdb.gz /w3act/bin/GeoLite2-City.mmdb.gz && tar xzf /w3act/bin/GeoLite2-City.mmdb.gz && rm /w3act/bin/GeoLite2-City.mmdb.gz
+WORKDIR /w3act
+RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && tar xzf GeoLite2-City.mmdb.gz && rm GeoLite2-City.mmdb.gz
 
 
 # And patch onto a smaller image:
