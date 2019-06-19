@@ -27,21 +27,21 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
+import org.postgresql.util.PGInterval;
+
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlUpdate;
-
 import com.github.kevinsawicki.timeago.TimeAgo;
-import play.Logger;
-import uk.bl.Const;
-import uk.bl.exception.ActException;
-import uk.bl.exception.UrlInvalidException;
+
 import models.Collection;
 import models.FieldUrl;
 import models.Subject;
 import models.Target;
-
-import org.apache.commons.lang3.StringUtils;
-import org.postgresql.util.PGInterval;
+import play.Logger;
+import uk.bl.Const;
+import uk.bl.exception.ActException;
+import uk.bl.exception.UrlInvalidException;
 
 /**
  * Helper class.
@@ -762,7 +762,7 @@ public enum Utils {
     }
     
     public boolean validUrl(String url) {
-        String urlRegex = "^((ftp|http|https):\\/\\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\\.[a-zA-Z]+)+((\\/)[\\w#]|/+)?([^?]+)*(\\/\\w+\\?[a-zA-Z0-9_]+=\\w+(&[a-zA-Z0-9_]+=[a-zA-Z0-9!@#$&-+_]+)*)?$";
+        String urlRegex = "^https?:\\/\\/\\S+$";
     	return url.matches(urlRegex);
     }
     
