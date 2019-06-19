@@ -562,7 +562,8 @@ public class TargetController extends AbstractController {
     public static Result allTargetsAsJson(int pageNo, int pageLength, boolean flag) {
         List<Target> targets = Target.findAllActive();
         if(flag) {
-            Logger.debug("Starting Sync for All active targets. Targets size = " + targets.size());
+            Logger.warn("Starting Sync for All active targets. Targets size = "
+                    + targets.size());
             // Transaction start
             Ebean.beginTransaction();
             try {
