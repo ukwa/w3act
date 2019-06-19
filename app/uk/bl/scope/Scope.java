@@ -87,7 +87,7 @@ public enum Scope {
 	public static final String END_STR         = "/";
 	
 	private static final int   WHOIS_TIMEOUT   = 15; // Whois lookup timeout (seconds)
-	public  static boolean     WHOIS_ENABLED   = true; // Should whois be used at all?
+	public  static boolean     WHOIS_ENABLED   = false; // Should whois be used at all?
 	
 	public static DatabaseReader databaseReader;
 	
