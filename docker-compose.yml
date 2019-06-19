@@ -1,0 +1,59 @@
+version: '3.2'
+
+services:
+
+  # W3ACT
+  w3act:
+    build: .
+    environment:
+      - "APPLICATION_SECRET=dhfoewwfwjovinjerv"
+      - "SECRET_SERVER_USER=dummy"
+      - "SECRET_SERVER_PASSWORD=dummy"
+      - "DB_DRIVER=org.postgresql.Driver"
+      - "DB_URI=postgres://w3act:w3act@postgres/w3act"
+      - "USE_TEST_DATA=false"
+      - "ENABLE_DDHAPT=true"
+      - "SMTP_SERVER=purple.bl.uk"
+      - "WAYBACK_URL=http://nginx:8100/"
+      - "CDXSERVER_ENDPOINT=http://192.168.45.21:8080/data-heritrix"
+      - "MONITRIX_URI=http://monitrix:5601/app/kibana"
+      - "PDFTOHTMLEX_URI=http://pdf2htmlex:5000/convert?url="
+      - "AMQP_HOST=amqp"
+      - "SERVER_NAME=localhost"
+      - "PII_URI=dummy"
+      - "ACCESS_RESOLVER_URI=https://www.webarchive.org.uk/access/resolve/"
+      - "ENABLE_EVOLUTIONS=false"
+      - "APPLY_EVOLUTIONS=false"
+      - "APPLY_DOWN_EVOLUTIONS=false" # WARNING DOWNS ARE POTENTIALLY DESTRUCTIVE
+    ports:
+      - "9000:9000"
+    restart: on-failure
+    depends_on: 
+      - postgres
+
+  # PostgreSQL
+  postgres:
+    image: postgres:9.6.2
+    environment:
+      - "POSTGRES_USER=w3act"
+      - "POSTGRES_PASSWORD=w3act"
+    ports:
+      - "5432:5432"
+
+  # Used to force a DB restore of the production DB
+  pg_restore:
+    image: postgres:9.6.2
+    command: pg_restore -d w3act --exit-on-error /var/lib/postgresql/backups/w3act.pgdump
+    environment:
+      - "PGHOST=postgres"
+      - "PGUSER=w3act"
+      - "PGPASSWORD=w3act"
+    volumes:
+      - "./integration-test/pgdump:/var/lib/postgresql/backups"
+    restart: on-failure
+    depends_on: 
+      - postgres
+
+
+
+
