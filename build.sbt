@@ -33,6 +33,8 @@ libraryDependencies ++= Seq(
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15" % "test"
 )
 
+libraryDependencies += "org.jruby" % "jruby" % "9.2.7.0"
+
 libraryDependencies += "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2" notTransitive()
 
 libraryDependencies += "org.julienrf" %% "play-jsmessages" % "1.6.2"
