@@ -26,11 +26,6 @@ RUN /usr/local/activator/bin/activator stage || exit 0
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
-# Install GeoIP:
-WORKDIR /w3act
-RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && gzip -dc GeoLite2-City.mmdb.gz && rm GeoLite2-City.mmdb.gz
-
-
 # And patch onto a smaller image:
 FROM openjdk:8-jre
 
@@ -40,6 +35,9 @@ EXPOSE 9000
 
 # Have to use this as the working directory or it fails to find the email templates!
 WORKDIR /w3act
+
+# Install GeoIP:
+RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && gzip -dc GeoLite2-City.mmdb.gz && rm GeoLite2-City.mmdb.gz
 
 # Use larger heap, and add experimental option: forcing restart on OOM:
 CMD /w3act/bin/w3act -J-Xmx2g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
