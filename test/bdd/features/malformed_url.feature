@@ -4,7 +4,7 @@ Feature: Check if there is an existing URL is malformed
   So that I can view the results
 
 Scenario: Checking if it's there my URL is malformed
-  Given I have a malformed URL of "http://www.nicelife"
+  Given I have a malformed URL of "htt://www.nicelife"
   When I check to see if it is malformed
   Then I should see a result of "no"
   # A good tip is to avoid putting anything about the outcome in the Given
