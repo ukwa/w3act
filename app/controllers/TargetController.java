@@ -969,11 +969,14 @@ public class TargetController extends AbstractController {
         Form<Target> filledForm = Form.form(Target.class);
         filledForm = filledForm.fill(target);
 
+        /*
+        // prevents to delete duplicate target
         if(!target.isDeletable()) {
             ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references Instance(s), License(s) and/or Collection(s)");
             filledForm.reject(ve);
             return info(filledForm, id);
         }
+        */
 
         if(target.hasDocuments()) {
             ValidationError ve = new ValidationError("watched", "Watched Targets with existing crawled documents can not be deleted.");
