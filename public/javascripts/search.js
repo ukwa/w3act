@@ -384,6 +384,9 @@ function showTree(data, id, key, sm) {
         		return node.data.key;
       		});
     	},
+        onCustomRender: function(node) {
+            return "<a href=" + node.data.url + ">" + node.data.title + "</a>";
+        },
     	onPostInit: function(isReloading, isError) {
             var tree = $(id).dynatree('getTree');
             var selKeys = $.map(tree.getSelectedNodes(), function(node){
