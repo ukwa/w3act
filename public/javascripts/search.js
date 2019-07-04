@@ -406,7 +406,10 @@ function showTreeSelect(data, id, key) {
 	            // use href to change the current frame:
 	            window.location.href = node.data.url; 
 	        }
-	    },				    
+	    },
+        onCustomRender: function(node) {
+            return "<a href=" + node.data.url + ">" + node.data.title + "</a>";
+        },
     	onSelect: function(select, node) {
       		// Get a list of all selected nodes, and convert to a key array:
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
