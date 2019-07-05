@@ -145,7 +145,7 @@ public class DocumentAnalyser {
 	}
 
 	private String waybackReplayUrl(String url, String timestamp) throws UnsupportedEncodingException {
-        return WaybackController.getWaybackEndpoint() + "/" + timestamp + "id_/" + url;
+        return WaybackController.getWaybackEndpoint() + timestamp + "id_/" + url;
     }
 	
 	/**
