@@ -860,9 +860,6 @@ public class TargetController extends AbstractController {
 
         filledForm = filledForm.fill(target);
 
-        JsonNode collectionData = getCollectionsData();
-        JsonNode subjectData = getSubjectsData();
-
         Map<String, String> authors = User.options();
         List<Tag> tags = Tag.findAllTags();
         List<Flag> flags = Flag.findAllFlags();
@@ -877,7 +874,7 @@ public class TargetController extends AbstractController {
         Map<String, String> siteStatuses = Const.SiteStatus.options();
         Map<String, String> organisations = Organisation.options();
 
-        return ok(edit.render(filledForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, null, null, null));
+        return ok(edit.render(filledForm, user, null, null, null, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, null, null, null));
     }
 
     /**
@@ -906,8 +903,6 @@ public class TargetController extends AbstractController {
         }
         User user = User.findByEmail(request().username());
         target.language = Const.TargetLanguage.EN.toString();
-        JsonNode collectionData = getCollectionsData(target.collections);
-        JsonNode subjectData = getSubjectsData(target.subjects);
 
         Map<String, String> authors = User.options();
         List<Tag> tags = Tag.findAllTags();
@@ -937,7 +932,7 @@ public class TargetController extends AbstractController {
 //		}
 
         Logger.debug("collections: " + target.collections.size());
-        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
+        return ok(edit.render(filledForm, user, id, null, null, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
     }
 
     public static Result delete(Long id) {

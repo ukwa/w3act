@@ -116,12 +116,68 @@
                         }
                     });
 
-                    @if(collectionData != null){
-                    showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 2);
-                    }
-                    @if(subjectData != null){
-                    showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);
-                    }
+                    context = '@play.api.Play.current.configuration.getString("application.context")'
+                    searchContext = 'targets';
+                    subjecttreeclicked = false;
+                    colleciontreeclicked = false;
+                    $.ajaxSetup({
+                        beforeSend:function(){
+                            $("#collectionTreeLoading").show();
+                        },
+                        complete:function(){
+                            $("#collectionTreeLoading").hide();
+                        }
+                    });
+                    $('#subject-drop-button').click(function () {
+                        $(this).find('i').toggleClass('fa-lock fa-unlock');
+                        $('#subjectTree').show();
+                        if (!subjecttreeclicked) {
+                            $.ajax({
+                                url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
+                                type: 'GET',
+                                success: function (outputfromserver) {
+                                    if (outputfromserver !== null) {
+                                        showTree(outputfromserver, "#subjectTree", "subjectSelect");
+                                    } else {
+                                        alert('Make call failed - no output from server');
+                                    }
+                                },
+                                error: function (outputfromserver) {
+                                    alert('Make call failed');
+                                }
+                            });
+                            subjecttreeclicked = true;
+                        }
+                        else{
+                            $('#subjectTree').hide();
+                            subjecttreeclicked = false;
+                        }
+                    });
+                    $('#collection-drop-button').click(function () {
+                        $(this).find('i').toggleClass('fa-lock fa-unlock');
+                        $('#collectionTree').show();
+                        if (!colleciontreeclicked) {
+                            $.ajax({
+                                url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
+                                type: 'GET',
+                                success: function (outputfromserver) {
+                                    if (outputfromserver !== null) {
+                                        showTree(outputfromserver, "#collectionTree", "collectionSelect");
+                                    } else {
+                                        alert('Make call failed - no output from server');
+                                    }
+                                },
+                                error: function (results) {
+                                    alert('Make call failed');
+                                }
+                            });
+                            colleciontreeclicked = true;
+                        }
+                        else{
+                            $('#collectionTree').hide();
+                            colleciontreeclicked = false;
+                        }
+                    });
 
                     // This happens right after the document is loaded.
                     // Our nav pills won't do anything by themselves, so we need to make sure we
@@ -460,21 +516,27 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            <label for="subjects" class="col-sm-6 control-label">Browse Subject</label>
-                            <div class="col-sm-6">
-                                <div id="subjectTree"></div>
+                            <label for="subject" class="col-md-5 col-sm-5 control-label">Browse Subject</label>
+                            <button type="button" class="col-md-1 col-sm-1" id="subject-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+                            <div class="col-md-6 col-sm-6">
+                                <div id="subjectTree" style="padding:5px;"></div>
                                 <input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
                             </div>
                         </div>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 text-center">
+                        <div id="collectionTreeLoading" style="display:none"><img src="@routes.Assets.at("images/loading.gif")" height="32"></div>
+                    </div>
+                </div>
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            <label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-                            <div class="col-sm-6">
-                                <div id="collectionTree"></div>
+                            <label for="suggestions-collections" class="col-sm-5 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+                            <button type="button" class="col-md-1 col-sm-1" id="collection-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+                            <div class="col-md-6 col-sm-6">
+                                <div id="collectionTree" style="padding:5px;"></div>
                                 <input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
                             </div>
                         </div>
