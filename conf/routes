@@ -284,6 +284,11 @@ GET     /target/archive/:id                 controllers.TargetController.archive
 GET     /targets/:id/logincredentials   controllers.LoginCredentialsController.edit(id: Long)
 POST    /targets/:id/logincredentials   controllers.LoginCredentialsController.save(id: Long)
 
+# AJAX
+GET    /targets/allSubjectsIDsAsJson/:subjects             controllers.TargetController.allSubjectsIDsAsJson(subjects: String)
+GET    /targets/allCollectionsIDsAsJson/:collections       controllers.TargetController.allCollectionsIDsAsJson(collections: String)
+
+
 GET     /instances                          controllers.InstanceController.index()
 GET     /instances/search                   controllers.InstanceController.search()
 GET     /instances/filterbyjson/:url        controllers.InstanceController.filterByJson(url)

@@ -242,26 +242,6 @@ public class TargetController extends AbstractController {
         User user = User.findByEmail(request().username());
         List<License> licenses = License.findAllLicenses();
 
-        List<Long> subjectIds = new ArrayList<Long>();
-        String[] subjects = subject.split(", ");
-        for(String sId : subjects) {
-            if(StringUtils.isNotEmpty(sId)) {
-                Long subjectId = Long.valueOf(sId);
-                subjectIds.add(subjectId);
-            }
-        }
-        JsonNode subjectData = getSubjectsDataByIds(subjectIds);
-
-        List<Long> collectionIds = new ArrayList<Long>();
-        String[] collections = collection.split(", ");
-        for(String cId : collections) {
-            if(StringUtils.isNotEmpty(cId)) {
-                Long collectionId = Long.valueOf(cId);
-                collectionIds.add(collectionId);
-            }
-        }
-        JsonNode collectionData = getCollectionsDataByIds(collectionIds);
-
         List<User> users = User.findAllSorted();
         List<Organisation> organisations = Organisation.findAllSorted();
         CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
@@ -286,8 +266,8 @@ public class TargetController extends AbstractController {
                 pageSize,
                 flagId,
                 licenses,
-                collectionData,
-                subjectData,
+                null,
+                null,
                 users,
                 organisations,
                 crawlFrequencies, flags)
@@ -2267,6 +2247,46 @@ public class TargetController extends AbstractController {
         }
         return collectionNode;
     }
+
+
+    /**
+     * Method for Subjects tree data.
+     * Used by AJAX call.
+     *
+     * @param subject This is an identifier for current subjects selected in subject tree
+     * @return tree structure
+     * */
+    public static Result allSubjectsIDsAsJson(String subject) {
+        List<Long> subjectIds = new ArrayList<Long>();
+        String[] subjects = subject.replace("\"", "").split(", ");
+        for(String sId : subjects) {
+            if(StringUtils.isNotEmpty(sId)) {
+                Long subjectId = Long.valueOf(sId);
+                subjectIds.add(subjectId);
+            }
+        }
+        return ok ( getSubjectsDataByIds(subjectIds) );
+    }
+
+    /**
+     * Method for Collections tree data.
+     * Used by AJAX call.
+     *
+     * @param collection This is an identifier for current collections selected in collection tree
+     * @return tree structure
+     * */
+    public static Result allCollectionsIDsAsJson(String collection) {
+        List<Long> collectionIds = new ArrayList<Long>();
+        String[] collections = collection.replace("\"", "").split(", ");
+        for(String cId : collections) {
+            if(StringUtils.isNotEmpty(cId)) {
+                Long collectionId = Long.valueOf(cId);
+                collectionIds.add(collectionId);
+            }
+        }
+        return ok ( getCollectionsDataByIds(collectionIds));
+    }
+
 
     @Security.Authenticated(SecuredController.class)
     public static Result getTargetCategories(Long id) {

@@ -19,9 +19,70 @@
 			searchContext = 'targets';
 			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
-			
-			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
-			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");
+			subjecttreeclicked = false;
+			colleciontreeclicked = false;
+			$.ajaxSetup({
+				beforeSend:function(){
+					$("#collectionTreeLoading").show();
+				},
+				complete:function(){
+					$("#collectionTreeLoading").hide();
+				}
+			});
+
+			$('#subject-drop-button').click(function () {
+				$(this).find('i').toggleClass('fa-lock fa-unlock');
+				$('#subjectTree').show();
+				if (!subjecttreeclicked) {
+					$.ajax({
+						url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
+						type: 'GET',
+						success: function (outputfromserver) {
+							if (outputfromserver !== null) {
+								showTree(outputfromserver, "#subjectTree", "subjectSelect");
+							} else {
+								alert('Make call failed - no output from server');
+							}
+						},
+						error: function (outputfromserver) {
+							alert('Make call failed');
+						}
+					});
+					subjecttreeclicked = true;
+				}
+				else{
+					$('#subjectTree').hide();
+					subjecttreeclicked = false;
+				}
+			});
+
+			$('#collection-drop-button').click(function () {
+				$(this).find('i').toggleClass('fa-lock fa-unlock');
+
+				$('#collectionTree').show();
+
+				if (!colleciontreeclicked) {
+					$.ajax({
+						url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
+						type: 'GET',
+						success: function (outputfromserver) {
+							if (outputfromserver !== null) {
+								showTree(outputfromserver, "#collectionTree", "collectionSelect");
+							} else {
+								alert('Make call failed - no output from server');
+							}
+						},
+						error: function (results) {
+							alert('Make call failed');
+						}
+					});
+					colleciontreeclicked = true;
+				}
+				else{
+					$('#collectionTree').hide();
+					colleciontreeclicked = false;
+				}
+			});
 		});
 	</script>
 }
@@ -235,19 +296,34 @@
 									     </div>
 									</div>
 									<div class="col-md-6 col-sm-6">
-										<div class="form-group">
-							            	<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
-							            	<div class="col-md-8 col-sm-8">
-												<div id="subjectTree" style="padding:5px;"></div>
-												<input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjects">
+										<div class="row">
+											<div class="col-md-12 col-sm-12">
+												<div class="form-group">
+													<label for="subject" class="col-md-3 col-sm-3 control-label">Subject</label>
+													<button type="button" class="col-md-1 col-sm-1" id="subject-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+													<div class="col-md-8 col-sm-8">
+														<div id="subjectTree" style="padding:5px;"></div>
+														<input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjects">
+													</div>
+												</div>
 											</div>
-										</div>						         	
-										<div class="form-group">
-						            		<label for="suggested_collections" class="col-md-4 col-sm-4 control-label">Collection</label>
-						            		<div class="col-md-8 col-sm-8">
-									  			<div id="collectionTree" style="padding:5px;"></div>
-									  			<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collections">
-									  		</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12 col-sm-12 text-center">
+												<div id="collectionTreeLoading" style="display:none"><img src="@routes.Assets.at("images/loading.gif")" height="32"></div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12 col-sm-12">
+												<div class="form-group">
+													<label for="subject" class="col-md-3 col-sm-3 control-label">Collection</label>
+													<button type="button" class="col-md-1 col-sm-1" id="collection-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+													<div class="col-md-8 col-sm-8">
+														<div id="collectionTree" style="padding:5px;"></div>
+														<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collections">
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>							
 									<div class="col-md-12 col-sm-12">
