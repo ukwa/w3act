@@ -284,19 +284,13 @@
 				}
 			}
 			
-			@if(editable) {
-            	@helper.input(form("selectedFastSubjects"), '_label -> "Subjects") { (id, name, value, args) =>
-                	<select id="@id" name="selectedFastSubjects[]" @toHtmlArgs(args) multiple="multiple" class="fast-multi-select-list">
-                        @for(fastSubject <- Documents.getFastSubjectList(document)) {
-							<option value="@fastSubject.fastId" @{if(document.fastSubjects.contains(fastSubject)) "selected" else ""}>@fastSubject.name</option>                        
-                        }
-                    </select>
-                }			
-			} else {
-	  				@for(fastSubject <- document.fastSubjectList) {
- 	 	  				@fastSubject.fastSubject.name (@fastSubject.fastSubject.fastId)
-	  				}
-			}            	
+           	@helper.input(form("selectedFastSubjects"), '_label -> "Subjects") { (id, name, value, args) =>
+               	<select id="@id" name="selectedFastSubjects[]" @toHtmlArgs(args) multiple="multiple" class="fast-multi-select-list" @if(!editable) { disabled="disabled" }>
+                       @for(fastSubject <- Documents.getFastSubjectList(document)) {
+						<option value="@fastSubject.fastId" @{if(document.fastSubjects.contains(fastSubject)) "selected" else ""}>@fastSubject.name</option>                        
+                       }
+                   </select>
+            }			
 			
 			<!-- Only eBooks available at present.
                 options(List("", Document.Type.BOOK.toString,
