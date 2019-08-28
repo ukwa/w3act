@@ -1,10 +1,10 @@
 package controllers;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +17,12 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.io.IOUtils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Query;
 import com.avaje.ebean.SqlUpdate;
@@ -28,6 +34,7 @@ import models.BlCollectionSubset;
 import models.Book;
 import models.Document;
 import models.DocumentFilter;
+import models.FastSubject;
 import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
@@ -36,30 +43,24 @@ import models.Target;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
+import play.Play;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.libs.F.Function;
 import play.libs.F.Function0;
 import play.libs.F.Promise;
 import play.libs.Json;
+import play.libs.XPath;
 import play.libs.ws.WS;
 import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
-import play.libs.XPath;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
-import play.Play;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.io.IOUtils;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
 import uk.bl.documents.DocumentAnalyser;
+
 import views.html.documents.compare;
 import views.html.documents.edit;
 import views.html.documents.list;
@@ -707,17 +708,35 @@ public class Documents extends AbstractController {
 		return document;
 	}
 	
-	public static Map<String, String> getJournalTitles(Form<Document> form) {
-		WatchedTarget watchedTarget = WatchedTarget.find.byId(new Long(form.apply("watchedTarget.id").value()));
-		Map<String, String> titles = new LinkedHashMap<>();
-		titles.put("","");
-		for (JournalTitle journalTitle : watchedTarget.journalTitles)
-			titles.put(""+journalTitle.id, journalTitle.title);
-		return titles;
-	}
-	
+    public static Map<String, String> getJournalTitles(Form<Document> form) {
+        WatchedTarget watchedTarget = WatchedTarget.find.byId(new Long(form.apply("watchedTarget.id").value()));
+        Map<String, String> titles = new LinkedHashMap<>();
+        titles.put("","");
+        for (JournalTitle journalTitle : watchedTarget.journalTitles)
+            titles.put(""+journalTitle.id, journalTitle.title);
+        return titles;
+    }
+    
+    public static List<FastSubject> getFastSubjectList(Document document) {
+        // Get all the FAST subjects:
+        List<FastSubject> all = FastSubject.find.orderBy("name").findList();
+
+        // Now, rearrange so the documents subjects are first and in order:
+        int index = document.fastSubjects.size();
+        for (FastSubject fs : document.fastSubjects) {
+            // Take it out of the current position:
+            all.remove(fs);
+            // Insert it at the correct position:
+            index = index - 1;
+            all.add(index, fs);
+        }
+
+        return all;
+    }
+
 	private static void setRelatedEntitiesOfModel(Document document, Form<Document> documentForm) {
-		document.fastSubjects = FastSubjects.getFastSubjects(documentForm);
+        document.fastSubjects = FastSubjects
+                .getFastSubjectsForDocument(documentForm);
 		document.portals = Portals.getPortals(documentForm);
 		if (document.isBookOrBookChapter())
 			for (BlCollectionSubset blCollectionSubset : blCollectionSubsetList.getList())

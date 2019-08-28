@@ -1,7 +1,7 @@
 # --- !Ups
 
-ALTER TABLE id_fast_subject ADD COLUMN position;
+ALTER TABLE fast_subject_document ADD COLUMN position integer;
 
 # --- !Downs
 
-ALTER TABLE id_fast_subject DROP COLUMN position;
+ALTER TABLE fast_subject_document DROP COLUMN position;

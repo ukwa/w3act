@@ -30,4 +30,5 @@ public class FastSubject extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }
+
 }

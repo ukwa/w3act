@@ -18,6 +18,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
@@ -73,8 +75,9 @@ public class Document extends Model {
 	@JoinTable(name = "fast_subject_document",
 		joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
+    @OrderColumn(name = "position")
 	public List<FastSubject> fastSubjects = new ArrayList<>();
-	
+
     public String landingPageUrl;
     public String documentUrl;
     public String sha256Hash;

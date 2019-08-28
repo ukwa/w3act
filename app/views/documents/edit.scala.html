@@ -13,6 +13,12 @@
 @implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
 
 @scripts = {
+    <!-- Start Choices Support -->
+	<!-- Include Choices CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+	<!-- Include Choices JavaScript -->
+	<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <!-- END Choices Support -->
 	<script src="@routes.Assets.at("javascripts/parse-date.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		function getSelectionText() {
@@ -185,6 +191,14 @@
 					};
 			}
 			
+			$(document).ready(function() {
+			    var fastSelect = new Choices('.fast-multi-select-list', {
+			        removeItemButton: true,
+			        searchResultLimit: 10,
+			        duplicateItemsAllowed: false,
+			      });
+			});
+			
 		});
 		
 	</script>
@@ -268,15 +282,21 @@
 					}
 				}
 			}
-			@helper.input(form("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
-				<div @if(editable) {class="scroll-box"}>
-					@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
-						@checkbox2(form(fastSubject.fastId), editable, '_label -> fastSubject.name)(
-							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
-						)
-					}
-				</div>
-			}
+			
+			@if(editable) {
+            	@helper.input(form("selectedFastSubjects"), '_label -> "Subjects") { (id, name, value, args) =>
+                	<select id="@id" name="selectedFastSubjects[]" @toHtmlArgs(args) multiple="multiple" class="fast-multi-select-list">
+                        @for(fastSubject <- Documents.getFastSubjectList(document)) {
+							<option value="@fastSubject.fastId" @{if(document.fastSubjects.contains(fastSubject)) "selected" else ""}>@fastSubject.name</option>                        
+                        }
+                    </select>
+                }			
+			} else {
+	  				@for(fastSubject <- document.fastSubjects) {
+ 	 	  				@fastSubject.name (@fastSubject.fastId)
+	  				}
+			}            	
+			
 			<!-- Only eBooks available at present.
                 options(List("", Document.Type.BOOK.toString,
                     Document.Type.JOURNAL_ARTICLE.toString,
