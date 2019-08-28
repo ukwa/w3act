@@ -196,6 +196,7 @@
 			        removeItemButton: true,
 			        searchResultLimit: 10,
 			        duplicateItemsAllowed: false,
+			        shouldSort: false
 			      });
 			});
 			
@@ -292,8 +293,8 @@
                     </select>
                 }			
 			} else {
-	  				@for(fastSubject <- document.fastSubjects) {
- 	 	  				@fastSubject.name (@fastSubject.fastId)
+	  				@for(fastSubject <- document.fastSubjectList) {
+ 	 	  				@fastSubject.fastSubject.name (@fastSubject.fastSubject.fastId)
 	  				}
 			}            	
 			

@@ -11,13 +11,17 @@ import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -77,6 +81,11 @@ public class Document extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
     @OrderColumn(name = "position")
 	public List<FastSubject> fastSubjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL)
+    @OrderBy("priority ASC")
+    @JsonIgnore
+    public List<FastSubjectByPriority> fastSubjectList = new ArrayList<>();
 
     public String landingPageUrl;
     public String documentUrl;

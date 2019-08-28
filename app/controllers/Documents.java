@@ -35,6 +35,7 @@ import models.Book;
 import models.Document;
 import models.DocumentFilter;
 import models.FastSubject;
+import models.FastSubjectByPriority;
 import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
@@ -722,13 +723,13 @@ public class Documents extends AbstractController {
         List<FastSubject> all = FastSubject.find.orderBy("name").findList();
 
         // Now, rearrange so the documents subjects are first and in order:
-        int index = document.fastSubjects.size();
-        for (FastSubject fs : document.fastSubjects) {
+        int index = 0;
+        for (FastSubjectByPriority fsbp : document.fastSubjectList) {
             // Take it out of the current position:
-            all.remove(fs);
+            all.remove(fsbp.fastSubject);
             // Insert it at the correct position:
-            index = index - 1;
-            all.add(index, fs);
+            all.add(index, fsbp.fastSubject);
+            index = index + 1;
         }
 
         return all;
@@ -737,6 +738,15 @@ public class Documents extends AbstractController {
 	private static void setRelatedEntitiesOfModel(Document document, Form<Document> documentForm) {
         document.fastSubjects = FastSubjects
                 .getFastSubjectsForDocument(documentForm);
+        long priority = 0;
+        document.fastSubjectList = new ArrayList<>();
+        for (FastSubject fs : document.fastSubjects) {
+            FastSubjectByPriority fsbp = new FastSubjectByPriority();
+            fsbp.fastSubject = fs;
+            fsbp.priority = priority;
+            document.fastSubjectList.add(fsbp);
+            priority += 1;
+        }
 		document.portals = Portals.getPortals(documentForm);
 		if (document.isBookOrBookChapter())
 			for (BlCollectionSubset blCollectionSubset : blCollectionSubsetList.getList())
