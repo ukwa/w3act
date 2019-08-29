@@ -75,6 +75,11 @@ public class Document extends Model {
 			inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") })
 	public List<Portal> portals = new ArrayList<>();
 	
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "id_primary_subject")
+    public FastSubject primarySubject;
+
 	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
 	@JoinTable(name = "fast_subject_document",
 		joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
@@ -82,10 +87,18 @@ public class Document extends Model {
     @OrderColumn(name = "position")
 	public List<FastSubject> fastSubjects = new ArrayList<>();
 
-    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL)
-    @OrderBy("priority ASC")
-    @JsonIgnore
-    public List<FastSubjectByPriority> fastSubjectList = new ArrayList<>();
+    public List<FastSubject> getPrioritisedFastSubjects() {
+        List<FastSubject> assigned = new ArrayList<>();
+        // First, the primary subject:
+        if (this.primarySubject != null) {
+            assigned.add(primarySubject);
+        }
+        // Then the others:
+        for (FastSubject sfs : this.fastSubjects) {
+            assigned.add(sfs);
+        }
+        return assigned;
+    }
 
     public String landingPageUrl;
     public String documentUrl;

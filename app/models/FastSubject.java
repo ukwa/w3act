@@ -31,4 +31,9 @@ public class FastSubject extends Model {
         		.getPage(page);
     }
 
+    public static FastSubject findById(Long id) {
+        FastSubject fs = find.where().eq("id", id).findUnique();
+        return fs;
+    }
+
 }

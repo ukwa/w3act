@@ -1,14 +1,7 @@
 # --- !Ups
 
-CREATE TABLE fast_subject_by_priority (
-  id				bigint primary key,
-  id_document		bigint not null references document (id),
-  id_fast_subject	bigint not null references fast_subject (id),
-  priority			integer
-);
-CREATE SEQUENCE fast_subject_by_priority_seq;
+ALTER TABLE document ADD COLUMN id_primary_subject bigint references fast_subject (id);
 
 # --- !Downs
 
-DROP TABLE IF EXISTS fast_subject_by_priority_seq;
-DROP SEQUENCE IF EXISTS fast_subject_by_priority_seq;
+ALTER TABLE document DROP COLUMN id_primary_subject;

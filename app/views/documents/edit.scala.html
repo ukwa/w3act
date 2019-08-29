@@ -13,12 +13,10 @@
 @implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
 
 @scripts = {
-    <!-- Start Choices Support -->
-	<!-- Include Choices CSS -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-	<!-- Include Choices JavaScript -->
-	<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <!-- END Choices Support -->
+    <!-- START enhanced select UI support -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+    <!-- END enhanced select UI support -->
 	<script src="@routes.Assets.at("javascripts/parse-date.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		function getSelectionText() {
@@ -192,12 +190,7 @@
 			}
 			
 			$(document).ready(function() {
-			    var fastSelect = new Choices('.fast-multi-select-list', {
-			        removeItemButton: true,
-			        searchResultLimit: 10,
-			        duplicateItemsAllowed: false,
-			        shouldSort: false
-			      });
+			    $('.fast-select-widget').select2();
 			});
 			
 		});
@@ -283,14 +276,23 @@
 					}
 				}
 			}
+
+           	@helper.input(form("primarySubject"), '_label -> "Primary Subject") { (id, name, value, args) =>
+               	<select id="@id" name="@name" @toHtmlArgs(args) class="fast-select-widget" @if(!editable) { disabled="disabled" }>
+               		<option value=""></option>
+                    @for(fastSubject <- Documents.getFastSubjectList()) {
+						<option value="@fastSubject.id" @{if(fastSubject.equals(document.primarySubject)) "selected" else ""}>@fastSubject.name (@fastSubject.fastId)</option>                        
+                    }
+                </select>
+            }
 			
-           	@helper.input(form("selectedFastSubjects"), '_label -> "Subjects") { (id, name, value, args) =>
-               	<select id="@id" name="selectedFastSubjects[]" @toHtmlArgs(args) multiple="multiple" class="fast-multi-select-list" @if(!editable) { disabled="disabled" }>
-                       @for(fastSubject <- Documents.getFastSubjectList(document)) {
-						<option value="@fastSubject.fastId" @{if(document.fastSubjects.contains(fastSubject)) "selected" else ""}>@fastSubject.name</option>                        
-                       }
-                   </select>
-            }			
+           	@helper.input(form("selectedFastSubjects"), '_label -> "Secondary Subjects") { (id, name, value, args) =>
+               	<select id="@id" name="selectedFastSubjects[]" @toHtmlArgs(args) multiple="multiple" class="fast-select-widget" @if(!editable) { disabled="disabled" }>
+                    @for(fastSubject <- Documents.getFastSubjectList()) {
+						<option value="@fastSubject.fastId" @{if(document.fastSubjects.contains(fastSubject)) "selected" else ""}>@fastSubject.name (@fastSubject.fastId)</option>                        
+                    }
+                </select>
+            }
 			
 			<!-- Only eBooks available at present.
                 options(List("", Document.Type.BOOK.toString,
