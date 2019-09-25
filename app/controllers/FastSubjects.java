@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,8 @@ public class FastSubjects extends AbstractController {
 		return redirect(routes.FastSubjects.edit(fastSubject.id));
 	}
 	
-	public static List<FastSubject> getFastSubjects(Form<?> form) {
-		List<FastSubject> fastSubjects = new ArrayList<>();
+    public static List<FastSubject> getFastSubjects(Form<?> form) {
+        List<FastSubject> fastSubjects = new ArrayList<>();
 		for (FastSubject fastSubject : FastSubject.find.all()) {
 			if (form.apply(fastSubject.fastId).value() != null) {
 				Logger.info("Adding subject "+fastSubject);
@@ -75,10 +76,32 @@ public class FastSubjects extends AbstractController {
 		return fastSubjects;
 	}
 	
+    public static List<FastSubject> getFastSubjectsForDocument(Form<?> form) {
+        // Find the list in the form:
+        List<String> selectedFastSubjects = new ArrayList<String>();
+        for (int i = 0; i < 50; i++) {
+            String param = "selectedFastSubjects[" + i + "]";
+            if (form.data().containsKey(param)) {
+                selectedFastSubjects.add(form.data().get(param));
+            }
+        }
+        Logger.debug(
+                "FastSubjects.getFastSubjects() got " + selectedFastSubjects);
+        List<FastSubject> fastSubjects = new ArrayList<FastSubject>();
+        for (FastSubject fastSubject : FastSubject.find.all()) {
+            if (selectedFastSubjects.contains(fastSubject.fastId)) {
+                Logger.info("Adding subject " + fastSubject);
+                fastSubjects.add(fastSubject);
+            }
+        }
+        return fastSubjects;
+    }
+
 	public static Map<String, String> getFormData(List<FastSubject> fastSubjects) {
 		Map<String, String> formData = new HashMap<>();
-		for (FastSubject fastSubject : fastSubjects)
+        for (FastSubject fastSubject : fastSubjects) {
 			formData.put(fastSubject.fastId, "true");
+        }
 		return formData;
 	}
 
