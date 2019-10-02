@@ -392,7 +392,26 @@ function showTree(data, id, key, sm) {
             var selKeys = $.map(tree.getSelectedNodes(), function(node){
                 node.makeVisible();
             });
-         }
+         },
+		onExpand: function(expand, node) {
+
+			$.ajax({
+				url: context + "/" + searchContext + '/getSingleCollectionByIdAsJson/' + (node.data.key).replace(/\"/g, "") ,
+				type: 'GET',
+				success: function (outputfromserver) {
+					if (outputfromserver !== null) {
+						node.addChild(outputfromserver);
+					} else {
+						alert('Make call failed - no output from server');
+					}
+				},
+				error: function (results) {
+					alert('Make call failed');
+				}
+			});
+
+
+		}
  	});
 }
 
@@ -439,7 +458,7 @@ function showTreeParent(data, id, key) {
         		return node.data.key;
       		});
       		document.getElementById(key).value = selKeys.join(", ");
-        },
+        }
         // The following options are only required, if we have more than one tree on one page:
 //        initId: "treeData",
 /* 			        cookieId: "dynatree-Cb1",

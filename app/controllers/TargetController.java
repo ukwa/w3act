@@ -2288,6 +2288,9 @@ public class TargetController extends AbstractController {
         return ok ( getCollectionsDataByIds(collectionIds));
     }
 
+    public static Result getSingleCollectionByIdAsJson(String collectionId) {
+        return ok ( getSingleCollectionDataById(Long.valueOf(collectionId)));
+    }
 
     @Security.Authenticated(SecuredController.class)
     public static Result getTargetCategories(Long id) {
