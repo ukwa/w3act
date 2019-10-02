@@ -4,7 +4,6 @@ import static play.data.Form.form;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,17 +22,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import com.avaje.ebean.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.commons.validator.routines.UrlValidator;
+
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Expr;
+import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
+import com.avaje.ebean.Query;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
 import models.Collection;
-import models.CrawlPermission;
 import models.FieldUrl;
 import models.Flag;
 import models.License;
@@ -42,7 +52,6 @@ import models.QaIssue;
 import models.Subject;
 import models.Tag;
 import models.Target;
-import models.Taxonomy;
 import models.User;
 import play.Logger;
 import play.Play;
@@ -55,7 +64,6 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
-import play.mvc.With;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
@@ -63,19 +71,9 @@ import uk.bl.api.models.CrawlFeedItem;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
+import views.html.infomessage;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
-import views.html.infomessage;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Channel;
-
 import views.html.targets.blank;
 import views.html.targets.edit;
 import views.html.targets.list;
@@ -533,42 +531,47 @@ public class TargetController extends AbstractController {
     }
 
     /**
-     * Optional flag parameter - allow it to be overridden as a query parameter. Default is false.
-     * If true (http://localhost:9000/act/api/targets?syncFlag=true),
-     * then sync all active targets (includes runChecks and Update for each, may take more than 2hrs with 80K targets)
+     * Optional runChecks parameter - allow it to be overridden as a query
+     * parameter. Default is false. If true
+     * (http://localhost:9000/act/api/targets?runChecks=true), then sync the
+     * requested targets (includes runChecks and Update for each). May take more
+     * than 2hrs with 80K targets, so paging the requests (using pageNo and
+     * pageLength) makes this more manageable.
      *
      * @return
      */
-    public static Result allTargetsAsJson(int pageNo, int pageLength, boolean flag) {
+    public static Result allTargetsAsJson(int pageNo, int pageLength, boolean runChecks) {
         List<Target> targets = Target.findAllActive();
-        if(flag) {
-            Logger.debug("Starting Sync for All active targets. Targets size = " + targets.size());
-            // Transaction start
-            Ebean.beginTransaction();
-            try {
-                targets.forEach(target -> {
+        // Use a paged iteration:
+        int offset = pageNo * pageLength;
+        if (offset > targets.size()) {
+            return notFound("There are only " + targets.size() + " targets!");
+        }
+        // Build up the page of results:
+        List<Target> targets_page = new ArrayList<Target>(pageLength);
+        for (int i = 0; i < pageLength; i++) {
+            if (offset + i >= targets.size())
+                break;
+            Target target = targets.get(offset + i);
+            // Also sync derived data fields, if requested.
+            if (runChecks) {
+                // Transaction start:
+                Ebean.beginTransaction();
+                try {
+                    // Run the checks and store the results:
                     target.runChecks();
                     target.update();
-                });
-                Ebean.commitTransaction();
-            } finally {
-                Ebean.endTransaction();
+                    // Commit:
+                    Ebean.commitTransaction();
+                    // And log that we did this:
+                    Logger.warn("Checks are up-to-date for tid " + target.id);
+                } finally {
+                    Ebean.endTransaction();
+                }
             }
-            // Transaction end
-            return ok("OK. Active Target Sync was done successfully.");
+            targets_page.add(target);
         }
-        else { //flag == false
-            int offset = pageNo * pageLength;
-            if( offset > targets.size()) {
-                return notFound("There are only "+targets.size()+" targets!");
-            }
-            List<Target> targets_page = new ArrayList<Target>(pageLength);
-            for (int i = 0; i < pageLength; i++) {
-                if (offset + i >= targets.size()) break;
-                targets_page.add(targets.get(offset + i));
-            }
-            return ok(Json.toJson(targets_page));
-        }
+        return ok(Json.toJson(targets_page));
     }
 
     /**
@@ -941,11 +944,14 @@ public class TargetController extends AbstractController {
         Form<Target> filledForm = Form.form(Target.class);
         filledForm = filledForm.fill(target);
 
+        /*
+        // prevents to delete duplicate target
         if(!target.isDeletable()) {
             ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references Instance(s), License(s) and/or Collection(s)");
             filledForm.reject(ve);
             return info(filledForm, id);
         }
+        */
 
         if(target.hasDocuments()) {
             ValidationError ve = new ValidationError("watched", "Watched Targets with existing crawled documents can not be deleted.");

@@ -37,7 +37,7 @@ EXPOSE 9000
 WORKDIR /w3act
 
 # Install GeoIP:
-RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && gunzip -d GeoLite2-City.mmdb.gz
+RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && gunzip GeoLite2-City.mmdb.gz
 
 # Use larger heap, and add experimental option: forcing restart on OOM:
-CMD /w3act/bin/w3act -J-Xmx2g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null
+CMD /w3act/bin/w3act -J-Xmx4g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -14,21 +12,19 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlRow;
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.model.CityResponse;
+
 import models.FieldUrl;
-import models.LookupEntry;
 import models.Target;
 import play.Logger;
-import uk.bl.Const;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.wa.whois.JRubyWhois;
 import uk.bl.wa.whois.record.WhoisContact;
 import uk.bl.wa.whois.record.WhoisResult;
-
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.SqlRow;
-import com.maxmind.geoip2.DatabaseReader;
-import com.maxmind.geoip2.model.CityResponse;
 
 /**
  * This class implements scope rule engine.
@@ -87,7 +83,7 @@ public enum Scope {
 	public static final String END_STR         = "/";
 	
 	private static final int   WHOIS_TIMEOUT   = 15; // Whois lookup timeout (seconds)
-	public  static boolean     WHOIS_ENABLED   = true; // Should whois be used at all?
+	public  static boolean     WHOIS_ENABLED   = false; // Should whois be used at all?
 	
 	public static DatabaseReader databaseReader;
 	
@@ -206,7 +202,7 @@ public enum Scope {
 				res = true;
 			}
 		} catch (Exception e) {
-			Logger.warn("GeoIP error. " + e);
+            Logger.warn("GeoIP error. ", e);
 		}
 		Logger.debug("Geo IP query result: " + res);
 		return res;

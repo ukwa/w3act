@@ -1234,7 +1234,7 @@
 
                         <p>Note that you can only edit these settings if your account has been permitted access to the Document Harvester, and if you own this target.</p>
 
-                        @if(!target.hasDocuments() &&  user.canWatchTarget(target) ) {
+                        @if(!target.hasDocuments() &&  user.canWatchTarget(target) || user.hasRole("archivist")) {
                             @checkbox(targetForm("watched"), true, '_label -> "Watched?", '_id -> "watched", 'onclick -> "javascript:display();")
                         } else {
                             @checkbox(targetForm("watched"), false, '_label -> "Watched?", '_id -> "watched")

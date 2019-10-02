@@ -381,7 +381,7 @@ GET     /api/suggested_collections_instance/:url      controllers.InstanceContro
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
 
 POST    /api/targets                        controllers.APIController.bulkImport()
-GET     /api/targets                        controllers.TargetController.allTargetsAsJson(p:Int ?= 0, l:Int ?= 1000, syncFlag:Boolean ?= false)
+GET     /api/targets                        controllers.TargetController.allTargetsAsJson(p:Int ?= 0, l:Int ?= 1000, runChecks:Boolean ?= false)
 GET     /api/targets/ids                    controllers.TargetController.allTargetsIDsAsJson()
 GET     /api/targets/ids/:frequency         controllers.TargetController.idsForFrequencyJson(frequency)
 GET     /api/targets/bycollection/:id       controllers.TargetController.collectionTargetsAsJson(id:Long)

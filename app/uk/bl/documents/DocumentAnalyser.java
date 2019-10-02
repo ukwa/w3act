@@ -143,10 +143,10 @@ public class DocumentAnalyser {
 		// Get the input stream:
 		return conn.getInputStream();
 	}
-	
+
 	private String waybackReplayUrl(String url, String timestamp) throws UnsupportedEncodingException {
-		return WaybackController.getWaybackEndpoint() + "replay?url=" + URLEncoder.encode(url, "UTF-8") + "&date=" + timestamp;
-	}
+        return WaybackController.getWaybackEndpoint() + timestamp + "id_/" + url;
+    }
 	
 	/**
 	 * 
