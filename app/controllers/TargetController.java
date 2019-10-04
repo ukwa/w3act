@@ -2293,7 +2293,6 @@ public class TargetController extends AbstractController {
         return ok ( getCollectionsDataByIds(collectionIds));
     }
 
-    @Cached(key = "targetsinglecollectiontree")
     public static Result getSingleCollectionByIdAsJson(String collectionId) {
         return ok ( getSingleCollectionDataById(Long.valueOf(collectionId)));
     }
