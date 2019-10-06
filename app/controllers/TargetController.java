@@ -206,7 +206,7 @@ public class TargetController extends AbstractController {
      * @param pageSize       The number of Target entries on the page
      * @param flag           The flag assigned by user
      */
-    @Cached(key = "targetlist")
+    //@Cached(key = "targetlist")
     public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject,
                               String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
 
@@ -887,7 +887,7 @@ public class TargetController extends AbstractController {
      *
      * @param url The target identifier URL
      */
-    @Cached(key = "targetedit")
+    //@Cached(key = "targetedit")
     public static Result edit(Long id) {
         Logger.debug("Targets.edit() id::::: " + id);
 
@@ -2260,16 +2260,20 @@ public class TargetController extends AbstractController {
      * @param subject This is an identifier for current subjects selected in subject tree
      * @return tree structure
      * */
-    @Cached(key = "targetallsubjectstree")
-    public static Result allSubjectsIDsAsJson(String subject) {
+    //@Cached(key = "targetallsubjectstree")
+    public static Result allSubjectsIDsAsJson(String subject) { //selected array passed as string
+        Logger.debug("allSubjectsIDsAsJson primary DATA subject = " + subject);
+
         List<Long> subjectIds = new ArrayList<Long>();
         String[] subjects = subject.replace("\"", "").split(", ");
         for(String sId : subjects) {
             if(StringUtils.isNotEmpty(sId)) {
                 Long subjectId = Long.valueOf(sId);
                 subjectIds.add(subjectId);
+                Logger.debug("allSubjectsIDsAsJson subjectId = " + subjectId);
             }
         }
+        Logger.debug("allSubjectsIDsAsJson SIZE = " + subjectIds.size());
         return ok ( getSubjectsDataByIds(subjectIds) );
     }
 
@@ -2280,7 +2284,7 @@ public class TargetController extends AbstractController {
      * @param collection This is an identifier for current collections selected in collection tree
      * @return tree structure
      * */
-    @Cached(key = "targetallcollectionstree")
+    //@Cached(key = "targetallcollectionstree")
     public static Result allCollectionsIDsAsJson(String collection) {
         List<Long> collectionIds = new ArrayList<Long>();
         String[] collections = collection.replace("\"", "").split(", ");

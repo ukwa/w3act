@@ -15,76 +15,57 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 
+
+
 		$(document).ready(function() {
 
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			searchContext = 'targets';
 			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
-			subjecttreeclicked = false;
-			colleciontreeclicked = false;
-			$.ajaxSetup({
-				beforeSend:function(){
-					$("#collectionTreeLoading").show();
+
+
+
+			$.ajax({
+				url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
+				type: 'GET',
+				success: function (outputfromserver) {
+					if (outputfromserver !== null) {
+						showTree(outputfromserver, "#subjectTree", "subjectSelect");
+					} else {
+						alert('Make call failed - no output from server');
+					}
 				},
-				complete:function(){
-					$("#collectionTreeLoading").hide();
+				error: function (outputfromserver) {
+					alert('Make call get Subjects failed');
 				}
 			});
 
-			$('#subject-drop-button').click(function () {
-				$(this).find('i').toggleClass('fa-lock fa-unlock');
-				$('#subjectTree').show();
-				if (!subjecttreeclicked) {
-					$.ajax({
-						url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
-						type: 'GET',
-						success: function (outputfromserver) {
-							if (outputfromserver !== null) {
-								showTree(outputfromserver, "#subjectTree", "subjectSelect");
-							} else {
-								alert('Make call failed - no output from server');
-							}
-						},
-						error: function (outputfromserver) {
-							alert('Make call failed');
-						}
-					});
-					subjecttreeclicked = true;
-				}
-				else{
-					$('#subjectTree').hide();
-					subjecttreeclicked = false;
-				}
-			});
+            $.ajaxSetup({
+                beforeSend:function(){
+                    $("#collectionTreeLoading").show();
+                },
+                complete:function(){
+                    $("#collectionTreeLoading").hide();
+                }
+            });
 
-			$('#collection-drop-button').click(function () {
-				$(this).find('i').toggleClass('fa-lock fa-unlock');
+            $.ajax({
+                url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
+                type: 'GET',
+                success: function (outputfromserver) {
+                    if (outputfromserver !== null) {
+                        showTree(outputfromserver, "#collectionTree", "collectionSelect");
+                    } else {
+                        alert('Make call failed - no output from server');
+                    }
+                },
+                error: function (results) {
+                    alert('Make call get Collections failed');
+                }
+            });
 
-				$('#collectionTree').show();
 
-				if (!colleciontreeclicked) {
-					$.ajax({
-						url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
-						type: 'GET',
-						success: function (outputfromserver) {
-							if (outputfromserver !== null) {
-								showTree(outputfromserver, "#collectionTree", "collectionSelect");
-							} else {
-								alert('Make call failed - no output from server');
-							}
-						},
-						error: function (results) {
-							alert('Make call failed');
-						}
-					});
-					colleciontreeclicked = true;
-				}
-				else{
-					$('#collectionTree').hide();
-					colleciontreeclicked = false;
-				}
-			});
 		});
 	</script>
 }
@@ -301,8 +282,7 @@
 										<div class="row">
 											<div class="col-md-12 col-sm-12">
 												<div class="form-group">
-													<label for="subject" class="col-md-3 col-sm-3 control-label">Subject</label>
-													<button type="button" class="col-md-1 col-sm-1" id="subject-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+													<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
 													<div class="col-md-8 col-sm-8">
 														<div id="subjectTree" style="padding:5px;"></div>
 														<input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjects">
@@ -318,8 +298,7 @@
 										<div class="row">
 											<div class="col-md-12 col-sm-12">
 												<div class="form-group">
-													<label for="subject" class="col-md-3 col-sm-3 control-label">Collection</label>
-													<button type="button" class="col-md-1 col-sm-1" id="collection-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+													<label for="subject" class="col-md-4 col-sm-4 control-label">Collection</label>
 													<div class="col-md-8 col-sm-8">
 														<div id="collectionTree" style="padding:5px;"></div>
 														<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collections">
