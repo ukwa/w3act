@@ -363,11 +363,13 @@ function showTree(data, id, key) {
 }
 
 function showTree(data, id, key, sm) {
-	//console.log(data);
-	var selectionMode = parseInt(sm); 
+    var expandedNodes = [];
+	var selectionMode = parseInt(sm);
  	$(id).dynatree({
 		checkbox: true,
     	selectMode: selectionMode,
+        autoCollapse:false,
+        activeVisible: true,
     	children: data,
     	onSelect: function(select, node) {
       		// Get a list of all selected nodes, and convert to a key array:
@@ -394,23 +396,26 @@ function showTree(data, id, key, sm) {
             });
          },
 		onExpand: function(expand, node) {
-
-			$.ajax({
-				url: context + "/" + searchContext + '/getSingleCollectionByIdAsJson/' + (node.data.key).replace(/\"/g, "") ,
-				type: 'GET',
-				success: function (outputfromserver) {
-					if (outputfromserver !== null) {
-						node.addChild(outputfromserver);
-					} else {
-						alert('Make call for single collection failed - no output from server');
-					}
-				},
-				error: function (results) {
-					alert('Make call failed');
-				}
-			});
-
-
+            var selectedNodeToExpand = (node.data.key).replace(/\"/g, "");
+            if(jQuery.inArray(selectedNodeToExpand, expandedNodes) !== -1){
+            }
+            else {
+                expandedNodes.push(selectedNodeToExpand);
+                $.ajax({
+                    url: context + "/" + searchContext + '/getSingleCollectionByIdAsJson/' + selectedNodeToExpand,
+                    type: 'GET',
+                    success: function (outputfromserver) {
+                        if (outputfromserver !== null) {
+                            node.addChild(outputfromserver);
+                        } else {
+                            alert('Make call for single collection failed - no output from server');
+                        }
+                    },
+                    error: function (results) {
+                        alert('Make call failed');
+                    }
+                });
+            }
 		}
  	});
 }
