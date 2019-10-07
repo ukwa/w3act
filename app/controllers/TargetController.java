@@ -93,6 +93,20 @@ public class TargetController extends AbstractController {
     private static final String DEFAULT_SORT_BY = "title";
     private static final String DEFAULT_ORDER = "asc";
 
+    private static List<Long> selectedCollectionIds;
+
+    public static List<Long> getSelectedCollectionIds() {
+        return selectedCollectionIds;
+    }
+
+    public static void setSelectedCollectionIds(List<Long> selectedCollectionIds) {
+        TargetController.selectedCollectionIds = selectedCollectionIds;
+    }
+
+
+
+
+
     /**
      * Display the targets.
      */
@@ -2294,11 +2308,23 @@ public class TargetController extends AbstractController {
                 collectionIds.add(collectionId);
             }
         }
-        return ok ( getCollectionsDataByIds(collectionIds));
+        //Save selected collections ids from filter - for single collection
+        setSelectedCollectionIds(collectionIds);
+        Logger.debug("allSubjectsIDsAsJson SIZE = " + selectedCollectionIds.size());
+
+        return ok (getCollectionsDataByIds(collectionIds));
     }
 
+    /**
+     * Method for Collections tree branch data.
+     * Used by AJAX call.
+     *
+     * @param collectionId This is an identifier for current collection's tree branch to get it's children.
+     * List of all selected ids is combined and reflected on collection tree view
+     * @return tree structure
+     * */
     public static Result getSingleCollectionByIdAsJson(String collectionId) {
-        return ok ( getSingleCollectionDataById(Long.valueOf(collectionId)));
+        return ok ( getSingleCollectionDataById( Long.valueOf(collectionId), getSelectedCollectionIds() ));
     }
 
     @Security.Authenticated(SecuredController.class)
@@ -2411,10 +2437,7 @@ public class TargetController extends AbstractController {
                 continue;
             }
             //Collection c = new Collection();
-            //c.name = 
-
-            // 
-            System.out.println(target);
+            //c.name =
 
             // TODO Merge with controllers.ApplicationController.bulkImport() code to avoid repetition.
             target.revision = Const.INITIAL_REVISION;
@@ -2441,7 +2464,7 @@ public class TargetController extends AbstractController {
 			*/
 
             //
-            System.out.println(target);
+            Logger.debug("target: " + target);
         }
         workbook.close();
         file.close();

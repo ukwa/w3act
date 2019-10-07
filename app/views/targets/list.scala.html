@@ -25,7 +25,6 @@
 			scopeCheck(context);
 
 
-
 			$.ajax({
 				url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
 				type: 'GET',
@@ -33,7 +32,7 @@
 					if (outputfromserver !== null) {
 						showTree(outputfromserver, "#subjectTree", "subjectSelect");
 					} else {
-						alert('Make call failed - no output from server');
+						alert('Make call get Subjects failed - no output from server');
 					}
 				},
 				error: function (outputfromserver) {
@@ -57,7 +56,7 @@
                     if (outputfromserver !== null) {
                         showTree(outputfromserver, "#collectionTree", "collectionSelect");
                     } else {
-                        alert('Make call failed - no output from server');
+                        alert('Make call get Collections failed - no output from server');
                     }
                 },
                 error: function (results) {

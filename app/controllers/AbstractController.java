@@ -94,59 +94,20 @@ public class AbstractController extends Controller {
     }
 
     protected static JsonNode getCollectionsDataByIds(List<Long> myCollectionIds) {
-
-        long start = System.currentTimeMillis();
-
-        //List<Collection> collections = Collection.getFirstLevelCollections();
-
-        long elapsedTimeMillis = System.currentTimeMillis()-start;
-        // Get elapsed time in seconds
-        float elapsedTimeSec = elapsedTimeMillis/1000F;
-        Logger.debug("--------- getCollectionsDataByIds - elapsedTimeSec -- getFirstLevelCollections -- : " + elapsedTimeSec);
-
-        List<ObjectNode> result = getCollectionTreeElementsByIds(getCollectionsData2(), null, true, myCollectionIds);
-        elapsedTimeMillis = System.currentTimeMillis()-start;
-        // Get elapsed time in seconds
-        elapsedTimeSec = elapsedTimeMillis/1000F;
-        Logger.debug("--------- getCollectionsDataByIds - elapsedTimeSec -- getCollectionTreeElementsByIds -- : " + elapsedTimeSec);
-
+        List<ObjectNode> result = getCollectionTreeElementsByIds(getFirstLevelCollectionsData(), null, true, myCollectionIds);
         JsonNode jsonData = Json.toJson(result);
-        elapsedTimeMillis = System.currentTimeMillis()-start;
-        // Get elapsed time in seconds
-        elapsedTimeSec = elapsedTimeMillis/1000F;
-        Logger.debug("--------- getCollectionsDataByIds - elapsedTimeSec -- toJson -- : " + elapsedTimeSec);
-
         return jsonData;
     }
 
 	@Cached(key = "CollectionsData")
-	protected static List<Collection> getCollectionsData2() {
-		//long start = System.currentTimeMillis();
+	protected static List<Collection> getFirstLevelCollectionsData() {
 		return Collection.getFirstLevelCollections();
 	}
 
-
-	protected static JsonNode getSingleCollectionDataById(Long myCollectionId) {
-
-		long start = System.currentTimeMillis();
+	protected static JsonNode getSingleCollectionDataById(Long myCollectionId, List<Long> selectedCollectionIds) {
 		List<Collection> collections = Collection.findChildrenByParentId(myCollectionId);
-		long elapsedTimeMillis = System.currentTimeMillis()-start;
-		// Get elapsed time in seconds
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		Logger.debug("--------- getCollectionsDataByIds - elapsedTimeSec -- getFirstLevelCollections -- : " + elapsedTimeSec);
-
-		List<ObjectNode> result = getSingleCollectionTreeElementsByIds(collections, null, true, myCollectionId);
-		elapsedTimeMillis = System.currentTimeMillis()-start;
-		// Get elapsed time in seconds
-		elapsedTimeSec = elapsedTimeMillis/1000F;
-		Logger.debug("--------- getCollectionsDataByIds - elapsedTimeSec -- getCollectionTreeElementsByIds -- : " + elapsedTimeSec);
-
+		List<ObjectNode> result = getCollectionTreeElementsByIds(collections, null, true, selectedCollectionIds);
 		JsonNode jsonData = Json.toJson(result);
-		elapsedTimeMillis = System.currentTimeMillis()-start;
-		// Get elapsed time in seconds
-		elapsedTimeSec = elapsedTimeMillis/1000F;
-		Logger.debug("--------- getCollectionsDataByIds - elapsedTimeSec -- toJson -- : " + elapsedTimeSec);
-
 		return jsonData;
 	}
 
@@ -167,42 +128,14 @@ public class AbstractController extends Controller {
 			child.put("key", "\"" + collection.id + "\"");
 
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
-//	    	Logger.debug("collection: " + collection.name + " - " + collection.children.size());
-//    	    	Logger.debug("children: " + children.size());
+
 	    	if (children.size() > 0) {
 	    		child.put("children", true);//"[{title : Item 1}]" );//Json.toJson(getCollectionTreeElementsByIds(children, filter, false, myCollectionIds)));
 	    	}
 			result.add(child);
     	}
-//        	Logger.debug("getTreeElements() res: " + result);
     	return result;
     }
-
-	protected static List<ObjectNode> getSingleCollectionTreeElementsByIds(List<Collection> collections, String filter, boolean parent, Long myCollectionId){ //, List<Long> myCollectionIds) {
-		List<ObjectNode> result = new ArrayList<ObjectNode>();
-		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
-
-		for (Collection collection : collections) {
-			ObjectNode child = nodeFactory.objectNode();
-			child.put("title", collection.name + " (" + collection.targets.size() + ")");
-			child.put("url", String.valueOf(routes.CollectionController.view(collection.id)));
-
-			//if (myCollectionIds != null && myCollectionIds.contains(collection.id)) {
-				child.put("select", false);
-			//}
-
-			child.put("key", "\"" + collection.id + "\"");
-			List<Collection> children = Collection.findChildrenByParentId(collection.id);
-//	    	Logger.debug("collection: " + collection.name + " - " + collection.children.size());
-//    	    	Logger.debug("children: " + children.size());
-			if (children.size() > 0) {
-				child.put("children", true );//Json.toJson(getCollectionTreeElementsByIds(children, filter, false, myCollectionIds)));
-			}
-			result.add(child);
-		}
-//        	Logger.debug("getTreeElements() res: " + result);
-		return result;
-	}
 
     protected static JsonNode getCollectionsData() {
     	return getCollectionsDataByFilter(null);

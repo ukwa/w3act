@@ -402,7 +402,7 @@ function showTree(data, id, key, sm) {
 					if (outputfromserver !== null) {
 						node.addChild(outputfromserver);
 					} else {
-						alert('Make call failed - no output from server');
+						alert('Make call for single collection failed - no output from server');
 					}
 				},
 				error: function (results) {
