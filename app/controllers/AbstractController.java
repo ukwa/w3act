@@ -11,14 +11,28 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import play.Logger;
 import play.cache.Cached;
 import play.libs.Json;
 import play.mvc.Controller;
 
 public class AbstractController extends Controller {
-        
-        protected static String getQueryParam(String name) {
+
+	private static final String cacheName = "play";
+	private static final CacheManager cacheManager = CacheManager.getInstance();
+
+	public static CacheManager getCacheManager() {
+		return cacheManager;
+	}
+
+	public static Cache getCache() {
+		Cache cache = getCacheManager().getCache(cacheName);
+		return cache;
+	}
+
+	protected static String getQueryParam(String name) {
                 String[] value = request().queryString().get(name);
                 if (value == null)
                         return null;
@@ -130,7 +144,7 @@ public class AbstractController extends Controller {
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
 
 	    	if (children.size() > 0) {
-	    		child.put("children", true);//"[{title : Item 1}]" );//Json.toJson(getCollectionTreeElementsByIds(children, filter, false, myCollectionIds)));
+	    		child.put("children", true ); //Json.toJson(getCollectionTreeElementsByIds(children, filter, false, myCollectionIds)));
 	    	}
 			result.add(child);
     	}

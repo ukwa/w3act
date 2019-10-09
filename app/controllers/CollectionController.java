@@ -216,7 +216,10 @@ public class CollectionController extends AbstractController {
 	
 	@Security.Authenticated(SecuredController.class)
     public static Result save() {
-    	
+
+
+
+
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
 
@@ -274,7 +277,10 @@ public class CollectionController extends AbstractController {
             	}
 		        
 		        filledForm.get().save();
-		        flash("message", "Collection " + filledForm.get().name + " has been created");
+				Logger.debug("invalidate cache on Collection Create, key CollectionsData: ");
+				getCache().remove("CollectionsData");
+
+				flash("message", "Collection " + filledForm.get().name + " has been created");
 		        return redirect(routes.CollectionController.view(filledForm.get().id));
         	}
         }
