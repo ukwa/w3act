@@ -202,6 +202,8 @@ public class SubjectController extends AbstractController {
 	            }		        
 		        
 		        filledForm.get().save();
+				Logger.debug("invalidate cache on Subject Create, key SubjectsData: ");
+				getCache().remove("SubjectsData");
 		        flash("message", "Subject " + filledForm.get().name + " has been created");
 		        return redirect(routes.SubjectController.view(filledForm.get().id));
         	}
@@ -256,12 +258,16 @@ public class SubjectController extends AbstractController {
 	            }
 		        
 		        filledForm.get().update(id);
+				Logger.debug("invalidate cache on Subject Update, key SubjectsData: ");
+				getCache().remove("SubjectsData");
 		        flash("message", "Collection " + filledForm.get().name + " has been updated");
 		        return redirect(routes.SubjectController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
         		Subject subject = Subject.findById(id);
 		        flash("message", "Subject " + filledForm.get().name + " has been deleted");
             	subject.delete();
+				Logger.debug("invalidate cache on Subject Delete, key SubjectsData: ");
+				getCache().remove("SubjectsData");
         		return redirect(routes.SubjectController.index()); 
         	}
         }

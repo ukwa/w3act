@@ -273,7 +273,7 @@ public class CollectionController extends AbstractController {
             	}
 		        filledForm.get().save();
 				Logger.debug("invalidate cache on Collection Create, key CollectionsData: ");
-				getCache().remove("CollectionsData");
+                getCache().remove("CollectionsData");
 				flash("message", "Collection " + filledForm.get().name + " has been created");
 		        return redirect(routes.CollectionController.view(filledForm.get().id));
         	}
@@ -367,13 +367,15 @@ public class CollectionController extends AbstractController {
 	            }
 		        
 		        filledForm.get().update(id);
+				Logger.debug("invalidate cache on Collection Update, key CollectionsData: ");
+				getCache().remove("CollectionsData");
 		        flash("message", "Collection " + filledForm.get().name + " has been updated");
 		        return redirect(routes.CollectionController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
         		Collection collection = Collection.findById(id);
 		        flash("message", "Collection " + filledForm.get().name + " has been deleted");
             	collection.delete();
-                Logger.debug("invalidate cache on Collection Create, key CollectionsData: ");
+                Logger.debug("invalidate cache on Collection Delete, key CollectionsData: ");
                 getCache().remove("CollectionsData");
         		return redirect(routes.CollectionController.index()); 
         	}
