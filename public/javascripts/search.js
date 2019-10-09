@@ -397,6 +397,7 @@ function showTree(data, id, key, sm) {
          },
 		onExpand: function(expand, node) {
             var selectedNodeToExpand = (node.data.key).replace(/\"/g, "");
+
             if(jQuery.inArray(selectedNodeToExpand, expandedNodes) !== -1){
             }
             else {
