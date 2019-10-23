@@ -395,29 +395,6 @@ function showTree(data, id, key, sm) {
                 node.makeVisible();
             });
          },
-		onExpand: function(expand, node) {
-            var selectedNodeToExpand = (node.data.key).replace(/\"/g, "");
-
-            if(jQuery.inArray(selectedNodeToExpand, expandedNodes) !== -1){
-            }
-            else {
-                expandedNodes.push(selectedNodeToExpand);
-                $.ajax({
-                    url: context + "/" + searchContext + '/getSingleCollectionByIdAsJson/' + selectedNodeToExpand,
-                    type: 'GET',
-                    success: function (outputfromserver) {
-                        if (outputfromserver !== null) {
-                            node.addChild(outputfromserver);
-                        } else {
-                            alert('Make call for single collection failed - no output from server');
-                        }
-                    },
-                    error: function (results) {
-                        alert('Make call failed');
-                    }
-                });
-            }
-		}
  	});
 }
 

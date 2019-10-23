@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import play.cache.Cached;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -45,7 +46,8 @@ public class Subject extends Taxonomy {
     	Subject subject = find.where().eq(Const.URL, url).findUnique();
     	return subject;
     }
-    
+
+	@Cached(key = "SubjectsData")
 	public static List<Subject> getFirstLevelSubjects() {
 	       List<Subject> rootSubjects = find.where().isNull("parent").order().asc("name").findList();
 	       return rootSubjects;

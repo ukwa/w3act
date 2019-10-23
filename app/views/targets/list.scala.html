@@ -15,8 +15,6 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 
-
-
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			searchContext = 'targets';
@@ -31,7 +29,7 @@
 				$('#collectionTree').hide();
 			});
 
-			if ( $('#subjectTree').css('display') !== 'none' || $('#collectionTree').css('display') !== 'none'){
+			if ( $('#subjectTree').css('display') !== 'none' ) {
 				$.ajax({
 					url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
 					type: 'GET',
@@ -46,7 +44,9 @@
 						alert('Make call get Subjects failed');
 					}
 				});
+			}
 
+			if ( $('#collectionTree').css('display') !== 'none') {
 				$.ajaxSetup({
 					beforeSend:function(){
 						$("#collectionTreeLoading").show();
@@ -361,25 +361,19 @@
 										<div class="row">
 											<div class="col-md-12 col-sm-12">
 												<div class="form-group">
-
-													@if(subjects.isEmpty){
-
-														<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
-														<div class="col-md-8 col-sm-8">
-															<div id="subjectTree" style="padding:5px;"></div>
-														</div>
-
-													} else {
-
+													@if(!subjects.isEmpty || !collections.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
 														<label for="subject" class="col-md-3 col-sm-3 control-label">Subject</label>
 														<button type="button" class="col-md-1 col-sm-1" id="subject-drop-button"><i class="fa fa-lock fa-lg"></i></button>
 														<div class="col-md-8 col-sm-8">
 															<div id="subjectTree" style="padding:5px; display: none"></div>
 														</div>
+													} else {
+														<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
+														<div class="col-md-8 col-sm-8">
+															<div id="subjectTree" style="padding:5px;"></div>
+														</div>
 													}
-
 													<input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjects">
-
 												</div>
 											</div>
 										</div>
@@ -391,24 +385,19 @@
 										<div class="row">
 											<div class="col-md-12 col-sm-12">
 												<div class="form-group">
-
-													@if(collections.isEmpty){
-
-														<label for="collection" class="col-md-4 col-sm-4 control-label">Collection</label>
-														<div class="col-md-8 col-sm-8">
-															<div id="collectionTree" style="padding:5px;"></div>
-														</div>
-
-													} else {
+													@if(!subjects.isEmpty || !collections.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
 														<label for="collection" class="col-md-3 col-sm-3 control-label">Collection</label>
 														<button type="button" class="col-md-1 col-sm-1" id="collection-drop-button"><i class="fa fa-lock fa-lg"></i></button>
 														<div class="col-md-8 col-sm-8">
 															<div id="collectionTree" style="padding:5px; display: none"></div>
 														</div>
+													} else {
+														<label for="collection" class="col-md-4 col-sm-4 control-label">Collection</label>
+														<div class="col-md-8 col-sm-8">
+															<div id="collectionTree" style="padding:5px;"></div>
+														</div>
 													}
-
 													<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collections">
-
 												</div>
 											</div>
 										</div>
@@ -430,7 +419,6 @@
 							</div>
 						</div>
 					</div>
-					
 
 				<div class="form-group">
 	   			<div class="input-group">

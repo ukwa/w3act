@@ -1,9 +1,10 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import models.Collection;
 import models.Subject;
 
@@ -18,10 +19,106 @@ import play.cache.Cached;
 import play.libs.Json;
 import play.mvc.Controller;
 
+/*
+class SortedList<E> extends AbstractList<E> {
+
+	private ArrayList<E> internalList = new ArrayList<E>();
+
+	// Note that add(E e) in AbstractList is calling this one
+	@Override
+	public void add(int position, E e) {
+		internalList.add(e);
+		Collections.sort(internalList, null);
+	}
+
+	@Override
+	public E get(int i) {
+		return internalList.get(i);
+	}
+
+	@Override
+	public int size() {
+		return internalList.size();
+	}
+
+}
+*/
+
+class NaryTreeNode {
+	public long key;
+	public String title;
+	public String url;
+	public boolean select;
+	public int targetCount;
+
+	//public boolean checked; // checkBox
+	public List<NaryTreeNode> children; //left
+	//public List<NaryTreeNode> siblings; //right //NON sense!
+
+
+	public NaryTreeNode() {}
+
+	//            Collection ?
+	//public Node(int _val, String _name,  List<Node> _children)
+
+	public NaryTreeNode(long _val, String _name, String _url,  boolean _select, List<NaryTreeNode> _children) {
+		key = _val;
+		title = _name;
+		url = _url;
+		select = _select;
+		children = _children;
+	}
+
+	//--------------------------------------------------------------
+	//Breadth Search First - Level Order Traversal - aka siblings
+	//--------------------------------------------------------------
+	public void BSF(){
+
+	}
+
+	public NaryTreeNode searchNode(NaryTreeNode start_from, NaryTreeNode searchNode){//root (where to start from), element (key or title)
+		//search for Title or key (aka id)
+		return null;
+	}
+
+	// specify the Level where to start from
+	// L0:                         root
+	//            /     /     /     |     \     \     \
+	// L1        24    13    96    63     15    79    74
+	//         Art.. Busin. Edu  Gov     Med   Scie   Soc
+	//          /
+	//
+	//
+	public NaryTreeNode insertNode(NaryTreeNode start_from, NaryTreeNode parent, NaryTreeNode newNode){//root (where to start from), element (key or title)
+		//search with
+		searchNode(start_from, parent);
+
+
+
+		return null;
+	}
+};
+
 public class AbstractController extends Controller {
 
 	private static final String cacheName = "play";
 	private static final CacheManager cacheManager = CacheManager.getInstance();
+
+	//----------------------------------------------------------------------------------
+	private static Stack<NaryTreeNode> stackOfObjectsLayers;
+	private static Stack<NaryTreeNode> stackOfCollectionsLayers;
+
+	public static Stack<NaryTreeNode> getStackOfObjectsLayers() {
+		if (stackOfObjectsLayers==null)
+			stackOfObjectsLayers = new Stack<>();
+		return stackOfObjectsLayers;
+	}
+	public static Stack<NaryTreeNode> getStackOfCollectionsLayers() {
+		if (stackOfCollectionsLayers==null)
+			stackOfCollectionsLayers = new Stack<>();
+		return stackOfCollectionsLayers;
+	}
+    //----------------------------------------------------------------------------------
 
 	public static CacheManager getCacheManager() {
 		return cacheManager;
@@ -107,15 +204,8 @@ public class AbstractController extends Controller {
             return values;
     }
 
-    protected static JsonNode getCollectionsDataByIds(List<Long> myCollectionIds) {
-        List<ObjectNode> result = getCollectionTreeElementsByIds(getFirstLevelCollectionsData(), null, true, myCollectionIds);
-        JsonNode jsonData = Json.toJson(result);
-        return jsonData;
-    }
-
-	@Cached(key = "CollectionsData")
-	protected static List<Collection> getFirstLevelCollectionsData() {
-		return Collection.getFirstLevelCollections();
+	protected static JsonNode getCollectionsDataByIds(List<Long> myCollectionIds) {
+		return Json.toJson(getCollectionTreeElementsByIdsStack(Collection.getFirstLevelCollections(), myCollectionIds));//jsonData;
 	}
 
 	protected static JsonNode getSingleCollectionDataById(Long myCollectionId, List<Long> selectedCollectionIds) {
@@ -131,7 +221,7 @@ public class AbstractController extends Controller {
 
         for (Collection collection : collections) {
 			ObjectNode child = nodeFactory.objectNode();
-			child.put("title", collection.name + " (" + collection.targets.size() + ")");
+			child.put("title", collection.name + ", id = " + collection.id + " (" + collection.targets.size() + ")");
 			child.put("url", String.valueOf(routes.CollectionController.view(collection.id)));
 
 			//if selected in filter
@@ -144,7 +234,7 @@ public class AbstractController extends Controller {
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
 
 	    	if (children.size() > 0) {
-	    		child.put("children", true ); //Json.toJson(getCollectionTreeElementsByIds(children, filter, false, myCollectionIds)));
+	    		child.put("children", Json.toJson(getCollectionTreeElementsByIds(children, filter, false, myCollectionIds)));
 	    	}
 			result.add(child);
     	}
@@ -261,51 +351,152 @@ public class AbstractController extends Controller {
 //              {"title":"London SHA Cluster","key":"act-83","children":[{"title":"London SHA","key":"act-87","children":[
 //                   {"title":"North West London","key":"act-34"},{"title":"London","key":"act-31"},{"title":"North East London and City","key":"act-32"},{"title":"North Central London","key":"act-33"},{"title":"South West London","key":"act-35"},{"title":"South East London","key":"act-36"}]}]},{"title":"Midlands and East SHA Cluster","key":"act-85","children":[{"title":"East Midlands","key":"act-91","children":[{"title":"Nottinghamshhire County and Nottingham City","key":"act-57"},{"title":"Derby City and Derbyshire","key":"act-53"},{"title":"Leicestershire County & Rutland and Leicestershire City","key":"act-54"},{"title":"Lincolnshire","key":"act-55"},{"title":"Milton Keynes and Northamptonshire","key":"act-56"}]},{"title":"West Midlands","key":"act-93","children":[{"title":"Black Country","key":"act-67"},{"title":"Arden","key":"act-65"},{"title":"Birmingham and Solihull","key":"act-66"},{"title":"Staffordshire","key":"act-69"},{"title":"West Mercia","key":"act-70"}]},{"title":"East of England","key":"act-92","children":[{"title":"Hertfordshire","key":"act-58"},{"title":"Bedfordshire and Luton","key":"act-59"},{"title":"North,  Mid and East Essex","key":"act-60"},{"title":"South Essex","key":"act-61"},{"title":"Cambridgeshire and Peterborough","key":"act-62"},{"title":"Norfolk and Waveney","key":"act-63"},{"title":"Suffolk","key":"act-64"}]}]},{"title":"North of England SHA Cluster","key":"act-84","children":[{"title":"North West","key":"act-89","children":[{"title":"Greater Manchester","key":"act-43"},{"title":"Cheshire,  Warrington,  Wirral","key":"act-41"},{"title":"Cumbria","key":"act-42"},{"title":"Lancashire","key":"act-44"},{"title":"Merseyside","key":"act-45"}]},{"title":"North East","key":"act-88","children":[{"title":"County Durham and Darlington","key":"act-37"},{"title":"North of Tyne","key":"act-38"},{"title":"South of Tyne","key":"act-39"},{"title":"Tees","key":"act-40"}]},{"title":"Yorkshire and the Humber","key":"act-90","children":[{"title":"Calderdale,  Kirklees and Wakefield","key":"act-46"},{"title":"Humber","key":"act-47"},{"title":"South Yorkshire and Bassetlaw","key":"act-48"},{"title":"Bradford","key":"act-49"},{"title":"Leeds","key":"act-50"},{"title":"North Yorkshire and York","key":"act-51"}]}]},{"title":"South of England SHA Cluster","key":"act-86","children":[{"title":"South Central","key":"act-94","children":[{"title":"Berkshire","key":"act-71"},{"title":"Southampton,  Hampshire,  Isle of Wight & Portsmouth","key":"act-72"},{"title":"Buckinghamshire and Oxfordshire","key":"act-73"}]},{"title":"South East Coast","key":"act-95","children":[{"title":"Kent and Medway","key":"act-74"},{"title":"Surrey","key":"act-75"},{"title":"Sussex","key":"act-76"}]},{"title":"South West","key":"act-96","children":[{"title":"Bath,  North East Somerset and Wiltshire","key":"act-77"},{"title":"Bournemouth,  Poole and Dorset","key":"act-78"},{"title":"Bristol,  North Somerset and South Gloucestershire","key":"act-79"},{"title":"Devon,  Plymouth and Torbay","key":"act-80"},{"title":"Gloucestershire and Swindon","key":"act-81"}]}]}]},{"title":"Health and Wellbeing Boards","key":"act-29"},{"title":"Local Involvement Networks (LINks)","key":"act-30"},{"title":"Care Trust","key":"act-139"},{"title":"Public Health England","key":"act-149"},{"title":"Special Health Authorities","key":"act-140"},{"title":"Public Health Agencies","key":"act-134"},{"title":"Ambulance Trusts","key":"act-136"},{"title":"Mental Health Trusts","key":"act-138"},{"title":"Gateways","key":"act-141"},{"title":"NHS programmes","key":"act-142"},{"title":"Professional Bodies Trade Union","key":"act-147"},{"title":"Legislation","key":"act-143"},{"title":"Healthwatch","key":"act-144"},{"title":"Specialised Commissioning Group","key":"act-145"},{"title":"Think Tanks","key":"act-146"},{"title":"Press Comment","key":"act-150"},{"title":"Cancer Networks","key":"act-137"},{"title":"Regulators & Central Government","key":"act-135"},{"title":"Local Authorities","key":"act-166"},{"title":"Social Media (Facebook,  Twitter etc)","key":"act-167"},{"title":"Primary Care Trusts","key":"act-26"},{"title":"Private and voluntary sector providers","key":"act-169"}]}]},{"title":"Scottish Independence Referendum","key":"act-171","children":[{"title":"Press,  Media & Comment","key":"act-292"},{"title":"Political Parties and Trade Unions","key":"act-289"},{"title":"Think Tanks and Research Institutes","key":"act-290"},{"title":"National Campaigning Groups","key":"act-288"},{"title":"Government (UK and Scottish)","key":"act-291"},{"title":"Charities,  Churches and Third Sector","key":"act-293"}]},{"title":"Science,  Technology & Medicine","key":"act-99","children":[{"title":"Physics","key":"act-108"},{"title":"Astronomy","key":"act-107"}]},{"title":"Religion,  politics and law since 2005","key":"act-160"},{"title":"News Sites","key":"act-173"},{"title":"100 Best Sites","key":"act-170"},{"title":"Margaret Thatcher","key":"act-151"},{"title":"First World War Centenary,  2014-18","key":"act-174","children":[{"title":"Heritage Lottery Fund","key":"act-265"}]},{"title":"Religion/Theology","key":"act-172"},{"title":"European Parliament Elections 2014","key":"act-250","children":[{"title":"Political Parties: National","key":"act-256"},{"title":"Academia & think tanks","key":"act-257"},{"title":"Interest groups","key":"act-254"},{"title":"Regulation and Guidance","key":"act-253"},{"title":"Blogs","key":"act-263"},{"title":"Political Parties: Regional & Local","key":"act-258"},{"title":"Social Media","key":"act-259"},{"title":"EU Institutions","key":"act-260"},{"title":"Opinion Polls","key":"act-261"},{"title":"Candidates","key":"act-262"}]},{"title":"Nelson Mandela","key":"act-178"},{"title":"UK response to Philippines disaster 2013","key":"act-176"},{"title":"Commonwealth Games Glasgow 2014","key":"act-252","children":[{"title":"Organisational bodies/venues","key":"act-267"},{"title":"Sports","key":"act-268","children":[{"title":"Rugby Sevens","key":"act-277"},{"title":"Badminton","key":"act-285"},{"title":"Cycling","key":"act-283"},{"title":"Wrestling","key":"act-271"},{"title":"Hockey","key":"act-281"},{"title":"Boxing","key":"act-284"},{"title":"Aquatics","key":"act-287"},{"title":"Athletics","key":"act-286"},{"title":"Gymnastics","key":"act-282"},{"title":"Judo","key":"act-280"},{"title":"Lawn bowls","key":"act-279"},{"title":"Netball","key":"act-278"},{"title":"Shooting","key":"act-276"},{"title":"Squash","key":"act-275"},{"title":"Table tennis","key":"act-274"},{"title":"Triathlon","key":"act-273"},{"title":"Weightlifting","key":"act-272"}]},{"title":"Press & Media Comment","key":"act-269"},{"title":"Sponsors","key":"act-270"},{"title":"Competitors","key":"act-266"},{"title":"Cultural Programme","key":"act-295"}]},{"title":"Winter Olympics Sochi 2014","key":"act-177"},{"title":"Oral History in the UK","key":"act-158"},{"title":"Conservative Party Website deletions - Press articles November 2013","key":"act-175"},{"title":"Political Action and Communication","key":"act-159"},{"title":"Tour de France (Yorkshire) 2014","key":"act-264"}]
 
-	public static JsonNode getSubjectsDataByIds(List<Long> mySubjectIds) {
+	public static JsonNode getSubjectsDataByIds(List<Long> mySubjectIds){
 		Logger.debug("getSubjectsDataByIds as List - selected = " + mySubjectIds.size());
-
-		//List<Subject> firstLevel = Subject.getFirstLevelSubjects();
-
-		List<ObjectNode> result = getSubjectTreeElementsByIds(getSubjectsData2(), null, true, mySubjectIds);
-		//Logger.debug("subjects main level size: " + firstLevel.size());
-		JsonNode jsonData = Json.toJson(result);
-	    return jsonData;
+		return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
 	}
 
-	@Cached(key = "SubjectsData")
-	public static List<Subject> getSubjectsData2() {
-		Logger.debug("SubjectsData");
-		return Subject.getFirstLevelSubjects();
+	protected static List<NaryTreeNode> getSubjectTreeElementsByIdsStack(List<Subject> subjects, List<Long> mySubjectIds) {
+		getStackOfObjectsLayers().clear();
+        for (Subject subject : subjects)
+			getStackOfObjectsLayers().push(new NaryTreeNode(subject.id, subject.name,
+                    String.valueOf(routes.SubjectController.view(subject.id)),
+                    mySubjectIds.contains(subject.id)?true:false,
+                    subjectHelper(subject.id, mySubjectIds) ));
+		// testing other class
+        //searchSubject(74);
+		return getStackOfObjectsLayers();
 	}
 
+    public static List<NaryTreeNode> subjectHelper(long subject_id, List<Long> mySubjectIds){
+        List<NaryTreeNode> result = new ArrayList<>();
+        List<Subject> children = Subject.findChildrenByParentId(subject_id);
+        if (children.size() > 0) {
+            children.forEach(c->
+                    result.add(new NaryTreeNode(c.id, c.name, //+ " (" + c.targets.size() + ")",
+                            String.valueOf(routes.SubjectController.view(c.id)),
+                            mySubjectIds.contains(c.id)?true:false,
+                            subjectHelper(c.id, mySubjectIds)))
+            );
+            return result;
+        }
+        else { //no children
+            return null;
+        }
+    }
+
+	//@Cached(key = "CollectionsTreeDS")
+	protected static List<NaryTreeNode> getCollectionTreeElementsByIdsStack(List<Collection> collections, List<Long> myCollectionIds) {
+
+		getStackOfCollectionsLayers().clear();
 
 
-	protected static List<ObjectNode> getSubjectTreeElementsByIds(List<Subject> subjects, String filter, boolean parent, List<Long> mySubjectIds) { 
-		List<ObjectNode> result = new ArrayList<ObjectNode>();
-		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
-	
-		for (Subject subject : subjects) {
-			ObjectNode child = nodeFactory.objectNode();
-			child.put("title", subject.name);
-			child.put("url", String.valueOf(routes.SubjectController.view(subject.id)));
-			if (mySubjectIds != null && mySubjectIds.contains(subject.id)) {
-				child.put("select", true);
-			}
-			child.put("key", subject.id);
-	    	List<Subject> children = Subject.findChildrenByParentId(subject.id);
-	    	if (children.size() > 0) {
-	    		child.put("children", Json.toJson(getSubjectTreeElementsByIds(children, filter, false, mySubjectIds)));
-	    	}
-			result.add(child);
+		//---------------------- TURN INTO --------------------------
+        //collections.forEach(c->getStackOfCollections().addAll( iterate(c.id, myCollectionIds)));
+
+		/*
+		collections.forEach(c->
+				getStackOfCollections().push(
+						new NaryTreeNode(c.id, c.name,
+								String.valueOf(routes.CollectionController.view(c.id)),
+								myCollectionIds.contains(c.id)?true:false,
+								iterate(c.id, myCollectionIds) )));
+		*/
+
+		//-----------------------------------------------------------
+
+		for (Collection collection : collections)
+			getStackOfCollectionsLayers().push(new NaryTreeNode(collection.id, collection.name, // + " (" + collection.targets.size() + ")",
+					String.valueOf(routes.CollectionController.view(collection.id)),
+					myCollectionIds.contains(collection.id)?true:false,
+                    collectionHelper(collection.id, myCollectionIds) ));
+		//searchCollections(690);
+		return getStackOfCollectionsLayers();
+	}
+
+	public static List<NaryTreeNode> collectionHelper(long collection_id, List<Long> myCollectionIds){
+		List<NaryTreeNode> result = new ArrayList<>();
+		List<Collection> children = Collection.findChildrenByParentId(collection_id);
+		if (children.size() > 0) {
+			children.forEach(c->
+				result.add(new NaryTreeNode(c.id, c.name, //+ " (" + c.targets.size() + ")",
+						String.valueOf(routes.CollectionController.view(c.id)),
+						myCollectionIds.contains(c.id)?true:false,
+                        collectionHelper(c.id, myCollectionIds)))
+			);
+			return result;
 		}
-	//        	Logger.debug("getSubjectTreeElements() res: " + result);
-		return result;
+		else { //no children
+			return null;
+		}
 	}
-    
-    
+
 	public static JsonNode getSubjectsData() {
 		return getSubjectsData(null);
 	}
+
+
+	/**
+     * In-memory structure Insertion
+     *
+     * */
+    protected static JsonNode insertionSubject(NaryTreeNode root, NaryTreeNode parent, NaryTreeNode newNodeToInsert){
+        Iterator value = getStackOfObjectsLayers().iterator();
+        return null;
+    }
+
+	protected static JsonNode searchSubject(int _key){//root_id, ){
+
+		//                      root (based on REAL SUBJECTS TREE)
+		//                       |
+		//      /     /     /    |     \     \     \
+		//     24    13    96    63     15    79    74   (nodes with children?)
+		//     |     |     |
+		//     |     |
+		//     |     |
+		//     |     |
+		//     |    12, 33, 53, ...
+		//     |
+		//   23, 29, 71, 89, 112, 113
+
+		Iterator iterator = getStackOfObjectsLayers().iterator();
+		while (iterator.hasNext()) { //stack of NaryTreeNode
+			NaryTreeNode nodeObject = (NaryTreeNode)iterator.next();
+			if (nodeObject.key == _key) {
+				Logger.debug("++++++++++ --------- STACK traverse - FOUND NODE - Subject Tree - key, title =  : " + nodeObject.key + ", title = " + nodeObject.title);
+			}
+		}
+
+		return null;
+	}
+	
+	protected static JsonNode searchCollections(int _key){//root_id, ){
+
+		//                             root (based on REAL SUBJECTS TREE)
+		//                              |
+		//      /   ...8...  /     /    |     \     \     \
+		//     1    brexit  910    96    63     15    79    74   (nodes with children?)
+		//     |            |      |
+		//     |            |
+		//     |            |
+		//     |            |
+		//     |            911, , ..., 914
+		//     |
+		//   23, 29, 71, 89, 112, 113
+
+		int i=0;
+		Iterator iterator = getStackOfCollectionsLayers().iterator();
+
+		while (iterator.hasNext()) { //stack of NaryTreeNode
+			i++;
+			NaryTreeNode nodeObject = (NaryTreeNode)iterator.next();
+			if (nodeObject.key == _key) {
+				Logger.debug("++++++++++ --------- STACK traverse - FOUND NODE - Collection Tree - coll id key =  : " + nodeObject.key + ", title = " + nodeObject.title+" at i = " +i+", stack size = "+getStackOfCollectionsLayers().size());
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * This method computes a tree of subjects in JSON format. 
@@ -345,7 +536,7 @@ public class AbstractController extends Controller {
 	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent, List<Subject> mySubjects) { 
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
-	
+
 		for (Subject subject : subjects) {
 			ObjectNode child = nodeFactory.objectNode();
 			child.put("title", subject.name);
@@ -363,5 +554,87 @@ public class AbstractController extends Controller {
 	//        	Logger.debug("getSubjectTreeElements() res: " + result);
 		return result;
 	}
-    
+
+	/**
+	 *
+	 *
+	 *
+	 * */
+
+	/*
+	// Definition for a Node:
+	// Collection id, name & List of Children Nodes
+	class Node {
+		public int id;
+		public String name;
+		//public boolean checked; // checkBox
+
+		public List<Node> children;
+
+		public Node() {}
+
+		//            Collection ?
+		//public Node(int _val, String _name,  List<Node> _children)
+
+		public Node(int _val, String _name,  List<Node> _children) {
+			id = _val;
+			name = _name;
+			children = _children;
+		}
+	};
+
+	List<Integer> idValues = new ArrayList<>();
+	List<String> nameValues = new ArrayList<>();
+
+	public List<Integer> preorder(Node root) {
+		updateListIterative(root);
+		return idValues;
+	}
+	*/
+
+
+	/**
+	 * Stack - LIFO - Last In First Out
+	 * for vertical levels, starting from top, root,  0
+	 * every stack element - Node
+	 * */
+
+	/*
+	private void updateListIterative(Node root) {
+		if (root == null) {
+			return;
+		}
+
+		//add to stack IF HAS CHILDREN ONLY
+		Stack<Node> stack = new Stack<>();
+		stack.push(root);
+
+		while (!stack.empty()) {
+			Node temp = stack.pop();
+			idValues.add(temp.id);
+			nameValues.add(temp.name);
+
+			List<Node> childrens = temp.children;
+
+			for (int i=childrens.size()-1; i>=0; i--) {
+				stack.push(childrens.get(i));
+			}
+		}
+	}
+
+	private void updateListRecursive(Node root) {
+
+		if (root == null) {
+			return;
+		}
+
+		idValues.add(root.id);
+		nameValues.add(root.name);
+
+		for (Node node : root.children) {
+			updateListRecursive(node);
+		}
+
+	}
+	*/
 }

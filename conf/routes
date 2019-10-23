@@ -287,7 +287,7 @@ POST    /targets/:id/logincredentials   controllers.LoginCredentialsController.s
 # AJAX
 GET    /targets/allSubjectsIDsAsJson/:subjects             controllers.TargetController.allSubjectsIDsAsJson(subjects: String)
 GET    /targets/allCollectionsIDsAsJson/:collections       controllers.TargetController.allCollectionsIDsAsJson(collections: String)
-GET    /targets/getSingleCollectionByIdAsJson/:collectionid controllers.TargetController.getSingleCollectionByIdAsJson(collectionid: String)
+# GET    /targets/getSingleCollectionByIdAsJson/:collectionid controllers.TargetController.getSingleCollectionByIdAsJson(collectionid: String)
 
 GET     /instances                          controllers.InstanceController.index()
 GET     /instances/search                   controllers.InstanceController.search()

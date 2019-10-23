@@ -93,19 +93,11 @@ public class TargetController extends AbstractController {
     private static final String DEFAULT_SORT_BY = "title";
     private static final String DEFAULT_ORDER = "asc";
 
+    //for AJAX call
     private static List<Long> selectedCollectionIds;
-
     public static List<Long> getSelectedCollectionIds() {
         return selectedCollectionIds;
     }
-
-    public static void setSelectedCollectionIds(List<Long> selectedCollectionIds) {
-        TargetController.selectedCollectionIds = selectedCollectionIds;
-    }
-
-
-
-
 
     /**
      * Display the targets.
@@ -2266,7 +2258,6 @@ public class TargetController extends AbstractController {
         return collectionNode;
     }
 
-
     /**
      * Method for Subjects tree data.
      * Used by AJAX call.
@@ -2274,21 +2265,17 @@ public class TargetController extends AbstractController {
      * @param subject This is an identifier for current subjects selected in subject tree
      * @return tree structure
      * */
-    //@Cached(key = "targetallsubjectstree")
-    public static Result allSubjectsIDsAsJson(String subject) { //selected array passed as string
-        Logger.debug("allSubjectsIDsAsJson primary DATA subject = " + subject);
-
+    @Security.Authenticated(SecuredController.class)
+    public static Result allSubjectsIDsAsJson(String subject) {
         List<Long> subjectIds = new ArrayList<Long>();
         String[] subjects = subject.replace("\"", "").split(", ");
         for(String sId : subjects) {
             if(StringUtils.isNotEmpty(sId)) {
                 Long subjectId = Long.valueOf(sId);
                 subjectIds.add(subjectId);
-                Logger.debug("allSubjectsIDsAsJson subjectId = " + subjectId);
             }
         }
-        Logger.debug("allSubjectsIDsAsJson SIZE = " + subjectIds.size());
-        return ok ( getSubjectsDataByIds(subjectIds) );
+        return ok (getSubjectsDataByIds(subjectIds));
     }
 
     /**
@@ -2298,7 +2285,7 @@ public class TargetController extends AbstractController {
      * @param collection This is an identifier for current collections selected in collection tree
      * @return tree structure
      * */
-    //@Cached(key = "targetallcollectionstree")
+    @Security.Authenticated(SecuredController.class)
     public static Result allCollectionsIDsAsJson(String collection) {
         List<Long> collectionIds = new ArrayList<Long>();
         String[] collections = collection.replace("\"", "").split(", ");
@@ -2308,10 +2295,6 @@ public class TargetController extends AbstractController {
                 collectionIds.add(collectionId);
             }
         }
-        //Save selected collections ids from filter - for single collection
-        setSelectedCollectionIds(collectionIds);
-        Logger.debug("allSubjectsIDsAsJson SIZE = " + selectedCollectionIds.size());
-
         return ok (getCollectionsDataByIds(collectionIds));
     }
 
@@ -2323,6 +2306,7 @@ public class TargetController extends AbstractController {
      * List of all selected ids is combined and reflected on collection tree view
      * @return tree structure
      * */
+    @Security.Authenticated(SecuredController.class)
     public static Result getSingleCollectionByIdAsJson(String collectionId) {
         return ok ( getSingleCollectionDataById( Long.valueOf(collectionId), getSelectedCollectionIds() ));
     }

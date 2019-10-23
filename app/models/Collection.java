@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import play.Logger;
+import play.cache.Cached;
 import play.db.ebean.*;
 import scala.NotImplementedError;
 import uk.bl.Const;
@@ -333,9 +334,10 @@ public class Collection extends Taxonomy {
 //    	}
 //		return res;
 		throw new NotImplementedError();
-	}       
-    
-	public static List<Collection> getFirstLevelCollections() {
+	}
+
+    @Cached(key = "CollectionsData")
+    public static List<Collection> getFirstLevelCollections() {
 	       List<Collection> rootCollections = find.fetch("targets").where().isNull("parent").order().asc("name").findList();
 	       Logger.debug("getFirstLevelCollections list size: " + rootCollections.size());
 	       return rootCollections;
