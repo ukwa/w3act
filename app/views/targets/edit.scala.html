@@ -132,6 +132,8 @@
                         $(this).find('i').toggleClass('fa-share-square-o fa-compress');
 
                         $('#subjectTree').show();
+                        $('#subjectTreeSelection').hide();
+
                         if (!subjecttreeclicked) {
                             $.ajax({
                                 url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
@@ -151,12 +153,14 @@
                         }
                         else{
                             $('#subjectTree').hide();
+                            $('#subjectTreeSelection').show();
                             subjecttreeclicked = false;
                         }
                     });
                     $("#collection_href").click(function(){
                         $(this).find('i').toggleClass('fa-share-square-o fa-compress');
                         $('#collectionTree').show();
+                        $('#collectionTreeSelection').hide();
                         if (!colleciontreeclicked) {
                             $.ajax({
                                 url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
@@ -176,6 +180,7 @@
                         }
                         else{
                             $('#collectionTree').hide();
+                            $('#collectionTreeSelection').show();
                             colleciontreeclicked = false;
                         }
                     });
@@ -521,10 +526,21 @@
                             <a href="#" id="subject_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
                             <div class="col-md-6 col-sm-6">
                                 <div id="subjectTree" style="padding:5px;"></div>
-                                <ul class="selectionfromtrees">
-                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
-                                    @targetForm("subjectSelect").value
-                                    </span></li>
+
+                                <div id="subjectTreeSelection" style="padding:5px">
+                                    <label class="control-label">Selected Subjects:</label>
+                                    @if(!targetForm("subjectSelect").value.isEmpty) {
+                                        <ul class="selectionfromtrees">
+                                        @for(_subject <- targetForm("subjectSelect").value.split(",")) {
+                                            <li><span class="badge badge-primary badge-pill font-weight-normal">
+                                            @_subject
+                                            </span>
+                                            </li>
+                                        }
+                                        </ul>
+                                    }
+                                </div>
+
 
                                 <input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
 
@@ -544,9 +560,24 @@
                             <a href="#" id="collection_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
                             <div class="col-md-6 col-sm-6">
                                 <div id="collectionTree" style="padding:5px;"></div>
-                                <ul class="selectionfromtrees">
-                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
-                                    @targetForm("collectionSelect").value                                    </span></li>
+
+
+                                <div id="collectionTreeSelection" style="padding:5px">
+                                    <label class="control-label">Selected Collections:</label>
+                                    @if(!targetForm("collectionSelect").value.isEmpty) {
+                                        <ul class="selectionfromtrees">
+                                        @for(_collection <- targetForm("collectionSelect").value.split(",")) {
+                                            <li><span class="badge badge-primary badge-pill font-weight-normal">
+                                            @_collection
+                                            </span>
+                                            </li>
+                                        }
+                                        </ul>
+                                    }
+                                </div>
+
+
+
                                 <input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
                             </div>
                         </div>
