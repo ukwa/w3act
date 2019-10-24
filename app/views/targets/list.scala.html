@@ -74,8 +74,9 @@
 
 
 
-			$('#subject-drop-button').click(function () {
-				$(this).find('i').toggleClass('fa-lock fa-unlock');
+			$("#subject_href").click(function(){
+				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
+
 				$('#subjectTree').show();
 				if (!subjecttreeclicked) {
 					$.ajaxSetup({
@@ -108,8 +109,8 @@
 				}
 			});
 
-			$('#collection-drop-button').click(function () {
-				$(this).find('i').toggleClass('fa-lock fa-unlock');
+			$("#collection_href").click(function(){
+				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
 
 				$('#collectionTree').show();
 
@@ -363,9 +364,16 @@
 												<div class="form-group">
 													@if(!subjects.isEmpty || !collections.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
 														<label for="subject" class="col-md-3 col-sm-3 control-label">Subject</label>
-														<button type="button" class="col-md-1 col-sm-1" id="subject-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+																<a href="#" id="subject_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
 														<div class="col-md-8 col-sm-8">
 															<div id="subjectTree" style="padding:5px; display: none"></div>
+
+																<ul class="selectionfromtrees">
+																	<li><span class="badge badge-primary badge-pill font-weight-normal">
+																@if(!subjects.isEmpty){@subjects.split(",")}
+																</span></li>
+																</ul>
+
 														</div>
 													} else {
 														<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
@@ -387,9 +395,14 @@
 												<div class="form-group">
 													@if(!subjects.isEmpty || !collections.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
 														<label for="collection" class="col-md-3 col-sm-3 control-label">Collection</label>
-														<button type="button" class="col-md-1 col-sm-1" id="collection-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+																<a href="#" id="collection_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
 														<div class="col-md-8 col-sm-8">
 															<div id="collectionTree" style="padding:5px; display: none"></div>
+															<ul class="selectionfromtrees">
+																<li><span class="badge badge-primary badge-pill font-weight-normal">
+																	@if(!collections.isEmpty){@collections.split(",")}
+														    </span></li>
+														    </ul>
 														</div>
 													} else {
 														<label for="collection" class="col-md-4 col-sm-4 control-label">Collection</label>

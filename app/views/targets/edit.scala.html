@@ -128,8 +128,9 @@
                             $("#collectionTreeLoading").hide();
                         }
                     });
-                    $('#subject-drop-button').click(function () {
-                        $(this).find('i').toggleClass('fa-lock fa-unlock');
+                    $("#subject_href").click(function(){
+                        $(this).find('i').toggleClass('fa-share-square-o fa-compress');
+
                         $('#subjectTree').show();
                         if (!subjecttreeclicked) {
                             $.ajax({
@@ -153,8 +154,8 @@
                             subjecttreeclicked = false;
                         }
                     });
-                    $('#collection-drop-button').click(function () {
-                        $(this).find('i').toggleClass('fa-lock fa-unlock');
+                    $("#collection_href").click(function(){
+                        $(this).find('i').toggleClass('fa-share-square-o fa-compress');
                         $('#collectionTree').show();
                         if (!colleciontreeclicked) {
                             $.ajax({
@@ -517,10 +518,16 @@
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
                             <label for="subject" class="col-md-5 col-sm-5 control-label">Browse Subject</label>
-                            <button type="button" class="col-md-1 col-sm-1" id="subject-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+                            <a href="#" id="subject_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
                             <div class="col-md-6 col-sm-6">
                                 <div id="subjectTree" style="padding:5px;"></div>
+                                <ul class="selectionfromtrees">
+                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
+                                    @targetForm("subjectSelect").value
+                                    </span></li>
+
                                 <input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
+
                             </div>
                         </div>
                     </div>
@@ -534,9 +541,12 @@
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
                             <label for="suggestions-collections" class="col-sm-5 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-                            <button type="button" class="col-md-1 col-sm-1" id="collection-drop-button"><i class="fa fa-lock fa-lg"></i></button>
+                            <a href="#" id="collection_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
                             <div class="col-md-6 col-sm-6">
                                 <div id="collectionTree" style="padding:5px;"></div>
+                                <ul class="selectionfromtrees">
+                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
+                                    @targetForm("collectionSelect").value                                    </span></li>
                                 <input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
                             </div>
                         </div>
