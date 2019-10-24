@@ -27,6 +27,9 @@
 			$('#apply').click(function(e) {
 				$('#subjectTree').hide();
 				$('#collectionTree').hide();
+				$('#subjectTreeSelection').show();
+				$('#collectionTreeSelection').show();
+
 			});
 
 			if ( $('#subjectTree').css('display') !== 'none' ) {
@@ -78,6 +81,8 @@
 				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
 
 				$('#subjectTree').show();
+				$('#subjectTreeSelection').hide();
+
 				if (!subjecttreeclicked) {
 					$.ajaxSetup({
 						beforeSend:function(){
@@ -105,6 +110,7 @@
 				}
 				else{
 					$('#subjectTree').hide();
+					$('#subjectTreeSelection').show();
 					subjecttreeclicked = false;
 				}
 			});
@@ -113,6 +119,8 @@
 				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
 
 				$('#collectionTree').show();
+				$('#collectionTreeSelection').hide();
+
 
 				if (!colleciontreeclicked) {
 					$.ajaxSetup({
@@ -141,6 +149,7 @@
 				}
 				else{
 					$('#collectionTree').hide();
+					$('#collectionTreeSelection').show();
 					colleciontreeclicked = false;
 				}
 			});
@@ -367,15 +376,19 @@
 																<a href="#" id="subject_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
 														<div class="col-md-8 col-sm-8">
 															<div id="subjectTree" style="padding:5px; display: none"></div>
-
-                                                            @if(!subjects.isEmpty) {
-                                                                <ul class="selectionfromtrees">
-                                                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
-                                                                        @subjects.split(",")
-                                                                    </span></li>
-                                                                </ul>
-                                                            }
-
+															<div id="subjectTreeSelection" style="padding:5px">
+																<label class="control-label">Selected Subjects:</label>
+																@if(!subjects.isEmpty) {
+																	<ul class="selectionfromtrees">
+																	@for(_subject <- subjects.split(",")) {
+																			<li><span class="badge badge-primary badge-pill font-weight-normal">
+																			@_subject
+																			</span>
+																			</li>
+																	}
+																	</ul>
+																}
+															</div>
 														</div>
 													} else {
 														<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
@@ -400,13 +413,19 @@
 																<a href="#" id="collection_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
 														<div class="col-md-8 col-sm-8">
 															<div id="collectionTree" style="padding:5px; display: none"></div>
-                                                            @if(!collections.isEmpty) {
-                                                                <ul class="selectionfromtrees">
-                                                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
-                                                                        @collections.split(",")
-                                                                    </span></li>
-                                                                </ul>
-                                                            }
+															<div id="collectionTreeSelection" style="padding:5px">
+																<label class="control-label">Selected Collections:</label>
+																@if(!collections.isEmpty) {
+																	<ul class="selectionfromtrees">
+																	@for(_collection <- collections.split(",")) {
+																		<li><span class="badge badge-primary badge-pill font-weight-normal">
+																		@_collection
+																		</span>
+																		</li>
+																	}
+																	</ul>
+																}
+															</div>
 														</div>
 													} else {
 														<label for="collection" class="col-md-4 col-sm-4 control-label">Collection</label>
