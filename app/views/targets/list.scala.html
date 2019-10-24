@@ -368,11 +368,13 @@
 														<div class="col-md-8 col-sm-8">
 															<div id="subjectTree" style="padding:5px; display: none"></div>
 
-																<ul class="selectionfromtrees">
-																	<li><span class="badge badge-primary badge-pill font-weight-normal">
-																@if(!subjects.isEmpty){@subjects.split(",")}
-																</span></li>
-																</ul>
+                                                            @if(!subjects.isEmpty) {
+                                                                <ul class="selectionfromtrees">
+                                                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
+                                                                        @subjects.split(",")
+                                                                    </span></li>
+                                                                </ul>
+                                                            }
 
 														</div>
 													} else {
@@ -398,11 +400,13 @@
 																<a href="#" id="collection_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
 														<div class="col-md-8 col-sm-8">
 															<div id="collectionTree" style="padding:5px; display: none"></div>
-															<ul class="selectionfromtrees">
-																<li><span class="badge badge-primary badge-pill font-weight-normal">
-																	@if(!collections.isEmpty){@collections.split(",")}
-														    </span></li>
-														    </ul>
+                                                            @if(!collections.isEmpty) {
+                                                                <ul class="selectionfromtrees">
+                                                                    <li><span class="badge badge-primary badge-pill font-weight-normal">
+                                                                        @collections.split(",")
+                                                                    </span></li>
+                                                                </ul>
+                                                            }
 														</div>
 													} else {
 														<label for="collection" class="col-md-4 col-sm-4 control-label">Collection</label>
