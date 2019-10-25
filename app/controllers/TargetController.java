@@ -909,6 +909,8 @@ public class TargetController extends AbstractController {
         target.formUrl = target.fieldUrl();
         target.subjectSelect = target.subjectIdsAsString();
         target.collectionSelect = target.collectionIdsAsString();
+        target.subjectSelectTitles = target.subjectsAsString();
+        target.collectionSelectTitles = target.collectionsAsString();
         Form<Target> filledForm = targetForm.fill(target);
         if(target.watchedTarget != null) {
             filledForm.data().putAll(FastSubjects.getFormData(target.watchedTarget.fastSubjects));

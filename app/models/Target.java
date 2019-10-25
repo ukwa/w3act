@@ -462,12 +462,17 @@ public class Target extends Model {
 	@Transient
 	public String webFormDateText;
 
-	
 	@Transient
 	public String subjectSelect;
 
 	@Transient
+	public String subjectSelectTitles;
+
+	@Transient
 	public String collectionSelect;
+
+	@Transient
+	public String collectionSelectTitles;
 
 	@Transient
 	public String authorIdText;
