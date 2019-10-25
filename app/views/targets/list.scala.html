@@ -33,6 +33,46 @@
 			});
 
 			if ( $('#subjectTree').css('display') !== 'none' ) {
+				functionWithAjaxScriptForAllSubjectsIDsAsJson();
+			}
+
+			if ( $('#collectionTree').css('display') !== 'none') {
+				functionAjaxSetup();
+				functionWithAjaxScriptForAllCollectionsIDsAsJson();
+			}
+
+
+
+			$("#subject_href").click(function(){
+				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
+
+				$('#subjectTree').show();
+				$('#subjectTreeSelection').hide();
+
+				if (!subjecttreeclicked) {
+					functionAjaxSetup();
+					functionWithAjaxScriptForAllSubjectsIDsAsJson();
+					subjecttreeclicked = true;
+				}
+				else{
+					$('#subjectTree').hide();
+					$('#subjectTreeSelection').show();
+					subjecttreeclicked = false;
+				}
+			});
+
+			function functionAjaxSetup() {
+				$.ajaxSetup({
+					beforeSend:function(){
+						$("#collectionTreeLoading").show();
+					},
+					complete:function(){
+						$("#collectionTreeLoading").hide();
+					}
+				});
+			}
+
+			function functionWithAjaxScriptForAllSubjectsIDsAsJson(){
 				$.ajax({
 					url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
 					type: 'GET',
@@ -49,16 +89,7 @@
 				});
 			}
 
-			if ( $('#collectionTree').css('display') !== 'none') {
-				$.ajaxSetup({
-					beforeSend:function(){
-						$("#collectionTreeLoading").show();
-					},
-					complete:function(){
-						$("#collectionTreeLoading").hide();
-					}
-				});
-
+			function functionWithAjaxScriptForAllCollectionsIDsAsJson() {
 				$.ajax({
 					url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
 					type: 'GET',
@@ -76,46 +107,7 @@
 			}
 
 
-
-			$("#subject_href").click(function(){
-				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
-
-				$('#subjectTree').show();
-				$('#subjectTreeSelection').hide();
-
-				if (!subjecttreeclicked) {
-					$.ajaxSetup({
-						beforeSend:function(){
-							$("#collectionTreeLoading").show();
-						},
-						complete:function(){
-							$("#collectionTreeLoading").hide();
-						}
-					});
-					$.ajax({
-						url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
-						type: 'GET',
-						success: function (outputfromserver) {
-							if (outputfromserver !== null) {
-								showTree(outputfromserver, "#subjectTree", "subjectSelect");
-							} else {
-								alert('Make call failed - no output from server');
-							}
-						},
-						error: function (outputfromserver) {
-							alert('Make call failed');
-						}
-					});
-					subjecttreeclicked = true;
-				}
-				else{
-					$('#subjectTree').hide();
-					$('#subjectTreeSelection').show();
-					subjecttreeclicked = false;
-				}
-			});
-
-			$("#collection_href").click(function(){
+				$("#collection_href").click(function(){
 				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
 
 				$('#collectionTree').show();
@@ -123,28 +115,8 @@
 
 
 				if (!colleciontreeclicked) {
-					$.ajaxSetup({
-						beforeSend:function(){
-							$("#collectionTreeLoading").show();
-						},
-						complete:function(){
-							$("#collectionTreeLoading").hide();
-						}
-					});
-					$.ajax({
-						url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
-						type: 'GET',
-						success: function (outputfromserver) {
-							if (outputfromserver !== null) {
-								showTree(outputfromserver, "#collectionTree", "collectionSelect");
-							} else {
-								alert('Make call failed - no output from server');
-							}
-						},
-						error: function (results) {
-							alert('Make call failed');
-						}
-					});
+					functionAjaxSetup();
+					functionWithAjaxScriptForAllCollectionsIDsAsJson();
 					colleciontreeclicked = true;
 				}
 				else{
