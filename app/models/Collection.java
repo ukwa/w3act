@@ -62,13 +62,15 @@ public class Collection extends Taxonomy {
      * @return object 
      */
     public static Collection findById(Long id) {
-    	Collection res = find.where().eq(Const.ID, id).findUnique();
-    	return res;
-    }          
+    	return find.where().eq(Const.ID, id).findUnique();
+    }
+
+	public static String findNameById(Long id) {
+		return find.where().eq(Const.ID, id).findUnique().name;
+	}
     
     public static Collection findByName(String name) {
-    	Collection collection = find.where().eq(Const.NAME, name).findUnique();
-    	return collection;
+    	return find.where().eq(Const.NAME, name).findUnique();
     }
     
     /**
@@ -157,8 +159,7 @@ public class Collection extends Taxonomy {
      * @return collection
      */
     public static Collection findByUrl(String url) {
-    	Collection collection = find.where().eq(Const.URL, url).findUnique();
-    	return collection;
+    	return find.where().eq(Const.URL, url).findUnique();
     }
 
     /**
@@ -338,9 +339,8 @@ public class Collection extends Taxonomy {
 
     @Cached(key = "CollectionsData")
     public static List<Collection> getFirstLevelCollections() {
-	       List<Collection> rootCollections = find.fetch("targets").where().isNull("parent").order().asc("name").findList();
-	       Logger.debug("getFirstLevelCollections list size: " + rootCollections.size());
-	       return rootCollections;
+	       //Logger.debug("getFirstLevelCollections list size: " + rootCollections.size());
+	       return find.fetch("targets").where().isNull("parent").order().asc("name").findList();
 	} 
 	
 	public static List<Collection> findChildrenByParentId(Long parentId) {
@@ -411,13 +411,11 @@ public class Collection extends Taxonomy {
 	 * @return
 	 */
 	public static List<Collection> getChildLevelCollections(String url) {
-        List<Collection> children = find.where().eq(Const.PARENT, url).findList();
-		return children;
+		return find.where().eq(Const.PARENT, url).findList();
 	}
 	
 	public static List<Collection> getCollectionCategoriesByTargetId(Long id) {
-		ExpressionList<Collection> categories = find.fetch("target").where().eq("target.id", id).isNull("parent");
-		return categories.findList();
+		return find.fetch("target").where().eq("target.id", id).isNull("parent").findList();
 	}
 
 }

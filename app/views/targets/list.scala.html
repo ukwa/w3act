@@ -41,8 +41,6 @@
 				functionWithAjaxScriptForAllCollectionsIDsAsJson();
 			}
 
-
-
 			$("#subject_href").click(function(){
 				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
 
@@ -354,7 +352,7 @@
 																	<ul class="selectionfromtrees">
 																	@for(_subject <- subjects.split(",")) {
 																			<li><span class="badge badge-primary badge-pill font-weight-normal">
-																			@_subject
+																			@models.Subject.findNameById(_subject.replaceAll("\\s", "").toLong)
 																			</span>
 																			</li>
 																	}
@@ -391,7 +389,7 @@
 																	<ul class="selectionfromtrees">
 																	@for(_collection <- collections.split(",")) {
 																		<li><span class="badge badge-primary badge-pill font-weight-normal">
-																		@_collection
+																			@models.Collection.findNameById(_collection.replaceAll("\\s", "").toLong)
 																		</span>
 																		</li>
 																	}

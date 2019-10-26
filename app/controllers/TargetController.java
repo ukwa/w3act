@@ -55,7 +55,6 @@ import models.Target;
 import models.User;
 import play.Logger;
 import play.Play;
-import play.cache.Cached;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.validation.ValidationError;
@@ -93,7 +92,7 @@ public class TargetController extends AbstractController {
     private static final String DEFAULT_SORT_BY = "title";
     private static final String DEFAULT_ORDER = "asc";
 
-    //for AJAX call
+    //for AJAX calls
     private static List<Long> selectedCollectionIds;
     public static List<Long> getSelectedCollectionIds() {
         return selectedCollectionIds;
