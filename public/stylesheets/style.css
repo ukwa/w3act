@@ -459,3 +459,7 @@ form div.clearfix.error .input-prepend span.add-on,form div.clearfix.error .inpu
 	padding-right:5px;
 	padding-top:3px;
 }
+
+.label-as-badge {
+	border-radius: 1em;
+}
