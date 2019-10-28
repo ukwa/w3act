@@ -22,8 +22,8 @@ services:
       - "SERVER_NAME=localhost"
       - "PII_URI=dummy"
       - "ACCESS_RESOLVER_URI=https://www.webarchive.org.uk/access/resolve/"
-      - "ENABLE_EVOLUTIONS=false"
-      - "APPLY_EVOLUTIONS=false"
+      - "ENABLE_EVOLUTIONS=true"
+      - "APPLY_EVOLUTIONS=true"
       - "APPLY_DOWN_EVOLUTIONS=false" # WARNING DOWNS ARE POTENTIALLY DESTRUCTIVE
     ports:
       - "9000:9000"

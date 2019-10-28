@@ -193,6 +193,13 @@ docker-compose up w3act
 
 Note that right now the Docker Compose setup does not include OutbackCDX, Wayback or pdftohtmlex, so some pages will render slowly (due to failing to talk to these services) as well as the parts that depend on these additional services not working.
 
+If you are able to develop Play apps locally, rather than building the Docker image, you can run the application directly, but against the Dockerised database:
+
+```
+$ activator -Dconfig.file=conf/dev-on-docker.conf -Dlogger.file=conf/logger-debug.xml clean start
+```
+
+
 Using the API from Curl
 -----------------------
 

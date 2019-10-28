@@ -11,13 +11,19 @@ import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
@@ -69,12 +75,31 @@ public class Document extends Model {
 			inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") })
 	public List<Portal> portals = new ArrayList<>();
 	
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "id_primary_subject")
+    public FastSubject primarySubject;
+
 	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
 	@JoinTable(name = "fast_subject_document",
 		joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
+    @OrderColumn(name = "position")
 	public List<FastSubject> fastSubjects = new ArrayList<>();
-	
+
+    public List<FastSubject> getPrioritisedFastSubjects() {
+        List<FastSubject> assigned = new ArrayList<>();
+        // First, the primary subject:
+        if (this.primarySubject != null) {
+            assigned.add(primarySubject);
+        }
+        // Then the others:
+        for (FastSubject sfs : this.fastSubjects) {
+            assigned.add(sfs);
+        }
+        return assigned;
+    }
+
     public String landingPageUrl;
     public String documentUrl;
     public String sha256Hash;
