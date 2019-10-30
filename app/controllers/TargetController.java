@@ -2266,7 +2266,7 @@ public class TargetController extends AbstractController {
      * @param subject This is an identifier for current subjects selected in subject tree
      * @return tree structure
      * */
-    //@Security.Authenticated(SecuredController.class)
+    @Security.Authenticated(SecuredController.class)
     public static Result allSubjectsIDsAsJson(String subject) {
         List<Long> subjectIds = new ArrayList<Long>();
         String[] subjects = subject.replace("\"", "").split(", ");
@@ -2286,7 +2286,7 @@ public class TargetController extends AbstractController {
      * @param collection This is an identifier for current collections selected in collection tree
      * @return tree structure
      * */
-    //@Security.Authenticated(SecuredController.class)
+    @Security.Authenticated(SecuredController.class)
     public static Result allCollectionsIDsAsJson(String collection) {
         List<Long> collectionIds = new ArrayList<Long>();
         String[] collections = collection.replace("\"", "").split(", ");
