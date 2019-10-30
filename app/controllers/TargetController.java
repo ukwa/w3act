@@ -2307,7 +2307,7 @@ public class TargetController extends AbstractController {
      * List of all selected ids is combined and reflected on collection tree view
      * @return tree structure
      * */
-    @Security.Authenticated(SecuredController.class)
+    //@Security.Authenticated(SecuredController.class)
     public static Result getSingleCollectionByIdAsJson(String collectionId) {
         return ok ( getSingleCollectionDataById( Long.valueOf(collectionId), getSelectedCollectionIds() ));
     }
