@@ -2268,6 +2268,7 @@ public class TargetController extends AbstractController {
      * */
     @Security.Authenticated(SecuredController.class)
     public static Result allSubjectsIDsAsJson(String subject) {
+        Logger.debug("Call from AJAX function allSubjectsIDsAsJson");
         List<Long> subjectIds = new ArrayList<Long>();
         String[] subjects = subject.replace("\"", "").split(", ");
         for(String sId : subjects) {
@@ -2288,6 +2289,7 @@ public class TargetController extends AbstractController {
      * */
     @Security.Authenticated(SecuredController.class)
     public static Result allCollectionsIDsAsJson(String collection) {
+        Logger.debug("Call from AJAX function allCollectionsIDsAsJson");
         List<Long> collectionIds = new ArrayList<Long>();
         String[] collections = collection.replace("\"", "").split(", ");
         for(String cId : collections) {

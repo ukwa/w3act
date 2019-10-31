@@ -71,9 +71,12 @@
 			}
 
 			function functionWithAjaxScriptForAllSubjectsIDsAsJson(){
-				$.ajax({
+				var jqXHR = $.ajax({
 					url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
 					type: 'GET',
+					beforeSend: function(jqXHR, settings) {
+						console.log(jqXHR, settings.url);
+					},
 					success: function (outputfromserver) {
 						if (outputfromserver !== null) {
 							showTree(outputfromserver, "#subjectTree", "subjectSelect");
@@ -88,9 +91,12 @@
 			}
 
 			function functionWithAjaxScriptForAllCollectionsIDsAsJson() {
-				$.ajax({
+				var jqXHR = $.ajax({
 					url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
 					type: 'GET',
+					beforeSend: function(jqXHR, settings) {
+						console.log(jqXHR, settings.url);
+					},
 					success: function (outputfromserver) {
 						if (outputfromserver !== null) {
 							showTree(outputfromserver, "#collectionTree", "collectionSelect");

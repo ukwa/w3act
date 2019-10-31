@@ -161,6 +161,7 @@ public class AbstractController extends Controller {
     }
 
 	protected static JsonNode getCollectionsDataByIds(List<Long> myCollectionIds) {
+		Logger.debug("Call from getCollectionsDataByIds - BEFORE  AJAX function allCollectionsIDsAsJson");
 		return Json.toJson(getCollectionTreeElementsByIdsStack(Collection.getFirstLevelCollections(), myCollectionIds));//jsonData;
 	}
 
@@ -256,7 +257,7 @@ public class AbstractController extends Controller {
     }
 
 	public static JsonNode getSubjectsDataByIds(List<Long> mySubjectIds){
-		Logger.debug("getSubjectsDataByIds as List - selected = " + mySubjectIds.size());
+		Logger.debug("Call from getSubjectsDataByIds - BEFORE  AJAX function allSubjectsIDsAsJson");
 		return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
 	}
 
