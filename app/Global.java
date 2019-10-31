@@ -97,9 +97,11 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onBadRequest(RequestHeader request, String error) {
-    	Logger.debug("error: " + error);
-        return Promise.<Result>pure(badRequest(
-        		views.html.errorPage.render(new Throwable("Bad Request"))
+		Logger.debug("Global error: " + error + ", request: " + request);
+		Logger.info("Global - onBadRequest -  error: " + error + ", request: " + request);
+
+		return Promise.<Result>pure(badRequest(
+        		views.html.errorPage.render(new Throwable("Bad Request" + request.toString()))
         ));
     }
 }

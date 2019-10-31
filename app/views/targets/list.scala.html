@@ -71,9 +71,13 @@
 			}
 
 			function functionWithAjaxScriptForAllSubjectsIDsAsJson(){
+				var tmp_url =  context + "/" + searchContext + '/allSubjectsIDsAsJson/' + ((($('#subjectSelect').val()).isEmpty)?"":24);
+
 				var jqXHR = $.ajax({
-					url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + JSON.stringify($('#subjectSelect').val()),
+					url: tmp_url,
 					type: 'GET',
+					contentType: "application/json",
+
 					beforeSend: function(jqXHR, settings) {
 						console.log(jqXHR, settings.url);
 					},
@@ -85,14 +89,14 @@
 						}
 					},
 					error: function (outputfromserver) {
-						alert('Make call get Subjects failed');
+						alert('Make call get Subjects failed' + outputfromserver);
 					}
 				});
 			}
 
 			function functionWithAjaxScriptForAllCollectionsIDsAsJson() {
 				var jqXHR = $.ajax({
-					url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + JSON.stringify($('#collectionSelect').val()),
+					url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (($('#collectionSelect').val()).isEmpty?"":1),
 					type: 'GET',
 					beforeSend: function(jqXHR, settings) {
 						console.log(jqXHR, settings.url);
@@ -105,7 +109,7 @@
 						}
 					},
 					error: function (results) {
-						alert('Make call get Collections failed');
+						alert('Make call get Collections failed' + results);
 					}
 				});
 			}
