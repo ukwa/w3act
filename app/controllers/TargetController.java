@@ -2269,6 +2269,9 @@ public class TargetController extends AbstractController {
     @Security.Authenticated(SecuredController.class)
     public static Result allSubjectsIDsAsJson(String subject) {
         Logger.debug("Call from AJAX function allSubjectsIDsAsJson, params subject = " + subject);
+
+        Logger.debug("after parse subject = " + play.api.libs.json.Json.parse(subject));
+
         List<Long> subjectIds = new ArrayList<Long>();
         String[] subjects = subject.replace("\"", "").split(", ");
         for(String sId : subjects) {
@@ -2291,6 +2294,9 @@ public class TargetController extends AbstractController {
     public static Result allCollectionsIDsAsJson(String collection) {
         Logger.debug("Call from AJAX function allCollectionsIDsAsJson, params subject = " + collection);
         List<Long> collectionIds = new ArrayList<Long>();
+
+        Logger.debug("after parse collection = " + play.api.libs.json.Json.parse(collection));
+
         String[] collections = collection.replace("\"", "").split(", ");
         for(String cId : collections) {
             if(StringUtils.isNotEmpty(cId)) {

@@ -71,10 +71,19 @@
 			}
 
 			function functionWithAjaxScriptForAllSubjectsIDsAsJson(){
-				$.ajax({
-					url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + (!(($('#subjectSelect').val()).isEmpty)?('\u0022'+'@{subjects}'+'\u0022'):'0'),
+
+                $("#subjectSelect").val().isEmpty?$("#subjectSelect").val('96'):('\u0022'+'@{subjects}'+'\u0022');
+
+				var tmp_url =  context + "/" + searchContext + '/allSubjectsIDsAsJson/' + (!(($('#subjectSelect').val()).isEmpty)?('\u0022'+'@{subjects}'+'\u0022'):'0');
+
+				var jqXHR = $.ajax({
+					url: tmp_url,
 					type: 'GET',
 					contentType: "application/json",
+
+					beforeSend: function(jqXHR, settings) {
+						console.log(jqXHR, settings.url);
+					},
 					success: function (outputfromserver) {
 						if (outputfromserver !== null) {
 							showTree(outputfromserver, "#subjectTree", "subjectSelect");
@@ -89,9 +98,14 @@
 			}
 
 			function functionWithAjaxScriptForAllCollectionsIDsAsJson() {
-				$.ajax({
+				var jqXHR = $.ajax({
 					url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (!(($('#collectionSelect').val()).isEmpty)?('\u0022'+'@collections'+'\u0022'):'0'),
 					type: 'GET',
+					contentType: "application/json",
+
+					beforeSend: function(jqXHR, settings) {
+						console.log(jqXHR, settings.url);
+					},
 					success: function (outputfromserver) {
 						if (outputfromserver !== null) {
 							showTree(outputfromserver, "#collectionTree", "collectionSelect");
