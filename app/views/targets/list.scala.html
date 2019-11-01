@@ -72,14 +72,17 @@
 
 			function functionWithAjaxScriptForAllSubjectsIDsAsJson(){
 
-                $("#subjectSelect").val().isEmpty?$("#subjectSelect").val('96'):('\u0022'+'@{subjects}'+'\u0022');
+                $("#subjectSelect").val().isEmpty?$("#subjectSelect").val('96'):('%22@{subjects}%22');
 
-				var tmp_url =  context + "/" + searchContext + '/allSubjectsIDsAsJson/' + (!(($('#subjectSelect').val()).isEmpty)?('\u0022'+'@{subjects}'+'\u0022'):'0');
+				var tmp_url =  context + "/" + searchContext + '/allSubjectsIDsAsJson/' + (!(($('#subjectSelect').val()).isEmpty)?'%22@{subjects}%22':'0');
+
+				var encodedUrl = decodeURIComponent(tmp_url);
 
 				var jqXHR = $.ajax({
-					url: tmp_url,
+					url: encodedUrl,
 					type: 'GET',
 
+					contentType: "text",
 
 					beforeSend: function(jqXHR, settings) {
 						console.log(jqXHR, settings.url);
@@ -98,9 +101,17 @@
 			}
 
 			function functionWithAjaxScriptForAllCollectionsIDsAsJson() {
+
+
+				var tmp_url = context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (!(($('#collectionSelect').val()).isEmpty)?'%22@{collections}%22':'0');
+
+				var encodedUrl = decodeURIComponent(tmp_url);
+
 				var jqXHR = $.ajax({
-					url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (!(($('#collectionSelect').val()).isEmpty)?('\u0022'+'@collections'+'\u0022'):'0'),
+					url: encodedUrl,
 					type: 'GET',
+
+					contentType: "text",
 
 					beforeSend: function(jqXHR, settings) {
 						console.log(jqXHR, settings.url);
