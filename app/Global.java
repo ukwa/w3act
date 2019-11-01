@@ -7,6 +7,7 @@ import models.Role;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
+import play.api.mvc.Handler;
 import scala.concurrent.duration.Duration;
 import uk.bl.db.DataImport;
 import uk.bl.crawling.CrawlActor;
@@ -85,13 +86,18 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onHandlerNotFound(RequestHeader request) {
-    	if( request.path().equals(app_context+"/")) {
+		Logger.info("++++++++++  Global - onHandlerNotFound, request: " + request);
+
+
+		if( request.path().equals(app_context+"/")) {
     		Logger.warn("Redirecting " + request.path());
     		return  Promise.<Result>pure(
     					movedPermanently(app_context)
     				);
     	} else {
-    		return Promise.<Result>pure(notFound(
+			Logger.info("++++++++++  Global - onHandlerNotFound -  ELSE - PAGE NOT FOUND, request: " + request);
+
+			return Promise.<Result>pure(notFound(
     				views.html.notFoundPage.render(request.uri())
     				));
     	}
@@ -105,4 +111,12 @@ public class Global extends GlobalSettings {
         		views.html.errorPage.render(new Throwable("Bad Request" + request.toString()))
         ));
     }
+
+	@Override
+	public Handler onRouteRequest(RequestHeader request) {
+		Logger.info("++++++++++++++ Global - onRouteRequest -  request: " + request + ", uri = " + request.uri());
+
+		return super.onRouteRequest(request);
+	}
+
 }
