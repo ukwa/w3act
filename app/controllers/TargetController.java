@@ -2,15 +2,9 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -2270,7 +2264,16 @@ public class TargetController extends AbstractController {
     public static Result allSubjectsIDsAsJson(String subject) {
         Logger.debug("Call from AJAX function allSubjectsIDsAsJson, params subject = " + subject);
 
-        Logger.debug("after parse subject = " + play.api.libs.json.Json.parse(subject));
+        //Logger.debug("after parse subject = " + play.api.libs.json.Json.parse(subject));
+
+        //URLDecoder.decode( subject, "UTF-8" );
+
+        try {
+            String result = java.net.URLDecoder.decode(subject, StandardCharsets.UTF_8.name());
+            subject = result;
+        } catch (UnsupportedEncodingException e) {
+            // not going to happen - value came from JDK's own StandardCharsets
+        }
 
         List<Long> subjectIds = new ArrayList<Long>();
         String[] subjects = subject.replace("\"", "").split(", ");
@@ -2295,8 +2298,12 @@ public class TargetController extends AbstractController {
         Logger.debug("Call from AJAX function allCollectionsIDsAsJson, params subject = " + collection);
         List<Long> collectionIds = new ArrayList<Long>();
 
-        Logger.debug("after parse collection = " + play.api.libs.json.Json.parse(collection));
-
+        try {
+            String result = java.net.URLDecoder.decode(collection, StandardCharsets.UTF_8.name());
+            collection = result;
+        } catch (UnsupportedEncodingException e) {
+            // not going to happen - value came from JDK's own StandardCharsets
+        }
         String[] collections = collection.replace("\"", "").split(", ");
         for(String cId : collections) {
             if(StringUtils.isNotEmpty(cId)) {

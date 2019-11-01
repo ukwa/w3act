@@ -72,11 +72,10 @@
 
 			function functionWithAjaxScriptForAllSubjectsIDsAsJson(){
 
-                $("#subjectSelect").val().isEmpty?$("#subjectSelect").val('96'):('%22@{subjects}%22');
 
-				var tmp_url =  context + "/" + searchContext + '/allSubjectsIDsAsJson/' + (!(($('#subjectSelect').val()).isEmpty)?'%22@{subjects}%22':'0');
+				var tmp_url =  context + "/" + searchContext + '/allSubjectsIDsAsJson/' + (!(($('#subjectSelect').val()).isEmpty)?encodeURI('%22@{subjects}%22'):'0');
 
-				var encodedUrl = decodeURIComponent(tmp_url);
+				var encodedUrl = (tmp_url);
 
 				var jqXHR = $.ajax({
 					url: encodedUrl,
@@ -103,9 +102,9 @@
 			function functionWithAjaxScriptForAllCollectionsIDsAsJson() {
 
 
-				var tmp_url = context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (!(($('#collectionSelect').val()).isEmpty)?'%22@{collections}%22':'0');
+				var tmp_url = context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (!(($('#collectionSelect').val()).isEmpty)?encodeURI('%22@{collections}%22'):'0');
 
-				var encodedUrl = decodeURIComponent(tmp_url);
+				var encodedUrl = (tmp_url);
 
 				var jqXHR = $.ajax({
 					url: encodedUrl,
