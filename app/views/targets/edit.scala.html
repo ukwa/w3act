@@ -136,7 +136,7 @@
 
                         if (!subjecttreeclicked) {
                             $.ajax({
-                                url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + encodeURI(JSON.stringify($('#subjectSelect').val())),
+                                url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + encodeURI('%22'+$('#subjectSelect').val()+'%22'),
                                 type: 'GET',
                                 success: function (outputfromserver) {
                                     if (outputfromserver !== null) {
@@ -163,7 +163,7 @@
                         $('#collectionTreeSelection').hide();
                         if (!colleciontreeclicked) {
                             $.ajax({
-                                url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + encodeURI(JSON.stringify($('#collectionSelect').val())),
+                                url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + encodeURI('%22'+$('#collectionSelect').val()+'%22'),
                                 type: 'GET',
                                 success: function (outputfromserver) {
                                     if (outputfromserver !== null) {
