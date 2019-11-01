@@ -79,7 +79,7 @@
 				var jqXHR = $.ajax({
 					url: tmp_url,
 					type: 'GET',
-					contentType: "application/json",
+
 
 					beforeSend: function(jqXHR, settings) {
 						console.log(jqXHR, settings.url);
@@ -101,7 +101,6 @@
 				var jqXHR = $.ajax({
 					url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (!(($('#collectionSelect').val()).isEmpty)?('\u0022'+'@collections'+'\u0022'):'0'),
 					type: 'GET',
-					contentType: "application/json",
 
 					beforeSend: function(jqXHR, settings) {
 						console.log(jqXHR, settings.url);
