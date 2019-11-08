@@ -1,5 +1,7 @@
 package uk.bl;
 
+import play.Logger;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -80,7 +82,7 @@ public final class Const {
 	public static final String TARGET_DEF         = "TARGETDEF";
 	public static final String OFFSET             = "offset";
 	public static final String LIMIT              = "limit";
-	public static final String LIST_DELIMITER     = ", ";
+	public static final String LIST_DELIMITER     = "; ";//", ";
 	public static final String SLASH_DELIMITER    = "/";
 	public static final String HOST          	  = "host";
 	public static final String PORT               = "port";
@@ -592,7 +594,10 @@ public final class Const {
             for(SelectionType s : SelectionType.values()) {
                 options.put(s.name(), s.getValue());
             }
-            return options;
+            //
+			//Logger.debug("options: " + res.getTotalRowCount());
+
+			return options;
     		
     	}    
     }

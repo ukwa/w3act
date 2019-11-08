@@ -1,3 +1,4 @@
+@import uk.bl.Const
 @(title: String, user: User, filter: String, currentPage: com.avaje.ebean.Page[Target], sortBy: String, orderBy: String, curatorId: Long, organisationId: Long, subjects: String, crawlFrequencyName: String, depthName: String, collections: String, licenseId: Long, pageSize: Int, flagId: Long, licenses: List[License], collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, users: List[User], organisations: List[Organisation], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency], flags: List[Flag])
 
 @import templates.shortLink
@@ -71,12 +72,8 @@
 			}
 
 			function functionWithAjaxScriptForAllSubjectsIDsAsJson(){
-
-
 				var tmp_url =  context + "/" + searchContext + '/allSubjectsIDsAsJson/' + (!(($('#subjectSelect').val()).isEmpty)?encodeURI('%22@{subjects}%22'):'0');
-
 				var encodedUrl = (tmp_url);
-
 				var jqXHR = $.ajax({
 					url: encodedUrl,
 					type: 'GET',
@@ -95,12 +92,8 @@
 			}
 
 			function functionWithAjaxScriptForAllCollectionsIDsAsJson() {
-
-
 				var tmp_url = context + "/" + searchContext + '/allCollectionsIDsAsJson/' + (!(($('#collectionSelect').val()).isEmpty)?encodeURI('%22@{collections}%22'):'0');
-
 				var encodedUrl = (tmp_url);
-
 				var jqXHR = $.ajax({
 					url: encodedUrl,
 					type: 'GET',
@@ -118,13 +111,11 @@
 				});
 			}
 
-
-				$("#collection_href").click(function(){
+			$("#collection_href").click(function(){
 				$(this).find('i').toggleClass('fa-share-square-o fa-compress');
 
 				$('#collectionTree').show();
 				$('#collectionTreeSelection').hide();
-
 
 				if (!colleciontreeclicked) {
 					functionAjaxSetup();
@@ -137,8 +128,7 @@
 					colleciontreeclicked = false;
 				}
 			});
-
-
+			
 		});
 	</script>
 }
@@ -355,7 +345,7 @@
 										<div class="row">
 											<div class="col-md-12 col-sm-12">
 												<div class="form-group">
-													@if(!subjects.isEmpty || !collections.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
+													@if(!subjects.isEmpty || !collections.isEmpty || !filter.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
 														<label for="subject" class="col-md-3 col-sm-3 control-label">Subject</label>
 														<a href="javascript:void(0)" id="subject_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
 														<div class="col-md-8 col-sm-8">
@@ -364,7 +354,7 @@
 																<label class="control-label">Selected Subjects:</label>
 																@if(!subjects.isEmpty) {
 																	<ul class="selectionfromtrees">
-																	@for(_subject <- subjects.split(",")) {
+																	@for(_subject <- subjects.split(Const.LIST_DELIMITER)) {
 																			<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
 																				@models.Subject.findNameById(_subject.replaceAll("\\s", "").toLong)
 																			</span>
@@ -386,13 +376,13 @@
 										</div>
 										<div class="row">
 											<div class="col-md-12 col-sm-12 text-center">
-												<div id="collectionTreeLoading" style="display:none"><img src="@routes.Assets.at("images/loading.gif")" height="32"></div>
+												<div id="collectionTreeLoading" style="display:none"><img src="@routes.Assets.at("images/loading2.gif")" height="32"></div>
 											</div>
 										</div>
 										<div class="row">
 											<div class="col-md-12 col-sm-12">
 												<div class="form-group">
-													@if(!subjects.isEmpty || !collections.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
+													@if(!subjects.isEmpty || !collections.isEmpty || !filter.isEmpty || curatorId!=0 || organisationId!=0 || !crawlFrequencyName.isEmpty || !depthName.isEmpty || licenseId!=0 || flagId!=0){
 														<label for="collection" class="col-md-3 col-sm-3 control-label">Collection</label>
 														<a href="javascript:void(0)" id="collection_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
 														<div class="col-md-8 col-sm-8">
@@ -401,7 +391,7 @@
 																<label class="control-label">Selected Collections:</label>
 																@if(!collections.isEmpty) {
 																	<ul class="selectionfromtrees">
-																	@for(_collection <- collections.split(",")) {
+																	@for(_collection <- collections.split(Const.LIST_DELIMITER)) {
 																		<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
 																			@models.Collection.findNameById(_collection.replaceAll("\\s", "").toLong)
 																		</span>

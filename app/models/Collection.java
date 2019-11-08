@@ -171,8 +171,8 @@ public class Collection extends Taxonomy {
 		List<Collection> res = new ArrayList<Collection>();
 		String parentStr = collection.parentsAll;
     	if (parentStr != null && parentStr.length() > 0) {
-    		if (parentStr.contains(Const.COMMA)) {
-    			List<String> resList = Arrays.asList(parentStr.split(Const.COMMA));
+    		if (parentStr.contains(Const.LIST_DELIMITER)) {
+    			List<String> resList = Arrays.asList(parentStr.split(Const.LIST_DELIMITER));
     			Iterator<String> itr = resList.iterator();
     			while (itr.hasNext()) {
         			String parentUrl = itr.next();
@@ -239,8 +239,8 @@ public class Collection extends Taxonomy {
     	Collection res = new Collection();
     	if (name != null && name.length() > 0) {
 //    		Logger.debug("p1: " + name);
-    		if (name.contains(Const.COMMA)) {
-    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		if (name.contains(Const.LIST_DELIMITER)) {
+    			name = name.replace(Const.LIST_DELIMITER, Const.LIST_DELIMITER + " "); // in database entry with comma has additional space after comma
     		}
     		res = find.where().eq(Const.NAME, name).findUnique();
     	} else {
@@ -301,7 +301,7 @@ public class Collection extends Taxonomy {
 				firstTime = false;
 			} else {
 //				Logger.debug("add collection.name: " + collection.name);
-				res = res + Const.COMMA + " " + collection.name;
+				res = res + Const.LIST_DELIMITER + " " + collection.name;
 			}
 		}
 		if (res.length() == 0) {

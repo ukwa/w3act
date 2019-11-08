@@ -463,3 +463,7 @@ form div.clearfix.error .input-prepend span.add-on,form div.clearfix.error .inpu
 .label-as-badge {
 	border-radius: 1em;
 }
+
+.selectionfromtrees{
+	padding-left: 1em;
+}

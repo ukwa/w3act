@@ -86,8 +86,7 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onHandlerNotFound(RequestHeader request) {
-		Logger.info("++++++++++  Global - onHandlerNotFound, request: " + request);
-
+		Logger.debug("++++++++++  Global - onHandlerNotFound, request: " + request);
 
 		if( request.path().equals(app_context+"/")) {
     		Logger.warn("Redirecting " + request.path());
@@ -95,7 +94,7 @@ public class Global extends GlobalSettings {
     					movedPermanently(app_context)
     				);
     	} else {
-			Logger.info("++++++++++  Global - onHandlerNotFound -  ELSE - PAGE NOT FOUND, request: " + request);
+			Logger.debug("++++++++++  Global - onHandlerNotFound -  ELSE - PAGE NOT FOUND, request: " + request);
 
 			return Promise.<Result>pure(notFound(
     				views.html.notFoundPage.render(request.uri())
@@ -105,7 +104,7 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onBadRequest(RequestHeader request, String error) {
-		Logger.info("Global - onBadRequest -  error: " + error + ", request: " + request);
+		Logger.debug("Global - onBadRequest -  error: " + error + ", request: " + request);
 
 		return Promise.<Result>pure(badRequest(
         		views.html.errorPage.render(new Throwable("Bad Request" + request.toString()))
@@ -114,7 +113,7 @@ public class Global extends GlobalSettings {
 
 	@Override
 	public Handler onRouteRequest(RequestHeader request) {
-		Logger.info("++++++++++++++ Global - onRouteRequest -  request: " + request + ", uri = " + request.uri());
+		Logger.debug("++++++++++++++ Global - onRouteRequest -  request: " + request + ", uri = " + request.uri());
 
 		return super.onRouteRequest(request);
 	}

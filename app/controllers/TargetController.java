@@ -1514,7 +1514,7 @@ public class TargetController extends AbstractController {
         String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
         Logger.debug("subjectSelect: " + subjectSelect);
         if(StringUtils.isNotEmpty(subjectSelect)) {
-            String[] subjects = subjectSelect.split(", ");
+            String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
             for(String sId : subjects) {
                 Long subjectId = Long.valueOf(sId);
                 Subject subject = Subject.findById(subjectId);
@@ -1532,7 +1532,7 @@ public class TargetController extends AbstractController {
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
         if(StringUtils.isNotEmpty(collectionSelect)) {
-            String[] collections = collectionSelect.split(", ");
+            String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
             for(String cId : collections) {
                 Long collectionId = Long.valueOf(cId);
                 Collection collection = Collection.findById(collectionId);
@@ -1751,7 +1751,7 @@ public class TargetController extends AbstractController {
 
         Logger.debug("\n\nfieldUrl: " + fieldUrl);
         if(StringUtils.isNotEmpty(fieldUrl)) {
-            String[] urls = fieldUrl.split(",");
+            String[] urls = fieldUrl.split(Const.LIST_DELIMITER);
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 
             long position = 0;
@@ -2276,7 +2276,7 @@ public class TargetController extends AbstractController {
         }
 
         List<Long> subjectIds = new ArrayList<Long>();
-        String[] subjects = subject.replace("\"", "").split(", ");
+        String[] subjects = subject.replace("\"", "").split(Const.LIST_DELIMITER);
         for(String sId : subjects) {
             if(StringUtils.isNotEmpty(sId)) {
                 Long subjectId = Long.valueOf(sId);
@@ -2304,7 +2304,7 @@ public class TargetController extends AbstractController {
         } catch (UnsupportedEncodingException e) {
             // not going to happen - value came from JDK's own StandardCharsets
         }
-        String[] collections = collection.replace("\"", "").split(", ");
+        String[] collections = collection.replace("\"", "").split(Const.LIST_DELIMITER);
         for(String cId : collections) {
             if(StringUtils.isNotEmpty(cId)) {
                 Long collectionId = Long.valueOf(cId);

@@ -272,6 +272,7 @@ public class AbstractController extends Controller {
 
     public static List<NaryTreeNode> subjectHelper(long subject_id, List<Long> mySubjectIds){
         List<NaryTreeNode> result = new ArrayList<>();
+
         List<Subject> children = Subject.findChildrenByParentId(subject_id);
         if (children.size() > 0) {
             children.forEach(c->
@@ -289,27 +290,15 @@ public class AbstractController extends Controller {
 
 	//@Cached(key = "CollectionsTreeDS")
 	protected static List<NaryTreeNode> getCollectionTreeElementsByIdsStack(List<Collection> collections, List<Long> myCollectionIds) {
-
 		getStackOfCollectionsLayers().clear();
-
-		//TODO: LAMBDA VERSION
-        //collections.forEach(c->getStackOfCollections().addAll( iterate(c.id, myCollectionIds)));
-
-		/*
 		collections.forEach(c->
-				getStackOfCollections().push(
-						new NaryTreeNode(c.id, c.name,
-								String.valueOf(routes.CollectionController.view(c.id)),
-								myCollectionIds.contains(c.id)?true:false,
-								iterate(c.id, myCollectionIds) )));
-		*/
+			getStackOfCollectionsLayers().push(
+				new NaryTreeNode(c.id, c.name,
+						String.valueOf(routes.CollectionController.view(c.id)),
+						myCollectionIds.contains(c.id)?true:false,
+						collectionHelper(c.id, myCollectionIds) )));
 
-		for (Collection collection : collections)
-			getStackOfCollectionsLayers().push(new NaryTreeNode(collection.id, collection.name, // + " (" + collection.targets.size() + ")",
-					String.valueOf(routes.CollectionController.view(collection.id)),
-					myCollectionIds.contains(collection.id)?true:false,
-                    collectionHelper(collection.id, myCollectionIds) ));
-		//searchCollections(690);
+		//searchCollections(690); //TODO: search action
 		return getStackOfCollectionsLayers();
 	}
 
