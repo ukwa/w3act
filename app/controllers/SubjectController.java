@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.Collection;
 import models.Subject;
-import models.Target;
 import models.Taxonomy;
 import models.User;
 
@@ -23,10 +21,8 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.subjects.*;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -202,6 +198,8 @@ public class SubjectController extends AbstractController {
 	            }		        
 		        
 		        filledForm.get().save();
+				Logger.debug("invalidate cache on Subject Create, key SubjectsData: ");
+				getCache().remove("SubjectsData");
 		        flash("message", "Subject " + filledForm.get().name + " has been created");
 		        return redirect(routes.SubjectController.view(filledForm.get().id));
         	}
@@ -256,12 +254,16 @@ public class SubjectController extends AbstractController {
 	            }
 		        
 		        filledForm.get().update(id);
+				Logger.debug("invalidate cache on Subject Update, key SubjectsData: ");
+				getCache().remove("SubjectsData");
 		        flash("message", "Collection " + filledForm.get().name + " has been updated");
 		        return redirect(routes.SubjectController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
         		Subject subject = Subject.findById(id);
 		        flash("message", "Subject " + filledForm.get().name + " has been deleted");
             	subject.delete();
+				Logger.debug("invalidate cache on Subject Delete, key SubjectsData: ");
+				getCache().remove("SubjectsData");
         		return redirect(routes.SubjectController.index()); 
         	}
         }
@@ -383,8 +385,8 @@ public class SubjectController extends AbstractController {
      */
     public static String checkSelection(String subjectUrl, String currentUrl) {
     	String res = "";
-		if (currentUrl.contains(Const.COMMA)) {
-			currentUrl = currentUrl.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+		if (currentUrl.contains(Const.LIST_DELIMITER)) {
+			currentUrl = currentUrl.replace(Const.LIST_DELIMITER, Const.LIST_DELIMITER + " "); // in database entry with comma has additional space after comma
 		}
 //    	Logger.debug("checkSelection() 1: " + subjectUrl + ", 2: " + currentUrl);
     	if (currentUrl != null && currentUrl.length() > 0) {

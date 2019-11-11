@@ -60,7 +60,7 @@ public class QAController extends AbstractController {
 		
         String collectionSelect = collection.replace("\"", "");
     	List<Long> collectionIds = new ArrayList<Long>();
-        String[] collections = collectionSelect.split(", ");
+        String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
         for (String cId : collections) {
         	if (StringUtils.isNotEmpty(cId)) {
 	        	Long collectionId = Long.valueOf(cId);

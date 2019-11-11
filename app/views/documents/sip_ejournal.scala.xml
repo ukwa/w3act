@@ -116,7 +116,7 @@
               @document.journal.journalTitle.language
             </mods:languageTerm>
           </mods:languageOfCataloging>*@
-             @for(fastSubject <- document.fastSubjects) {
+             @for(fastSubject <- document.getPrioritisedFastSubjects) {
         <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.fastId"></mods:subject>
       }
          </mods:relatedItem>

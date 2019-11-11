@@ -157,7 +157,7 @@
                           <subfield code="2">blcoll</subfield>
                       </datafield>
                   }
-                  @for(fastSubject<- document.fastSubjects) {
+                  @for(fastSubject<- document.getPrioritisedFastSubjects) {
                   <datafield tag="650" ind1=" " ind2="7">
                       <subfield code="a">@fastSubject.name</subfield>
                       <subfield code="2">fast</subfield>

@@ -1,3 +1,4 @@
+@import uk.bl.Const
 @(targetForm: Form[Target], user: User, id: Long, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: Map[String,String], tags: List[Tag], flags: List[Flag], qaIssues: Map[String,String], languages: Map[String,String], selectionTypes: Map[String,String], scopeTypes: Map[String,String], depthTypes: Map[String,String], licenses: List[License], licenseStatuses: Map[String,String], crawlFrequencies: Map[String,String], siteStatuses: Map[String,String], organisations: Map[String,String], tabStatus: String, targetTags: List[Tag], targetFlags: List[Flag], targetLicenses: List[License])
 
 @import helper._
@@ -116,12 +117,75 @@
                         }
                     });
 
-                    @if(collectionData != null){
-                    showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 2);
-                    }
-                    @if(subjectData != null){
-                    showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);
-                    }
+                    context = '@play.api.Play.current.configuration.getString("application.context")'
+                    searchContext = 'targets';
+
+                    subjecttreeclicked = false;
+                    colleciontreeclicked = false;
+                    $.ajaxSetup({
+                        beforeSend:function(){
+                            $("#collectionTreeLoading").show();
+                        },
+                        complete:function(){
+                            $("#collectionTreeLoading").hide();
+                        }
+                    });
+                    $("#subject_href").click(function(){
+                        $(this).find('i').toggleClass('fa-share-square-o fa-compress');
+
+                        $('#subjectTree').show();
+                        $('#subjectTreeSelection').hide();
+
+                        if (!subjecttreeclicked) {
+                            $.ajax({
+                                url: context + "/" + searchContext + '/allSubjectsIDsAsJson/' + encodeURI('%22'+$('#subjectSelect').val()+'%22'),
+                                type: 'GET',
+                                success: function (outputfromserver) {
+                                    if (outputfromserver !== null) {
+                                        showTree(outputfromserver, "#subjectTree", "subjectSelect");
+                                    } else {
+                                        alert('Make call failed - no output from server');
+                                    }
+                                },
+                                error: function (outputfromserver) {
+                                    alert('Make call failed');
+                                }
+                            });
+                            subjecttreeclicked = true;
+                        }
+                        else{
+                            $('#subjectTree').hide();
+                            $('#subjectTreeSelection').show();
+                            subjecttreeclicked = false;
+                        }
+                    });
+                    $("#collection_href").click(function(){
+                        $(this).find('i').toggleClass('fa-share-square-o fa-compress');
+                        $('#collectionTree').show();
+                        $('#collectionTreeSelection').hide();
+                        if (!colleciontreeclicked) {
+                            $.ajax({
+                                url: context + "/" + searchContext + '/allCollectionsIDsAsJson/' + encodeURI('%22'+$('#collectionSelect').val()+'%22'),
+                                type: 'GET',
+                                success: function (outputfromserver) {
+                                    if (outputfromserver !== null) {
+                                        showTree(outputfromserver, "#collectionTree", "collectionSelect");
+                                    } else {
+                                        alert('Make call failed - no output from server');
+                                    }
+                                },
+                                error: function (results) {
+                                    alert('Make call failed');
+                                }
+                            });
+                            colleciontreeclicked = true;
+                        }
+                        else{
+                            $('#collectionTree').hide();
+                            $('#collectionTreeSelection').show();
+                            colleciontreeclicked = false;
+                        }
+                    });
 
                     // This happens right after the document is loaded.
                     // Our nav pills won't do anything by themselves, so we need to make sure we
@@ -460,21 +524,54 @@
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            <label for="subjects" class="col-sm-6 control-label">Browse Subject</label>
-                            <div class="col-sm-6">
-                                <div id="subjectTree"></div>
+                            <label for="subject" class="col-md-5 col-sm-5 control-label">Browse Subject</label>
+                            <a href="javascript:void(0)" id="subject_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
+                            <div class="col-md-6 col-sm-6">
+                                <div id="subjectTree" style="padding:5px;"></div>
+                                <div id="subjectTreeSelection">
+                                    <label class="control-label">Selected Subjects:</label>
+                                    @if(targetForm("subjectSelect").value != null && !targetForm("subjectSelect").value.isEmpty) {
+                                        <ul class="selectionfromtrees">
+                                        @for(_subject <- targetForm("subjectSelectTitles").value.split(Const.LIST_DELIMITER)) {
+                                            <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+                                            @_subject
+                                            </span>
+                                            </li>
+                                        }
+                                        </ul>
+                                    }
+                                </div>
                                 <input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
                             </div>
                         </div>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col-10"></div>
+                    <div id="collectionTreeLoading" style="display:none" class="col-2 text-center">
+                        <img src="@routes.Assets.at("images/loading2.gif")" height="64">
+                    </div>
+                </div>
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
-                            <label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-                            <div class="col-sm-6">
-                                <div id="collectionTree"></div>
+                            <label for="suggestions-collections" class="col-sm-5 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+                            <a href="javascript:void(0)" id="collection_href" class="col-md-1 col-sm-1"><i class="fas fa-share-square-o fa fa-2x"></i></a>
+                            <div class="col-md-6 col-sm-6">
+                                <div id="collectionTree" style="padding:5px;"></div>
+                                <div id="collectionTreeSelection">
+                                    <label class="control-label">Selected Collections:</label>
+                                    @if(targetForm("collectionSelect").value != null && !targetForm("collectionSelect").value.isEmpty) {
+                                        <ul class="selectionfromtrees">
+                                        @for(_collection <- targetForm("collectionSelectTitles").value.split(Const.LIST_DELIMITER)) {
+                                            <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+                                            @_collection
+                                            </span>
+                                            </li>
+                                        }
+                                        </ul>
+                                    }
+                                </div>
                                 <input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
                             </div>
                         </div>
@@ -1172,7 +1269,7 @@
 
                         <p>Note that you can only edit these settings if your account has been permitted access to the Document Harvester, and if you own this target.</p>
 
-                        @if(!target.hasDocuments() &&  user.canWatchTarget(target) ) {
+                        @if(!target.hasDocuments() &&  user.canWatchTarget(target) || user.hasRole("archivist")) {
                             @checkbox(targetForm("watched"), true, '_label -> "Watched?", '_id -> "watched", 'onclick -> "javascript:display();")
                         } else {
                             @checkbox(targetForm("watched"), false, '_label -> "Watched?", '_id -> "watched")

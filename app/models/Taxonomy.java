@@ -461,8 +461,8 @@ public class Taxonomy extends ActModelMappedSuperClass {
     public static String formatDbComma(String name) {
     	String res = "";
     	if (name != null && name.length() > 0) {
-    		if (name.contains(Const.COMMA)) {
-    			name = name.replace(Const.COMMA + " ", Const.COMMA); // in database entry with comma has additional space after comma
+    		if (name.contains(Const.LIST_DELIMITER)) {
+    			name = name.replace(Const.LIST_DELIMITER + " ", Const.LIST_DELIMITER); // in database entry with comma has additional space after comma
     		}
     		res = name;
     	} 

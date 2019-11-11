@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import play.cache.Cached;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -30,25 +31,27 @@ public class Subject extends Taxonomy {
 	public static Model.Finder<Long,Subject> find = new Model.Finder<Long, Subject>(Long.class, Subject.class);
 
     /**
-     * Retrieve all collections.
+     * Retrieve all subjects.
      */
     public static List<Subject> findAllSubjects() {
         return find.orderBy("name asc").findList();
     }
 
     public static Subject findById(Long id) {
-    	Subject subject = find.byId(id);
-    	return subject;
+    	return find.byId(id);
     }
 
+	public static String findNameById(Long id) {
+		return find.byId(id).name;
+	}
+
 	public static Subject findByUrl(String url) {
-    	Subject subject = find.where().eq(Const.URL, url).findUnique();
-    	return subject;
+    	return find.where().eq(Const.URL, url).findUnique();
     }
-    
+
+	@Cached(key = "SubjectsData")
 	public static List<Subject> getFirstLevelSubjects() {
-	       List<Subject> rootSubjects = find.where().isNull("parent").order().asc("name").findList();
-	       return rootSubjects;
+	       return find.where().isNull("parent").order().asc("name").findList();
 	}
 	
 	public static List<Subject> findChildrenByParentId(Long parentId) {
