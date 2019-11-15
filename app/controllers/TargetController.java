@@ -2262,12 +2262,7 @@ public class TargetController extends AbstractController {
      * */
     @Security.Authenticated(SecuredController.class)
     public static Result allSubjectsIDsAsJson(String subject) {
-        Logger.debug("Call from AJAX function allSubjectsIDsAsJson, params subject = " + subject);
-
-        //Logger.debug("after parse subject = " + play.api.libs.json.Json.parse(subject));
-
-        //URLDecoder.decode( subject, "UTF-8" );
-
+        //Logger.debug("Call from AJAX function allSubjectsIDsAsJson, params subject = " + subject);
         try {
             String result = java.net.URLDecoder.decode(subject, StandardCharsets.UTF_8.name());
             subject = result;
@@ -2295,9 +2290,8 @@ public class TargetController extends AbstractController {
      * */
     @Security.Authenticated(SecuredController.class)
     public static Result allCollectionsIDsAsJson(String collection) {
-        Logger.debug("Call from AJAX function allCollectionsIDsAsJson, params subject = " + collection);
+        //Logger.debug("Call from AJAX function allCollectionsIDsAsJson, params subject = " + collection);
         List<Long> collectionIds = new ArrayList<Long>();
-
         try {
             String result = java.net.URLDecoder.decode(collection, StandardCharsets.UTF_8.name());
             collection = result;

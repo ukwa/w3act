@@ -146,9 +146,6 @@
                                     } else {
                                         alert('Make call failed - no output from server');
                                     }
-                                },
-                                error: function (outputfromserver) {
-                                    alert('Make call failed');
                                 }
                             });
                             subjecttreeclicked = true;
@@ -173,9 +170,6 @@
                                     } else {
                                         alert('Make call failed - no output from server');
                                     }
-                                },
-                                error: function (results) {
-                                    alert('Make call failed');
                                 }
                             });
                             colleciontreeclicked = true;
@@ -539,6 +533,8 @@
                                             </li>
                                         }
                                         </ul>
+                                    }else{
+                                        <span class="badge badge-pill badge-secondary">none</span>
                                     }
                                 </div>
                                 <input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
@@ -570,6 +566,8 @@
                                             </li>
                                         }
                                         </ul>
+                                    }else{
+                                        <span class="badge badge-pill badge-secondary">none</span>
                                     }
                                 </div>
                                 <input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">

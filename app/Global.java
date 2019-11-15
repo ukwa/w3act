@@ -113,7 +113,7 @@ public class Global extends GlobalSettings {
 
 	@Override
 	public Handler onRouteRequest(RequestHeader request) {
-		Logger.debug("++++++++++++++ Global - onRouteRequest -  request: " + request + ", uri = " + request.uri());
+		Logger.debug("++++++++++++++ Global - onRouteRequest -  request: " + request );
 
 		return super.onRouteRequest(request);
 	}
