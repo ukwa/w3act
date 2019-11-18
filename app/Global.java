@@ -7,6 +7,7 @@ import models.Role;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
+import play.api.mvc.Handler;
 import scala.concurrent.duration.Duration;
 import uk.bl.db.DataImport;
 import uk.bl.crawling.CrawlActor;
@@ -76,6 +77,8 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onError(RequestHeader request, Throwable t) {
+        Logger.debug("Global error: " + t.toString() + ", request: " + request);
+
         return Promise.<Result>pure(internalServerError(
             views.html.errorPage.render(t)
         ));
@@ -83,13 +86,17 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onHandlerNotFound(RequestHeader request) {
-    	if( request.path().equals(app_context+"/")) {
+		Logger.debug("++++++++++  Global - onHandlerNotFound, request: " + request);
+
+		if( request.path().equals(app_context+"/")) {
     		Logger.warn("Redirecting " + request.path());
     		return  Promise.<Result>pure(
     					movedPermanently(app_context)
     				);
     	} else {
-    		return Promise.<Result>pure(notFound(
+			Logger.debug("++++++++++  Global - onHandlerNotFound -  ELSE - PAGE NOT FOUND, request: " + request);
+
+			return Promise.<Result>pure(notFound(
     				views.html.notFoundPage.render(request.uri())
     				));
     	}
@@ -97,9 +104,18 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onBadRequest(RequestHeader request, String error) {
-    	Logger.debug("error: " + error);
-        return Promise.<Result>pure(badRequest(
-        		views.html.errorPage.render(new Throwable("Bad Request"))
+		Logger.debug("Global - onBadRequest -  error: " + error + ", request: " + request);
+
+		return Promise.<Result>pure(badRequest(
+        		views.html.errorPage.render(new Throwable("Bad Request" + request.toString()))
         ));
     }
+
+	@Override
+	public Handler onRouteRequest(RequestHeader request) {
+		Logger.debug("++++++++++++++ Global - onRouteRequest -  request: " + request );
+
+		return super.onRouteRequest(request);
+	}
+
 }

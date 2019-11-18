@@ -84,7 +84,9 @@ public class ApplicationController extends Controller {
      * We only store lowercase emails and transform user input to lowercase for this field.
      */
     public static Result authenticate() {
-    	// Grab the url to redirect to after login:
+		Logger.debug("Authenticate");
+
+		// Grab the url to redirect to after login:
     	DynamicForm requestData = Form.form().bindFromRequest();
     	String url = "";
     	if( requestData.data().containsKey("redirectToUrl")) {
@@ -103,8 +105,11 @@ public class ApplicationController extends Controller {
             user.lastLogin = Utils.INSTANCE.getCurrentTimeStamp();
     		Ebean.update(user);
             }
-            if( StringUtils.isBlank(url) ) url = routes.ApplicationController.home().url();            
-            return redirect( url );
+            if( StringUtils.isBlank(url) ) url = routes.ApplicationController.home().url();
+
+            Logger.debug("Final Url is: " + url);
+
+			return redirect( url );
         }
     }
 
@@ -161,7 +166,9 @@ public class ApplicationController extends Controller {
                 controllers.routes.javascript.TargetController.index(),
                 controllers.routes.javascript.OrganisationController.index(),
                 controllers.routes.javascript.UserController.index(),
-                controllers.routes.javascript.ContactController.index()
+                controllers.routes.javascript.ContactController.index(),
+				controllers.routes.javascript.TargetController.allSubjectsIDsAsJson(),
+				controllers.routes.javascript.TargetController.allCollectionsIDsAsJson()
             )
         );
     }
@@ -187,10 +194,19 @@ public class ApplicationController extends Controller {
 		
 	 // We've already removed the trailing "/", so if there's still one (or more) there, 
 	 // there's a danger of too many redirects, so let's just 404 in case somebody's playing silly browsers
-	 if (path.charAt(path.length() -1 ) == '/') 
-		return notFound("Sorry, that page does not exist.");
+		Logger.debug("+++++++++  Url path is: " + path);
+
+
+		if (path.charAt(path.length() -1 ) == '/')
+		{
+			Logger.debug("+++++++++ Case:  Sorry, that page does not exist. path = " + path);
+
+			return notFound("Sorry, that page does not exist.");
+		}
 	 else {
-         return movedPermanently(Play.application().configuration().getString("application.context")  + "/" + path); //HTTP 301
+			Logger.debug("+++++++++ Case:  HTTP 301, path = " + path);
+
+			return movedPermanently(Play.application().configuration().getString("application.context")  + "/" + path); //HTTP 301
 	 }
     }
 	

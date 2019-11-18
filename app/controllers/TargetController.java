@@ -2,15 +2,9 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,6 +85,12 @@ public class TargetController extends AbstractController {
     final static Form<Target> targetForm = new Form<Target>(Target.class);
     private static final String DEFAULT_SORT_BY = "title";
     private static final String DEFAULT_ORDER = "asc";
+
+    //for AJAX calls
+    private static List<Long> selectedCollectionIds;
+    public static List<Long> getSelectedCollectionIds() {
+        return selectedCollectionIds;
+    }
 
     /**
      * Display the targets.
@@ -205,6 +205,7 @@ public class TargetController extends AbstractController {
      * @param pageSize       The number of Target entries on the page
      * @param flag           The flag assigned by user
      */
+    //@Cached(key = "targetlist")
     public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject,
                               String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
 
@@ -240,26 +241,6 @@ public class TargetController extends AbstractController {
         User user = User.findByEmail(request().username());
         List<License> licenses = License.findAllLicenses();
 
-        List<Long> subjectIds = new ArrayList<Long>();
-        String[] subjects = subject.split(", ");
-        for(String sId : subjects) {
-            if(StringUtils.isNotEmpty(sId)) {
-                Long subjectId = Long.valueOf(sId);
-                subjectIds.add(subjectId);
-            }
-        }
-        JsonNode subjectData = getSubjectsDataByIds(subjectIds);
-
-        List<Long> collectionIds = new ArrayList<Long>();
-        String[] collections = collection.split(", ");
-        for(String cId : collections) {
-            if(StringUtils.isNotEmpty(cId)) {
-                Long collectionId = Long.valueOf(cId);
-                collectionIds.add(collectionId);
-            }
-        }
-        JsonNode collectionData = getCollectionsDataByIds(collectionIds);
-
         List<User> users = User.findAllSorted();
         List<Organisation> organisations = Organisation.findAllSorted();
         CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
@@ -284,8 +265,8 @@ public class TargetController extends AbstractController {
                 pageSize,
                 flagId,
                 licenses,
-                collectionData,
-                subjectData,
+                null,
+                null,
                 users,
                 organisations,
                 crawlFrequencies, flags)
@@ -883,9 +864,6 @@ public class TargetController extends AbstractController {
 
         filledForm = filledForm.fill(target);
 
-        JsonNode collectionData = getCollectionsData();
-        JsonNode subjectData = getSubjectsData();
-
         Map<String, String> authors = User.options();
         List<Tag> tags = Tag.findAllTags();
         List<Flag> flags = Flag.findAllFlags();
@@ -900,7 +878,7 @@ public class TargetController extends AbstractController {
         Map<String, String> siteStatuses = Const.SiteStatus.options();
         Map<String, String> organisations = Organisation.options();
 
-        return ok(edit.render(filledForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, null, null, null));
+        return ok(edit.render(filledForm, user, null, null, null, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, null, null, null));
     }
 
     /**
@@ -908,6 +886,7 @@ public class TargetController extends AbstractController {
      *
      * @param url The target identifier URL
      */
+    //@Cached(key = "targetedit")
     public static Result edit(Long id) {
         Logger.debug("Targets.edit() id::::: " + id);
 
@@ -923,14 +902,14 @@ public class TargetController extends AbstractController {
         target.formUrl = target.fieldUrl();
         target.subjectSelect = target.subjectIdsAsString();
         target.collectionSelect = target.collectionIdsAsString();
+        target.subjectSelectTitles = target.subjectsAsString();
+        target.collectionSelectTitles = target.collectionsAsString();
         Form<Target> filledForm = targetForm.fill(target);
         if(target.watchedTarget != null) {
             filledForm.data().putAll(FastSubjects.getFormData(target.watchedTarget.fastSubjects));
         }
         User user = User.findByEmail(request().username());
         target.language = Const.TargetLanguage.EN.toString();
-        JsonNode collectionData = getCollectionsData(target.collections);
-        JsonNode subjectData = getSubjectsData(target.subjects);
 
         Map<String, String> authors = User.options();
         List<Tag> tags = Tag.findAllTags();
@@ -960,7 +939,7 @@ public class TargetController extends AbstractController {
 //		}
 
         Logger.debug("collections: " + target.collections.size());
-        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
+        return ok(edit.render(filledForm, user, id, null, null, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
     }
 
     public static Result delete(Long id) {
@@ -1535,7 +1514,7 @@ public class TargetController extends AbstractController {
         String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
         Logger.debug("subjectSelect: " + subjectSelect);
         if(StringUtils.isNotEmpty(subjectSelect)) {
-            String[] subjects = subjectSelect.split(", ");
+            String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
             for(String sId : subjects) {
                 Long subjectId = Long.valueOf(sId);
                 Subject subject = Subject.findById(subjectId);
@@ -1553,7 +1532,7 @@ public class TargetController extends AbstractController {
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
         if(StringUtils.isNotEmpty(collectionSelect)) {
-            String[] collections = collectionSelect.split(", ");
+            String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
             for(String cId : collections) {
                 Long collectionId = Long.valueOf(cId);
                 Collection collection = Collection.findById(collectionId);
@@ -1772,7 +1751,7 @@ public class TargetController extends AbstractController {
 
         Logger.debug("\n\nfieldUrl: " + fieldUrl);
         if(StringUtils.isNotEmpty(fieldUrl)) {
-            String[] urls = fieldUrl.split(",");
+            String[] urls = fieldUrl.split(Const.LIST_DELIMITER);
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 
             long position = 0;
@@ -2274,6 +2253,74 @@ public class TargetController extends AbstractController {
         return collectionNode;
     }
 
+    /**
+     * Method for Subjects tree data.
+     * Used by AJAX call.
+     *
+     * @param subject This is an identifier for current subjects selected in subject tree
+     * @return tree structure
+     * */
+    @Security.Authenticated(SecuredController.class)
+    public static Result allSubjectsIDsAsJson(String subject) {
+        //Logger.debug("Call from AJAX function allSubjectsIDsAsJson, params subject = " + subject);
+        try {
+            String result = java.net.URLDecoder.decode(subject, StandardCharsets.UTF_8.name());
+            subject = result;
+        } catch (UnsupportedEncodingException e) {
+            // not going to happen - value came from JDK's own StandardCharsets
+        }
+
+        List<Long> subjectIds = new ArrayList<Long>();
+        String[] subjects = subject.replace("\"", "").split(Const.LIST_DELIMITER);
+        for(String sId : subjects) {
+            if(StringUtils.isNotEmpty(sId)) {
+                Long subjectId = Long.valueOf(sId);
+                subjectIds.add(subjectId);
+            }
+        }
+        return ok (getSubjectsDataByIds(subjectIds));
+    }
+
+    /**
+     * Method for Collections tree data.
+     * Used by AJAX call.
+     *
+     * @param collection This is an identifier for current collections selected in collection tree
+     * @return tree structure
+     * */
+    @Security.Authenticated(SecuredController.class)
+    public static Result allCollectionsIDsAsJson(String collection) {
+        //Logger.debug("Call from AJAX function allCollectionsIDsAsJson, params subject = " + collection);
+        List<Long> collectionIds = new ArrayList<Long>();
+        try {
+            String result = java.net.URLDecoder.decode(collection, StandardCharsets.UTF_8.name());
+            collection = result;
+        } catch (UnsupportedEncodingException e) {
+            // not going to happen - value came from JDK's own StandardCharsets
+        }
+        String[] collections = collection.replace("\"", "").split(Const.LIST_DELIMITER);
+        for(String cId : collections) {
+            if(StringUtils.isNotEmpty(cId)) {
+                Long collectionId = Long.valueOf(cId);
+                collectionIds.add(collectionId);
+            }
+        }
+        return ok (getCollectionsDataByIds(collectionIds));
+    }
+
+    /**
+     * Method for Collections tree branch data.
+     * Used by AJAX call.
+     *
+     * @param collectionId This is an identifier for current collection's tree branch to get it's children.
+     * List of all selected ids is combined and reflected on collection tree view
+     * @return tree structure
+     * */
+    //@Security.Authenticated(SecuredController.class)
+    public static Result getSingleCollectionByIdAsJson(String collectionId) {
+        return ok ( getSingleCollectionDataById( Long.valueOf(collectionId), getSelectedCollectionIds() ));
+    }
+
     @Security.Authenticated(SecuredController.class)
     public static Result getTargetCategories(Long id) {
         Target target = Target.findById(id);
@@ -2384,10 +2431,7 @@ public class TargetController extends AbstractController {
                 continue;
             }
             //Collection c = new Collection();
-            //c.name = 
-
-            // 
-            System.out.println(target);
+            //c.name =
 
             // TODO Merge with controllers.ApplicationController.bulkImport() code to avoid repetition.
             target.revision = Const.INITIAL_REVISION;
@@ -2414,7 +2458,7 @@ public class TargetController extends AbstractController {
 			*/
 
             //
-            System.out.println(target);
+            Logger.debug("target: " + target);
         }
         workbook.close();
         file.close();

@@ -216,7 +216,6 @@ public class CollectionController extends AbstractController {
 	
 	@Security.Authenticated(SecuredController.class)
     public static Result save() {
-    	
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
 
@@ -233,7 +232,7 @@ public class CollectionController extends AbstractController {
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
 	            Logger.debug("collectionSelect:save: " + collectionSelect);
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
-	                String[] collections = collectionSelect.split(", ");
+	                String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 		            	Collection collection = Collection.findById(collectionId);
@@ -272,9 +271,10 @@ public class CollectionController extends AbstractController {
         	            return newInfo(filledForm);
         			}
             	}
-		        
 		        filledForm.get().save();
-		        flash("message", "Collection " + filledForm.get().name + " has been created");
+				flash("message", "Collection " + filledForm.get().name + " has been created");
+				Logger.debug("invalidate cache on Collection Create, key CollectionsData: ");
+				getCache().remove("CollectionsData");
 		        return redirect(routes.CollectionController.view(filledForm.get().id));
         	}
         }
@@ -302,7 +302,7 @@ public class CollectionController extends AbstractController {
 	            Logger.debug("collectionSelect:update: " + collectionSelect);
 	           
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
-	                String[] collections = collectionSelect.split(", ");
+	                String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 	                	if (collectionId.longValue() == id.longValue()) {
@@ -368,11 +368,15 @@ public class CollectionController extends AbstractController {
 		        
 		        filledForm.get().update(id);
 		        flash("message", "Collection " + filledForm.get().name + " has been updated");
+				Logger.debug("invalidate cache on Collection Update, key CollectionsData: ");
+				getCache().remove("CollectionsData");
 		        return redirect(routes.CollectionController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
         		Collection collection = Collection.findById(id);
 		        flash("message", "Collection " + filledForm.get().name + " has been deleted");
             	collection.delete();
+                Logger.debug("invalidate cache on Collection Delete, key CollectionsData: ");
+                getCache().remove("CollectionsData");
         		return redirect(routes.CollectionController.index()); 
         	}
         }

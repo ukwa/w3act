@@ -48,7 +48,7 @@ function scopeCheck(context) {
     var idle_timeout,
     SCOPE_URI = context + '/api/scope/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
-    TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+    TRIGGER_CHARS = ". ,;", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
 
 	addButton = $('#addentry')
@@ -104,7 +104,7 @@ function licenceCheck(context) {
     var idle_timeout,
     LICENCE_URI = context + '/api/licence/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doLicence server
-    TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+    TRIGGER_CHARS = ". ,;", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doLicence is also done after IDLE_THRESHOLD milliseconds of key idleness
 
 	saveButton = $('#save')
@@ -363,18 +363,20 @@ function showTree(data, id, key) {
 }
 
 function showTree(data, id, key, sm) {
-	//console.log(data);
-	var selectionMode = parseInt(sm); 
+    var expandedNodes = [];
+	var selectionMode = parseInt(sm);
  	$(id).dynatree({
 		checkbox: true,
     	selectMode: selectionMode,
+        autoCollapse:false,
+        activeVisible: true,
     	children: data,
     	onSelect: function(select, node) {
       		// Get a list of all selected nodes, and convert to a key array:
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join(", ");
+      		document.getElementById(key).value = selKeys.join("; ");
       		
       		//console.log("test: " + document.getElementById(key).value);
       		// Get a list of all selected TOP nodes
@@ -392,7 +394,7 @@ function showTree(data, id, key, sm) {
             var selKeys = $.map(tree.getSelectedNodes(), function(node){
                 node.makeVisible();
             });
-         }
+         },
  	});
 }
 
@@ -415,7 +417,7 @@ function showTreeSelect(data, id, key) {
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join(", ");
+      		document.getElementById(key).value = selKeys.join("; ");
       		// Get a list of all selected TOP nodes
       		var selRootNodes = node.tree.getSelectedNodes(true);
       		// ... and convert to a key array:
@@ -438,8 +440,8 @@ function showTreeParent(data, id, key) {
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join(", ");
-        },
+      		document.getElementById(key).value = selKeys.join("; ");
+        }
         // The following options are only required, if we have more than one tree on one page:
 //        initId: "treeData",
 /* 			        cookieId: "dynatree-Cb1",
