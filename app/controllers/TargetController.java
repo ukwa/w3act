@@ -1751,7 +1751,7 @@ public class TargetController extends AbstractController {
 
         Logger.debug("\n\nfieldUrl: " + fieldUrl);
         if(StringUtils.isNotEmpty(fieldUrl)) {
-            String[] urls = fieldUrl.split(Const.LIST_DELIMITER);
+            String[] urls = fieldUrl.split(Const.SEED_URLS_DELIMITER);
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 
             long position = 0;

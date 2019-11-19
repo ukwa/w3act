@@ -1935,7 +1935,7 @@ public class Target extends Model {
 			Logger.debug("Adding URL to string: "+fieldUrl.id+":"+fieldUrl.url+" "+fieldUrl.position);
 			urls.add(fieldUrl.url);
 		}
-		return StringUtils.join(urls, ", ");
+		return StringUtils.join(urls, Const.SEED_URLS_DELIMITER);
 	}
 	
 	@JsonIgnore
