@@ -82,11 +82,8 @@
 						if (outputfromserver !== null) {
 							showTree(outputfromserver, "#subjectTree", "subjectSelect");
 						} else {
-							alert('Make call get Subjects failed - no output from server');
+							alert('Make call get Subjects failed 1 - no output from server');
 						}
-					},
-					error: function (outputfromserver) {
-						alert('Make call get Subjects failed' + outputfromserver);
 					}
 				});
 			}
@@ -102,11 +99,8 @@
 						if (outputfromserver !== null) {
 							showTree(outputfromserver, "#collectionTree", "collectionSelect");
 						} else {
-							alert('Make call get Collections failed - no output from server');
+							alert('Make call get Collections failed 1 - no output from server');
 						}
-					},
-					error: function (results) {
-						alert('Make call get Collections failed' + results);
 					}
 				});
 			}
@@ -361,7 +355,9 @@
 																			</li>
 																	}
 																	</ul>
-																}
+																}else{
+                                                                    <span class="badge badge-pill badge-secondary">none</span>
+                                                                }
 															</div>
 														</div>
 													} else {
@@ -398,7 +394,9 @@
 																		</li>
 																	}
 																	</ul>
-																}
+																}else{
+                                                                    <span class="badge badge-pill badge-secondary">none</span>
+                                                                }
 															</div>
 														</div>
 													} else {
