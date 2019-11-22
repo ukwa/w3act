@@ -581,7 +581,7 @@
                                             @if(targetForm("collectionSelect").value!=null){
                                                 @for(_collection <- targetForm("collectionSelect").value.split(Const.LIST_DELIMITER)) {
                                                     <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
-                                                        @models.Collection.findById(Long.valueOf(_collection.trim()))
+                                                        @models.Collection.findNameById(Long.valueOf(_collection.trim()))
                                                     </span>
                                                     </li>
                                                 }
