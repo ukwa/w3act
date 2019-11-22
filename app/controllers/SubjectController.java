@@ -388,7 +388,6 @@ public class SubjectController extends AbstractController {
 		if (currentUrl.contains(Const.LIST_DELIMITER)) {
 			currentUrl = currentUrl.replace(Const.LIST_DELIMITER, Const.LIST_DELIMITER + " "); // in database entry with comma has additional space after comma
 		}
-//    	Logger.debug("checkSelection() 1: " + subjectUrl + ", 2: " + currentUrl);
     	if (currentUrl != null && currentUrl.length() > 0) {
     		if (currentUrl.equals(subjectUrl) || currentUrl.equals(subjectUrl)) {
     			res = "\"select\": true ,";
