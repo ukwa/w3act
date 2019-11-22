@@ -8,13 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -1748,8 +1742,30 @@ public class TargetController extends AbstractController {
         return redirect(routes.TargetController.view(filledForm.get().id));
     }
 
+    /**
+     * Method validateUrls
+     * Constructs an empty <tt>LinkedHashMap</tt> instance with the
+     * specified initial capacity, load factor and ordering mode.
+     *
+     * @param  initialCapacity the initial capacity
+     * @param  loadFactor      the load factor
+     * @param  accessOrder     the ordering mode - <tt>true</tt> for
+     *         access-order, <tt>false</tt> for insertion-order
+     * @throws IllegalArgumentException if the initial capacity is negative
+     *         or the load factor is nonpositive
+     */
+    /**
+     * Method validateUrls
+     * @param requestData
+     * @param id
+     * @param filledForm
+     * @return
+     * @throws ActException
+     */
     private static Result validateUrls(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
         String fieldUrl = requestData.get("formUrl");
+
+        Set<String> setOfUrls = Collections.newSetFromMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true));
 
         Logger.debug("\n\nfieldUrl: " + fieldUrl);
         if(StringUtils.isNotEmpty(fieldUrl)) {
@@ -1759,13 +1775,18 @@ public class TargetController extends AbstractController {
             long position = 0;
 
             for(String url : urls) {
-
                 String trimmed = url.trim();
-
                 Logger.debug("trimmed " + trimmed);
+                //-----------
+                setOfUrls.add(trimmed);
+                //-----------
+            }
+
+            //setOfUrls.stream().forEach(s_url -> {
+            for(String s_url : setOfUrls){
                 URL uri;
                 try {
-                    uri = new URI(trimmed).normalize().toURL();
+                    uri = new URI(s_url).normalize().toURL();
                 }
                 catch(MalformedURLException | URISyntaxException | IllegalArgumentException e) {
                     ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
@@ -1774,15 +1795,20 @@ public class TargetController extends AbstractController {
                 }
 
                 UrlValidator urlValidator = new UrlValidator();
-                if(!urlValidator.isValid(trimmed)) {
+                if(!urlValidator.isValid(s_url)) {
                     ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     return info(filledForm, id);
                 }
 
                 String extFormUrl = uri.toExternalForm();
-                FieldUrl fu = new FieldUrl(extFormUrl.trim());
-                boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+                FieldUrl fu = null;
+                try {
+                    fu = new FieldUrl(extFormUrl.trim());
+                } catch (ActException e) {
+                    e.printStackTrace();
+                }
+                boolean isValidUrl = Utils.INSTANCE.validUrl(s_url);
                 Logger.debug("valid? " + isValidUrl);
                 if(!isValidUrl) {
                     ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again 5");
@@ -1790,18 +1816,26 @@ public class TargetController extends AbstractController {
                     flash("message", "Invalid URL.");
                     return redirect(routes.TargetController.edit(id));
                 }
-                Logger.debug("Adding url: " + trimmed + " at position " + position);
+                Logger.debug("Adding url: " + s_url + " at position " + position);
                 fu.position = position;
                 position++;
                 Logger.debug("extFormUrl: " + extFormUrl);
                 fieldUrls.add(fu);
-            }
+            };
+
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
         }
         return null;
     }
 
+    /**
+     * Method validateCheckForExistingUrl
+     * @param id
+     * @param filledForm
+     * @return
+     * @throws ActException
+     */
     private static Result validateCheckForExistingUrl(Long id, Form<Target> filledForm) throws ActException {
         List<FieldUrl> fieldUrls = filledForm.get().fieldUrls;
 
