@@ -183,7 +183,7 @@ public class SubjectController extends AbstractController {
 	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
 	            Logger.debug("subjectSelect: " + subjectSelect);
 	            if (StringUtils.isNotEmpty(subjectSelect)) {
-	                String[] subjects = subjectSelect.split(", ");
+	                String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
 	                if (subjects.length == 1) {
 	                	Long subjectId = Long.valueOf(subjects[0]);
 		            	Subject subject = Subject.findById(subjectId);
@@ -227,7 +227,7 @@ public class SubjectController extends AbstractController {
 	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
 	            Logger.debug("subjectSelect: " + subjectSelect);
 	            if (StringUtils.isNotEmpty(subjectSelect)) {
-	                String[] subjects = subjectSelect.split(", ");
+	                String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
 	                if (subjects.length == 1) {
 	                	Long subjectId = Long.valueOf(subjects[0]);
 	                	if (subjectId.longValue() == id.longValue()) {

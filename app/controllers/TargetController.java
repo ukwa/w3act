@@ -1511,7 +1511,8 @@ public class TargetController extends AbstractController {
         }
 
         List<Subject> newSubjects = new ArrayList<Subject>();
-        String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+        String subjectSelect = requestData.get("subjectSelect");
+        if (subjectSelect!=null) subjectSelect.replace("\"", "");
         Logger.debug("subjectSelect: " + subjectSelect);
         if(StringUtils.isNotEmpty(subjectSelect)) {
             String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
@@ -1529,7 +1530,8 @@ public class TargetController extends AbstractController {
         filledForm.get().subjects = newSubjects;
 
         List<Collection> newCollections = new ArrayList<Collection>();
-        String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
+        String collectionSelect = requestData.get("collectionSelect");
+        if (collectionSelect!=null)collectionSelect.replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
         if(StringUtils.isNotEmpty(collectionSelect)) {
             String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
