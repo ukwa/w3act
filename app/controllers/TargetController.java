@@ -2276,7 +2276,7 @@ public class TargetController extends AbstractController {
         String[] subjects = subject.replace("\"", "").split(Const.LIST_DELIMITER);
         for(String sId : subjects) {
             if(StringUtils.isNotEmpty(sId)) {
-                Long subjectId = Long.valueOf(sId);
+                Long subjectId = Long.valueOf(sId.trim());
                 subjectIds.add(subjectId);
             }
         }
@@ -2303,7 +2303,7 @@ public class TargetController extends AbstractController {
         String[] collections = collection.replace("\"", "").split(Const.LIST_DELIMITER);
         for(String cId : collections) {
             if(StringUtils.isNotEmpty(cId)) {
-                Long collectionId = Long.valueOf(cId);
+                Long collectionId = Long.valueOf(cId.trim());
                 collectionIds.add(collectionId);
             }
         }
