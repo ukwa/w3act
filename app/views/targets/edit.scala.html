@@ -523,7 +523,7 @@
                             <div class="col-md-6 col-sm-6">
                                 <div id="subjectTree" style="padding:5px;"></div>
                                 <div id="subjectTreeSelection">
-                                    <label class="control-label">Selected Subjects:</label>
+                                    <lasbel class="control-label">Selected Subjects:</lasbel>
                                     @if(targetForm("subjectSelect").value != null && !targetForm("subjectSelect").value.isEmpty) {
                                         <ul class="selectionfromtrees">
                                         @if(targetForm("subjectSelectTitles").value != null ) {
@@ -537,7 +537,7 @@
                                         @if(targetForm("subjectSelect").value!=null){
                                                 @for(_subject <- targetForm("subjectSelect").value.split(Const.LIST_DELIMITER)) {
                                                     <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
-                                                        @Subject.findById(Long.valueOf(_subject.trim())).description
+                                                        @Subject.findNameById(Long.valueOf(_subject.trim()))
                                                     </span>
                                                     </li>
                                                 }
@@ -581,7 +581,7 @@
                                             @if(targetForm("collectionSelect").value!=null){
                                                 @for(_collection <- targetForm("collectionSelect").value.split(Const.LIST_DELIMITER)) {
                                                     <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
-                                                        @Collection.findById(Long.valueOf(_collection.trim())).description
+                                                        @models.Collection.findById(Long.valueOf(_collection.trim()))
                                                     </span>
                                                     </li>
                                                 }
