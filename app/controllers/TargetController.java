@@ -1515,9 +1515,9 @@ public class TargetController extends AbstractController {
         if (subjectSelect!=null) subjectSelect.replace("\"", "");
         Logger.debug("subjectSelect: " + subjectSelect);
         if(StringUtils.isNotEmpty(subjectSelect)) {
-            String[] subjects = subjectSelect.trim().split(Const.LIST_DELIMITER);
+            String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
             for(String sId : subjects) {
-                Long subjectId = Long.valueOf(sId);
+                Long subjectId = Long.valueOf(sId.trim());
                 Subject subject = Subject.findById(subjectId);
                 if(subject.parent != null) {
                     newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
@@ -1534,9 +1534,9 @@ public class TargetController extends AbstractController {
         if (collectionSelect!=null)collectionSelect.replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
         if(StringUtils.isNotEmpty(collectionSelect)) {
-            String[] collections = collectionSelect.trim().split(Const.LIST_DELIMITER);
+            String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
             for(String cId : collections) {
-                Long collectionId = Long.valueOf(cId);
+                Long collectionId = Long.valueOf(cId.trim());
                 Collection collection = Collection.findById(collectionId);
                 if(collection.parent != null) {
                     newCollections = processParentsCollections(newCollections, collection.parent.id);
