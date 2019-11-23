@@ -1754,14 +1754,6 @@ public class TargetController extends AbstractController {
      * @throws IllegalArgumentException if the initial capacity is negative
      *         or the load factor is nonpositive
      */
-    /**
-     * Method validateUrls
-     * @param requestData
-     * @param id
-     * @param filledForm
-     * @return
-     * @throws ActException
-     */
     private static Result validateUrls(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
         String fieldUrl = requestData.get("formUrl");
 
@@ -1774,15 +1766,9 @@ public class TargetController extends AbstractController {
 
             long position = 0;
 
-            for(String url : urls) {
-                String trimmed = url.trim();
-                Logger.debug("trimmed " + trimmed);
-                //-----------
-                setOfUrls.add(trimmed);
-                //-----------
-            }
+            for(String url : urls)
+                setOfUrls.add(url.trim());
 
-            //setOfUrls.stream().forEach(s_url -> {
             for(String s_url : setOfUrls){
                 URL uri;
                 try {
