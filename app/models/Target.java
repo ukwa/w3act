@@ -1089,7 +1089,7 @@ public class Target extends Model {
         	List<Long> subjectIds = new ArrayList<Long>();
             String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
             for (String sId : subjects) {
-            	Long subjectId = Long.valueOf(sId);
+            	Long subjectId = Long.valueOf(sId.trim());
             	subjectIds.add(subjectId);
             }
     		exp = exp.in("subjects.id", subjectIds);
