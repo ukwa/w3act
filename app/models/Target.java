@@ -1099,7 +1099,7 @@ public class Target extends Model {
         	List<Collection> collectionIds = new ArrayList<Collection>();
             String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
             for (String cId : collections) {
-            	Long collectionId = Long.valueOf(cId);
+            	Long collectionId = Long.valueOf(cId.trim());
             	Collection collection = Collection.findById(collectionId);
             	collectionIds.add(collection);
             }
