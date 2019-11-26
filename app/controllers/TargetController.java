@@ -1755,21 +1755,11 @@ public class TargetController extends AbstractController {
      * @return
      * @throws ActException
      *
-     *
-     * Variable setOfUrls - Constructs an empty <tt>LinkedHashMap</tt> instance with the
-     * specified initial capacity, load factor and ordering mode.
-     *
-     * @param  initialCapacity the initial capacity
-     * @param  loadFactor      the load factor
-     * @param  accessOrder     the ordering mode - <tt>true</tt> for
-     *         access-order, <tt>false</tt> for insertion-order
-     * @throws IllegalArgumentException if the initial capacity is negative
-     *         or the load factor is nonpositive
      */
     private static Result validateUrls(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
         String fieldUrl = requestData.get("formUrl");
 
-        Set<String> setOfUrls = Collections.newSetFromMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true));
+        List<String> listOfUrls = new ArrayList<>();
 
         Logger.debug("\n\nfieldUrl: " + fieldUrl);
         if(StringUtils.isNotEmpty(fieldUrl)) {
@@ -1777,11 +1767,17 @@ public class TargetController extends AbstractController {
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 
             long position = 0;
+            String trimmed;
 
             for(String url : urls)
-                setOfUrls.add(url.trim());
+            {
+                trimmed = url.trim();
+                if (!listOfUrls.contains(trimmed)) {
+                    listOfUrls.add(trimmed);
+                }
+            }
 
-            for(String s_url : setOfUrls){
+            for(String s_url : listOfUrls){
                 URL uri;
                 try {
                     uri = new URI(s_url).normalize().toURL();
