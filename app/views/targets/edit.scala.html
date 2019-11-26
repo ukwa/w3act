@@ -526,11 +526,22 @@
                                     <label class="control-label">Selected Subjects:</label>
                                     @if(targetForm("subjectSelect").value != null && !targetForm("subjectSelect").value.isEmpty) {
                                         <ul class="selectionfromtrees">
-                                        @for(_subject <- targetForm("subjectSelectTitles").value.split(Const.LIST_DELIMITER)) {
-                                            <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
-                                            @_subject
-                                            </span>
-                                            </li>
+                                        @if(targetForm("subjectSelectTitles").value != null ) {
+                                            @for(_subject <- targetForm("subjectSelectTitles").value.split(Const.LIST_DELIMITER)) {
+                                                <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+                                                @_subject
+                                                </span>
+                                                </li>
+                                            }
+                                        }else{
+                                        @if(targetForm("subjectSelect").value!=null){
+                                                @for(_subject <- targetForm("subjectSelect").value.split(Const.LIST_DELIMITER)) {
+                                                    <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+                                                        @Subject.findNameById(Long.valueOf(_subject.trim()))
+                                                    </span>
+                                                    </li>
+                                                }
+                                            }
                                         }
                                         </ul>
                                     }else{
@@ -559,11 +570,22 @@
                                     <label class="control-label">Selected Collections:</label>
                                     @if(targetForm("collectionSelect").value != null && !targetForm("collectionSelect").value.isEmpty) {
                                         <ul class="selectionfromtrees">
-                                        @for(_collection <- targetForm("collectionSelectTitles").value.split(Const.LIST_DELIMITER)) {
-                                            <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
-                                            @_collection
-                                            </span>
-                                            </li>
+                                        @if(targetForm("collectionSelectTitles").value != null ) {
+                                            @for(_collection <- targetForm("collectionSelectTitles").value.split(Const.LIST_DELIMITER)) {
+                                                <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+                                                @_collection
+                                                </span>
+                                                </li>
+                                            }
+                                        }else{
+                                            @if(targetForm("collectionSelect").value!=null){
+                                                @for(_collection <- targetForm("collectionSelect").value.split(Const.LIST_DELIMITER)) {
+                                                    <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+                                                        @models.Collection.findNameById(Long.valueOf(_collection.trim()))
+                                                    </span>
+                                                    </li>
+                                                }
+                                            }
                                         }
                                         </ul>
                                     }else{
@@ -571,6 +593,7 @@
                                     }
                                 </div>
                                 <input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
+
                             </div>
                         </div>
                     </div>

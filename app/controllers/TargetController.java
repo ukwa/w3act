@@ -8,13 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -1511,12 +1505,13 @@ public class TargetController extends AbstractController {
         }
 
         List<Subject> newSubjects = new ArrayList<Subject>();
-        String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+        String subjectSelect = requestData.get("subjectSelect");
+        if (subjectSelect!=null) subjectSelect.replace("\"", "");
         Logger.debug("subjectSelect: " + subjectSelect);
         if(StringUtils.isNotEmpty(subjectSelect)) {
             String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
             for(String sId : subjects) {
-                Long subjectId = Long.valueOf(sId);
+                Long subjectId = Long.valueOf(sId.trim());
                 Subject subject = Subject.findById(subjectId);
                 if(subject.parent != null) {
                     newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
@@ -1529,12 +1524,13 @@ public class TargetController extends AbstractController {
         filledForm.get().subjects = newSubjects;
 
         List<Collection> newCollections = new ArrayList<Collection>();
-        String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
+        String collectionSelect = requestData.get("collectionSelect");
+        if (collectionSelect!=null)collectionSelect.replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
         if(StringUtils.isNotEmpty(collectionSelect)) {
             String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
             for(String cId : collections) {
-                Long collectionId = Long.valueOf(cId);
+                Long collectionId = Long.valueOf(cId.trim());
                 Collection collection = Collection.findById(collectionId);
                 if(collection.parent != null) {
                     newCollections = processParentsCollections(newCollections, collection.parent.id);
@@ -1746,24 +1742,49 @@ public class TargetController extends AbstractController {
         return redirect(routes.TargetController.view(filledForm.get().id));
     }
 
+    /**
+     *
+     *
+
+     */
+    /**
+     * Method validateUrls
+     * @param requestData
+     * @param id
+     * @param filledForm
+     * @return
+     * @throws ActException
+     *
+     *
+     * Variable setOfUrls - Constructs an empty <tt>LinkedHashMap</tt> instance with the
+     * specified initial capacity, load factor and ordering mode.
+     *
+     * @param  initialCapacity the initial capacity
+     * @param  loadFactor      the load factor
+     * @param  accessOrder     the ordering mode - <tt>true</tt> for
+     *         access-order, <tt>false</tt> for insertion-order
+     * @throws IllegalArgumentException if the initial capacity is negative
+     *         or the load factor is nonpositive
+     */
     private static Result validateUrls(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
         String fieldUrl = requestData.get("formUrl");
 
+        Set<String> setOfUrls = Collections.newSetFromMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true));
+
         Logger.debug("\n\nfieldUrl: " + fieldUrl);
         if(StringUtils.isNotEmpty(fieldUrl)) {
-            String[] urls = fieldUrl.split(Const.LIST_DELIMITER);
+            String[] urls = fieldUrl.split(Const.SEED_URLS_DELIMITER);
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 
             long position = 0;
 
-            for(String url : urls) {
+            for(String url : urls)
+                setOfUrls.add(url.trim());
 
-                String trimmed = url.trim();
-
-                Logger.debug("trimmed " + trimmed);
+            for(String s_url : setOfUrls){
                 URL uri;
                 try {
-                    uri = new URI(trimmed).normalize().toURL();
+                    uri = new URI(s_url).normalize().toURL();
                 }
                 catch(MalformedURLException | URISyntaxException | IllegalArgumentException e) {
                     ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
@@ -1772,15 +1793,20 @@ public class TargetController extends AbstractController {
                 }
 
                 UrlValidator urlValidator = new UrlValidator();
-                if(!urlValidator.isValid(trimmed)) {
+                if(!urlValidator.isValid(s_url)) {
                     ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     return info(filledForm, id);
                 }
 
                 String extFormUrl = uri.toExternalForm();
-                FieldUrl fu = new FieldUrl(extFormUrl.trim());
-                boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+                FieldUrl fu = null;
+                try {
+                    fu = new FieldUrl(extFormUrl.trim());
+                } catch (ActException e) {
+                    e.printStackTrace();
+                }
+                boolean isValidUrl = Utils.INSTANCE.validUrl(s_url);
                 Logger.debug("valid? " + isValidUrl);
                 if(!isValidUrl) {
                     ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again 5");
@@ -1788,18 +1814,26 @@ public class TargetController extends AbstractController {
                     flash("message", "Invalid URL.");
                     return redirect(routes.TargetController.edit(id));
                 }
-                Logger.debug("Adding url: " + trimmed + " at position " + position);
+                Logger.debug("Adding url: " + s_url + " at position " + position);
                 fu.position = position;
                 position++;
                 Logger.debug("extFormUrl: " + extFormUrl);
                 fieldUrls.add(fu);
-            }
+            };
+
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
         }
         return null;
     }
 
+    /**
+     * Method validateCheckForExistingUrl
+     * @param id
+     * @param filledForm
+     * @return
+     * @throws ActException
+     */
     private static Result validateCheckForExistingUrl(Long id, Form<Target> filledForm) throws ActException {
         List<FieldUrl> fieldUrls = filledForm.get().fieldUrls;
 
@@ -2274,7 +2308,7 @@ public class TargetController extends AbstractController {
         String[] subjects = subject.replace("\"", "").split(Const.LIST_DELIMITER);
         for(String sId : subjects) {
             if(StringUtils.isNotEmpty(sId)) {
-                Long subjectId = Long.valueOf(sId);
+                Long subjectId = Long.valueOf(sId.trim());
                 subjectIds.add(subjectId);
             }
         }
@@ -2301,7 +2335,7 @@ public class TargetController extends AbstractController {
         String[] collections = collection.replace("\"", "").split(Const.LIST_DELIMITER);
         for(String cId : collections) {
             if(StringUtils.isNotEmpty(cId)) {
-                Long collectionId = Long.valueOf(cId);
+                Long collectionId = Long.valueOf(cId.trim());
                 collectionIds.add(collectionId);
             }
         }

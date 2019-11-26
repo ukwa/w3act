@@ -1089,7 +1089,7 @@ public class Target extends Model {
         	List<Long> subjectIds = new ArrayList<Long>();
             String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
             for (String sId : subjects) {
-            	Long subjectId = Long.valueOf(sId);
+            	Long subjectId = Long.valueOf(sId.trim());
             	subjectIds.add(subjectId);
             }
     		exp = exp.in("subjects.id", subjectIds);
@@ -1099,7 +1099,7 @@ public class Target extends Model {
         	List<Collection> collectionIds = new ArrayList<Collection>();
             String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
             for (String cId : collections) {
-            	Long collectionId = Long.valueOf(cId);
+            	Long collectionId = Long.valueOf(cId.trim());
             	Collection collection = Collection.findById(collectionId);
             	collectionIds.add(collection);
             }
@@ -1935,7 +1935,7 @@ public class Target extends Model {
 			Logger.debug("Adding URL to string: "+fieldUrl.id+":"+fieldUrl.url+" "+fieldUrl.position);
 			urls.add(fieldUrl.url);
 		}
-		return StringUtils.join(urls, ", ");
+		return StringUtils.join(urls, Const.SEED_URLS_DELIMITER);
 	}
 	
 	@JsonIgnore

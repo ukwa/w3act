@@ -59,7 +59,7 @@ public final class Const {
 	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
 	public static final String FIELD_QA_ISSUE     = "field_qa_issue";
 	public static final String JSON               = ".json";
-	public static final String COMMA              = ",";
+	public static final String COMMA              = ", ";
 
 	public static final int STRING_LIMIT          = 50;
 
@@ -82,7 +82,8 @@ public final class Const {
 	public static final String TARGET_DEF         = "TARGETDEF";
 	public static final String OFFSET             = "offset";
 	public static final String LIMIT              = "limit";
-	public static final String LIST_DELIMITER     = "; ";//", ";
+	public static final String LIST_DELIMITER     = ";";//", ";
+	public static final String SEED_URLS_DELIMITER    = ",";
 	public static final String SLASH_DELIMITER    = "/";
 	public static final String HOST          	  = "host";
 	public static final String PORT               = "port";
