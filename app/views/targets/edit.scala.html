@@ -527,7 +527,7 @@
                                     @if(targetForm("subjectSelect").value != null && !targetForm("subjectSelect").value.isEmpty) {
                                         <ul class="selectionfromtrees">
                                         @if(targetForm("subjectSelectTitles").value != null ) {
-                                            @for(_subject <- targetForm("subjectSelectTitles").value.split(Const.LIST_DELIMITER)) {
+                                            @for(_subject <- targetForm("subjectSelectTitles").value.split(Const.TREE_LIST_TITLE_DELIMITER)) {
                                                 <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
                                                 @_subject
                                                 </span>
@@ -535,7 +535,7 @@
                                             }
                                         }else{
                                         @if(targetForm("subjectSelect").value!=null){
-                                                @for(_subject <- targetForm("subjectSelect").value.split(Const.LIST_DELIMITER)) {
+                                                @for(_subject <- targetForm("subjectSelect").value.split(Const.TREE_LIST_ID_DELIMITER)) {
                                                     <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
                                                         @Subject.findNameById(Long.valueOf(_subject.trim()))
                                                     </span>
@@ -571,7 +571,7 @@
                                     @if(targetForm("collectionSelect").value != null && !targetForm("collectionSelect").value.isEmpty) {
                                         <ul class="selectionfromtrees">
                                         @if(targetForm("collectionSelectTitles").value != null ) {
-                                            @for(_collection <- targetForm("collectionSelectTitles").value.split(Const.LIST_DELIMITER)) {
+                                            @for(_collection <- targetForm("collectionSelectTitles").value.split(Const.TREE_LIST_TITLE_DELIMITER)) {
                                                 <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
                                                 @_collection
                                                 </span>
@@ -579,7 +579,7 @@
                                             }
                                         }else{
                                             @if(targetForm("collectionSelect").value!=null){
-                                                @for(_collection <- targetForm("collectionSelect").value.split(Const.LIST_DELIMITER)) {
+                                                @for(_collection <- targetForm("collectionSelect").value.split(Const.TREE_LIST_ID_DELIMITER)) {
                                                     <li><span class="label label-pill label-primary label-as-badge font-weight-normal">
                                                         @models.Collection.findNameById(Long.valueOf(_collection.trim()))
                                                     </span>

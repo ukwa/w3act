@@ -376,7 +376,7 @@ function showTree(data, id, key, sm) {
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join("; ");
+      		document.getElementById(key).value = selKeys.join(",");
       		
       		//console.log("test: " + document.getElementById(key).value);
       		// Get a list of all selected TOP nodes
@@ -417,7 +417,7 @@ function showTreeSelect(data, id, key) {
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join("; ");
+      		document.getElementById(key).value = selKeys.join(",");
       		// Get a list of all selected TOP nodes
       		var selRootNodes = node.tree.getSelectedNodes(true);
       		// ... and convert to a key array:
@@ -440,7 +440,7 @@ function showTreeParent(data, id, key) {
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join("; ");
+      		document.getElementById(key).value = selKeys.join(",");
         }
         // The following options are only required, if we have more than one tree on one page:
 //        initId: "treeData",
