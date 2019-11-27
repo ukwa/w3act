@@ -1744,6 +1744,12 @@ public class TargetController extends AbstractController {
 
     /**
      * Method validateUrls
+     * @param requestData
+     * @param id
+     * @param filledForm
+     * @return
+     * @throws ActException
+     *
      * Constructs an empty <tt>LinkedHashMap</tt> instance with the
      * specified initial capacity, load factor and ordering mode.
      *
@@ -1754,15 +1760,7 @@ public class TargetController extends AbstractController {
      * @throws IllegalArgumentException if the initial capacity is negative
      *         or the load factor is nonpositive
      */
-    /**
-     * Method validateUrls
-     * @param requestData
-     * @param id
-     * @param filledForm
-     * @return
-     * @throws ActException
-     *
-     */
+
     private static Result validateUrls(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
         String fieldUrl = requestData.get("formUrl");
 

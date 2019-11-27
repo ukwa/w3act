@@ -54,8 +54,6 @@ public class QAController extends AbstractController {
     	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaIssueId);
     	Logger.debug("Calling QAController.list() collection: " + collection + " - " + qaIssueId);
 
-    	Logger.debug("Called QAController.list() collection: " + collection + " - " + qaIssueId + " - " + page);
-    	
 		User user = User.findByEmail(request().username());
 		
         String collectionSelect = collection.replace("\"", "");
