@@ -348,7 +348,7 @@
 																<label class="control-label">Selected Subjects:</label>
 																@if(!subjects.isEmpty) {
 																	<ul class="selectionfromtrees">
-																	@for(_subject <- subjects.split(Const.LIST_DELIMITER)) {
+																	@for(_subject <- subjects.split(Const.TREE_LIST_ID_DELIMITER)) {
 																			<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
 																				@models.Subject.findNameById(_subject.replaceAll("\\s", "").toLong)
 																			</span>
@@ -387,7 +387,7 @@
 																<label class="control-label">Selected Collections:</label>
 																@if(!collections.isEmpty) {
 																	<ul class="selectionfromtrees">
-																	@for(_collection <- collections.split(Const.LIST_DELIMITER)) {
+																	@for(_collection <- collections.split(Const.TREE_LIST_ID_DELIMITER)) {
 																		<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
 																			@models.Collection.findNameById(_collection.replaceAll("\\s", "").toLong)
 																		</span>

@@ -1509,9 +1509,9 @@ public class TargetController extends AbstractController {
         if (subjectSelect!=null) subjectSelect.replace("\"", "");
         Logger.debug("subjectSelect: " + subjectSelect);
         if(StringUtils.isNotEmpty(subjectSelect)) {
-            String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
+            String[] subjects = subjectSelect.split(Const.TREE_LIST_ID_DELIMITER);
             for(String sId : subjects) {
-                Long subjectId = Long.valueOf(sId.trim());
+                Long subjectId = Long.valueOf(sId);
                 Subject subject = Subject.findById(subjectId);
                 if(subject.parent != null) {
                     newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
@@ -1528,9 +1528,9 @@ public class TargetController extends AbstractController {
         if (collectionSelect!=null)collectionSelect.replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
         if(StringUtils.isNotEmpty(collectionSelect)) {
-            String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
+            String[] collections = collectionSelect.split(Const.TREE_LIST_ID_DELIMITER);
             for(String cId : collections) {
-                Long collectionId = Long.valueOf(cId.trim());
+                Long collectionId = Long.valueOf(cId);
                 Collection collection = Collection.findById(collectionId);
                 if(collection.parent != null) {
                     newCollections = processParentsCollections(newCollections, collection.parent.id);
@@ -1743,11 +1743,6 @@ public class TargetController extends AbstractController {
     }
 
     /**
-     *
-     *
-
-     */
-    /**
      * Method validateUrls
      * @param requestData
      * @param id
@@ -1755,8 +1750,7 @@ public class TargetController extends AbstractController {
      * @return
      * @throws ActException
      *
-     *
-     * Variable setOfUrls - Constructs an empty <tt>LinkedHashMap</tt> instance with the
+     * Constructs an empty <tt>LinkedHashMap</tt> instance with the
      * specified initial capacity, load factor and ordering mode.
      *
      * @param  initialCapacity the initial capacity
@@ -1766,6 +1760,7 @@ public class TargetController extends AbstractController {
      * @throws IllegalArgumentException if the initial capacity is negative
      *         or the load factor is nonpositive
      */
+
     private static Result validateUrls(DynamicForm requestData, Long id, Form<Target> filledForm) throws ActException {
         String fieldUrl = requestData.get("formUrl");
 
@@ -2296,7 +2291,7 @@ public class TargetController extends AbstractController {
      * */
     @Security.Authenticated(SecuredController.class)
     public static Result allSubjectsIDsAsJson(String subject) {
-        //Logger.debug("Call from AJAX function allSubjectsIDsAsJson, params subject = " + subject);
+        Logger.debug("Call from AJAX function allSubjectsIDsAsJson, params subject = " + subject);
         try {
             String result = java.net.URLDecoder.decode(subject, StandardCharsets.UTF_8.name());
             subject = result;
@@ -2305,10 +2300,10 @@ public class TargetController extends AbstractController {
         }
 
         List<Long> subjectIds = new ArrayList<Long>();
-        String[] subjects = subject.replace("\"", "").split(Const.LIST_DELIMITER);
+        String[] subjects = subject.replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
         for(String sId : subjects) {
             if(StringUtils.isNotEmpty(sId)) {
-                Long subjectId = Long.valueOf(sId.trim());
+                Long subjectId = Long.valueOf(sId);
                 subjectIds.add(subjectId);
             }
         }
@@ -2332,10 +2327,10 @@ public class TargetController extends AbstractController {
         } catch (UnsupportedEncodingException e) {
             // not going to happen - value came from JDK's own StandardCharsets
         }
-        String[] collections = collection.replace("\"", "").split(Const.LIST_DELIMITER);
+        String[] collections = collection.replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
         for(String cId : collections) {
             if(StringUtils.isNotEmpty(cId)) {
-                Long collectionId = Long.valueOf(cId.trim());
+                Long collectionId = Long.valueOf(cId);
                 collectionIds.add(collectionId);
             }
         }

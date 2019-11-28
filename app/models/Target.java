@@ -1087,9 +1087,9 @@ public class Target extends Model {
 		
         if (StringUtils.isNotEmpty(subjectSelect)) {
         	List<Long> subjectIds = new ArrayList<Long>();
-            String[] subjects = subjectSelect.split(Const.LIST_DELIMITER);
+            String[] subjects = subjectSelect.split(Const.TREE_LIST_ID_DELIMITER);
             for (String sId : subjects) {
-            	Long subjectId = Long.valueOf(sId.trim());
+            	Long subjectId = Long.valueOf(sId);
             	subjectIds.add(subjectId);
             }
     		exp = exp.in("subjects.id", subjectIds);
@@ -1097,9 +1097,9 @@ public class Target extends Model {
         
         if (StringUtils.isNotEmpty(collectionSelect)) {
         	List<Collection> collectionIds = new ArrayList<Collection>();
-            String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
+            String[] collections = collectionSelect.split(Const.TREE_LIST_ID_DELIMITER);
             for (String cId : collections) {
-            	Long collectionId = Long.valueOf(cId.trim());
+            	Long collectionId = Long.valueOf(cId);
             	Collection collection = Collection.findById(collectionId);
             	collectionIds.add(collection);
             }
@@ -1107,7 +1107,7 @@ public class Target extends Model {
         }
         
         Page<Target> res = exp.query().orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);
-		Logger.debug("Expression list size: " + res.getTotalRowCount());
+		//Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
 	}
 
@@ -1951,7 +1951,7 @@ public class Target extends Model {
 	@JsonIgnore
 	@Transient
 	public String subjectIdsAsString() {
-		return StringUtils.join(this.subjectIds(), Const.LIST_DELIMITER);
+		return StringUtils.join(this.subjectIds(), Const.TREE_LIST_ID_DELIMITER);
 	}
 
 	@JsonIgnore
@@ -1971,7 +1971,7 @@ public class Target extends Model {
 		for (Subject subject : this.subjects) {
 			names.add(subject.name);
 		}
-		return StringUtils.join(names, Const.LIST_DELIMITER);
+		return StringUtils.join(names, Const.TREE_LIST_TITLE_DELIMITER);
 	}
 	
 	@JsonIgnore
@@ -1987,7 +1987,7 @@ public class Target extends Model {
 	@JsonIgnore
 	@Transient
 	public String collectionIdsAsString() {
-		return StringUtils.join(collectionIds(), Const.LIST_DELIMITER);
+		return StringUtils.join(collectionIds(), Const.TREE_LIST_ID_DELIMITER);
 	}
 	
 	@JsonIgnore
@@ -1997,7 +1997,7 @@ public class Target extends Model {
 		for (Collection collection : this.collections) {
 			names.add(collection.name);
 		}
-		return StringUtils.join(names, Const.LIST_DELIMITER);
+		return StringUtils.join(names, Const.TREE_LIST_TITLE_DELIMITER);
 	}
 	
 	@JsonIgnore
