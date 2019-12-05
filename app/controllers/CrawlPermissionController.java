@@ -856,8 +856,8 @@ public class CrawlPermissionController extends AbstractController {
                 messageBody = CrawlPermission.
                     replaceTwoStringsInText(
                             messageBody
-                            , Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
-                            , Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
+                            , Const.URL_PLACE_HOLDER
+                            , Const.LINK_PLACE_HOLDER
                             , permission.target.title
                             , licenseUrl);
             } else {
@@ -968,17 +968,17 @@ public class CrawlPermissionController extends AbstractController {
                         );
                         String toMails = crawlPermission.contactPerson.email;
                         String messageSubject = mailTemplate.subject;
-                        String messageBody = mailTemplate.readTemplate();
+                        String messageBody;// = mailTemplate.readTemplate();
                         messageBody = mailTemplate.readTemplate();
 
-                        String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
+                        //String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
                         String licenseUrl = routes.LicenseController.form(crawlPermission.token).absoluteURL(request()).toString();
                         licenseUrl = injectServerName(licenseUrl);
                         messageBody = CrawlPermission.
                             replaceTwoStringsInText(
                                     messageBody
-                                    , Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
-                                    , Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
+                                    , Const.URL_PLACE_HOLDER
+                                    , Const.LINK_PLACE_HOLDER
                                     , crawlPermission.target.title
                                     , licenseUrl);
 
