@@ -1,3 +1,4 @@
+@import uk.bl.Const
 @(permission: CrawlPermission, user: User, emails: String, template: String, messageSubject: String, messageBody: String)
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
@@ -14,10 +15,10 @@
     <input type="hidden" name="subject" value="@MailTemplate.findByName(template).subject">		        
 	<input type="hidden" name="body" value="@CrawlPermission.replaceTwoStringsInText(
 						MailTemplate.findByName(template).text
-						, "||URL||"
-						, "||LINK||"
+						, Const.URL_PLACE_HOLDER
+						, Const.LINK_PLACE_HOLDER
 						, permission.target.title
-						, CrawlPermissionController.injectServerName(routes.LicenseController.form(permission.token).absoluteURL(request()).toString()))">	
+						, CrawlPermissionController.injectServerName(routes.LicenseController.form(permission.token).absoluteURL(request()).toString()))">
 	
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
