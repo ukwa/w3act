@@ -968,10 +968,10 @@ public class CrawlPermissionController extends AbstractController {
                         );
                         String toMails = crawlPermission.contactPerson.email;
                         String messageSubject = mailTemplate.subject;
-                        String messageBody;// = mailTemplate.readTemplate();
+                        String messageBody = mailTemplate.readTemplate();
                         messageBody = mailTemplate.readTemplate();
 
-                        //String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
+                        String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
                         String licenseUrl = routes.LicenseController.form(crawlPermission.token).absoluteURL(request()).toString();
                         licenseUrl = injectServerName(licenseUrl);
                         messageBody = CrawlPermission.
