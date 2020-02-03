@@ -2,6 +2,8 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -178,7 +180,6 @@ public class CollectionController extends AbstractController {
 		Collection collection = new Collection();
 		collectionForm = collectionForm.fill(collection);
         return ok(newForm.render(collectionForm, user, node));
-    	
     }
 
 	@Security.Authenticated(SecuredController.class)
@@ -458,4 +459,32 @@ public class CollectionController extends AbstractController {
 		JsonNode jsonNode = Json.toJson(collection.targets);
 		return ok(jsonNode);
     }
+
+	/**
+	 * Method for Collection Areas tree data.
+	 * Used by AJAX call.
+	 *
+	 * @param subject This is an identifier for current Collection Areas selected in Collection Area tree
+	 * @return tree structure
+	 * */
+	@Security.Authenticated(SecuredController.class)
+	public static Result allCollectionAreasAsJson(String collectionArea) { // IDs or names?
+		Logger.debug("Call from AJAX function allCollectionAreasAsJson");
+		try {
+			String result = java.net.URLDecoder.decode(collectionArea, StandardCharsets.UTF_8.name());
+			collectionArea = result;
+		} catch (UnsupportedEncodingException e) {
+			// not going to happen - value came from JDK's own StandardCharsets
+		}
+		List<Long> collectionAreasIds = new ArrayList<Long>();
+		String[] collectionAreas = collectionArea.replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
+		for(String sId : collectionAreas) {
+			if(StringUtils.isNotEmpty(sId)) {
+				Long collectionAreaId = Long.valueOf(sId);
+				collectionAreasIds.add(collectionAreaId);
+			}
+		}
+		return ok (getCollectionAreaDataByIds(collectionAreasIds));
+	}
+
 }

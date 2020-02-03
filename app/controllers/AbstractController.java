@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import models.Taxonomy;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import play.Logger;
@@ -257,6 +258,17 @@ public class AbstractController extends Controller {
 
 	public static JsonNode getSubjectsDataByIds(List<Long> mySubjectIds){
 		return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
+	}
+
+	public static JsonNode getCollectionAreaDataByIds(List<Long> mySubjectIds){
+		List<Long> collectionAreasIds = new ArrayList<Long>();
+		List<String> collectionAreasNames = new ArrayList<String>();
+
+		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) {
+				//Long collectionAreaId = Long.valueOf(sId);
+			collectionAreasNames.add(taxonomy.name);
+		}
+		return Json.toJson(collectionAreasNames);//jsonData;
 	}
 
 	protected static List<NaryTreeNode> getSubjectTreeElementsByIdsStack(List<Subject> subjects, List<Long> mySubjectIds) {

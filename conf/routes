@@ -288,6 +288,8 @@ POST    /targets/:id/logincredentials   controllers.LoginCredentialsController.s
 GET    /targets/allSubjectsIDsAsJson/:subjects             controllers.TargetController.allSubjectsIDsAsJson(subjects: String)
 GET    /targets/allCollectionsIDsAsJson/:collections       controllers.TargetController.allCollectionsIDsAsJson(collections: String)
 # GET    /targets/getSingleCollectionByIdAsJson/:collectionid controllers.TargetController.getSingleCollectionByIdAsJson(collectionid: String)
+GET    /collections/allCollectionAreasAsJson/:collectionAreas             controllers.CollectionController.allCollectionAreasAsJson(collectionAreas: String)
+
 
 GET     /instances                          controllers.InstanceController.index()
 GET     /instances/search                   controllers.InstanceController.search()

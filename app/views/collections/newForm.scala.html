@@ -1,3 +1,4 @@
+@import uk.bl.Const
 @(collectionsForm: Form[models.Collection], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode)
 
 @import helper._
@@ -16,7 +17,24 @@
 			applySearch(context, 'collections'); 
 
 			showTreeParent(@getJson(collectionData), "#collectionTree", "collectionSelect");
-			
+
+			context = '@play.api.Play.current.configuration.getString("application.context")'
+			searchContext = 'collections';
+
+			$.ajax({
+				url: context + "/" + searchContext + '/allCollectionAreasAsJson/1',
+				type: 'GET',
+				success: function (outputfromserver) {
+					if (outputfromserver !== null) {
+						showTree(outputfromserver, "#collectionAreasTree", "collectionAreasTreeSelect");
+					} else {
+						alert('Make call failed - no output from server');
+					}
+				}
+			});
+
+
+
 		});
 	</script>
 }
@@ -73,9 +91,49 @@
 						</div>
 					</div>
 				</div>
-	     	</div>	   
-	     	
-	     	<div class="row padding-10">
+	     	</div>
+
+
+			<div class="row padding-10">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="suggestions-collections" class="col-sm-6 control-label">Collection Areas</label>
+						<div class="col-sm-6">
+						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+
+							<div id="collectionAreasTree" style="padding:5px;"></div>
+
+							<div id="collectionAreasTreeSelection">
+
+
+								@if(collectionsForm("collectionAreasTreeSelect").value != null && !collectionsForm("collectionAreasTreeSelect").value.isEmpty) {
+									<ul class="selectionfromtrees">
+
+										@if(collectionsForm("collectionAreasTreeSelect").value!=null){
+
+											@for(_subject <- collectionsForm("collectionAreasTreeSelect").value.split(Const.TREE_LIST_ID_DELIMITER)) {
+												<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+												@_subject
+												</span>
+												</li>
+											}
+
+										}
+
+									</ul>
+								}
+
+							</div>
+							<input type="hidden" id="collectionAreasTreeSelect" name="collectionAreasTreeSelect" value="@collectionsForm("collectionAreasTreeSelect").value">
+
+						}
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 					@inputText(collectionsForm("startDateText"),
@@ -99,7 +157,6 @@
 					</div>
 				</div>
 			</div>  
-
 
 			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		   		<div class="row padding-10">
