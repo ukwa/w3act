@@ -467,3 +467,7 @@ form div.clearfix.error .input-prepend span.add-on,form div.clearfix.error .inpu
 .selectionfromtrees{
 	padding-left: 1em;
 }
+
+.divhighlight{
+	border-color: #285e8e ;color:white;border-top-left-radius: 0.5em 0.5em;border-top-right-radius: 0.5em 0.5em;border-bottom-right-radius: 0.5em 0.5em;border-bottom-left-radius: 0.5em 0.5em;
+}
