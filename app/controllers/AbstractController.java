@@ -96,43 +96,43 @@ public class AbstractController extends Controller {
                 String[] value = request().queryString().get(name);
                 if (value == null)
                         return null;
-                
+
                 if (value.length == 0)
                         return null;
-                
+
                 return value[0];
         }
-        
+
         protected static int getQueryParamAsInt(String name, int defaultValue) {
                 String[] param = request().queryString().get(name);
                 if (param == null)
                         return defaultValue;
-                
+
                 if (param.length < 1)
                         return defaultValue;
-                
+
                 try {
                         return Integer.parseInt(param[0]);
                 } catch (Throwable t) {
                         return defaultValue;
                 }
         }
-        
+
         protected static double getQueryParamAsDouble(String name, double defaultValue) {
                 String[] param = request().queryString().get(name);
                 if (param == null)
                         return defaultValue;
-                
+
                 if (param.length < 1)
                         return defaultValue;
-                
+
                 try {
                         return Double.parseDouble(param[0]);
                 } catch (Throwable t) {
                         return defaultValue;
                 }
         }
-        
+
         protected static String getFormParam(String name) {
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             if (formParams == null)
@@ -140,13 +140,13 @@ public class AbstractController extends Controller {
             String[] values = formParams.get(name);
             if (values == null)
                     return null;
-            
+
             if (values.length < 1)
                     return null;
-            
+
             return values[0];
     }
-    
+
         protected static String[] getFormParams(String name) {
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             if (formParams == null)
@@ -154,10 +154,10 @@ public class AbstractController extends Controller {
             String[] values = formParams.get(name);
             if (values == null)
                     return null;
-            
+
             if (values.length < 1)
                     return null;
-            
+
             return values;
     }
 
@@ -210,7 +210,7 @@ public class AbstractController extends Controller {
     }
 
     /**
-     * This method computes a tree of collections in JSON format. 
+     * This method computes a tree of collections in JSON format.
      * @param collectionUrl This is an identifier for current selected object
      * @return tree structure
      */
@@ -220,11 +220,11 @@ public class AbstractController extends Controller {
     	JsonNode jsonData = Json.toJson(result);
         return jsonData;
     }
-    
+
     protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collections, String filter, boolean parent) {
     	return getCollectionTreeElements(collections, filter, parent, null);
     }
-    
+
     /**
    	 * This method calculates first order collections.
      * @param collections The list of all collections
@@ -261,10 +261,12 @@ public class AbstractController extends Controller {
 	}
 
 	public static JsonNode getCollectionAreaDataByIds(List<Long> mySubjectIds){
-		List<TreeNodeTaxonomy> collectionAreasTaxonomy = new ArrayList<>();
+		List<NaryTreeNode> collectionAreasTaxonomy = new ArrayList<>();
 
 		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) {
-			collectionAreasTaxonomy.add(new TreeNodeTaxonomy(taxonomy.id, taxonomy.name, "some url", false, null));
+			collectionAreasTaxonomy.add(new NaryTreeNode(taxonomy.id, taxonomy.name,
+					String.valueOf(routes.TaxonomyController.view(taxonomy.id)),
+					false, null));
 		}
 
 		return Json.toJson(collectionAreasTaxonomy);//jsonData;
@@ -368,7 +370,7 @@ public class AbstractController extends Controller {
 
 		return null;
 	}
-	
+
 	protected static JsonNode searchCollections(int _key){//root_id, ){
 
 		//                             root (based on REAL SUBJECTS TREE)
@@ -397,18 +399,18 @@ public class AbstractController extends Controller {
 	}
 
 	/**
-	 * This method computes a tree of subjects in JSON format. 
+	 * This method computes a tree of subjects in JSON format.
 	 * @param subjectUrl This is an identifier for current selected object
 	 * @return tree structure
 	 */
-	protected static JsonNode getSubjectsData(List<Subject> mySubjects) {    	
+	protected static JsonNode getSubjectsData(List<Subject> mySubjects) {
 		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
 		List<ObjectNode> result = getSubjectTreeElements(firstLevel, true, mySubjects);
 		Logger.debug("subjects main level size: " + firstLevel.size());
 		JsonNode jsonData = Json.toJson(result);
 	    return jsonData;
 	}
-	
+
     protected static JsonNode getSubjectsDataByFilter(String filter) {
 		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
     	List<ObjectNode> result = getSubjectTreeElements(firstLevel, filter, true);
@@ -419,11 +421,11 @@ public class AbstractController extends Controller {
     protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent) {
     	return getSubjectTreeElements(subjects, filter, parent, null);
     }
-    
-	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> firstLevel, boolean parent, List<Subject> mySubjects) { 
+
+	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> firstLevel, boolean parent, List<Subject> mySubjects) {
 		return getSubjectTreeElements(firstLevel, null, parent, mySubjects);
 	}
-	
+
 	/**
 	 * This method calculates first order subjects.
 	 * @param subjectList The list of all subjects
@@ -431,7 +433,7 @@ public class AbstractController extends Controller {
 	 * @param parent This parameter is used to differentiate between root and children nodes
 	 * @return subject object in JSON form
 	 */
-	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent, List<Subject> mySubjects) { 
+	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent, List<Subject> mySubjects) {
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
