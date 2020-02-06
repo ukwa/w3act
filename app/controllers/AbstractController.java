@@ -257,18 +257,17 @@ public class AbstractController extends Controller {
     }
 
 	public static JsonNode getSubjectsDataByIds(List<Long> mySubjectIds){
-		return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
+    	return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
 	}
 
 	public static JsonNode getCollectionAreaDataByIds(List<Long> mySubjectIds){
-		List<Long> collectionAreasIds = new ArrayList<Long>();
-		List<String> collectionAreasNames = new ArrayList<String>();
+		List<TreeNodeTaxonomy> collectionAreasTaxonomy = new ArrayList<>();
 
 		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) {
-				//Long collectionAreaId = Long.valueOf(sId);
-			collectionAreasNames.add(taxonomy.name);
+			collectionAreasTaxonomy.add(new TreeNodeTaxonomy(taxonomy.id, taxonomy.name, "some url", false, null));
 		}
-		return Json.toJson(collectionAreasNames);//jsonData;
+
+		return Json.toJson(collectionAreasTaxonomy);//jsonData;
 	}
 
 	protected static List<NaryTreeNode> getSubjectTreeElementsByIdsStack(List<Subject> subjects, List<Long> mySubjectIds) {
