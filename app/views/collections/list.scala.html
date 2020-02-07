@@ -16,7 +16,7 @@
 			searchContext = 'collections';
 
 			$.ajax({
-				url: context + "/" + searchContext + '/allCollectionAreasAsJson/1',
+				url: context + "/" + searchContext + '/allCollectionAreasAsJson/' + encodeURI('%22'+$('#collectionAreasTreeSelect').val()+'%22'),
 				type: 'GET',
 				success: function (outputfromserver) {
 					if (outputfromserver !== null) {
@@ -59,7 +59,7 @@
 			}
 		</div>
 
-		<div class="row">		
+		<div class="row">
 			<div class="form-group">
 				<div class="col-sm-4 control-label bg-primary taxonomy">
 					<label for="suggestions-collections" class="">Collection Areas</label>
