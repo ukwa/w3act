@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import models.Taxonomy;
+import models.TaxonomyParentsAll;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import play.Logger;
@@ -260,13 +261,33 @@ public class AbstractController extends Controller {
     	return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
 	}
 
-	public static JsonNode getCollectionAreaDataByIds(List<Long> mySubjectIds){
+	/**
+	 * Fill data for Taxonomy related Collection Areas Tree
+	 * @param myCollectionAreaIds
+	 * @return
+	 */
+	public static JsonNode getCollectionAreaDataByIds(List<Long> myCollectionAreaIds){
 		List<NaryTreeNode> collectionAreasTaxonomy = new ArrayList<>();
+		List<Long> taxonomyIds = new ArrayList<>();
 
-		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) {
+
+		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) { //From taxonomy table get available 9 collection_areas
+
+			//collection areas -  taxonomy_id
+			//collection id    -  parent_id
+			for(TaxonomyParentsAll taxonomyTaxonomyParentsAll : TaxonomyParentsAll.findByParentId(taxonomy.id)) {
+
+				Logger.info("------------- adding to LIST taxonomyTaxonomyParentsAll, parentId = " + taxonomyTaxonomyParentsAll.parentId);
+
+				taxonomyIds.add(taxonomyTaxonomyParentsAll.parentId);
+			}
+
 			collectionAreasTaxonomy.add(new NaryTreeNode(taxonomy.id, taxonomy.name,
 					String.valueOf(routes.TaxonomyController.view(taxonomy.id)),
-					false, null));
+					taxonomyIds.contains(myCollectionAreaIds.get(0))?true:false, //CASE 1 - check if specific collection ID exists in Taxonomy List: taxonomy_id <-> parent_id
+					null));
+			//need data from, taxonomy_parent_all
+			taxonomyIds.clear();
 		}
 
 		return Json.toJson(collectionAreasTaxonomy);//jsonData;

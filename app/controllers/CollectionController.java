@@ -480,13 +480,15 @@ public class CollectionController extends AbstractController {
 	@Security.Authenticated(SecuredController.class)
 	public static Result allCollectionAreasAsJson(String collectionArea) { // IDs or names?
 		Logger.debug("Call from AJAX function allCollectionAreasAsJson");
+		Logger.debug("Paremeter collectionArea : " + collectionArea);
+
 		try {
 			String result = java.net.URLDecoder.decode(collectionArea, StandardCharsets.UTF_8.name());
 			collectionArea = result;
 		} catch (UnsupportedEncodingException e) {
 			// not going to happen - value came from JDK's own StandardCharsets
 		}
-		List<Long> collectionAreasIds = new ArrayList<Long>();
+		List<Long> collectionAreasIds = new ArrayList<>();
 		String[] collectionAreas = collectionArea.replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
 		for(String sId : collectionAreas) {
 			if(StringUtils.isNotEmpty(sId)) {

@@ -50,4 +50,9 @@ public class TaxonomyParentsAll extends Model {
         return taxonomyParentAll;
     }
 
+    public static List<TaxonomyParentsAll> findByTaxonomyId(Long taxonomy_id) { //get parent ids by taxonomy_id
+        List<TaxonomyParentsAll> taxonomyParentAll = findTaxonomyParentsAll.where().eq("parent_id", taxonomy_id).findList();
+        return taxonomyParentAll;
+    }
+
 }

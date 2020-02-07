@@ -42,7 +42,8 @@ libraryDependencies += "org.julienrf" %% "play-jsmessages" % "1.6.2"
 resolvers ++=Seq(
     Resolver.sonatypeRepo("public"),
     Resolver.mavenLocal,
-    "Apache Repository" at "https://repository.apache.org/content/repositories/releases/",
+  //"DefaultMavenRepository" at "https://repo1.maven.org/maven2/",
+"Apache Repository" at "https://repository.apache.org/content/repositories/releases/",
     "rubygems-release" at "http://rubygems-proxy.torquebox.org/releases"
 )
 

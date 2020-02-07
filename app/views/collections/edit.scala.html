@@ -20,8 +20,15 @@
 
 			searchContext = 'collections';
 
+			var parameterStr = $('#collectionAreasTreeSelect').val();
+			if (parameterStr=== ""){
+				parameterStr=@id;
+			} else {
+				parameterStr = encodeURI('%22'+$('#collectionAreasTreeSelect').val()+'%22');
+			}
+
 			$.ajax({
-				url: context + "/" + searchContext + '/allCollectionAreasAsJson/' + encodeURI('%22'+$('#collectionAreasTreeSelect').val()+'%22'),
+				url: context + "/" + searchContext + '/allCollectionAreasAsJson/' + parameterStr,
 				type: 'GET',
 				success: function (outputfromserver) {
 					if (outputfromserver !== null) {
