@@ -1,5 +1,6 @@
 package controllers;
 
+import static org.apache.sis.util.ArraysExt.append;
 import static play.data.Form.form;
 
 import java.io.UnsupportedEncodingException;
@@ -7,13 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import models.Collection;
 import models.Taxonomy;
+import models.TaxonomyParentsAll;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -295,12 +294,6 @@ public class CollectionController extends AbstractController {
 
     	String action = requestData.get("action");
 
-		Logger.debug("------------------------------------collectionAreasTreeSelect = " + requestData.get("collectionAreasTreeSelect"));
-		//insert into
-		//taxonomy_parents_all( taxonomy_id (treeselection), id )
-		//
-
-
 		Logger.debug("action: " + action);
 
         if (StringUtils.isNotEmpty(action)) {
@@ -372,7 +365,27 @@ public class CollectionController extends AbstractController {
                       .setParameter("id", id).execute();
 		    	}
 
-	            // Check if the 'publish' field is empty, which corresponds to 'false':
+            	//collection areas
+				//0. check if any changes in COLLECTION AREAS
+				String[] updatedCollectionAreas = requestData.get("collectionAreasTreeSelect").replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
+				String[] originalCollectionAreas = {""};
+				for(TaxonomyParentsAll t : TaxonomyParentsAll.findByParentId(id))
+					originalCollectionAreas = append(originalCollectionAreas, String.valueOf(t.taxonomyId));
+
+				if (Arrays.equals(originalCollectionAreas, updatedCollectionAreas))
+					Logger.debug("COLLECTION AREAS ARE EQUAL ");
+				else {
+					Logger.debug("COLLECTION AREAS ARE NOT EQUAL ");
+					// 1. delete all existing list from DB
+					Ebean.createSqlUpdate("DELETE FROM taxonomy_parents_all WHERE parent_id="+id).execute();
+					// 2. insert checked
+					String sql_insert_bulk = "";
+					for(String sId : updatedCollectionAreas)
+						sql_insert_bulk += "("+Long.valueOf(sId)+","+id+"),";
+					Ebean.createSqlUpdate("INSERT INTO taxonomy_parents_all (taxonomy_id, parent_id) VALUES " + sql_insert_bulk.substring(0, sql_insert_bulk.length() - 1)).execute();
+				}
+
+				// Check if the 'publish' field is empty, which corresponds to 'false':
 	            if( filledForm.get().publish == null ) {
 	            	filledForm.get().publish = false;
 	            }
