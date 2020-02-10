@@ -61,6 +61,30 @@ class NaryTreeNode {
 	}
 };
 
+class NaryTreeNodeForCollArea {
+	public long key;
+	public String title;
+	public String url;
+	public boolean select;
+	//public int targetCount;
+	public List<NaryTreeNode> children;
+	//public int[] collections_ids;
+	public List<Long> collections_ids;
+
+	public NaryTreeNodeForCollArea() {}
+
+	public NaryTreeNodeForCollArea(long _val, String _name, String _url,  boolean _select, List<NaryTreeNode> _children, List<Long> _collections_ids) {
+		key = _val;
+		title = _name;
+		url = _url;
+		select = _select;
+		children = _children;
+		collections_ids = _collections_ids;
+	}
+
+
+};
+
 public class AbstractController extends Controller {
 
 	private static final String cacheName = "play";
@@ -286,6 +310,37 @@ public class AbstractController extends Controller {
 					String.valueOf(routes.TaxonomyController.view(taxonomy.id)),
 					taxonomyIds.contains(myCollectionAreaIds.get(0))?true:false, //CASE 1 - check if specific collection ID exists in Taxonomy List: taxonomy_id <-> parent_id
 					null));
+			//need data from, taxonomy_parent_all
+			taxonomyIds.clear();
+		}
+
+		return Json.toJson(collectionAreasTaxonomy);//jsonData;
+	}
+
+	public static JsonNode getCollectionAreaDataByIds_PlusCollections(List<Long> myCollectionAreaIds){
+		List<NaryTreeNodeForCollArea> collectionAreasTaxonomy = new ArrayList<>();
+		List<Long> taxonomyIds = new ArrayList<>();
+
+		//int[] collectionIds = new int [20]; // List better?
+		List<Long> collectionIdsRelatedToCollArea = new ArrayList<>();
+
+
+
+		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) { //From taxonomy table get available 9 collection_areas
+			// 9 items
+
+			//collection areas -  taxonomy_id
+			//collection id    -  parent_id
+			for(TaxonomyParentsAll taxonomyTaxonomyParentsAll : TaxonomyParentsAll.findByParentId(taxonomy.id))
+				taxonomyIds.add(taxonomyTaxonomyParentsAll.parentId);
+
+			Logger.debug("TaxonomyParentsAll findByParentId(taxonomy.id), Total size  = " + taxonomyIds.size());
+
+			collectionAreasTaxonomy.add(new NaryTreeNodeForCollArea(taxonomy.id, taxonomy.name,
+					String.valueOf(routes.TaxonomyController.view(taxonomy.id)),
+					taxonomyIds.contains(myCollectionAreaIds.get(0))?true:false, //CASE 1 - check if specific collection ID exists in Taxonomy List: taxonomy_id <-> parent_id
+					null,
+					new ArrayList<>(taxonomyIds)));
 			//need data from, taxonomy_parent_all
 			taxonomyIds.clear();
 		}

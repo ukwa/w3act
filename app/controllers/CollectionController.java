@@ -221,10 +221,6 @@ public class CollectionController extends AbstractController {
 
 		Logger.debug("action: " + action);
 
-
-		Logger.debug("------------------------------------collectionAreasTreeSelect = " + requestData.get("collectionAreasTreeSelect"));
-
-
         if (StringUtils.isNotEmpty(action)) {
         	if (action.equals("save")) {
 		        Form<Collection> filledForm = form(Collection.class).bindFromRequest();
@@ -493,7 +489,7 @@ public class CollectionController extends AbstractController {
 	@Security.Authenticated(SecuredController.class)
 	public static Result allCollectionAreasAsJson(String collectionArea) { // IDs or names?
 		Logger.debug("Call from AJAX function allCollectionAreasAsJson");
-		Logger.debug("Paremeter collectionArea : " + collectionArea);
+		Logger.debug("Parameter collectionArea : " + collectionArea);
 
 		try {
 			String result = java.net.URLDecoder.decode(collectionArea, StandardCharsets.UTF_8.name());
@@ -509,7 +505,9 @@ public class CollectionController extends AbstractController {
 				collectionAreasIds.add(collectionAreaId);
 			}
 		}
-		return ok (getCollectionAreaDataByIds(collectionAreasIds));
+
+		return ok (getCollectionAreaDataByIds_PlusCollections(collectionAreasIds));
 	}
 
 }
+

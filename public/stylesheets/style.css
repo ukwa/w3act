@@ -471,3 +471,10 @@ form div.clearfix.error .input-prepend span.add-on,form div.clearfix.error .inpu
 .taxonomy{
 	border-color: #285e8e ;color:white;border-top-left-radius: 0.5em 0.5em;border-top-right-radius: 0.5em 0.5em;border-bottom-right-radius: 0.5em 0.5em;border-bottom-left-radius: 0.5em 0.5em;
 }
+
+.fancytree-plain span.fancytree-active span.fancytree-title,
+.fancytree-plain.fancytree-treefocus.fancytree-container span.fancytree-active pan.fancytree-title{
+	background-color: #0d0;
+	border-color: #080;
+}
+

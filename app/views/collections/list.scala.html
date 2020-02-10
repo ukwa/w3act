@@ -16,11 +16,11 @@
 			searchContext = 'collections';
 
 			$.ajax({
-				url: context + "/" + searchContext + '/allCollectionAreasAsJson/' + encodeURI('%22'+$('#collectionAreasTreeSelect').val()+'%22'),
+				url: context + "/" + searchContext + '/allCollectionAreasAsJson/0',
 				type: 'GET',
 				success: function (outputfromserver) {
 					if (outputfromserver !== null) {
-						showTree(outputfromserver, "#collectionAreasTree", "collectionAreasTreeSelect");
+						showTreeCollectionAreas(outputfromserver, "#collectionAreasTree", "collectionAreasTreeSelect");
 					} else {
 						alert('Make call failed - no output from server');
 					}
