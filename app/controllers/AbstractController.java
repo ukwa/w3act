@@ -294,15 +294,10 @@ public class AbstractController extends Controller {
 		List<NaryTreeNode> collectionAreasTaxonomy = new ArrayList<>();
 		List<Long> taxonomyIds = new ArrayList<>();
 
-
 		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) { //From taxonomy table get available 9 collection_areas
-
 			//collection areas -  taxonomy_id
 			//collection id    -  parent_id
 			for(TaxonomyParentsAll taxonomyTaxonomyParentsAll : TaxonomyParentsAll.findByParentId(taxonomy.id)) {
-
-				Logger.info("------------- adding to LIST taxonomyTaxonomyParentsAll, parentId = " + taxonomyTaxonomyParentsAll.parentId);
-
 				taxonomyIds.add(taxonomyTaxonomyParentsAll.parentId);
 			}
 
@@ -321,20 +316,11 @@ public class AbstractController extends Controller {
 		List<NaryTreeNodeForCollArea> collectionAreasTaxonomy = new ArrayList<>();
 		List<Long> taxonomyIds = new ArrayList<>();
 
-		//int[] collectionIds = new int [20]; // List better?
-		List<Long> collectionIdsRelatedToCollArea = new ArrayList<>();
-
-
-
 		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) { //From taxonomy table get available 9 collection_areas
-			// 9 items
-
 			//collection areas -  taxonomy_id
 			//collection id    -  parent_id
 			for(TaxonomyParentsAll taxonomyTaxonomyParentsAll : TaxonomyParentsAll.findByParentId(taxonomy.id))
 				taxonomyIds.add(taxonomyTaxonomyParentsAll.parentId);
-
-			Logger.debug("TaxonomyParentsAll findByParentId(taxonomy.id), Total size  = " + taxonomyIds.size());
 
 			collectionAreasTaxonomy.add(new NaryTreeNodeForCollArea(taxonomy.id, taxonomy.name,
 					String.valueOf(routes.TaxonomyController.view(taxonomy.id)),

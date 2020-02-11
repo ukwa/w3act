@@ -408,18 +408,11 @@ function showTreeSelect(data, id, key) {
 	            window.location.href = node.data.url; 
 	        }
 	    },
-        onRender: function(node, nodeSpan) {
-            $(nodeSpan)
-                .find(".dynatree-icon")
-                .css("background-color", "#20639B");
-        },
         onCustomRender: function(node) {
             node.data.addClass = "fancytree-plain";
-
             return "<a href=" + node.data.url + ">" + node.data.title + "</a>";
         },
     	onSelect: function(select, node) {
-
             // Get a list of all selected nodes, and convert to a key array:
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
@@ -466,7 +459,6 @@ function showTreeParent(data, id, key) {
 }
 
 function showTreeCollectionAreas(data, id, key) {
-	var selectedCA = true;
     var tree = $("#collectionTree").dynatree("getTree");
     var tmp;
 
@@ -480,29 +472,23 @@ function showTreeCollectionAreas(data, id, key) {
             var collections_ids = $.map(node.tree.getSelectedNodes(), function(node){
                 return node.data.collections_ids;
             });
+			if((tmp && tmp.length))
+			{
+				$.each( tmp, function( index, value ){
+					tree.getNodeByKey(value.toString()).select(false);
+				});
+				$("#collectionListByCollectionAreas").empty();
+			}
+			$.each( collections_ids, function( index, value ){
+				tree.getNodeByKey(value.toString()).select(true);
+			});
 
+			$.each( collections_ids, function( index, value ){
+				$("#collectionListByCollectionAreas").append("<li><span class='label label-pill label-primary label-as-badge font-weight-normal'>"+value.toString()+'</span></li>');
+			});
 
-                if((tmp && tmp.length))
-                {
-                    console.log("selectedSA = TRUE AND (tmp && tmp.length) == TRUE ?");
-
-                    $.each( tmp, function( index, value ){
-                        tree.getNodeByKey(value.toString()).select(false);
-                    });
-                }
-                else{
-                    console.log("ELSE: selectedSA = TRUE AND (tmp && tmp.length) == TRUE ?");
-
-                }
-
-                $.each( collections_ids, function( index, value ){
-                    tree.getNodeByKey(value.toString()).select(true);
-                });
-
-                tmp=collections_ids;
-
+			tmp=collections_ids;
 		}
-
 	});
 }
 
