@@ -446,7 +446,6 @@ public class CollectionController extends AbstractController {
     public static Result collectionCreate() {
     	JsonNode node = request().body().asJson();
 
-
         try {
 	    	if(node == null) {
 	    		return badRequest("Expecting Json data");

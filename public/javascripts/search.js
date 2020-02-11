@@ -447,7 +447,6 @@ function showTreeParent(data, id, key) {
         		return node.data.key;
       		});
       		document.getElementById(key).value = selKeys;
-			console.log("onSelect - showTreeParent");
 			if (topCollection){
 				$('#collectionAreasTree').dynatree('disable');
 				topCollection=false;
@@ -469,6 +468,7 @@ function showTreeParent(data, id, key) {
 function showTreeCollectionAreas(data, id, key) {
 	var selectedCA = true;
     var tree = $("#collectionTree").dynatree("getTree");
+    var tmp;
 
     $(id).dynatree({
 		checkbox: true,
@@ -477,36 +477,30 @@ function showTreeCollectionAreas(data, id, key) {
 		selectMode: 1,
 		children: data,
 		onSelect: function(select, node) {
-
-            var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                return node.data.key;
-            });
-            var selTitle = $.map(node.tree.getSelectedNodes(), function(node){
-                return node.data.title;
-            });
             var collections_ids = $.map(node.tree.getSelectedNodes(), function(node){
                 return node.data.collections_ids;
             });
 
-            console.log(selKeys);
-            console.log(selTitle);
-            console.log(collections_ids);
 
-            if (selectedCA){
-                console.log("onSelect - true");
+                if((tmp && tmp.length))
+                {
+                    console.log("selectedSA = TRUE AND (tmp && tmp.length) == TRUE ?");
+
+                    $.each( tmp, function( index, value ){
+                        tree.getNodeByKey(value.toString()).select(false);
+                    });
+                }
+                else{
+                    console.log("ELSE: selectedSA = TRUE AND (tmp && tmp.length) == TRUE ?");
+
+                }
+
                 $.each( collections_ids, function( index, value ){
                     tree.getNodeByKey(value.toString()).select(true);
                 });
-                selectedCA=false;
-            }
-            else
-            {
-                console.log("onSelect - false");
-                $.each( collections_ids, function( index, value ){
-                    tree.getNodeByKey(value.toString()).select(false);
-                });
-                selectedCA=true;
-            }
+
+                tmp=collections_ids;
+
 		}
 
 	});

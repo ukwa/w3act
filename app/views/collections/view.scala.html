@@ -1,4 +1,4 @@
-@(collection: models.Collection, user: User) 
+@(collection: models.Collection, user: User)
 
 @main("", user) {
 
@@ -50,11 +50,14 @@
 				<div class="col-sm-6">
 
 					<ul class="selectionfromtrees">
-						<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
-							Politics  Government
 
-						</span>
-						</li>
+						@for(tpa <- TaxonomyParentsAll.findByParentId(collection.id)) {
+							<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+								@tpa.taxonomyId
+							</span>
+							</li>
+						}
+
 
 					</ul>
 
