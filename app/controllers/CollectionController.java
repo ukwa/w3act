@@ -218,6 +218,7 @@ public class CollectionController extends AbstractController {
     public static Result save() {
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
+    	int tmp_parent_collection=0;
 
 		Logger.debug("action: " + action);
 
@@ -233,6 +234,8 @@ public class CollectionController extends AbstractController {
 	            Logger.debug("collectionSelect:save: " + collectionSelect);
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
+	                tmp_parent_collection = collections.length;
+					//PARENT SELECTION OPTION
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 		            	Collection collection = Collection.findById(collectionId);
@@ -271,7 +274,21 @@ public class CollectionController extends AbstractController {
         	            return newInfo(filledForm);
         			}
             	}
+
 		        filledForm.get().save();
+
+				//collection areas
+				//------- IF TOP COLLECTION ONLY!!!
+				if (tmp_parent_collection < 1){
+					String[] newCollectionAreas = requestData.get("collectionAreasTreeSelect").replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
+
+					String sql_insert_bulk = "";
+					for(String sId : newCollectionAreas)
+						sql_insert_bulk += "("+Long.valueOf(sId)+","+filledForm.get().id+"),";
+					Ebean.createSqlUpdate("INSERT INTO taxonomy_parents_all (taxonomy_id, parent_id) VALUES " + sql_insert_bulk.substring(0, sql_insert_bulk.length() - 1)).execute();
+				}
+
+
 				flash("message", "Collection " + filledForm.get().name + " has been created");
 				Logger.debug("invalidate cache on Collection Create, key CollectionsData: ");
 				getCache().remove("CollectionsData");
@@ -289,6 +306,8 @@ public class CollectionController extends AbstractController {
     	Logger.debug("hasErrors: " + filledForm.hasErrors());
 
     	String action = requestData.get("action");
+		int tmp_parent_collection=0;
+
 
 		Logger.debug("action: " + action);
 
@@ -303,7 +322,9 @@ public class CollectionController extends AbstractController {
 
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
-	                if (collections.length == 1) {
+					tmp_parent_collection=collections.length;
+
+					if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 	                	if (collectionId.longValue() == id.longValue()) {
 	                		Logger.debug("same id");
@@ -363,22 +384,26 @@ public class CollectionController extends AbstractController {
 
             	//collection areas
 				//0. check if any changes in COLLECTION AREAS
-				String[] updatedCollectionAreas = requestData.get("collectionAreasTreeSelect").replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
-				String[] originalCollectionAreas = {""};
-				for(TaxonomyParentsAll t : TaxonomyParentsAll.findByParentId(id))
-					originalCollectionAreas = append(originalCollectionAreas, String.valueOf(t.taxonomyId));
 
-				if (Arrays.equals(originalCollectionAreas, updatedCollectionAreas))
-					Logger.debug("COLLECTION AREAS ARE EQUAL ");
-				else {
-					Logger.debug("COLLECTION AREAS ARE NOT EQUAL ");
-					// 1. delete all existing list from DB
-					Ebean.createSqlUpdate("DELETE FROM taxonomy_parents_all WHERE parent_id="+id).execute();
-					// 2. insert checked
-					String sql_insert_bulk = "";
-					for(String sId : updatedCollectionAreas)
-						sql_insert_bulk += "("+Long.valueOf(sId)+","+id+"),";
-					Ebean.createSqlUpdate("INSERT INTO taxonomy_parents_all (taxonomy_id, parent_id) VALUES " + sql_insert_bulk.substring(0, sql_insert_bulk.length() - 1)).execute();
+				//ONLY IF TOP LEVEL COLLECTION
+				if (tmp_parent_collection<1) {
+					String[] updatedCollectionAreas = requestData.get("collectionAreasTreeSelect").replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
+					String[] originalCollectionAreas = {""};
+					for (TaxonomyParentsAll t : TaxonomyParentsAll.findByParentId(id))
+						originalCollectionAreas = append(originalCollectionAreas, String.valueOf(t.taxonomyId));
+
+					if (Arrays.equals(originalCollectionAreas, updatedCollectionAreas))
+						Logger.debug("COLLECTION AREAS ARE EQUAL ");
+					else {
+						Logger.debug("COLLECTION AREAS ARE NOT EQUAL ");
+						// 1. delete all existing list from DB
+						Ebean.createSqlUpdate("DELETE FROM taxonomy_parents_all WHERE parent_id=" + id).execute();
+						// 2. insert checked
+						String sql_insert_bulk = "";
+						for (String sId : updatedCollectionAreas)
+							sql_insert_bulk += "(" + Long.valueOf(sId) + "," + id + "),";
+						Ebean.createSqlUpdate("INSERT INTO taxonomy_parents_all (taxonomy_id, parent_id) VALUES " + sql_insert_bulk.substring(0, sql_insert_bulk.length() - 1)).execute();
+					}
 				}
 
 				// Check if the 'publish' field is empty, which corresponds to 'false':
