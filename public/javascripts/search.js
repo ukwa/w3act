@@ -484,7 +484,7 @@ function showTreeCollectionAreas(data, id, key) {
 			});
 
 			$.each( collections_ids, function( index, value ){
-				$("#collectionListByCollectionAreas").append("<li><span class='label label-pill label-primary label-as-badge font-weight-normal'>"+value.toString()+'</span></li>');
+				$("#collectionListByCollectionAreas").append("<li><span class='label label-pill label-primary label-as-badge font-weight-normal'>"+tree.getNodeByKey(value.toString()).data.title+'</span></li>');
 			});
 
 			tmp=collections_ids;
