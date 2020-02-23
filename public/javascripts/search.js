@@ -428,7 +428,6 @@ function showTreeSelect(data, id, key) {
 }
 
 function showTreeParent(data, id, key) {
- 	var topCollection = true;
     $(id).dynatree({
         checkbox: true,
         // Override class name for checkbox icon:
@@ -436,19 +435,16 @@ function showTreeParent(data, id, key) {
         selectMode: 1,
         children: data,
         onSelect: function(select, node) {
-      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+            var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys;
-			if (topCollection){
-				$('#collectionAreasTree').dynatree('disable');
-				topCollection=false;
+            document.getElementById(key).value = selKeys;
+            if (selKeys.length > 0){
+                $('#collectionAreasTree').dynatree('disable');
             }
-			else
-			{
-				$('#collectionAreasTree').dynatree('enable');
-				topCollection=true;
-			}
+            else{
+                $('#collectionAreasTree').dynatree('enable');
+            }
         }
         // The following options are only required, if we have more than one tree on one page:
 //        initId: "treeData",
