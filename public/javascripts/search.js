@@ -371,6 +371,7 @@ function showTree(data, id, key, sm) {
         activeVisible: true,
     	children: data,
     	onSelect: function(select, node) {
+			console.log("showTree : onSelect" );
       		// Get a list of all selected nodes, and convert to a key array:
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
@@ -415,6 +416,7 @@ function showTree(data, id, key, sm) {
 }
 
 function showTreeSelect(data, id, key) {
+	var t = false;
  	$(id).dynatree({
     	checkbox: false,
     	selectMode: 3,
@@ -425,8 +427,26 @@ function showTreeSelect(data, id, key) {
 	            window.location.href = node.data.url; 
 	        }
 	    },
+		onRender: function(node, nodeSpan) {
+			console.log("showTreeSelect : onRender" );
+
+			if (t){
+				$(nodeSpan)
+					.removeClass('customClassDefault')
+					.removeClass('customClassGray')
+					.removeClass('customClassBold')
+					.addClass('customClassGray')
+			}
+			else{
+				$(nodeSpan)
+					.removeClass('customClassDefault')
+					.removeClass('customClassGray')
+					.removeClass('customClassBold')
+					.addClass('customClassGray')
+			}
+		},
         onCustomRender: function(node) {
-            node.data.addClass = "fancytree-plain";
+            //node.data.addClass = "fancytree-plain";
             return "<a href=" + node.data.url + ">" + node.data.title + "</a>";
         },
     	onSelect: function(select, node) {
@@ -440,6 +460,22 @@ function showTreeSelect(data, id, key) {
       		var selRootKeys = $.map(selRootNodes, function(node){
         		return node.data.key;
       		});
+
+			console.log("showTreeSelect : onSelect" );
+
+			var span = jQuery(node.span);
+			$(span)
+				.removeClass('customClassDefault')
+				.removeClass('customClassBold')
+				.addClass('customClassGray')
+				//.html("<font color='blue'>"+node.data.title +"</font>");
+				//.find(".dynatree-icon")
+
+			t = true;
+				//.find(".span.fancytree-title")
+
+				//.css("background-color", "#37edfe")
+				//.css("color", "#781929")
     	}
  	});
 }
@@ -466,6 +502,8 @@ function showTreeParent(data, id, key) {
 			}
 		},
 		onSelect: function(select, node) {
+			console.log("showTreeParent : onSelect" );
+
 			var collectionareastreeselection = $("#collectionAreasTree").dynatree("getTree").getSelectedNodes();
 			var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
@@ -502,15 +540,32 @@ function showTreeCollectionAreas(data, id, key) {
 		selectMode: 1,
 		children: data,
 		onSelect: function(select, node) {
-            var collections_ids = $.map(node.tree.getSelectedNodes(), function(node){
+			console.log("showTreeCollectionAreas : onSelect" );
+
+			var collections_ids = $.map(node.tree.getSelectedNodes(), function(node){
                 return node.data.collections_ids;
             });
 			if((tmp && tmp.length))
 			{
 				$.each( tmp, function( index, value ){
 					tree.getNodeByKey(value.toString()).select(false);
+
+					var span = jQuery(tree.getNodeByKey(value.toString()).span);
+					$(span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+						.removeClass('customClassBold')
+						.addClass('customClassBold')
+
+					//$(nodeSpan)
+						//.html("<font color='blue'>"+node.data.title +"</font>");
+						//.find(".dynatree-icon")
+
+						//.find(".span.fancytree-title")
+					//$(node)
+					//	.css("background-color", "#1efe1e")
+
 				});
-				$("#collectionListByCollectionAreas").empty();
 			}
 			else
 			{
@@ -519,11 +574,6 @@ function showTreeCollectionAreas(data, id, key) {
 			$.each( collections_ids, function( index, value ){
 				tree.getNodeByKey(value.toString()).select(true);
 			});
-
-			$.each( collections_ids, function( index, value ){
-				$("#collectionListByCollectionAreas").append("<li><span class='label label-pill label-primary label-as-badge font-weight-normal'>"+tree.getNodeByKey(value.toString()).data.title+'</span></li>');
-			});
-
 			tmp=collections_ids;
 		}
 	});
