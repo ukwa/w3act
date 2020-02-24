@@ -430,20 +430,21 @@ function showTreeSelect(data, id, key) {
 		onRender: function(node, nodeSpan) {
 			console.log("showTreeSelect : onRender" );
 
-			if (t){
+			//if (t){
 				$(nodeSpan)
 					.removeClass('customClassDefault')
 					.removeClass('customClassGray')
 					.removeClass('customClassBold')
-					.addClass('customClassGray')
-			}
-			else{
-				$(nodeSpan)
-					.removeClass('customClassDefault')
-					.removeClass('customClassGray')
-					.removeClass('customClassBold')
-					.addClass('customClassGray')
-			}
+                    //first initial view
+					.addClass('customClassDefault')
+			//}
+			//else{
+			//	$(nodeSpan)
+			//		.removeClass('customClassDefault')
+			//		.removeClass('customClassGray')
+			//		.removeClass('customClassBold')
+			//		.addClass('customClassGray')
+			//}
 		},
         onCustomRender: function(node) {
             //node.data.addClass = "fancytree-plain";
@@ -461,17 +462,50 @@ function showTreeSelect(data, id, key) {
         		return node.data.key;
       		});
 
-			console.log("showTreeSelect : onSelect" );
+			console.log("showTreeSelect : onSelect, selRootKeys = " + selRootKeys.length );
 
-			var span = jQuery(node.span);
-			$(span)
-				.removeClass('customClassDefault')
-				.removeClass('customClassBold')
-				.addClass('customClassGray')
+			//var span = jQuery(selRootNodes.span);
+			//$(span)
+			//	.addClass('customClassGray')
+				//.removeClass('customClassBold')
+				//.removeClass('customClassDefault')
+
 				//.html("<font color='blue'>"+node.data.title +"</font>");
 				//.find(".dynatree-icon")
 
-			t = true;
+            if (selRootKeys.length > 0){
+                $("#collectionTree").dynatree("getRoot").visit(function(node){
+                    if( node.getLevel() > 1) {
+                        return 'skip';
+                    }
+                    //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
+
+                    $(node.span)
+                        .removeClass('customClassDefault')
+                        .removeClass('customClassGray')
+                        .removeClass('customClassBold')
+                        .addClass('customClassGray')
+                });
+            }
+            else{
+                $("#collectionTree").dynatree("getRoot").visit(function(node){
+                    if( node.getLevel() > 1) {
+                        return 'skip';
+                    }
+                    //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
+
+                    $(node.span)
+                        .removeClass('customClassDefault')
+                        .removeClass('customClassGray')
+                        .removeClass('customClassBold')
+                        .addClass('customClassGray')
+                });
+            }
+
+
+
+
+            //t = true;
 				//.find(".span.fancytree-title")
 
 				//.css("background-color", "#37edfe")
@@ -547,7 +581,9 @@ function showTreeCollectionAreas(data, id, key) {
             });
 			if((tmp && tmp.length))
 			{
-				$.each( tmp, function( index, value ){
+                console.log("showTreeCollectionAreas : onSelect: if((tmp && tmp.length), tmp.length = " + tmp.length );
+
+                $.each( tmp, function( index, value ){
 					tree.getNodeByKey(value.toString()).select(false);
 
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
@@ -569,7 +605,25 @@ function showTreeCollectionAreas(data, id, key) {
 			}
 			else
 			{
-				$('#savebutton').addClass('disabled');
+                console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length)" );
+
+
+                $("#collectionTree").dynatree("getRoot").visit(function(node){
+                    if( node.getLevel() > 1) {
+                        return 'skip';
+                    }
+                    //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
+
+                    $(node.span)
+                        .removeClass('customClassDefault')
+                        .removeClass('customClassGray')
+                        .removeClass('customClassBold')
+                        //.addClass('customClassDefault')
+                });
+
+
+
+                $('#savebutton').addClass('disabled');
 			}
 			$.each( collections_ids, function( index, value ){
 				tree.getNodeByKey(value.toString()).select(true);
