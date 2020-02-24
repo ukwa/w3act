@@ -384,6 +384,14 @@ function showTree(data, id, key, sm) {
       		var selRootKeys = $.map(selRootNodes, function(node){
         		return node.data.key;
       		});
+
+      		if((selRootKeys && selRootKeys.length))
+			{
+				$('#savebutton').removeClass('disabled');
+			}
+			else{
+				$('#savebutton').addClass('disabled');
+			}
     	},
         onCustomRender: function(node) {
             return "<a href=" + node.data.url + ">" + node.data.title + "</a>";
@@ -393,6 +401,15 @@ function showTree(data, id, key, sm) {
             var selKeys = $.map(tree.getSelectedNodes(), function(node){
                 node.makeVisible();
             });
+
+
+			if((selKeys && selKeys.length))
+			{
+				$('#savebutton').removeClass('disabled');
+			}
+			else{
+				$('#savebutton').addClass('disabled');
+			}
          },
  	});
 }
@@ -428,22 +445,42 @@ function showTreeSelect(data, id, key) {
 }
 
 function showTreeParent(data, id, key) {
+
     $(id).dynatree({
         checkbox: true,
         // Override class name for checkbox icon:
         classNames: {checkbox: "dynatree-radio"},
         selectMode: 1,
         children: data,
-        onSelect: function(select, node) {
-            var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+		onPostInit: function(dtnode) {
+			var tree = $(id).dynatree('getTree');
+			var selKeys = $.map(tree.getSelectedNodes(), function(node){
+				node.makeVisible();
+			});
+			if((selKeys && selKeys.length))
+			{
+				$('#savebutton').removeClass('disabled');
+			}
+			else{
+				$('#savebutton').addClass('disabled');
+			}
+		},
+		onSelect: function(select, node) {
+			var collectionareastreeselection = $("#collectionAreasTree").dynatree("getTree").getSelectedNodes();
+			var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
             document.getElementById(key).value = selKeys;
-            if (selKeys.length > 0){
-                $('#collectionAreasTree').dynatree('disable');
+            if (selKeys.length > 0){ //keys from TreeParent and keys from TreeCollectionAreas
+				$('#collectionAreasTree').dynatree('disable');
+				$('#savebutton').removeClass('disabled');
             }
-            else{
+            else {
                 $('#collectionAreasTree').dynatree('enable');
+                if (collectionareastreeselection.length < 1 )
+				{
+					$('#savebutton').addClass('disabled');
+				}
             }
         }
         // The following options are only required, if we have more than one tree on one page:
@@ -474,6 +511,10 @@ function showTreeCollectionAreas(data, id, key) {
 					tree.getNodeByKey(value.toString()).select(false);
 				});
 				$("#collectionListByCollectionAreas").empty();
+			}
+			else
+			{
+				$('#savebutton').addClass('disabled');
 			}
 			$.each( collections_ids, function( index, value ){
 				tree.getNodeByKey(value.toString()).select(true);
