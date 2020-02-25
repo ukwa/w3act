@@ -431,12 +431,12 @@ function showTreeSelect(data, id, key) {
 			console.log("showTreeSelect : onRender" );
 
 			//if (t){
-				$(nodeSpan)
-					.removeClass('customClassDefault')
-					.removeClass('customClassGray')
-					.removeClass('customClassBold')
+			//	$(nodeSpan)
+			//		.removeClass('customClassDefault')
+			//		.removeClass('customClassGray')
+			//		.removeClass('customClassBold')
                     //first initial view
-					.addClass('customClassDefault')
+			//		.addClass('customClassDefault')
 			//}
 			//else{
 			//	$(nodeSpan)
@@ -474,7 +474,9 @@ function showTreeSelect(data, id, key) {
 				//.find(".dynatree-icon")
 
             if (selRootKeys.length > 0){
-                $("#collectionTree").dynatree("getRoot").visit(function(node){
+				console.log('showTreeSelect : onSelect, CASE selRootKeys.length > 0, selRootKeys.length = ' + selRootKeys.length );
+
+				$("#collectionTree").dynatree("getRoot").visit(function(node){
                     if( node.getLevel() > 1) {
                         return 'skip';
                     }
@@ -488,7 +490,9 @@ function showTreeSelect(data, id, key) {
                 });
             }
             else{
-                $("#collectionTree").dynatree("getRoot").visit(function(node){
+				console.log('showTreeSelect : onSelect, CASE NOT selRootKeys.length > 0, selRootKeys.length = ' + selRootKeys.length );
+
+				$("#collectionTree").dynatree("getRoot").visit(function(node){
                     if( node.getLevel() > 1) {
                         return 'skip';
                     }
@@ -579,19 +583,29 @@ function showTreeCollectionAreas(data, id, key) {
 			var collections_ids = $.map(node.tree.getSelectedNodes(), function(node){
                 return node.data.collections_ids;
             });
+
+			//node.data.collections_ids
+
 			if((tmp && tmp.length))
 			{
                 console.log("showTreeCollectionAreas : onSelect: if((tmp && tmp.length), tmp.length = " + tmp.length );
 
                 $.each( tmp, function( index, value ){
-					tree.getNodeByKey(value.toString()).select(false);
 
-					var span = jQuery(tree.getNodeByKey(value.toString()).span);
+					console.log("index = " + index + ", value = " + value);
+					console.log("showTreeCollectionAreas tree.getNodeByKey(value.toString()) = " + tree.getNodeByKey(value));
+					console.log("showTreeCollectionAreas tree.getNodeByKey(value.toString()) = " + tree.getNodeByKey(tmp[index].toString()));
+
+
+					(tree.getNodeByKey(value)).select(false);
+
+					var span = jQuery((tree.getNodeByKey(tmp[index])).span);
 					$(span)
 						.removeClass('customClassDefault')
 						.removeClass('customClassGray')
 						.removeClass('customClassBold')
 						.addClass('customClassBold')
+
 
 					//$(nodeSpan)
 						//.html("<font color='blue'>"+node.data.title +"</font>");
@@ -603,23 +617,61 @@ function showTreeCollectionAreas(data, id, key) {
 
 				});
 			}
-			else
+			else //CASE WHEN COLLECTION_IDS NOT NULL
 			{
-                console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length)" );
+                console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  tmp.length = " );
 
 
-                $("#collectionTree").dynatree("getRoot").visit(function(node){
-                    if( node.getLevel() > 1) {
-                        return 'skip';
-                    }
+
+                //$("#collectionTree").dynatree("getRoot").visit(function(node){
+                //    if( node.getLevel() > 1) {
+                //        return 'skip';
+                //    }
                     //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
 
-                    $(node.span)
-                        .removeClass('customClassDefault')
-                        .removeClass('customClassGray')
-                        .removeClass('customClassBold')
+                 //   $(node.span)
+                 //       .removeClass('customClassDefault')
+                 //       .removeClass('customClassGray')
+                 //       .removeClass('customClassBold')
                         //.addClass('customClassDefault')
-                });
+                //});
+				if((collections_ids && collections_ids.length)){
+					console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  if((collections_ids && collections_ids.length)), collections_ids.length = " +  collections_ids.length);
+
+
+					$.each( collections_ids, function( index, value ){
+
+						//console.log("each( collections_ids,  " + tree.getNodeByKey(value.toString()).key);
+						console.log("each( collections_id [index] =  " + collections_ids[index]);
+
+
+						//(tree.getNodeByKey(collections_ids[index])).select(true);
+
+						var node = jQuery(tree.getNodeByKey(collections_ids[index]));
+						$(node)
+							.removeClass('customClassDefault')
+							.removeClass('customClassGray')
+							.removeClass('customClassBold')
+							.addClass('customClassBold') // -------------- REAL HIGHLIGHT --------------
+						//$(nodeSpan)
+						//.html("<font color='blue'>"+node.data.title +"</font>");
+						//.find(".dynatree-icon")
+
+						//.find(".span.fancytree-title")
+						//$(node)
+						//	.css("background-color", "#1efe1e")
+
+					});
+
+
+				}
+				else{
+					console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  ----- ELSE if((collections_ids && collections_ids.length))" );
+				}
+
+
+
+
 
 
 
