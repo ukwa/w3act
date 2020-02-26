@@ -502,7 +502,7 @@ function showTreeSelect(data, id, key) {
                         .removeClass('customClassDefault')
                         .removeClass('customClassGray')
                         .removeClass('customClassBold')
-                        .addClass('customClassGray')
+                        .addClass('customClassDefault')
                 });
             }
 
@@ -586,7 +586,7 @@ function showTreeCollectionAreas(data, id, key) {
 
 			//node.data.collections_ids
 
-			if((tmp && tmp.length))
+			if((tmp && tmp.length)) // CHECK IF PREVIOUS SELECTION EXISTS AND SET IT TO DEFAULT
 			{
                 console.log("showTreeCollectionAreas : onSelect: if((tmp && tmp.length), tmp.length = " + tmp.length );
 
@@ -594,17 +594,20 @@ function showTreeCollectionAreas(data, id, key) {
 
 					console.log("index = " + index + ", value = " + value);
 					console.log("showTreeCollectionAreas tree.getNodeByKey(value.toString()) = " + tree.getNodeByKey(value));
-					console.log("showTreeCollectionAreas tree.getNodeByKey(value.toString()) = " + tree.getNodeByKey(tmp[index].toString()));
+                    console.log("showTreeCollectionAreas tree.getNodeByKey(tmp[index].toString()) = " + tree.getNodeByKey(tmp[index].toString()));
+                    //console.log("showTreeCollectionAreas tree.getNodeByKey(tmp[index].key.toString()) = " + (tree.getNodeByKey(tmp[index].key)).toString() );
+                    console.log("showTreeCollectionAreas tree.getNodeByKey(tmp[index].key) = " + tree.getNodeByKey(tmp[index].key));
 
 
-					(tree.getNodeByKey(value)).select(false);
+                    //(tree.getNodeByKey(value)).select(false);
+					var span = jQuery(tree.getNodeByKey(value.toString()).span);
 
-					var span = jQuery((tree.getNodeByKey(tmp[index])).span);
+					//var span = jQuery((tree.getNodeByKey(tmp[index])).span);
 					$(span)
 						.removeClass('customClassDefault')
 						.removeClass('customClassGray')
 						.removeClass('customClassBold')
-						.addClass('customClassBold')
+						.addClass('customClassDefault')
 
 
 					//$(nodeSpan)
@@ -647,8 +650,10 @@ function showTreeCollectionAreas(data, id, key) {
 
 						//(tree.getNodeByKey(collections_ids[index])).select(true);
 
-						var node = jQuery(tree.getNodeByKey(collections_ids[index]));
-						$(node)
+						//var node = jQuery(tree.getNodeByKey(collections_ids[index]));
+						var span = jQuery(tree.getNodeByKey(value.toString()).span);
+
+						$(span)
 							.removeClass('customClassDefault')
 							.removeClass('customClassGray')
 							.removeClass('customClassBold')
