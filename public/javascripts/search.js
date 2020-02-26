@@ -473,38 +473,38 @@ function showTreeSelect(data, id, key) {
 				//.html("<font color='blue'>"+node.data.title +"</font>");
 				//.find(".dynatree-icon")
 
-            if (selRootKeys.length > 0){
-				console.log('showTreeSelect : onSelect, CASE selRootKeys.length > 0, selRootKeys.length = ' + selRootKeys.length );
+            // if (selRootKeys.length > 0){
+			// 	console.log('showTreeSelect : onSelect, CASE selRootKeys.length > 0, selRootKeys.length = ' + selRootKeys.length );
+			//
+			// 	$("#collectionTree").dynatree("getRoot").visit(function(node){
+            //         if( node.getLevel() > 1) {
+            //             return 'skip';
+            //         }
+            //         //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
+			//
+            //         $(node.span)
+            //             .removeClass('customClassDefault')
+            //             .removeClass('customClassGray')
+            //             .removeClass('customClassBold')
+            //             .addClass('customClassGray')
+            //     });
+            // }
+            //else{
+			//	console.log('showTreeSelect : onSelect, CASE NOT selRootKeys.length > 0, selRootKeys.length = ' + selRootKeys.length );
 
-				$("#collectionTree").dynatree("getRoot").visit(function(node){
-                    if( node.getLevel() > 1) {
-                        return 'skip';
-                    }
-                    //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
-
-                    $(node.span)
-                        .removeClass('customClassDefault')
-                        .removeClass('customClassGray')
-                        .removeClass('customClassBold')
-                        .addClass('customClassGray')
-                });
-            }
-            else{
-				console.log('showTreeSelect : onSelect, CASE NOT selRootKeys.length > 0, selRootKeys.length = ' + selRootKeys.length );
-
-				$("#collectionTree").dynatree("getRoot").visit(function(node){
-                    if( node.getLevel() > 1) {
-                        return 'skip';
-                    }
-                    //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
-
-                    $(node.span)
-                        .removeClass('customClassDefault')
-                        .removeClass('customClassGray')
-                        .removeClass('customClassBold')
-                        .addClass('customClassDefault')
-                });
-            }
+				// $("#collectionTree").dynatree("getRoot").visit(function(node){
+                //     if( node.getLevel() > 1) {
+                //         return 'skip';
+                //     }
+                //     //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
+				//
+                //     $(node.span)
+                //         .removeClass('customClassDefault')
+                //         .removeClass('customClassGray')
+                //         .removeClass('customClassBold')
+                //         .addClass('customClassGray')
+                // });
+            //}
 
 
 
@@ -599,7 +599,8 @@ function showTreeCollectionAreas(data, id, key) {
                     console.log("showTreeCollectionAreas tree.getNodeByKey(tmp[index].key) = " + tree.getNodeByKey(tmp[index].key));
 
 
-                    //(tree.getNodeByKey(value)).select(false);
+                    //tree.getNodeByKey(value.toString()).select(false);
+
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
 
 					//var span = jQuery((tree.getNodeByKey(tmp[index])).span);
@@ -622,66 +623,46 @@ function showTreeCollectionAreas(data, id, key) {
 			}
 			else //CASE WHEN COLLECTION_IDS NOT NULL
 			{
-                console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  tmp.length = " );
-
-
-
-                //$("#collectionTree").dynatree("getRoot").visit(function(node){
-                //    if( node.getLevel() > 1) {
-                //        return 'skip';
-                //    }
-                    //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
-
-                 //   $(node.span)
-                 //       .removeClass('customClassDefault')
-                 //       .removeClass('customClassGray')
-                 //       .removeClass('customClassBold')
-                        //.addClass('customClassDefault')
-                //});
-				if((collections_ids && collections_ids.length)){
-					console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  if((collections_ids && collections_ids.length)), collections_ids.length = " +  collections_ids.length);
-
-
-					$.each( collections_ids, function( index, value ){
-
-						//console.log("each( collections_ids,  " + tree.getNodeByKey(value.toString()).key);
-						console.log("each( collections_id [index] =  " + collections_ids[index]);
-
-
-						//(tree.getNodeByKey(collections_ids[index])).select(true);
-
-						//var node = jQuery(tree.getNodeByKey(collections_ids[index]));
-						var span = jQuery(tree.getNodeByKey(value.toString()).span);
-
-						$(span)
-							.removeClass('customClassDefault')
-							.removeClass('customClassGray')
-							.removeClass('customClassBold')
-							.addClass('customClassBold') // -------------- REAL HIGHLIGHT --------------
-						//$(nodeSpan)
-						//.html("<font color='blue'>"+node.data.title +"</font>");
-						//.find(".dynatree-icon")
-
-						//.find(".span.fancytree-title")
-						//$(node)
-						//	.css("background-color", "#1efe1e")
-
-					});
-
-
-				}
-				else{
-					console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  ----- ELSE if((collections_ids && collections_ids.length))" );
-				}
-
-
-
-
-
-
-
                 $('#savebutton').addClass('disabled');
 			}
+
+			if((collections_ids && collections_ids.length)){
+
+				console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  if((collections_ids && collections_ids.length)), collections_ids.length = " +  collections_ids.length);
+
+
+				$.each( collections_ids, function( index, value ){
+
+					//console.log("each( collections_ids,  " + tree.getNodeByKey(value.toString()).key);
+					console.log("each( collections_id [index] =  " + collections_ids[index]);
+
+
+					//(tree.getNodeByKey(value.toString())).select(true); //activates onSelect 'showTreeSelect'
+
+					//var node = jQuery(tree.getNodeByKey(collections_ids[index]));
+					var span = jQuery(tree.getNodeByKey(value.toString()).span);
+
+					$(span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+						.removeClass('customClassBold')
+						.addClass('customClassBold') // -------------- REAL HIGHLIGHT --------------
+					//$(nodeSpan)
+					//.html("<font color='blue'>"+node.data.title +"</font>");
+					//.find(".dynatree-icon")
+
+					//.find(".span.fancytree-title")
+					//$(node)
+					//	.css("background-color", "#1efe1e")
+
+				});
+
+
+			}
+			else{
+				console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  ----- ELSE if((collections_ids && collections_ids.length))" );
+			}
+
 			$.each( collections_ids, function( index, value ){
 				tree.getNodeByKey(value.toString()).select(true);
 			});
