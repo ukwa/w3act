@@ -599,7 +599,7 @@ function showTreeCollectionAreas(data, id, key) {
                     console.log("showTreeCollectionAreas tree.getNodeByKey(tmp[index].key) = " + tree.getNodeByKey(tmp[index].key));
 
 
-                    //tree.getNodeByKey(value.toString()).select(false);
+                    tree.getNodeByKey(value.toString()).select(false);
 
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
 
@@ -637,7 +637,7 @@ function showTreeCollectionAreas(data, id, key) {
 					console.log("each( collections_id [index] =  " + collections_ids[index]);
 
 
-					//(tree.getNodeByKey(value.toString())).select(true); //activates onSelect 'showTreeSelect'
+					(tree.getNodeByKey(value.toString())).select(true); //activates onSelect 'showTreeSelect'
 
 					//var node = jQuery(tree.getNodeByKey(collections_ids[index]));
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
