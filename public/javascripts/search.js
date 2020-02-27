@@ -371,7 +371,7 @@ function showTree(data, id, key, sm) {
         activeVisible: true,
     	children: data,
     	onSelect: function(select, node) {
-			console.log("showTree : onSelect" );
+			//console.log("showTree : onSelect" );
       		// Get a list of all selected nodes, and convert to a key array:
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
@@ -402,7 +402,6 @@ function showTree(data, id, key, sm) {
             var selKeys = $.map(tree.getSelectedNodes(), function(node){
                 node.makeVisible();
             });
-
 
 			if((selKeys && selKeys.length))
 			{
@@ -442,8 +441,6 @@ function showTreeSelect(data, id, key) {
       		var selRootKeys = $.map(selRootNodes, function(node){
         		return node.data.key;
       		});
-
-			console.log("showTreeSelect : onSelect, selRootKeys = " + selRootKeys.length );
 
     	}
  	});
@@ -515,17 +512,13 @@ function showTreeCollectionAreas(data, id, key) {
                 return node.data.collections_ids;
             });
 
-			//node.data.collections_ids
-
 			if((tmp && tmp.length || collections_ids && collections_ids.length)){
-				console.log("showTreeCollectionAreas : onSelect: +++ FIRST +++ TMP && COLLECTIONS_IDS +++ " );
+				console.log("showTreeCollectionAreas : onSelect: +++ FIRST +++ TMP || COLLECTIONS_IDS +++ " );
 
 				$("#collectionTree").dynatree("getRoot").visit(function(node){
 					if( node.getLevel() > 1) {
 						return 'skip';
 					}
-					//console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
-
 					$(node.span)
 						.removeClass('customClassDefault')
 						.removeClass('customClassGray')
@@ -533,33 +526,19 @@ function showTreeCollectionAreas(data, id, key) {
 						.addClass('customClassGray')
 				});
 			}
-			else{
-				console.log("showTreeCollectionAreas : onSelect: +++ FIRST ELSE +++ TMP && COLLECTIONS_IDS +++ " );
-
-			}
-
 
 			if((tmp && tmp.length)) // CHECK IF PREVIOUS SELECTION EXISTS AND SET IT TO DEFAULT
 			{
                 console.log("showTreeCollectionAreas : onSelect: if((tmp && tmp.length), tmp.length = " + tmp.length );
 
                 $.each( tmp, function( index, value ){
-
-
                     tree.getNodeByKey(value.toString()).select(false);
-
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
-
-					//var span = jQuery((tree.getNodeByKey(tmp[index])).span);
 					$(span)
 						.removeClass('customClassDefault')
 						.removeClass('customClassGray')
 						.removeClass('customClassBold')
-					//.addClass('customClassDefault')
 						.addClass('customClassGray')
-
-
-
 				});
 			}
 			else //CASE WHEN COLLECTION_IDS NOT NULL
@@ -568,17 +547,12 @@ function showTreeCollectionAreas(data, id, key) {
 			}
 
 			if((collections_ids && collections_ids.length)){
-
 				console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  if((collections_ids && collections_ids.length)), collections_ids.length = " +  collections_ids.length);
 
 				$.each( collections_ids, function( index, value ){
-
-					//console.log("each( collections_ids,  " + tree.getNodeByKey(value.toString()).key);
 					console.log("each( collections_id [index] =  " + collections_ids[index]);
 
 					(tree.getNodeByKey(value.toString())).select(true); //activates onSelect 'showTreeSelect'
-
-					//var node = jQuery(tree.getNodeByKey(collections_ids[index]));
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
 
 					$(span)
@@ -588,35 +562,29 @@ function showTreeCollectionAreas(data, id, key) {
 						.addClass('customClassBold') // -------------- REAL HIGHLIGHT --------------
 				});
 
-			}
-			else{
-				console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  ----- ELSE if((collections_ids && collections_ids.length))" );
+				$('#collectionCountInArea').text('Collection count in selected area: ' + collections_ids.length);
 			}
 
-			// $.each( collections_ids, function( index, value ){
-			// 	tree.getNodeByKey(value.toString()).select(true);
-			// });
-			//
 			tmp=collections_ids;
 
 			if((tmp && tmp.length&&collections_ids && collections_ids.length)){
 				console.log("showTreeCollectionAreas : onSelect: +++ TMP && COLLECTIONS_IDS +++ " );
-
 			}
 			else{
 				console.log("showTreeCollectionAreas : onSelect: ELSE: +++ TMP && COLLECTIONS_IDS +++ " );
-				$("#collectionTree").dynatree("getRoot").visit(function(node){
-					        if( node.getLevel() > 1) {
-					            return 'skip';
-					        }
-					        //console.log('processing node "' + node.data.title + '" at level ' + node.getLevel());
 
-					        $(node.span)
-					            .removeClass('customClassDefault')
-					            .removeClass('customClassGray')
-					            .removeClass('customClassBold')
-								//.addClass('customClassDefault')
+				$("#collectionTree").dynatree("getRoot").visit(function(node){
+					if( node.getLevel() > 1) {
+						return 'skip';
+					}
+
+					$(node.span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+						.removeClass('customClassBold')
 				});
+				$('#collectionCountInArea').text('');
+
 			}
 		}
 	});
