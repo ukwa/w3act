@@ -552,16 +552,18 @@ function showTreeCollectionAreas(data, id, key) {
 
 				$("#collectionTree").dynatree("getRoot").visit(function(node){
 
+                    //return 'skip'; ------------- SELECT SUB TREE ELEMENTS
 
-					// if( node.getLevel() > 1) {
-					// 	return 'skip';
-					// }
+					if( node.getLevel() > 1) { // ---------- IMPORTANT
+                        $(node.span)
+                        //.removeClass('customClassDefault')
+                        //.removeClass('customClassGray')
+                        //.removeClass('customClassBold')
+                            .addClass('customClassBold')
+					 	//return 'skip';
+					}
 
-					$(node.span)
-						//.removeClass('customClassDefault')
-						//.removeClass('customClassGray')
-						.removeClass('customClassBold')
-						.addClass('customClassGray')
+
 				});
 			}
 
@@ -570,13 +572,13 @@ function showTreeCollectionAreas(data, id, key) {
                 console.log("showTreeCollectionAreas : onSelect: if((tmp && tmp.length), tmp.length = " + tmp.length );
 
                 $.each( tmp, function( index, value ){
-                    tree.getNodeByKey(value.toString()).select(false);
+                    tree.getNodeByKey(value.toString()).select(false);//---------------- SELECT FALSE
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
 					$(span)
 						//.removeClass('customClassDefault')
 						//.removeClass('customClassGray')
-						//.removeClass('customClassBold')
-						.addClass('customClassBold')
+						.removeClass('customClassBold')
+						.addClass('customClassDefault')
 				});
 			}
 			else //CASE WHEN COLLECTION_IDS NOT NULL
@@ -590,7 +592,8 @@ function showTreeCollectionAreas(data, id, key) {
 				$.each( collections_ids, function( index, value ){
 					console.log("each( collections_id [index] =  " + collections_ids[index]);
 
-					(tree.getNodeByKey(value.toString())).select(true); //activates onSelect 'showTreeSelect'
+					(tree.getNodeByKey(value.toString())).select(true); //---------------- SELECT TRUE
+					//activates onSelect 'showTreeSelect'
 					// (tree.getNodeByKey(value.toString())).visit(function(childNode){
 					// 	childNode.select(true);
 					// });
@@ -611,19 +614,41 @@ function showTreeCollectionAreas(data, id, key) {
 
 			if((tmp && tmp.length&&collections_ids && collections_ids.length)){
 				console.log("showTreeCollectionAreas : onSelect: +++ TMP && COLLECTIONS_IDS +++ " );
+				$("#collectionTree").dynatree("getRoot").visit(function(node) {
+
+					//return 'skip'; ------------- SELECT SUB TREE ELEMENTS
+
+					if (node.getLevel() > 1) { // ---------- IMPORTANT
+						$(node.span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+							.removeClass('customClassBold')
+							.addClass('customClassBold')
+						//return 'skip';
+					}
+				});
 			}
 			else{
 				console.log("showTreeCollectionAreas : onSelect: ELSE: +++ TMP && COLLECTIONS_IDS +++ " );
 
 				$("#collectionTree").dynatree("getRoot").visit(function(node){
 					if( node.getLevel() > 1) {
-						return 'skip';
+						//return 'skip'; ------------- UNSELECT SUB TREE ELEMENTS
+						$(node.span)
+						//.removeClass('customClassDefault')
+						//.removeClass('customClassGray')
+							.removeClass('customClassBold')
+							//.addClass('customClassGray')
+						 	.removeClass('customClassGray')
+
+						//return 'skip';
+
 					}
 
-					$(node.span)
-						.removeClass('customClassDefault')
-						.removeClass('customClassGray')
-						.removeClass('customClassBold')
+					// $(node.span)
+					// 	.removeClass('customClassDefault')
+					// 	.removeClass('customClassGray')
+					// 	.removeClass('customClassBold')
 				});
 				$('#collectionCountInArea').text('');
 
