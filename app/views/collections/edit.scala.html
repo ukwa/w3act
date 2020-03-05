@@ -31,42 +31,27 @@
 			$('#title').bind('input', function() {
 				/* This will be fired every time, when textbox's value changes. */
 				console.log("----- title : bind. Text changed" );
-
+				$('#savebutton').removeClass('disabled');
 			} );
-
-
-			$('#inputStartDate').on('dp.change', function(e){
-				var formatedValue = e.date.format(e.date._f);
-				console.log(formatedValue);
-			});
-
-			$('#inputStartDate').on('input',function(e){
-				alert('Changed!')
-			});
-
 			$('#inputStartDate').bind('input', function() {
-				/* This will be fired every time, when textbox's value changes. */
 				console.log("----- inputStartDate : bind. Text changed" );
+				$('#savebutton').removeClass('disabled');
 			} );
-
 			$('#inputEndDate').bind('input', function() {
-				/* This will be fired every time, when textbox's value changes. */
 				console.log("----- inputEndDate : bind. Text changed" );
+				$('#savebutton').removeClass('disabled');
 			} );
-
 			$('#inputDescription').bind('input', function() {
-				/* This will be fired every time, when textbox's value changes. */
 				console.log("----- inputDescription : bind. Text changed" );
+				$('#savebutton').removeClass('disabled');
 			} );
 			$('#inputRevision').bind('input', function() {
-				/* This will be fired every time, when textbox's value changes. */
 				console.log("----- inputRevision : bind. Text changed" );
-
+				$('#savebutton').removeClass('disabled');
 			} );
 			$('#publish').bind('input', function() {
-				/* This will be fired every time, when textbox's value changes. */
 				console.log("----- publish checkbox : bind. Text changed" );
-
+				$('#savebutton').removeClass('disabled');
 			} );
 
 
