@@ -534,10 +534,7 @@ function showTreeCollectionAreas(data, id, key) {
             });
 
 			if((tmp && tmp.length || collections_ids && collections_ids.length)){
-				//console.log("showTreeCollectionAreas : onSelect: +++ FIRST +++ TMP || COLLECTIONS_IDS +++ " );
-
 				$("#collectionTree").dynatree("getRoot").visit(function(node){ //----------------- ALL CHILDREN ------------------
-
 					$(node.span)
 						.removeClass('customClassDefault')
 						.removeClass('customClassGray')
@@ -548,8 +545,6 @@ function showTreeCollectionAreas(data, id, key) {
 
 			if((tmp && tmp.length)) // CHECK IF PREVIOUS SELECTION EXISTS AND SET IT TO DEFAULT
 			{
-                console.log("showTreeCollectionAreas : onSelect: if((tmp && tmp.length), tmp.length = " + tmp.length );
-
                 $.each( tmp, function( index, value ){
                     tree.getNodeByKey(value.toString()).select(false);
 					var span = jQuery(tree.getNodeByKey(value.toString()).span);
@@ -566,7 +561,6 @@ function showTreeCollectionAreas(data, id, key) {
 			}
 
 			if((collections_ids && collections_ids.length)){
-				//console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  if((collections_ids && collections_ids.length)), collections_ids.length = " +  collections_ids.length);
 				$.each( collections_ids, function( index, value ){
 					//console.log("each( collections_id [index] =  " + collections_ids[index]);
 					ptnode = tree.getNodeByKey(value.toString());
@@ -577,9 +571,7 @@ function showTreeCollectionAreas(data, id, key) {
 						.removeClass('customClassGray')
 						.removeClass('customClassBold')
 						.addClass('customClassBold')
-
 					ptnode.visit(function(childNode){
-						//childNode.select(true);
 						$(childNode.span)
 							.removeClass('customClassDefault')
 							.removeClass('customClassGray')
@@ -595,10 +587,8 @@ function showTreeCollectionAreas(data, id, key) {
 			tmp=collections_ids;
 
 			if((tmp && tmp.length&&collections_ids && collections_ids.length)){
-				//console.log("showTreeCollectionAreas : onSelect: +++ TMP && COLLECTIONS_IDS +++ " );
 			}
 			else{
-				//console.log("showTreeCollectionAreas : onSelect: ELSE: +++ TMP && COLLECTIONS_IDS +++ " );
 				//---------- FOR ENTIRE TREE !!! ----------------
 				$("#collectionTree").dynatree("getRoot").visit(function(nodechild){
 					$(nodechild.span)
@@ -607,7 +597,6 @@ function showTreeCollectionAreas(data, id, key) {
 						.removeClass('customClassBold')
 				});
 				$('#collectionCountInArea').text('');
-
 			}
 		}
 	});
