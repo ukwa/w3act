@@ -27,34 +27,25 @@
 				parameterStr = encodeURI('%22'+$('#collectionAreasTreeSelect').val()+'%22');
 			}
 
-
 			$('#title').bind('input', function() {
-				/* This will be fired every time, when textbox's value changes. */
-				console.log("----- title : bind. Text changed" );
 				$('#savebutton').removeClass('disabled');
 			} );
 			$('#inputStartDate').bind('input', function() {
-				console.log("----- inputStartDate : bind. Text changed" );
 				$('#savebutton').removeClass('disabled');
 			} );
 			$('#inputEndDate').bind('input', function() {
-				console.log("----- inputEndDate : bind. Text changed" );
 				$('#savebutton').removeClass('disabled');
 			} );
 			$('#inputDescription').bind('input', function() {
-				console.log("----- inputDescription : bind. Text changed" );
 				$('#savebutton').removeClass('disabled');
 			} );
 			$('#inputRevision').bind('input', function() {
-				console.log("----- inputRevision : bind. Text changed" );
 				$('#savebutton').removeClass('disabled');
 			} );
 			$('#publish').bind('input', function() {
-				console.log("----- publish checkbox : bind. Text changed" );
+				//console.log("----- publish checkbox : bind. Text changed" );
 				$('#savebutton').removeClass('disabled');
 			} );
-
-
 
 			$.ajax({
 				url: context + "/" + searchContext + '/allCollectionAreasAsJson/' + parameterStr,

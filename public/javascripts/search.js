@@ -443,49 +443,26 @@ function showTreeSelect(data, id, key) {
       		var selRootKeys = $.map(selRootNodes, function(node){
         		return node.data.key;
       		});
-
-            node.visit(function(childNode){
-                childNode.data.addClass = "dynatree-highlight";
-
-                $(childNode.span)
-                    .removeClass('customClassDefault')
-                    .removeClass('customClassGray')
-                    .removeClass('customClassBold')
-                    .addClass('customClassGray')
-
-            });
     	},
 		onQueryExpand: function(expand, node) {
-			console.log("showTreeSelect : onQueryExpand, expand = " +  expand + ", node = " + node );
-
+			//console.log("showTreeSelect : onQueryExpand, expand = " +  expand + ", node = " + node );
             if ($(node.span).hasClass("customClassBold")){
                 node.data.addClass = 'customClassBold';
-
                 node.visit(function(childNode){
                     childNode.data.addClass = 'customClassBold';
                 });
             }
             else if ($(node.span).hasClass("customClassGray")) {
-                console.log("showTreeSelect : onQueryExpand, has customClassGray");
-
                 node.data.addClass = 'customClassGray';
-
                 node.visit(function(childNode){
                     childNode.data.addClass = 'customClassGray';
                 });
             }
             else if ($(node.span).hasClass("customClassDefault")) {
-                console.log("showTreeSelect : onQueryExpand, has customClassDefault");
-
                 node.data.addClass = 'customClassDefault';
-
                 node.visit(function(childNode){
                     childNode.data.addClass = 'customClassDefault';
                 });
-            }
-            else{
-                console.log("showTreeSelect : onQueryExpand, has NO customClass");
-
             }
 
 		}
@@ -552,15 +529,12 @@ function showTreeCollectionAreas(data, id, key) {
 		selectMode: 1,
 		children: data,
 		onSelect: function (isSelected, node) {
-
-			console.log("showTreeCollectionAreas : onSelect" );
-
 			var collections_ids = $.map(node.tree.getSelectedNodes(), function(node){
                 return node.data.collections_ids;
             });
 
 			if((tmp && tmp.length || collections_ids && collections_ids.length)){
-				console.log("showTreeCollectionAreas : onSelect: +++ FIRST +++ TMP || COLLECTIONS_IDS +++ " );
+				//console.log("showTreeCollectionAreas : onSelect: +++ FIRST +++ TMP || COLLECTIONS_IDS +++ " );
 
 				$("#collectionTree").dynatree("getRoot").visit(function(node){ //----------------- ALL CHILDREN ------------------
 
@@ -592,14 +566,11 @@ function showTreeCollectionAreas(data, id, key) {
 			}
 
 			if((collections_ids && collections_ids.length)){
-				console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  if((collections_ids && collections_ids.length)), collections_ids.length = " +  collections_ids.length);
-
+				//console.log("showTreeCollectionAreas : onSelect: ELSE if((tmp && tmp.length),  if((collections_ids && collections_ids.length)), collections_ids.length = " +  collections_ids.length);
 				$.each( collections_ids, function( index, value ){
-					console.log("each( collections_id [index] =  " + collections_ids[index]);
-
+					//console.log("each( collections_id [index] =  " + collections_ids[index]);
 					ptnode = tree.getNodeByKey(value.toString());
 					ptnode.select(true); //activates onSelect 'showTreeSelect'
-
 					// -------------- HIGHLIGHT PARENT NODE WITH CHILDREN --------------
 					$(ptnode.span)
 						.removeClass('customClassDefault')
@@ -624,11 +595,10 @@ function showTreeCollectionAreas(data, id, key) {
 			tmp=collections_ids;
 
 			if((tmp && tmp.length&&collections_ids && collections_ids.length)){
-				console.log("showTreeCollectionAreas : onSelect: +++ TMP && COLLECTIONS_IDS +++ " );
+				//console.log("showTreeCollectionAreas : onSelect: +++ TMP && COLLECTIONS_IDS +++ " );
 			}
 			else{
-				console.log("showTreeCollectionAreas : onSelect: ELSE: +++ TMP && COLLECTIONS_IDS +++ " );
-
+				//console.log("showTreeCollectionAreas : onSelect: ELSE: +++ TMP && COLLECTIONS_IDS +++ " );
 				//---------- FOR ENTIRE TREE !!! ----------------
 				$("#collectionTree").dynatree("getRoot").visit(function(nodechild){
 					$(nodechild.span)
