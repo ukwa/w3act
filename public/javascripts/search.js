@@ -363,7 +363,6 @@ function showTree(data, id, key) {
 }
 
 function showTree(data, id, key, sm) {
-    var expandedNodes = [];
 	var selectionMode = parseInt(sm);
  	$(id).dynatree({
 		checkbox: true,
@@ -372,6 +371,7 @@ function showTree(data, id, key, sm) {
         activeVisible: true,
     	children: data,
     	onSelect: function(select, node) {
+			//console.log("showTree : onSelect" );
       		// Get a list of all selected nodes, and convert to a key array:
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
@@ -385,6 +385,14 @@ function showTree(data, id, key, sm) {
       		var selRootKeys = $.map(selRootNodes, function(node){
         		return node.data.key;
       		});
+
+      		if((selRootKeys && selRootKeys.length))
+			{
+				$('#savebutton').removeClass('disabled');
+			}
+			else{
+				$('#savebutton').addClass('disabled');
+			}
     	},
         onCustomRender: function(node) {
             return "<a href=" + node.data.url + ">" + node.data.title + "</a>";
@@ -394,11 +402,20 @@ function showTree(data, id, key, sm) {
             var selKeys = $.map(tree.getSelectedNodes(), function(node){
                 node.makeVisible();
             });
+
+			if((selKeys && selKeys.length))
+			{
+				$('#savebutton').removeClass('disabled');
+			}
+			else{
+				$('#savebutton').addClass('disabled');
+			}
          },
  	});
 }
 
 function showTreeSelect(data, id, key) {
+	var t = false;
  	$(id).dynatree({
     	checkbox: false,
     	selectMode: 3,
@@ -410,37 +427,88 @@ function showTreeSelect(data, id, key) {
 	        }
 	    },
         onCustomRender: function(node) {
+            //node.data.addClass = "fancytree-plain";
             return "<a href=" + node.data.url + ">" + node.data.title + "</a>";
         },
     	onSelect: function(select, node) {
-      		// Get a list of all selected nodes, and convert to a key array:
+            console.log("showTreeSelect : onSelect, expand = " +  select + ", node = " + node );
+
+            // Get a list of all selected nodes, and convert to a key array:
       		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join(",");
       		// Get a list of all selected TOP nodes
       		var selRootNodes = node.tree.getSelectedNodes(true);
       		// ... and convert to a key array:
       		var selRootKeys = $.map(selRootNodes, function(node){
         		return node.data.key;
       		});
-    	}
+    	},
+		onQueryExpand: function(expand, node) {
+			//console.log("showTreeSelect : onQueryExpand, expand = " +  expand + ", node = " + node );
+            if ($(node.span).hasClass("customClassBold")){
+                node.data.addClass = 'customClassBold';
+                node.visit(function(childNode){
+                    childNode.data.addClass = 'customClassBold';
+                });
+            }
+            else if ($(node.span).hasClass("customClassGray")) {
+                node.data.addClass = 'customClassGray';
+                node.visit(function(childNode){
+                    childNode.data.addClass = 'customClassGray';
+                });
+            }
+            else if ($(node.span).hasClass("customClassDefault")) {
+                node.data.addClass = 'customClassDefault';
+                node.visit(function(childNode){
+                    childNode.data.addClass = 'customClassDefault';
+                });
+            }
+
+		}
  	});
 }
 
 function showTreeParent(data, id, key) {
- 	
+
     $(id).dynatree({
         checkbox: true,
         // Override class name for checkbox icon:
         classNames: {checkbox: "dynatree-radio"},
         selectMode: 1,
         children: data,
-        onSelect: function(select, node) {
-      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+		onPostInit: function(dtnode) {
+			var tree = $(id).dynatree('getTree');
+			var selKeys = $.map(tree.getSelectedNodes(), function(node){
+				node.makeVisible();
+			});
+			if((selKeys && selKeys.length))
+			{
+				$('#savebutton').removeClass('disabled');
+			}
+			else{
+				$('#savebutton').addClass('disabled');
+			}
+		},
+		onSelect: function(select, node) {
+			console.log("showTreeParent : onSelect" );
+
+			var collectionareastreeselection = $("#collectionAreasTree").dynatree("getTree").getSelectedNodes();
+			var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
         		return node.data.key;
       		});
-      		document.getElementById(key).value = selKeys.join(",");
+            document.getElementById(key).value = selKeys;
+            if (selKeys.length > 0){ //keys from TreeParent and keys from TreeCollectionAreas
+				$('#collectionAreasTree').dynatree('disable');
+				$('#savebutton').removeClass('disabled');
+            }
+            else {
+                $('#collectionAreasTree').dynatree('enable');
+                if (collectionareastreeselection.length < 1 )
+				{
+					$('#savebutton').addClass('disabled');
+				}
+            }
         }
         // The following options are only required, if we have more than one tree on one page:
 //        initId: "treeData",
@@ -448,6 +516,90 @@ function showTreeParent(data, id, key) {
         idPrefix: "dynatree-Cb1-"
 */
     });
+}
+
+function showTreeCollectionAreas(data, id, key) {
+    var tree = $("#collectionTree").dynatree("getTree");
+    var tmp;
+
+    $(id).dynatree({
+		checkbox: true,
+		// Override class name for checkbox icon:
+		classNames: {checkbox: "dynatree-radio"},
+		selectMode: 1,
+		children: data,
+		onSelect: function (isSelected, node) {
+			var collections_ids = $.map(node.tree.getSelectedNodes(), function(node){
+                return node.data.collections_ids;
+            });
+
+			if((tmp && tmp.length || collections_ids && collections_ids.length)){
+				$("#collectionTree").dynatree("getRoot").visit(function(node){ //----------------- ALL CHILDREN ------------------
+					$(node.span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+						.removeClass('customClassBold')
+						.addClass('customClassGray')
+				});
+			}
+
+			if((tmp && tmp.length)) // CHECK IF PREVIOUS SELECTION EXISTS AND SET IT TO DEFAULT
+			{
+                $.each( tmp, function( index, value ){
+                    tree.getNodeByKey(value.toString()).select(false);
+					var span = jQuery(tree.getNodeByKey(value.toString()).span);
+					$(span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+						.removeClass('customClassBold')
+						.addClass('customClassGray') //on change make GRAY - the previous active ones
+				});
+			}
+			else //CASE WHEN COLLECTION_IDS NOT NULL
+			{
+                $('#savebutton').addClass('disabled');
+			}
+
+			if((collections_ids && collections_ids.length)){
+				$.each( collections_ids, function( index, value ){
+					//console.log("each( collections_id [index] =  " + collections_ids[index]);
+					ptnode = tree.getNodeByKey(value.toString());
+					ptnode.select(true); //activates onSelect 'showTreeSelect'
+					// -------------- HIGHLIGHT PARENT NODE WITH CHILDREN --------------
+					$(ptnode.span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+						.removeClass('customClassBold')
+						.addClass('customClassBold')
+					ptnode.visit(function(childNode){
+						$(childNode.span)
+							.removeClass('customClassDefault')
+							.removeClass('customClassGray')
+							.removeClass('customClassBold')
+							.addClass('customClassBold')
+					});
+
+				});
+
+				$('#collectionCountInArea').text('Top Collection count in selected area: ' + collections_ids.length);
+			}
+
+			tmp=collections_ids;
+
+			if((tmp && tmp.length&&collections_ids && collections_ids.length)){
+			}
+			else{
+				//---------- FOR ENTIRE TREE !!! ----------------
+				$("#collectionTree").dynatree("getRoot").visit(function(nodechild){
+					$(nodechild.span)
+						.removeClass('customClassDefault')
+						.removeClass('customClassGray')
+						.removeClass('customClassBold')
+				});
+				$('#collectionCountInArea').text('');
+			}
+		}
+	});
 }
 
 function targetDateTime() {

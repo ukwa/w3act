@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import models.Taxonomy;
+import models.TaxonomyParentsAll;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import play.Logger;
@@ -59,6 +61,30 @@ class NaryTreeNode {
 	}
 };
 
+class NaryTreeNodeForCollArea {
+	public long key;
+	public String title;
+	public String url;
+	public boolean select;
+	//public int targetCount;
+	public List<NaryTreeNode> children;
+	//public int[] collections_ids;
+	public List<Long> collections_ids;
+
+	public NaryTreeNodeForCollArea() {}
+
+	public NaryTreeNodeForCollArea(long _val, String _name, String _url,  boolean _select, List<NaryTreeNode> _children, List<Long> _collections_ids) {
+		key = _val;
+		title = _name;
+		url = _url;
+		select = _select;
+		children = _children;
+		collections_ids = _collections_ids;
+	}
+
+
+};
+
 public class AbstractController extends Controller {
 
 	private static final String cacheName = "play";
@@ -95,43 +121,43 @@ public class AbstractController extends Controller {
                 String[] value = request().queryString().get(name);
                 if (value == null)
                         return null;
-                
+
                 if (value.length == 0)
                         return null;
-                
+
                 return value[0];
         }
-        
+
         protected static int getQueryParamAsInt(String name, int defaultValue) {
                 String[] param = request().queryString().get(name);
                 if (param == null)
                         return defaultValue;
-                
+
                 if (param.length < 1)
                         return defaultValue;
-                
+
                 try {
                         return Integer.parseInt(param[0]);
                 } catch (Throwable t) {
                         return defaultValue;
                 }
         }
-        
+
         protected static double getQueryParamAsDouble(String name, double defaultValue) {
                 String[] param = request().queryString().get(name);
                 if (param == null)
                         return defaultValue;
-                
+
                 if (param.length < 1)
                         return defaultValue;
-                
+
                 try {
                         return Double.parseDouble(param[0]);
                 } catch (Throwable t) {
                         return defaultValue;
                 }
         }
-        
+
         protected static String getFormParam(String name) {
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             if (formParams == null)
@@ -139,13 +165,13 @@ public class AbstractController extends Controller {
             String[] values = formParams.get(name);
             if (values == null)
                     return null;
-            
+
             if (values.length < 1)
                     return null;
-            
+
             return values[0];
     }
-    
+
         protected static String[] getFormParams(String name) {
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             if (formParams == null)
@@ -153,10 +179,10 @@ public class AbstractController extends Controller {
             String[] values = formParams.get(name);
             if (values == null)
                     return null;
-            
+
             if (values.length < 1)
                     return null;
-            
+
             return values;
     }
 
@@ -209,7 +235,7 @@ public class AbstractController extends Controller {
     }
 
     /**
-     * This method computes a tree of collections in JSON format. 
+     * This method computes a tree of collections in JSON format.
      * @param collectionUrl This is an identifier for current selected object
      * @return tree structure
      */
@@ -219,11 +245,11 @@ public class AbstractController extends Controller {
     	JsonNode jsonData = Json.toJson(result);
         return jsonData;
     }
-    
+
     protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collections, String filter, boolean parent) {
     	return getCollectionTreeElements(collections, filter, parent, null);
     }
-    
+
     /**
    	 * This method calculates first order collections.
      * @param collections The list of all collections
@@ -256,7 +282,56 @@ public class AbstractController extends Controller {
     }
 
 	public static JsonNode getSubjectsDataByIds(List<Long> mySubjectIds){
-		return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
+    	return Json.toJson(getSubjectTreeElementsByIdsStack( Subject.getFirstLevelSubjects(), mySubjectIds));//jsonData;
+	}
+
+	/**
+	 * Fill data for Taxonomy related Collection Areas Tree
+	 * @param myCollectionAreaIds
+	 * @return
+	 */
+	public static JsonNode getCollectionAreaDataByIds(List<Long> myCollectionAreaIds){
+		List<NaryTreeNode> collectionAreasTaxonomy = new ArrayList<>();
+		List<Long> taxonomyIds = new ArrayList<>();
+
+		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) { //From taxonomy table get available 9 collection_areas
+			//collection areas -  taxonomy_id
+			//collection id    -  parent_id
+			for(TaxonomyParentsAll taxonomyTaxonomyParentsAll : TaxonomyParentsAll.findByParentId(taxonomy.id)) {
+				taxonomyIds.add(taxonomyTaxonomyParentsAll.parentId);
+			}
+
+			collectionAreasTaxonomy.add(new NaryTreeNode(taxonomy.id, taxonomy.name,
+					String.valueOf(routes.TaxonomyController.view(taxonomy.id)),
+					taxonomyIds.contains(myCollectionAreaIds.get(0))?true:false, //CASE 1 - check if specific collection ID exists in Taxonomy List: taxonomy_id <-> parent_id
+					null));
+			//need data from, taxonomy_parent_all
+			taxonomyIds.clear();
+		}
+
+		return Json.toJson(collectionAreasTaxonomy);//jsonData;
+	}
+
+	public static JsonNode getCollectionAreaDataByIds_PlusCollections(List<Long> myCollectionAreaIds){
+		List<NaryTreeNodeForCollArea> collectionAreasTaxonomy = new ArrayList<>();
+		List<Long> taxonomyIds = new ArrayList<>();
+
+		for(Taxonomy taxonomy : Taxonomy.findByType("collection_areas")) { //From taxonomy table get available 9 collection_areas
+			//collection areas -  taxonomy_id
+			//collection id    -  parent_id
+			for(TaxonomyParentsAll taxonomyTaxonomyParentsAll : TaxonomyParentsAll.findByParentId(taxonomy.id))
+				taxonomyIds.add(taxonomyTaxonomyParentsAll.parentId);
+
+			collectionAreasTaxonomy.add(new NaryTreeNodeForCollArea(taxonomy.id, taxonomy.name,
+					String.valueOf(routes.TaxonomyController.view(taxonomy.id)),
+					taxonomyIds.contains(myCollectionAreaIds.get(0))?true:false, //CASE 1 - check if specific collection ID exists in Taxonomy List: taxonomy_id <-> parent_id
+					null,
+					new ArrayList<>(taxonomyIds)));
+			//need data from, taxonomy_parent_all
+			taxonomyIds.clear();
+		}
+
+		return Json.toJson(collectionAreasTaxonomy);//jsonData;
 	}
 
 	protected static List<NaryTreeNode> getSubjectTreeElementsByIdsStack(List<Subject> subjects, List<Long> mySubjectIds) {
@@ -357,7 +432,7 @@ public class AbstractController extends Controller {
 
 		return null;
 	}
-	
+
 	protected static JsonNode searchCollections(int _key){//root_id, ){
 
 		//                             root (based on REAL SUBJECTS TREE)
@@ -386,18 +461,18 @@ public class AbstractController extends Controller {
 	}
 
 	/**
-	 * This method computes a tree of subjects in JSON format. 
+	 * This method computes a tree of subjects in JSON format.
 	 * @param subjectUrl This is an identifier for current selected object
 	 * @return tree structure
 	 */
-	protected static JsonNode getSubjectsData(List<Subject> mySubjects) {    	
+	protected static JsonNode getSubjectsData(List<Subject> mySubjects) {
 		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
 		List<ObjectNode> result = getSubjectTreeElements(firstLevel, true, mySubjects);
 		Logger.debug("subjects main level size: " + firstLevel.size());
 		JsonNode jsonData = Json.toJson(result);
 	    return jsonData;
 	}
-	
+
     protected static JsonNode getSubjectsDataByFilter(String filter) {
 		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
     	List<ObjectNode> result = getSubjectTreeElements(firstLevel, filter, true);
@@ -408,11 +483,11 @@ public class AbstractController extends Controller {
     protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent) {
     	return getSubjectTreeElements(subjects, filter, parent, null);
     }
-    
-	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> firstLevel, boolean parent, List<Subject> mySubjects) { 
+
+	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> firstLevel, boolean parent, List<Subject> mySubjects) {
 		return getSubjectTreeElements(firstLevel, null, parent, mySubjects);
 	}
-	
+
 	/**
 	 * This method calculates first order subjects.
 	 * @param subjectList The list of all subjects
@@ -420,7 +495,7 @@ public class AbstractController extends Controller {
 	 * @param parent This parameter is used to differentiate between root and children nodes
 	 * @return subject object in JSON form
 	 */
-	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent, List<Subject> mySubjects) { 
+	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent, List<Subject> mySubjects) {
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 

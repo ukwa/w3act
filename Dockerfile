@@ -33,11 +33,5 @@ COPY --from=build-env /w3act/target/universal/stage /w3act
 
 EXPOSE 9000
 
-# Have to use this as the working directory or it fails to find the email templates!
-WORKDIR /w3act
-
-# Install GeoIP:
-RUN curl -L -O http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz && gunzip GeoLite2-City.mmdb.gz
-
 # Use larger heap, and add experimental option: forcing restart on OOM:
 CMD /w3act/bin/w3act -J-Xmx4g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null

@@ -12,6 +12,21 @@
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'collections');
 			showTreeSelect(@getJson(collectionData), "#collectionTree", "collectionSelect");
+
+			searchContext = 'collections';
+
+			$.ajax({
+				url: context + "/" + searchContext + '/allCollectionAreasAsJson/0',
+				type: 'GET',
+				success: function (outputfromserver) {
+					if (outputfromserver !== null) {
+						showTreeCollectionAreas(outputfromserver, "#collectionAreasTree", "collectionAreasTreeSelect");
+					} else {
+						alert('Make call failed - no output from server');
+					}
+				}
+			});
+
 		});
 	</script>
 }
@@ -28,7 +43,9 @@
  	<article class="collections">
 		<div id="forms">
    			@helper.form(action=routes.CollectionController.search, 'class -> "form-inline") {
-	   			<div class="input-group">
+				<div class="col-sm-4"></div>
+
+	   			<div class="input-group col-sm-8">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
 	   				<input type="hidden" name="o" value="@currentOrder">
@@ -43,9 +60,15 @@
 			}
 		</div>
 
-		<div class="row">		
-			<div class="form-group">									
-			    <div class="col-sm-12">
+		<div class="row">
+			<div class="form-group">
+				<div class="col-sm-4 control-label">
+					<label for="suggestions-collections" >Collection Areas</label>
+					<div id="collectionAreasTree" class="padding-10  bg-primary taxonomy"></div>
+					<div id="collectionCountInArea" class="padding-10 text-primary"></div>
+				</div>
+
+				<div class="col-sm-8">
 					  <div id="collectionTree"></div>
 					  <input type="hidden" id="treeKeys" name="collectionTree">
 				</div>

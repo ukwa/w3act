@@ -1,3 +1,4 @@
+@import uk.bl.Const
 @(collectionsForm: Form[models.Collection], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode)
 
 @import helper._
@@ -13,10 +14,24 @@
 	<script>
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
-			applySearch(context, 'collections'); 
+			applySearch(context, 'collections');
 
 			showTreeParent(@getJson(collectionData), "#collectionTree", "collectionSelect");
-			
+
+			searchContext = 'collections';
+
+			$.ajax({
+				url: context + "/" + searchContext + '/allCollectionAreasAsJson/0',
+				type: 'GET',
+				success: function (outputfromserver) {
+					if (outputfromserver !== null) {
+						showTree(outputfromserver, "#collectionAreasTree", "collectionAreasTreeSelect");
+					} else {
+						alert('Make call failed - no output from server');
+					}
+				}
+			});
+
 		});
 	</script>
 }
@@ -24,13 +39,13 @@
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
 	@main("", user, scripts) {
-	    
+
 	   	<div class="page-header">
 		    <h1><a href="@routes.CollectionController.index()">Taxonomies > Collections > </a>New Collection</h1>
 	    </div>
-	    
+
 	    @warningmessage(flash)
-	    
+
         @if(collectionsForm.hasErrors) {
 			<div class="padding-20">
 				<div class="alert alert-warning alert-dismissable">
@@ -43,7 +58,7 @@
 				</div>
 			</div>
 		}
-			    
+
 		@helper.form(action=routes.CollectionController.save) {
 
 			<div class="row padding-10">
@@ -58,7 +73,7 @@
 					</div>
 				</div>
 	     	</div>
-	     	
+
 	   		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -69,13 +84,29 @@
 						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collectionsForm("parentName").value">
 							} else {
 							    None
-	     	              	}	   
+	     	              	}
 						</div>
 					</div>
 				</div>
-	     	</div>	   
-	     	
-	     	<div class="row padding-10">
+	     	</div>
+
+
+			<div class="row padding-10">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="suggestions-collections" class="col-sm-6 control-label">Collection Areas</label>
+						<div class="col-sm-6 control-label bg-primary taxonomy">
+						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+							<div id="collectionAreasTree" style="padding:5px;"></div>
+							<div id="collectionAreasTreeSelection"></div>
+							<input type="hidden" id="collectionAreasTreeSelect" name="collectionAreasTreeSelect" value="@collectionsForm("collectionAreasTreeSelect").value">
+						}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 					@inputText(collectionsForm("startDateText"),
@@ -83,7 +114,7 @@
 						    'id -> "inputStartDate",
 						    'class -> "form-control",
 						    'placeholder -> "Start Date"
-						)(FieldConstructor(genericInput.f), lang)						
+						)(FieldConstructor(genericInput.f), lang)
 					</div>
 				</div>
 			</div>
@@ -95,25 +126,24 @@
 						    'id -> "inputEndDate",
 						    'class -> "form-control",
 						    'placeholder -> "End Date"
-						)(FieldConstructor(genericInput.f), lang)											
+						)(FieldConstructor(genericInput.f), lang)
 					</div>
 				</div>
-			</div>  
-
+			</div>
 
 			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@helper.checkbox(collectionsForm("publish"), 
-								args = 
-								'_label -> "Publish" 
+							@helper.checkbox(collectionsForm("publish"),
+								args =
+								'_label -> "Publish"
 							)(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
-		     	</div>		     				     	
-			}     	
-		
+		     	</div>
+			}
+
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -122,11 +152,11 @@
 							'_label -> "Description",
 							'id -> "inputDescription",
 							'class -> "form-control"
-						)(FieldConstructor(genericInput.f), lang)						
+						)(FieldConstructor(genericInput.f), lang)
 					</div>
 				</div>
 			</div>
-		
+
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 	     			<div class="form-group">
@@ -135,16 +165,16 @@
 							'_label -> "Revision log message",
 							'id -> "inputRevision",
 							'class -> "form-control"
-						)(FieldConstructor(genericInput.f), lang)						
+						)(FieldConstructor(genericInput.f), lang)
 					</div>
 				</div>
 			</div>
-    	
+
 	    	@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 				<div class="row padding-10 pull-right">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="btn-group">
-							<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+							<button id="savebutton" type="submit" class="btn btn-primary" name="action" value="save">Save</button>
 				       </div>
 					</div>
 				</div>

@@ -143,7 +143,7 @@ public class Taxonomy extends ActModelMappedSuperClass {
     }
 
     public static Taxonomy findByNameAndType(String name, String type) {
-    	return findTaxonomy.where().eq("name", name).eq("ttype", type).findUnique();
+    	return findTaxonomy.where().eq("name", name).eq(Const.TTYPE, type).findUnique();
     }
 
     /**

@@ -1,17 +1,18 @@
 package controllers;
 
+import static org.apache.sis.util.ArraysExt.append;
 import static play.data.Form.form;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import models.Collection;
 import models.Taxonomy;
+import models.TaxonomyParentsAll;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +64,7 @@ public class CollectionController extends AbstractController {
 
 	/**
 	 * Display the paginated list of collections.
-	 * 
+	 *
 	 * @param page
 	 *            Current page number (starts from 0)
 	 * @param sortBy
@@ -75,18 +76,18 @@ public class CollectionController extends AbstractController {
 	 */
 	@Security.Authenticated(SecuredController.class)
 	public static Result list(int pageNo, String sortBy, String order, String filter) {
-		
+
 		JsonNode node = getCollectionsDataByFilter(filter);
-		
+
 		Page<Collection> pages = Collection.pager(pageNo, 10, sortBy, order, filter);
-		
+
 		return ok(list.render("Collections", User.findByEmail(request().username()), filter, pages, sortBy, order, node));
 	}
-	
+
 	/**
 	 * This method enables searching for given URL and redirection in order to
 	 * add new entry if required.
-	 * 
+	 *
 	 * @return
 	 */
 	@Security.Authenticated(SecuredController.class)
@@ -100,7 +101,7 @@ public class CollectionController extends AbstractController {
 			flash("message", "Please enter a name in the search window");
 	        return redirect(routes.CollectionController.list(0, "title", "asc", ""));
     	}
-    	
+
     	int pageNo = Integer.parseInt(requestData.get(Const.PAGE_NO));
     	String sort = requestData.get(Const.SORT_BY);
     	String order = requestData.get(Const.ORDER);
@@ -127,14 +128,14 @@ public class CollectionController extends AbstractController {
         }
         return ok(jsonData);
     }
-	
+
 	@Security.Authenticated(SecuredController.class)
 	@BodyParser.Of(BodyParser.Json.class)
     public static Result getByJson() {
     	JsonNode jsonData = getCollectionsData();
         return ok(jsonData);
     }
-	
+
 	@Security.Authenticated(SecuredController.class)
 	public static Result view(Long id) {
 		User user = User.findByEmail(request().username());
@@ -151,7 +152,7 @@ public class CollectionController extends AbstractController {
     		return notFound("There is no Collection with ID "+id);
 		}
 	}
-	
+
 	@Security.Authenticated(SecuredController.class)
 	public static Result viewAsJson(Long id) {
 		Collection collection = Collection.findById(id);
@@ -162,14 +163,14 @@ public class CollectionController extends AbstractController {
     		return notFound("There is no Collection with ID "+id);
 		}
 	}
-	
+
 	@Security.Authenticated(SecuredController.class)
     public static Result viewAct(String url) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findByUrl(url);
         return ok(view.render(collection, user));
     }
-    
+
 	@Security.Authenticated(SecuredController.class)
     public static Result newForm() {
     	User user = User.findByEmail(request().username());
@@ -178,7 +179,6 @@ public class CollectionController extends AbstractController {
 		Collection collection = new Collection();
 		collectionForm = collectionForm.fill(collection);
         return ok(newForm.render(collectionForm, user, node));
-    	
     }
 
 	@Security.Authenticated(SecuredController.class)
@@ -206,21 +206,22 @@ public class CollectionController extends AbstractController {
 		JsonNode node = getCollectionsData(thisCollection);
 		return badRequest(edit.render(form, user, id, node));
     }
-    
+
 	@Security.Authenticated(SecuredController.class)
 	public static Result newInfo(Form<Collection> form) {
 		User user = User.findByEmail(request().username());
 		JsonNode node = getCollectionsData();
         return badRequest(newForm.render(form, user, node));
 	}
-	
+
 	@Security.Authenticated(SecuredController.class)
     public static Result save() {
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
+    	int tmp_parent_collection=0;
 
-    	Logger.debug("action: " + action);
-    	
+		Logger.debug("action: " + action);
+
         if (StringUtils.isNotEmpty(action)) {
         	if (action.equals("save")) {
 		        Form<Collection> filledForm = form(Collection.class).bindFromRequest();
@@ -228,16 +229,18 @@ public class CollectionController extends AbstractController {
 	        		Logger.debug("errors: " + filledForm.errors());
 		            return newInfo(filledForm);
 		        }
-		        
+
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
 	            Logger.debug("collectionSelect:save: " + collectionSelect);
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
+	                tmp_parent_collection = collections.length;
+					//PARENT SELECTION OPTION
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 		            	Collection collection = Collection.findById(collectionId);
-	                	filledForm.get().parent = collection;	                		                	
-	                	
+	                	filledForm.get().parent = collection;
+
 	                	Logger.debug("looking good");
 	                }
 	                else if (collections.length > 1) {
@@ -245,8 +248,8 @@ public class CollectionController extends AbstractController {
 	    	  			flash("message", "Please select only one parent.");
 	    	  			return newInfo(filledForm);
 	                }
-	            }		
-	            
+	            }
+
 	            String startDate = requestData.get("startDateText");
             	if (StringUtils.isNotEmpty(startDate)) {
         			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -271,16 +274,30 @@ public class CollectionController extends AbstractController {
         	            return newInfo(filledForm);
         			}
             	}
+
 		        filledForm.get().save();
+
+				//collection areas
+				//------- IF TOP COLLECTION ONLY!!!
+				if (tmp_parent_collection < 1){
+					String[] newCollectionAreas = requestData.get("collectionAreasTreeSelect").replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
+
+					String sql_insert_bulk = "";
+					for(String sId : newCollectionAreas)
+						sql_insert_bulk += "("+Long.valueOf(sId)+","+filledForm.get().id+"),";
+					Ebean.createSqlUpdate("INSERT INTO taxonomy_parents_all (taxonomy_id, parent_id) VALUES " + sql_insert_bulk.substring(0, sql_insert_bulk.length() - 1)).execute();
+				}
+
+
 				flash("message", "Collection " + filledForm.get().name + " has been created");
 				Logger.debug("invalidate cache on Collection Create, key CollectionsData: ");
 				getCache().remove("CollectionsData");
 		        return redirect(routes.CollectionController.view(filledForm.get().id));
         	}
         }
-        return null;    	
+        return null;
     }
-    
+
 	@Security.Authenticated(SecuredController.class)
     public static Result update(Long id) {
     	DynamicForm requestData = form().bindFromRequest();
@@ -289,21 +306,25 @@ public class CollectionController extends AbstractController {
     	Logger.debug("hasErrors: " + filledForm.hasErrors());
 
     	String action = requestData.get("action");
+		int tmp_parent_collection=0;
 
-    	Logger.debug("action: " + action);
-    	
+
+		Logger.debug("action: " + action);
+
         if (StringUtils.isNotEmpty(action)) {
-        	if (action.equals("save")) {    
+        	if (action.equals("save")) {
 		        if (filledForm.hasErrors()) {
 		        	Logger.debug("hasErrors: " + filledForm.errors());
 		            return info(filledForm, id);
 		        }
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
 	            Logger.debug("collectionSelect:update: " + collectionSelect);
-	           
+
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(Const.LIST_DELIMITER);
-	                if (collections.length == 1) {
+					tmp_parent_collection=collections.length;
+
+					if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
 	                	if (collectionId.longValue() == id.longValue()) {
 	                		Logger.debug("same id");
@@ -312,7 +333,7 @@ public class CollectionController extends AbstractController {
 	        	  			return info(filledForm, id);
 	                	} else {
 			            	Collection collection = Collection.findById(collectionId);
-		                	filledForm.get().parent = collection;		 		                	
+		                	filledForm.get().parent = collection;
 		                	Logger.debug("looking good");
 	                	}
 	                }
@@ -323,15 +344,15 @@ public class CollectionController extends AbstractController {
 	                }
 	            }else{
 	            	 Ebean.createUpdate(Taxonomy.class, "update taxonomy SET parent_id=null where id=:id")
-                     .setParameter("id", id).execute(); 
+                     .setParameter("id", id).execute();
 	            }
-	            
-	            
+
+
 	            String startDate = requestData.get("startDateText");
             	if (StringUtils.isNotEmpty(startDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-					try {						
+					try {
 						Date date = formatter.parse(startDate);
 						filledForm.get().startDate = date;
 						 Logger.debug("startDate in date:::::::: " + date);
@@ -343,12 +364,12 @@ public class CollectionController extends AbstractController {
 		    		  Ebean.createUpdate(Taxonomy.class, "update taxonomy SET start_date=null where id=:id")
                       .setParameter("id", id).execute();
 		    	}
-            	
+
             	String endDate = requestData.get("endDateText");
             	if (StringUtils.isNotEmpty(endDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-					try {						
+					try {
 						Date date = formatter.parse(endDate);
 						filledForm.get().endDate = date;
 						 Logger.debug("endDate in date:::::::: " + date);
@@ -360,12 +381,36 @@ public class CollectionController extends AbstractController {
 		    		  Ebean.createUpdate(Taxonomy.class, "update taxonomy SET end_date=null where id=:id")
                       .setParameter("id", id).execute();
 		    	}
-	            
-	            // Check if the 'publish' field is empty, which corresponds to 'false':
+
+            	//collection areas
+				//0. check if any changes in COLLECTION AREAS
+
+				//ONLY IF TOP LEVEL COLLECTION
+				if (tmp_parent_collection<1) {
+					String[] updatedCollectionAreas = requestData.get("collectionAreasTreeSelect").replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
+					String[] originalCollectionAreas = {""};
+					for (TaxonomyParentsAll t : TaxonomyParentsAll.findByParentId(id))
+						originalCollectionAreas = append(originalCollectionAreas, String.valueOf(t.taxonomyId));
+
+					if (Arrays.equals(originalCollectionAreas, updatedCollectionAreas))
+						Logger.debug("COLLECTION AREAS ARE EQUAL ");
+					else {
+						Logger.debug("COLLECTION AREAS ARE NOT EQUAL ");
+						// 1. delete all existing list from DB
+						Ebean.createSqlUpdate("DELETE FROM taxonomy_parents_all WHERE parent_id=" + id).execute();
+						// 2. insert checked
+						String sql_insert_bulk = "";
+						for (String sId : updatedCollectionAreas)
+							sql_insert_bulk += "(" + Long.valueOf(sId) + "," + id + "),";
+						Ebean.createSqlUpdate("INSERT INTO taxonomy_parents_all (taxonomy_id, parent_id) VALUES " + sql_insert_bulk.substring(0, sql_insert_bulk.length() - 1)).execute();
+					}
+				}
+
+				// Check if the 'publish' field is empty, which corresponds to 'false':
 	            if( filledForm.get().publish == null ) {
 	            	filledForm.get().publish = false;
 	            }
-		        
+
 		        filledForm.get().update(id);
 		        flash("message", "Collection " + filledForm.get().name + " has been updated");
 				Logger.debug("invalidate cache on Collection Update, key CollectionsData: ");
@@ -377,17 +422,17 @@ public class CollectionController extends AbstractController {
             	collection.delete();
                 Logger.debug("invalidate cache on Collection Delete, key CollectionsData: ");
                 getCache().remove("CollectionsData");
-        		return redirect(routes.CollectionController.index()); 
+        		return redirect(routes.CollectionController.index());
         	}
         }
         return null;
     }
-	    
+
 	@Security.Authenticated(SecuredController.class)
     public static Result sites(Long id) {
         return redirect(routes.TargetController.collectionTargets(0, 50, "title", "asc", "", id));
     }
-    
+
 	public static String serializeCollections(List<Collection> dCollections) {
 		String collection = "";
 		for (Collection dCollection : dCollections) {
@@ -396,11 +441,11 @@ public class CollectionController extends AbstractController {
 		}
 		return collection;
 	}
-	
+
     /**
      * @param id
      * @return
-     * 
+     *
      * curl -v -H "Content-Type: application/json" -X PUT -d '{"name": "kinman li"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/collections/1
      * @throws ActException
      */
@@ -414,11 +459,11 @@ public class CollectionController extends AbstractController {
 		Logger.debug("response 200 updated");
 	    return ok(response().getHeaders().get(LOCATION));
     }
-    
+
     /**
-     * 
+     *
      *  curl -v -H "Content-Type: application/json" -X POST -d '{"name": "Test Collection"}' -u wa-sysadm@bl.uk:sysAdmin http://localhost:9000/act/api/collections
-     *  
+     *
      * @return
      */
     @With(SecuredAction.class)
@@ -426,7 +471,6 @@ public class CollectionController extends AbstractController {
     public static Result collectionCreate() {
     	JsonNode node = request().body().asJson();
 
-        
         try {
 	    	if(node == null) {
 	    		return badRequest("Expecting Json data");
@@ -445,17 +489,49 @@ public class CollectionController extends AbstractController {
         } catch (Exception e) {
         	Logger.error("error: " + e);
             return Results.internalServerError(e.getMessage());
-        }        
+        }
     	Logger.debug("response 200 updated");
     	return ok("OK");
     }
-    
+
 	@Security.Authenticated(SecuredController.class)
     public static Result getCollectionTargets(Long id) {
 		Collection collection = Collection.findById(id);
 		Logger.debug("targets: " + collection.targets.size());
-		
+
 		JsonNode jsonNode = Json.toJson(collection.targets);
 		return ok(jsonNode);
     }
+
+	/**
+	 * Method for Collection Areas tree data.
+	 * Used by AJAX call.
+	 *
+	 * @param subject This is an identifier for current Collection Areas selected in Collection Area tree
+	 * @return tree structure
+	 * */
+	@Security.Authenticated(SecuredController.class)
+	public static Result allCollectionAreasAsJson(String collectionArea) { // IDs or names?
+		Logger.debug("Call from AJAX function allCollectionAreasAsJson");
+		Logger.debug("Parameter collectionArea : " + collectionArea);
+
+		try {
+			String result = java.net.URLDecoder.decode(collectionArea, StandardCharsets.UTF_8.name());
+			collectionArea = result;
+		} catch (UnsupportedEncodingException e) {
+			// not going to happen - value came from JDK's own StandardCharsets
+		}
+		List<Long> collectionAreasIds = new ArrayList<>();
+		String[] collectionAreas = collectionArea.replace("\"", "").split(Const.TREE_LIST_ID_DELIMITER);
+		for(String sId : collectionAreas) {
+			if(StringUtils.isNotEmpty(sId)) {
+				Long collectionAreaId = Long.valueOf(sId);
+				collectionAreasIds.add(collectionAreaId);
+			}
+		}
+
+		return ok (getCollectionAreaDataByIds_PlusCollections(collectionAreasIds));
+	}
+
 }
+

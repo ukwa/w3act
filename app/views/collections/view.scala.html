@@ -1,4 +1,4 @@
-@(collection: models.Collection, user: User) 
+@(collection: models.Collection, user: User)
 
 @main("", user) {
 
@@ -41,7 +41,31 @@
 					</div>
 				</div>
 			</div>
-     	</div>		
+     	</div>
+
+	<div class="row padding-10">
+		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputDescription" class="col-sm-6 control-label">Collection Areas</label>
+				<div class="col-sm-6">
+
+					<ul class="selectionfromtrees">
+
+						@for(tpa <- TaxonomyParentsAll.findByParentId(collection.id)) {
+							<li><span class="label label-pill label-primary label-as-badge font-weight-normal">
+								@tpa.taxonomyId
+							</span>
+							</li>
+						}
+
+
+					</ul>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
      	
      	<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">

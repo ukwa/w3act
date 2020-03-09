@@ -168,8 +168,9 @@ public class ApplicationController extends Controller {
                 controllers.routes.javascript.UserController.index(),
                 controllers.routes.javascript.ContactController.index(),
 				controllers.routes.javascript.TargetController.allSubjectsIDsAsJson(),
-				controllers.routes.javascript.TargetController.allCollectionsIDsAsJson()
-            )
+				controllers.routes.javascript.TargetController.allCollectionsIDsAsJson(),
+				controllers.routes.javascript.CollectionController.allCollectionAreasAsJson()
+			)
         );
     }
     
