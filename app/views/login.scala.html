@@ -20,8 +20,14 @@
 <script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
 <script type="text/javascript" src="@routes.Assets.at("javascripts/main.min.js")"></script>
 <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.tablesorter.min.js")"></script>
-<script type="text/javascript"
-	src="@routes.ApplicationController.javascriptRoutes"></script>
+<script type="text/javascript" src="@routes.ApplicationController.javascriptRoutes"></script>
+@if( play.api.Play.current.configuration.getString("application.navbar.background-color") != "" ) {
+	  <style>
+	    .navbar-default {
+	      background-color: @{play.api.Play.current.configuration.getString("application.navbar.background-color")} !important;
+	    }
+	  </style>
+}
 </head>
 <body>
 	<nav class="navbar navbar-default" role="navigation">
