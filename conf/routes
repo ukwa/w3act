@@ -405,14 +405,17 @@ GET     /api/collections/:id                controllers.CollectionController.vie
 PUT     /api/collections/:id                controllers.CollectionController.collectionUpdate(id:Long)
 GET     /api/collections/:id/targets        controllers.CollectionController.getCollectionTargets(id:Long)
 
+# Authentication and authorisation check requests for e.g. NGINX http_auth_request
+GET     /api/auth                           controllers.APISecurityCheckController.isUser()
+GET     /api/auth/ldl                       controllers.APISecurityCheckController.isLDLMember()
 
 # Password management
-GET     /passwords                           controllers.PasswordController.edit()
-POST    /passwords                           controllers.PasswordController.save()
+GET     /passwords                          controllers.PasswordController.edit()
+POST    /passwords                          controllers.PasswordController.save()
 
 # WhoIs check
-GET     /whois                               controllers.WhoIsController.index()
-GET     /whois/check                         controllers.WhoIsController.check(total:Int ?= 0)
+GET     /whois                              controllers.WhoIsController.index()
+GET     /whois/check                        controllers.WhoIsController.check(total:Int ?= 0)
 
 # Sample forms with validation
 GET     /targets/blank                      controllers.TargetController.blank()

@@ -284,12 +284,13 @@ public class User extends ActModel {
     @JsonIgnore
     public boolean isLDLMember() {
     	String orgstr = getUserOrg();
-		if ( orgstr.equals("BL") || orgstr.equals("NLW") || 
-				orgstr.equals("NLS") || orgstr.equals("Bodleian") || 
-				orgstr.equals("CAM") || orgstr.equals("TCD") ) {
-			return true;
-		}
-
+        if (orgstr != null) {
+            if (orgstr.equals("BL") || orgstr.equals("NLW")
+                    || orgstr.equals("NLS") || orgstr.equals("Bodleian")
+                    || orgstr.equals("CAM") || orgstr.equals("TCD")) {
+                return true;
+            }
+        }
     	return false;
     }
 

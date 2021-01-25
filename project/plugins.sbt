@@ -5,7 +5,7 @@ checksums in update := Nil
 //logLevel := Level.Warn
 logLevel := Level.Info
 
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers += "Typesafe repository" at "https://dl.bintray.com/typesafe/maven-releases/"
 
 // For Eclipse (under Play 2.4.x)
 //addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
