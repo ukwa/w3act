@@ -25,6 +25,11 @@ public class APISecurityCheckController extends AbstractController {
             return unauthorized("unauthorized - you must be logged in!");
         }
         // Otherwise, all good:
+        User user = User.findByEmail(email);
+        response().setHeader("X-Auth-Remote-User", user.name);
+        response().setHeader("X-Auth-Remote-User-Email", user.email);
+        response().setHeader("X-Auth-Remote-User-Primary-Role",
+                user.getRole().name);
         return ok(Json.toJson("isUser"));
     }
 
@@ -43,6 +48,10 @@ public class APISecurityCheckController extends AbstractController {
         }
 
         // Otherwise, all good:
+        response().setHeader("X-Auth-Remote-User", user.name);
+        response().setHeader("X-Auth-Remote-User-Email", user.email);
+        response().setHeader("X-Auth-Remote-User-Primary-Role",
+                user.getRole().name);
         return ok(Json.toJson("isLDLMember"));
     }
 
