@@ -716,11 +716,13 @@ public class Target extends Model {
 	}
 
 	public static Target findByUrl(String url) {
-		return find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
+        return find.fetch("fieldUrls").fetch("licenses").where()
+                .eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
 	}
 
 	public static Target findByWct(String url) {
-		return find.where().eq("edit_url", url).eq(Const.ACTIVE, true).findUnique();
+        return find.fetch("fieldUrls").fetch("licenses").where()
+                .eq("edit_url", url).eq(Const.ACTIVE, true).findUnique();
 	}
 
 	/**
