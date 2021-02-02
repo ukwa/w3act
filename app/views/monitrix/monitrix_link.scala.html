@@ -18,6 +18,4 @@
         "Find URL in crawl logs"
 }
 
-<a target="_blank" href="@kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1d,mode:quick,to:now))&amp;_a=(columns:!(_source),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'@query(url,mode)')),sort:!(log_timestamp,desc))">
-@linktext(mode)
-</a>
+<a target="_blank" href="@{kibana}@{query(url,mode)}">@{linktext(mode)}</a>

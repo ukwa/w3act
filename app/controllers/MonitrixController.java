@@ -23,11 +23,11 @@ public class MonitrixController extends Controller {
 	}
 	
     public static String getURLPrefixQuery(String url) {
-    	return "downloaded_uri.raw:/"+escape(url)+".*/";
+        return "?url_filter=" + escapeParam(url) + "*";
     }
     
     public static String getURLQuery(String url) {
-    	return "downloaded_uri.raw:\""+url+"\"";
+        return "?url_filter=" + escapeParam(url) + "";
     }
     
     public static Result all() {
@@ -40,13 +40,14 @@ public class MonitrixController extends Controller {
     	PREFIX
     };
     
-    private static String escape(String in) {
-    	Logger.debug("in: "+in);
-    	String n = in.replaceAll("([\\:\\/])","\\\\$1");
-    	Logger.debug("out: "+n);
-    	return n;
+    private static String escapeParam(String raw) {
+        try {
+            return URLEncoder.encode(raw, "UTF-8").replaceAll("\\+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            return raw;
+        }
     }
-    
+
     public static Result forTarget(Long id) throws UnsupportedEncodingException {
     	Target target = Target.findById(id);
     	if( target != null) {
