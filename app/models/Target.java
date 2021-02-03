@@ -630,6 +630,7 @@ public class Target extends Model {
         this.crawlRate = "default";
         this.parallelQueues = "default";
 		this.crawlFrequency = Const.CrawlFrequency.DOMAINCRAWL.name();
+        this.watchedTarget = null;
 	}
 
 	public static Model.Finder<Long, Target> find = new Model.Finder<>(Long.class, Target.class);

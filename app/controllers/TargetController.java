@@ -1714,6 +1714,7 @@ public class TargetController extends AbstractController {
 
         // The watchedTarget is not cascaded automatically, so we handle it here:
         String watchedString = getFormParam("watched");
+        Logger.warn("watchedString " + watchedString);
         boolean watched = false;
         if(watchedString != null) {
             watched = Boolean.parseBoolean(watchedString);

@@ -443,7 +443,9 @@
                             </div>
                         </div>
                     </div>
-                }
+                } else {
+                    <input type="hidden" id="hidden" name="hidden" value="@targetForm("hidden").value">
+                }                
 
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
                     <div class="row padding-10">
@@ -457,7 +459,10 @@
                             </div>
                         </div>
                     </div>
+                } else {
+                    <input type="hidden" id="keySite" name="keySite" value="@targetForm("keySite").value">
                 }
+                
                 <div class="row padding-10">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <div class="form-group">
@@ -971,7 +976,9 @@
                                 </div>
                             </div>
                         </div>
-                    }
+                    } else {
+                        <input type="hidden" id="professionalJudgement" name="professionalJudgement" value="@targetForm("professionalJudgement").value">
+                    } 
 
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
@@ -1084,7 +1091,10 @@
                             </div>
                         </div>
                     </div>
-                }
+                } else {
+                    <input type="hidden" id="ignoreRobotsTxt" name="ignoreRobotsTxt" value="@targetForm("ignoreRobotsTxt").value">
+                    <input type="hidden" id="ignoreCookies" name="ignoreCookies" value="@targetForm("ignoreCookies").value">
+                }                
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
@@ -1101,24 +1111,6 @@
                             </div>
                         </div>
                     </div>
-                } else {
-                    @if(id == null) {
-                        <div class="row padding-10">
-                            <div class="col-md-12 col-xs-12 col-sm-12">
-                                <div class="form-group">
-                                    <label class="col-sm-6 control-label" for="crawlFrequency">
-                                        Crawl Frequency (How often should this site be archived?):
-                                        <font color="red">*</font>
-                                    </label>
-                                    <div class="col-sm-6">
-                                        <select id="crawlFrequency" class="form-control" name="crawlFrequency">
-                                            <option value="DOMAINCRAWL">Domain Crawl Only</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
                 }
 
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
@@ -1341,19 +1333,21 @@
 
                         <p>Note that you can only edit these settings if your account has been permitted access to the Document Harvester, and if you own this target.</p>
 
-                        @if(!target.hasDocuments() &&  user.canWatchTarget(target) || user.hasRole("archivist")) {
+                        @if( (!target.hasDocuments() && user.canWatchTarget(target)) || user.hasRole("archivist") ) {
                             @checkbox(targetForm("watched"), true, '_label -> "Watched?", '_id -> "watched", 'onclick -> "javascript:display();")
                         } else {
                             @checkbox(targetForm("watched"), false, '_label -> "Watched?", '_id -> "watched")
                         }
                         <div id="division">
-
-                            @inputText(
-                                targetForm("watchedTarget.documentUrlScheme"),
-                                user.canWatchTarget(target),
-                                '_label -> Html("Document URL Scheme<br/>"),
+	                        @helper.inputText(targetForm("watchedTarget.documentUrlScheme"),
+	                            '_label -> "Document URL Scheme",
+	                            'id -> "watchedTarget.documentUrlScheme",
+	                            'class -> "form-control",
+	                            'spellcheck -> "true",
+	                            'contenteditable -> "true",
+	                            '_error -> targetForm("name").error.map(_.withMessage("Enter Title")),
                                 '_description -> "(it should not be necessary to set a document URL scheme, but this can be used to limit the scope of the document detection process. It cannot be used to grow the scope of the crawl)"
-                            )
+	                        )(FieldConstructor(genericMandatoryInput.f), lang)
 
                             @if(Target.findById(id).watchedTarget != null) {
                                 <div class="row padding-10">
