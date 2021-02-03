@@ -1615,6 +1615,15 @@ public class TargetController extends AbstractController {
             filledForm.get().keySite = Boolean.FALSE;
         }
 
+        // robots
+        if (filledForm.get().ignoreRobotsTxt == null) {
+            filledForm.get().ignoreRobotsTxt = Boolean.FALSE;
+        }
+
+        // cookie
+        if (filledForm.get().ignoreCookies == null) {
+            filledForm.get().ignoreCookies = Boolean.FALSE;
+        }
 
         // Ensure items NOT edited herein are re-attached:
         if(original != null) {
@@ -2478,6 +2487,10 @@ public class TargetController extends AbstractController {
 
             if(target.ignoreRobotsTxt == null) {
                 target.ignoreRobotsTxt = Boolean.FALSE;
+            }
+
+            if (target.ignoreCookies == null) {
+                target.ignoreCookies = Boolean.FALSE;
             }
 
             // Save - disabled right now, as we do not want this live as yet.

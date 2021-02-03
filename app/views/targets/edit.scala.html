@@ -1021,7 +1021,7 @@
                         </div>
                     </div>
                 }
-                @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+                @if(user.hasRole("sys_admin") || user.hasRole("archivist") ) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
@@ -1034,7 +1034,58 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                            @helper.checkbox(field = targetForm("ignoreCookies"),
 
+                                '_label -> "Ignore Cookies",
+                                '_description -> "Should we ignore Cookies while crawling this web host? (This applies to all Targets on this host, and should be set only on the host-level Target record.)",
+                                '_showConstraints -> false
+                            )(FieldConstructor(genericMandatoryInput.f), lang)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                            @select(
+                                targetForm("crawlRate"),
+							    options = Seq(
+							      "default" -> "No faster than 2 URI/s, backing-off based on site response time (default).",
+							      "extraPolite" -> "No faster than 10 URI/s (extra polite).",
+							      "fast-2ps" -> "2 URI/s (fast, no back-off).",
+							      "fast-10ps" -> "10 URI/s (really fast, no back-off)."
+							     ),
+                                'class -> "form-control",
+                                '_label -> "Crawl Rate",
+                                '_description -> "How fast should the crawler run for all Targets this host? Faster settings should only be used with site owners permission, on the host-level Target record.",
+                                '_showConstraints -> false
+                            )(FieldConstructor(genericMandatoryInput.f), lang)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                            @select(
+                                targetForm("parallelQueues"),
+							    options = Seq(
+							      "default" -> "One queue for this host (default).",
+							      "parallel-queues-2" -> "Two parallel queues",
+							      "parallel-queues-4" -> "Four parallel queues.",
+							      "parallel-queues-8" -> "Eight parallel queues."
+							     ),
+                                'class -> "form-control",
+                                '_label -> "Parallel Queues",
+                                '_description -> "How many simultaneous downloads can the crawler do for this host? (This multiplies the crawl rate! And applies to all Targets on this web host! Use sparingly!)",
+                                '_showConstraints -> false
+                            )(FieldConstructor(genericMandatoryInput.f), lang)
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">

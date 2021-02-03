@@ -350,6 +350,12 @@ public class Target extends Model {
 	@JsonProperty("field_ignore_robots_txt")
 	public Boolean ignoreRobotsTxt;
 	
+    public Boolean ignoreCookies;
+
+    public String crawlRate;
+
+    public String parallelQueues;
+
 	@JsonProperty("field_crawl_frequency")
 	public String crawlFrequency;
 	
@@ -619,7 +625,10 @@ public class Target extends Model {
 		this.ukPostalAddress = Boolean.FALSE;
 		this.viaCorrespondence = Boolean.FALSE;
 		this.professionalJudgement = Boolean.FALSE;
-		this.ignoreRobotsTxt = Boolean.FALSE;
+        this.ignoreRobotsTxt = Boolean.FALSE;
+        this.ignoreCookies = Boolean.FALSE;
+        this.crawlRate = "default";
+        this.parallelQueues = "default";
 		this.crawlFrequency = Const.CrawlFrequency.DOMAINCRAWL.name();
 	}
 

@@ -782,8 +782,9 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">
-                                    (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
+                                <label class="col-sm-6 control-label">Ignore Robots.txt:
+                                <small class="text-center">
+                                    (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems - Archivist use only)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.ignoreRobotsTxt != null && target.ignoreRobotsTxt) {
                                     yes
@@ -799,7 +800,58 @@
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 <label class="col-sm-6 control-label">
-                                    Crawl Frequency <span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
+                                Ignore Cookies: <small>(Archivist use only)</small>
+                                </label>
+                                <div class="col-sm-6">
+                                @if(target.ignoreCookies != null && target.ignoreCookies) {
+                                    yes
+                                } else {
+                                    no
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">
+                                    Crawl Rate: <small>(Archivist use only)</small>
+                                </label>
+                                <div class="col-sm-6">
+                                @if(target.crawlRate != null ) {
+                                    @target.crawlRate
+                                } else {
+                                	default
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">
+                                    Parallel Queues: <small>(Archivist use only)</small>
+                                </label>
+                                <div class="col-sm-6">
+                                @if(target.parallelQueues != null ) {
+                                    @target.parallelQueues
+                                } else {
+                                	default (one queue for this host)
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padding-10">
+                        <div class="col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label">
+                                    Crawl Frequency: <span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
                                 <div class="col-sm-6">
                                 @if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
                                     @uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
@@ -836,7 +888,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">White list: (Archivist use only)</label>
+                                <label class="col-sm-6 control-label">White list: <small>(Archivist use only)</small></label>
                                 <div class="col-sm-6">
                                 @target.whiteList
                                 </div>
@@ -847,7 +899,7 @@
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label class="col-sm-6 control-label">Black list: (Archivist use only)</label>
+                                <label class="col-sm-6 control-label">Black list: <small>(Archivist use only)</small></label>
                                 <div class="col-sm-6">
                                 @target.blackList
                                 </div>
