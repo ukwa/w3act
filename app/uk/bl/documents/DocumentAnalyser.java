@@ -61,6 +61,11 @@ public class DocumentAnalyser {
 		try {
 			byte[] digest = DigestUtils.sha256(getWaybackInputStream(document.documentUrl, document.waybackTimestamp));
 			document.sha256Hash = String.format("%064x", new java.math.BigInteger(1, digest));
+			// Check if the file appears to be empty:
+            if (document.sha256Hash.equals(
+                    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")) {
+			    throw new Exception("Got the hash of an empty file for " + document.documentUrl + "!");
+			}
 			Logger.info("Recorded sha256Hash "+document.sha256Hash+" for "+document.documentUrl);
 		} catch (Exception e) {
 			Logger.error("Failure while SHA256 hashing "+document.documentUrl, e);
@@ -139,7 +144,12 @@ public class DocumentAnalyser {
 		URL wburl = new URL(wbu);
 		HttpURLConnection conn = (HttpURLConnection)wburl.openConnection();
 		// Do NOT follow redirects, as we want precisely the right timestamp:
-		HttpURLConnection.setFollowRedirects(false);
+        conn.setInstanceFollowRedirects(false);
+        // Check it's working:
+        int status = conn.getResponseCode();
+        if (status != HttpURLConnection.HTTP_OK) {
+            throw new IOException("Resource not found.");
+        }
 		// Get the input stream:
 		return conn.getInputStream();
 	}
