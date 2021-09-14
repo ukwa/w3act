@@ -4,7 +4,11 @@ services:
 
   # W3ACT
   w3act:
-    build: .
+    build:
+      context: .
+      args:
+        http_proxy: ${HTTP_PROXY}
+        https_proxy: ${HTTPS_PROXY}
     environment:
       - "APPLICATION_SECRET=dhfoewwfwjovinjerv"
       - "SECRET_SERVER_USER=dummy"

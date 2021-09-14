@@ -1041,6 +1041,10 @@
                             </div>
                         </div>
                     </div>
+                } else {
+                    <input type="hidden" id="ignoreRobotsTxt" name="ignoreRobotsTxt" value="@targetForm("ignoreRobotsTxt").value">
+                }
+                @if(user.hasRole("sys_admin")) {
                     <div class="row padding-10">
                         <div class="col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
@@ -1092,7 +1096,6 @@
                         </div>
                     </div>
                 } else {
-                    <input type="hidden" id="ignoreRobotsTxt" name="ignoreRobotsTxt" value="@targetForm("ignoreRobotsTxt").value">
                     <input type="hidden" id="ignoreCookies" name="ignoreCookies" value="@targetForm("ignoreCookies").value">
                 }                
                 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
