@@ -1,6 +1,7 @@
 FROM openjdk:8 AS build-env
 
 ENV         ACTIVATOR_VERSION 1.3.11
+ARG         VERSION="unknown"
 ARG         USER_HOME_DIR="/root"
 
 # Install Typesafe Activator
@@ -11,12 +12,13 @@ RUN         mv /usr/local/activator-dist-$ACTIVATOR_VERSION /usr/local/activator
             rm /tmp/typesafe-activator-$ACTIVATOR_VERSION.zip
 
 COPY . /w3act
-COPY ./.git /w3act/.git
 
 WORKDIR /w3act
 
 # Patch in the version tag:
-RUN git fetch --tags --force --no-recurse-submodules https://github.com/ukwa/w3act.git && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt
+#RUN git fetch --tags --force --no-recurse-submodules https://github.com/ukwa/w3act.git && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt
+RUN echo "Building version ${VERSION}..."
+RUN sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt
 
 # Run without failing to try to download all dependencies:
 RUN /usr/local/activator/bin/activator stage || exit 0

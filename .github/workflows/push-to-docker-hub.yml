@@ -21,6 +21,8 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ github.repository }}
+      - name: Set up version variable to embed in container
+        run: echo "VERSION=`git describe --tags --always`" >> $GITHUB_ENV
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
