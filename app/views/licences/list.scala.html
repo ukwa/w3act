@@ -24,7 +24,7 @@
 				    <td>
                     <a href="@routes.LicencesController.preview(license.id)">@license.name</a>
 				    @if( user.isSysAdmin() ) {
-					&nbsp;<a href="@routes.LicencesController.edit(license.id) 
+					&nbsp;<a href="@routes.LicencesController.edit(license.id)" 
 					  title="Edit @license.name licence" role="button" class="btn btn-default btn-xs">Edit</a>
 					}
 					</td>
