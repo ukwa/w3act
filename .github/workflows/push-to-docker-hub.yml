@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Fetch tags etc. so git describe will work
       - name: Set up Docker metadata
         id: meta
         uses: docker/metadata-action@v3
