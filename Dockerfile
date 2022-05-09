@@ -41,5 +41,8 @@ COPY GeoLite2-City.mmdb /w3act
 # Have to use this as the working directory or it fails to find the email templates!
 WORKDIR /w3act
 
+# Default env var values:
+ENV DDHAPT_SUBMISSION_ENABLED=true
+
 # Use larger heap, and add experimental option: forcing restart on OOM:
 CMD /w3act/bin/w3act -J-Xmx4g -J-XX:+ExitOnOutOfMemoryError -Dconfig.file=/w3act/conf/docker.conf -Dpidfile.path=/dev/null

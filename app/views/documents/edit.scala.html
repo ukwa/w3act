@@ -367,7 +367,11 @@
 				<input type="submit" class="btn btn-primary" value="Save">
 			 } else {
 				@if(document.status != Document.Status.SUBMITTED && !form("type").value.isEmpty) {
-                    <input type="submit" name="submit" class="btn btn-primary" value="Submit" onclick="return confirm('Are you sure?');">
+					@if( document.isSubmissionEnabled ) {
+                        <input type="submit" name="submit" class="btn btn-primary" value="Submit" onclick="return confirm('Are you sure?');">
+					} else {
+                        <input type="submit" name="submit" class="btn btn-primary" value="Submission is not currently enabled" disabled>
+					}
                 }				
   			 }
 			}

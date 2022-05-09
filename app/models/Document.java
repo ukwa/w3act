@@ -254,11 +254,10 @@ public class Document extends Model {
 		currentStatusSet = new Date();
 	}
 	
-	public boolean isSubmissable() {
-		if( type != null ) {
-			return true;
-		}
-		return false;
+	public boolean isSubmissionEnabled() {
+		// Check configuration:
+		Boolean enabled = Play.application().configuration().getBoolean("ddhapt.submission.enabled");
+		return enabled;
 	}
 	
 	public String currentStatusSetUTCString() {
