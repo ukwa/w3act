@@ -887,6 +887,21 @@ public enum Utils {
 		}
 		return collections;
     }
+
+	/**
+	 * Problematic characters should be handled may vary with the use case.
+	 * Our method calls the escapeSpecialCharacters method on some data as it's building up a String.
+	 * @param field
+	 * @return
+	 */
+	public String escapeSpecialCharacters(String field) {
+		String escapedData = field.replaceAll("\\R", " ");
+		if (field.contains(",") || field.contains("\"") || field.contains("'")) {
+			field = field.replace("\"", "\"\"");
+			escapedData = "\"" + field + "\"";
+		}
+		return escapedData;
+	}
     
     /**
      * This method exports selected targets to CSV file.
@@ -916,7 +931,7 @@ public enum Utils {
  	    	for (Target target : targetList) {
  	    		builder.append(String.valueOf(target.id));
  	    		builder.append(Const.CSV_SEPARATOR);
- 	    		builder.append(target.title);
+ 	    		builder.append(escapeSpecialCharacters(target.title));
  	    		builder.append(Const.CSV_SEPARATOR);
  	    		builder.append(target.fieldUrl());
  	    		builder.append(Const.CSV_SEPARATOR);
