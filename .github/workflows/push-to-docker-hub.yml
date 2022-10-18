@@ -6,6 +6,7 @@ on:
       - '*'
     branches:
       - master
+      - BR234
 
 jobs:
   push_to_docker_hub:
