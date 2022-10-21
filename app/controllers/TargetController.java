@@ -1729,8 +1729,12 @@ public class TargetController extends AbstractController {
             }
             else {
                 if(watched && !original.isWatched()) {
+                    String mapStr = "";
+                    for( String k : request().headers().keySet() ) {
+                      mapStr += k + "=" + Arrays.toString(request().headers().get(k));
+                    }                
                     Logger.warn("Target id=" + original.id + " title=" + original.title + " is going from unwatched to watched. User email="
-                     + currentUser.email + " ddhaptUser=" + currentUser.ddhaptUser + " request headers=" + request().headers());
+                     + currentUser.email + " ddhaptUser=" + currentUser.ddhaptUser + " request headers=" + mapStr);
                     filledForm.get().watchedTarget.target = original;
                     filledForm.get().watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
                     Ebean.save(filledForm.get().watchedTarget);
