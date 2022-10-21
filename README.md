@@ -21,7 +21,7 @@ To install you need:
 | Version    | Size     | Tool                                                    | Link                 |
 |------------|----------|---------------------------------------------------------|----------------------|
 | v1.0       | 221 KB   | W3ACT source code                                       |[download-w3act]      |
-| v2.2.0     | 108.1 MB | Play Framework                                          |[download-play]       |
+| v2.3.10    | 108.1 MB | Play Framework                                          |[download-play]       |
 | v9.3.1     | 51.6 MB  | PostgreSQL database                                     |[download-db]         |
 | v1.6.0_33  | 178 MB   | Java Developers Kit (e.g. JDK 6)                        |[download-java]       |
 | v0.7.0     | 13.6 MB  | Maxmind GeoIP2 database                                 |[download-geoip]      |

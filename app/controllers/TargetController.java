@@ -1722,15 +1722,14 @@ public class TargetController extends AbstractController {
         Logger.info("WATCHED status is " + watched + " from " + watchedString);
         if(original != null) {
             if(!watched && original.isWatched()) {
-                Logger.warn("Target " + original.id ": " + original.title + " is going from watched to unwatched.");
+                Logger.warn("Target id=" + original.id + " title=" + original.title + " is going from watched to unwatched.");
                 Ebean.delete(original.watchedTarget.documents);
                 Ebean.delete(original.watchedTarget.journalTitles);
                 Ebean.delete(original.watchedTarget);
             }
             else {
                 if(watched && !original.isWatched()) {
-                    User currentUser = User.findByEmail(request().username());
-                    Logger.warn("Target " + original.id ": " + original.title + " is going from unwatched to watched. User email="
+                    Logger.warn("Target id=" + original.id + " title=" + original.title + " is going from unwatched to watched. User email="
                      + currentUser.email + " ddhaptUser=" + currentUser.ddhaptUser + " request headers=" + request().headers());
                     filledForm.get().watchedTarget.target = original;
                     filledForm.get().watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
