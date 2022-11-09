@@ -355,7 +355,7 @@ public final class Const {
 	public static final String EXPORT_REQUESTED_LICENCE_FILE = "export_requested_licences.csv";
 	public static final String EXPORT_GRANTED_LICENCE_FILE = "export_granted_licences.csv";
 	public static final String EXPORT_REFUSED_LICENCE_FILE = "export_refused_licences.csv";
-	public static final String CSV_SEPARATOR      = "\t";//",";
+	public static final String CSV_SEPARATOR      = ",";//"\t"; //tab - for TAB separated values
 	public static final String CSV_LINE_END       = "\n";
 	public static final String TWO_POINTS         = ": ";
 	public static final String SEARCH             = "search";
