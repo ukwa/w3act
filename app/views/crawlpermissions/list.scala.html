@@ -251,6 +251,8 @@
                 <input type="hidden" id="statusValue" name="statusValue" value="@cur_status">
                 <input type="hidden" id="pageNo" name="pageNo" value="@currentPage.getPageIndex">
                 <input type="hidden" id="organisationValue" name="organisationValue" value="@cur_organisation">
+                <input type="hidden" id="sortByValue" name="sortByValue" value="@currentSortBy">
+                <input type="hidden" id="orderByValue" name="orderByValue" value="@currentOrder">
 
                 <div class="btn-group">
                     @if(currentPage.getTotalRowCount() > 0 && CrawlPermissionController.haveContactPerson(currentPage.getList())) {

@@ -919,6 +919,12 @@ public class CrawlPermissionController extends AbstractController {
             int pageNo = Integer.parseInt(requestData.get("pageNo"));
             Logger.debug("pageNo: " + pageNo);
 
+            String sortBy = requestData.get("sortByValue");
+            Logger.debug("sortByValue: " + sortBy);
+
+            String orderBy = requestData.get("orderByValue");
+            Logger.debug("orderByValue: " + orderBy);
+
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             String[] permissionValues = formParams.get("permissionsList");
 
@@ -1002,12 +1008,12 @@ public class CrawlPermissionController extends AbstractController {
             if (action.equals("selectall")) {
                 Logger.debug("select all listed in page crawl permissions");
                 res = redirect(routes.CrawlPermissionController.list(
-                        pageNo, Const.NAME, Const.ASC, "", status, organisation, Const.SELECT_ALL));
+                        pageNo, sortBy, orderBy, "", status, organisation, Const.SELECT_ALL));
             }
             if (action.equals("deselectall")) {
                 Logger.debug("deselect all listed in page crawl permissions");
                 res = redirect(routes.CrawlPermissionController.list(
-                        pageNo, Const.NAME, Const.ASC, "", status, organisation, Const.DESELECT_ALL));
+                        pageNo, sortBy, orderBy, "", status, organisation, Const.DESELECT_ALL));
             }
         }
         return res;
