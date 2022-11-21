@@ -1356,6 +1356,75 @@ public class Target extends Model {
 
 	}
 
+
+	/**
+	 * Target List Count after filtering
+	 *
+	 * @param filterUrl
+	 * @param curatorId
+	 * @param organisationId
+	 * @param subjectSelect
+	 * @param crawlFrequencyName
+	 * @param depthName
+	 * @param collectionSelect
+	 * @param licenseId
+	 * @param flagId
+	 * @return
+	 */
+	public static int filteredTargetListCount(String filterUrl, Long curatorId, Long organisationId,
+											  String subjectSelect, String crawlFrequencyName,
+											  String depthName, String collectionSelect,
+											  Long licenseId, Long flagId) {
+		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").where();
+		exp = exp.eq(Const.ACTIVE, true);
+		exp = exp.add(Expr.or(
+				Expr.icontains("fieldUrls.url", filterUrl),
+				Expr.icontains("title", filterUrl))
+		);
+		if (curatorId != 0) {
+			exp = exp.eq("authorUser.id", curatorId);
+		}
+		if (organisationId != 0) {
+			exp = exp.eq("organisation.id", organisationId);
+		}
+		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
+			exp = exp.eq("crawlFrequency", crawlFrequencyName);
+		}
+		if (StringUtils.isNotEmpty(depthName)) {
+			exp = exp.eq("depth", depthName);
+		}
+		if (licenseId != 0) {
+			if (licenseId == -1)
+				exp = exp.eq("t0.license_status", null);
+			else
+				exp = exp.eq("licenses.id", licenseId);
+		}
+		if (flagId != 0) {
+			exp = exp.eq("flags.id", flagId);
+		}
+		if (StringUtils.isNotEmpty(subjectSelect)) {
+			List<Long> subjectIds = new ArrayList<Long>();
+			String[] subjects = subjectSelect.split(Const.TREE_LIST_ID_DELIMITER);
+			for (String sId : subjects) {
+				Long subjectId = Long.valueOf(sId);
+				subjectIds.add(subjectId);
+			}
+			exp = exp.in("subjects.id", subjectIds);
+		}
+		if (StringUtils.isNotEmpty(collectionSelect)) {
+			List<Collection> collectionIds = new ArrayList<Collection>();
+			String[] collections = collectionSelect.split(Const.TREE_LIST_ID_DELIMITER);
+			for (String cId : collections) {
+				Long collectionId = Long.valueOf(cId);
+				Collection collection = Collection.findById(collectionId);
+				collectionIds.add(collection);
+			}
+			exp = exp.in("collections", collectionIds);
+		}
+		return exp.query().select("title").findRowCount();
+	}
+
+
 	/**
 	 * Return a page of Target
 	 * 
