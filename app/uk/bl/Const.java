@@ -1,11 +1,7 @@
 package uk.bl;
 
-import play.Logger;
-
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class Const {
   
@@ -355,7 +351,8 @@ public final class Const {
 	public static final String EXPORT_REQUESTED_LICENCE_FILE = "export_requested_licences.csv";
 	public static final String EXPORT_GRANTED_LICENCE_FILE = "export_granted_licences.csv";
 	public static final String EXPORT_REFUSED_LICENCE_FILE = "export_refused_licences.csv";
-	public static final String CSV_SEPARATOR      = ",";//"\t"; //tab - for TAB separated values
+	public static final String CSV_SEPARATOR      = ",";
+	public static final String TSV_SEPARATOR      = "\t"; //tab - for TAB separated values
 	public static final String CSV_LINE_END       = "\n";
 	public static final String TWO_POINTS         = ": ";
 	public static final String SEARCH             = "search";
@@ -1052,7 +1049,7 @@ public final class Const {
 		targetMap.put("field_notes", 7);
 		targetMap.put("field_instances", 8);
 	}
-	
+
     public static final Map<String, Integer> targetExportMap = new HashMap<String, Integer>();
 		static {
 		targetExportMap.put("nid", 0);
@@ -1062,8 +1059,8 @@ public final class Const {
 		targetExportMap.put("field_crawl_frequency", 4);
 		targetExportMap.put("created", 5);
 	}
-		
-    public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
+
+	public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
 		static {
 		permissionExportMap.put("target", 0);
 		permissionExportMap.put("licenseDate", 1);
