@@ -980,6 +980,35 @@ public enum Utils {
 		return builder.toString();
 	}
 
+	/**
+	 * Transform Targets' data into reduced data list of maps, where fields defined in Const.targetExportList
+	 * @param targetList
+	 * @return
+	 */
+	public List <Map> exportJson(List<Target> targetList) {
+		Logger.debug("export(JSON) targetList size: " + targetList.size());
+		List <Map> listOfMaps = new ArrayList<>();
+		Map<String, String> targetFields;
+		if (targetList != null && targetList.size() > 0) {
+//           "nid", "title", "field_url", "author", "field_crawl_frequency", "created"
+			for (Target target : targetList) {
+				targetFields = new HashMap<>();
+				targetFields.put(Const.targetExportList.get(0), String.valueOf(target.id));
+				targetFields.put(Const.targetExportList.get(1), escapeSpecialCharacters(target.title));
+				targetFields.put(Const.targetExportList.get(2), target.fieldUrl());
+				String authorName = "";
+				if (target.authorUser != null) {
+					authorName = target.authorUser.name;
+				}
+				targetFields.put(Const.targetExportList.get(3), authorName);
+				targetFields.put(Const.targetExportList.get(4), target.crawlFrequency);
+				targetFields.put(Const.targetExportList.get(5), convertToDateTimeISO(target.createdAt));
+				listOfMaps.add(targetFields);
+			}
+		}
+		return listOfMaps;
+	}
+
 	public boolean isDuplicate(String url, String dbUrl) throws ActException {
         url = Utils.INSTANCE.getPath(url);
         dbUrl = Utils.INSTANCE.getPath(dbUrl);

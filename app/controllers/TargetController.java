@@ -422,6 +422,16 @@ public class TargetController extends AbstractController {
                         response().setContentType("text/tsv; charset=utf-8");
                         response().setHeader("Content-disposition", "attachment; filename=\"target-export.tsv");
                         return ok(tsvData);
+                    } else if (action.equals("exportjson")) {
+                        List<Target> exportTargets = new ArrayList<Target>();
+                        int rowCount = Target.filteredTargetListCount(filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+                        Logger.debug("export size (for JSON): " + rowCount);
+                        Page<Target> pageAll = Target.pageTargets(pageNo, rowCount, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+                        exportTargets.addAll(pageAll.getList());
+                        List <Map> jsonData = Utils.INSTANCE.exportJson(exportTargets);
+                        response().setContentType("application/json; charset=utf-8");
+                        response().setHeader("Content-disposition", "attachment; filename=\"target-export.json");
+                        return ok(Json.toJson(jsonData));
                     } else {
                         if(action.equals("search") || action.equals("apply")) {
                             return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));

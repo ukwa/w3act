@@ -1060,6 +1060,16 @@ public final class Const {
 		targetExportMap.put("created", 5);
 	}
 
+	public static final List<String> targetExportList = new ArrayList<>();
+	static {
+		targetExportList.add("nid");
+		targetExportList.add("title");
+		targetExportList.add("field_url");
+		targetExportList.add("author");
+		targetExportList.add("field_crawl_frequency");
+		targetExportList.add("created");
+	}
+
 	public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
 		static {
 		permissionExportMap.put("target", 0);
