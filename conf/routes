@@ -210,6 +210,7 @@ POST    /crawlpermissions/save                  controllers.CrawlPermissionContr
 POST    /crawlpermissions/update/:id            controllers.CrawlPermissionController.update(id:Long)
 
 GET     /reports                                controllers.ReportController.index()
+GET     /reports/crawlstatus                    controllers.ReportController.processFilterReports(p:Int ?= 0, curator:Long ?= -1L, organisation:Long ?= -1L, crawlPermissionsStatus ?= "", request ?= "", requestedFromDate ?= "", requestedToDate ?= "", grantedFromDate ?= "", grantedToDate ?= "")
 GET     /reports/search                         controllers.ReportController.search()
 GET     /reports/summary                        controllers.ReportController.summary()
 GET     /reports/openLicences                   controllers.ReportController.openLicences()

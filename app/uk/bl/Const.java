@@ -60,7 +60,7 @@ public final class Const {
 	public static final int STRING_LIMIT          = 50;
 
 	// Help constants
-	public static final int PAGINATION_OFFSET     = 10; // offset is a page step from current page for pagination
+	public static final int PAGINATION_OFFSET     = 15; // offset is a page step from current page for pagination
 	public static final int ROWS_PER_PAGE         = 50;
 	public static final int MAX_USER_COUNT        = 100;
 	public static final int BUFFER_SIZE           = 1024; // 1KB 
@@ -380,7 +380,7 @@ public final class Const {
 	public static final String QUERY             	= "q";
 	public static final String QUERY_COLLECTION    	= "query_collection";
 	public static final String QUERY_QA_STATUS     	= "query_qa_status";
-	
+
 	/**
 	 * Export settings
 	 */

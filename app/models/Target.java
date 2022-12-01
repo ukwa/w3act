@@ -1123,35 +1123,217 @@ public class Target extends Model {
 		return res;
 	}
 
+
+	public static Page<Target> pageReports(int pageNo, Long curatorId, Long organisationId,
+										   String crawlPermissionsStatus, String request,
+										   String requestedFromDate, String requestedToDate, String grantedFromDate, String grantedToDate) throws ActException {
+
+		ExpressionList<Target> exp = Target.find.where();
+		exp = exp.eq("active", true);
+
+		Logger.debug("curatorId: " + curatorId);
+		Logger.debug("organisationId: " + organisationId);
+		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
+		Logger.debug("request: " + request);
+		Logger.debug("requestedFromDate: " + requestedFromDate);
+		Logger.debug("requestedToDate: " + requestedToDate);
+		Logger.debug("grantedFromDate: " + grantedFromDate);
+		Logger.debug("grantedToDate: " + grantedToDate);
+
+		if (curatorId != -1) {
+			exp = exp.eq("authorUser.id", curatorId);
+		}
+		if (organisationId != -1) {
+			exp = exp.eq("organisation.id", organisationId);
+		}
+
+//		if (curatorId != null) {
+//			exp = exp.eq("authorUser.id", curatorId);
+//		}
+//		if (organisationId != null) {
+//			exp = exp.eq("organisation.id", organisationId);
+//		}
+//		if (StringUtils.isNotEmpty(crawlPermissionsStatus)) {
+//			//exp = exp.eq("crawlPermissions.status", "PENDING");//crawlPermissionsStatus);
+//		    exp = exp.eq("crawlPermissions.status", "GRANTED");//crawlPermissionsStatus);
+//		    //exp = exp.eq("crawlPermissions.status", "REFUSED");//crawlPermissionsStatus);
+//		}
+		exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);
+
+		if (StringUtils.isNotEmpty(requestedFromDate)) {
+			try {
+				Date date = Utils.INSTANCE.convertDate(requestedFromDate);
+				exp = exp.ge("crawlPermissions.requestedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		if (StringUtils.isNotEmpty(requestedToDate)) {
+			try {
+				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(requestedToDate);
+				Date date = Utils.INSTANCE.convertDate(modRequestedToDate);
+				exp = exp.le("crawlPermissions.requestedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		if (StringUtils.isNotEmpty(grantedFromDate)) {
+			try {
+				Date date = Utils.INSTANCE.convertDate(grantedFromDate);
+				exp = exp.ge("crawlPermissions.grantedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		if (StringUtils.isNotEmpty(grantedToDate)) {
+			try {
+				String modGrantedToDate = Utils.INSTANCE.getaddDayToDate(grantedToDate);
+				Date date = Utils.INSTANCE.convertDate(modGrantedToDate);
+				exp = exp.le("crawlPermissions.grantedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		Logger.debug("exp: " + exp.toString());
+
+		Page<Target> res;// = null;
+
+		Query<Target> query = exp.query();
+		//TODO: sort and order
+		res = query//.orderBy(sortBy + " " + order)
+				.findPagingList(Const.PAGINATION_OFFSET)
+				.setFetchAhead(false)
+				.getPage(pageNo);
+		Logger.debug("pageReports - Expression list for targets created size: "
+				+ res.getTotalRowCount());
+
+		return res;
+	}
+
+
+	public static List<Target> pageReportsFull(int pageNo, Long curatorId, Long organisationId,
+										   String crawlPermissionsStatus, String request,
+										   String requestedFromDate, String requestedToDate, String grantedFromDate, String grantedToDate) throws ActException {
+
+		Logger.debug("pageReports ---- ");
+
+		ExpressionList<Target> exp = Target.find.where();
+		exp = exp.eq("active", true);
+
+		Logger.debug("curatorId: " + curatorId);
+		Logger.debug("organisationId: " + organisationId);
+		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
+		Logger.debug("request: " + request);
+		Logger.debug("requestedFromDate: " + requestedFromDate);
+		Logger.debug("requestedToDate: " + requestedToDate);
+		Logger.debug("grantedFromDate: " + grantedFromDate);
+		Logger.debug("grantedToDate: " + grantedToDate);
+
+		if (curatorId != -1) {
+			exp = exp.eq("authorUser.id", curatorId);
+		}
+		if (organisationId != -1) {
+			exp = exp.eq("organisation.id", organisationId);
+		}
+
+//		if (curatorId != null) {
+//			exp = exp.eq("authorUser.id", curatorId);
+//		}
+//		if (organisationId != null) {
+//			exp = exp.eq("organisation.id", organisationId);
+//		}
+//		if (StringUtils.isNotEmpty(crawlPermissionsStatus)) {
+//			//exp = exp.eq("crawlPermissions.status", "PENDING");//crawlPermissionsStatus);
+//		    exp = exp.eq("crawlPermissions.status", "GRANTED");//crawlPermissionsStatus);
+//		    //exp = exp.eq("crawlPermissions.status", "REFUSED");//crawlPermissionsStatus);
+//		}
+		exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);//crawlPermissionsStatus);
+
+
+
+		if (StringUtils.isNotEmpty(requestedFromDate)) {
+			try {
+				Date date = Utils.INSTANCE.convertDate(requestedFromDate);
+				exp = exp.ge("crawlPermissions.requestedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		if (StringUtils.isNotEmpty(requestedToDate)) {
+			try {
+				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(requestedToDate);
+				Date date = Utils.INSTANCE.convertDate(modRequestedToDate);
+				exp = exp.le("crawlPermissions.requestedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		if (StringUtils.isNotEmpty(grantedFromDate)) {
+			try {
+				Date date = Utils.INSTANCE.convertDate(grantedFromDate);
+				exp = exp.ge("crawlPermissions.grantedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		if (StringUtils.isNotEmpty(grantedToDate)) {
+			try {
+				String modGrantedToDate = Utils.INSTANCE.getaddDayToDate(grantedToDate);
+				Date date = Utils.INSTANCE.convertDate(modGrantedToDate);
+				exp = exp.le("crawlPermissions.grantedAt", date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+		}
+
+		Logger.debug("exp: " + exp.toString());
+
+		//TODO: in Target class - need method returns Page<Target>
+		List<Target> res;// = null;
+
+		Query<Target> query = exp.query();
+		res = query.findList();
+		Logger.debug("pageReports - Expression list for targets created size: "
+				+ res.size());
+
+		return res;
+	}
+
+
 	/**
-	 * Return a page of Target objects.
-	 * 
-	 * @param page
-	 *            Page to display
-	 * @param pageSize
-	 *            Number of targets per page
-	 * @param sortBy
-	 *            Target property used for sorting
-	 * @param order
-	 *            Sort order (either or asc or desc)
-	 * @param status
-	 *            The type of report QA e.g. awaiting QA, with no QA issues...
-	 * @param curatorUrl
-	 * @param organisationUrl
-	 * @param startDate
-	 *            The start date for filtering
-	 * @param endDate
-	 *            The end date for filtering
-	 * @param collectionCategoryUrl
-	 * @return
-	 */
+         * Return a page of Target objects.
+         *
+         * @param page
+         *            Page to display
+         * @param pageSize
+         *            Number of targets per page
+         * @param sortBy
+         *            Target property used for sorting
+         * @param order
+         *            Sort order (either or asc or desc)
+         * @param status
+         *            The type of report QA e.g. awaiting QA, with no QA issues...
+         * @param curatorUrl
+         * @param organisationUrl
+         * @param startDate
+         *            The start date for filtering
+         * @param endDate
+         *            The end date for filtering
+         * @param collectionCategoryUrl
+         * @return
+         */
 	public static Page<Target> pageReportsQa(int page, int pageSize,
 			String sortBy, String order, String status, Long curatorId,
 			Long organisationId, String startDate, String endDate,
 			Long collectionId) {
-		
-//		List<Instance> instanceList = Instance.processReportsQa(status, startDate, endDate);
-		
+
 		ExpressionList<Target> exp = Target.find.fetch("collections").fetch("fieldUrls").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);

@@ -2,10 +2,8 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
@@ -22,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
-import play.db.ebean.Transactional;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -31,12 +28,9 @@ import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.Const.NpldType;
 import uk.bl.Const.RequestType;
 import uk.bl.Const.ScopeType;
-import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import views.html.reports.*;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
 /**
@@ -50,33 +44,33 @@ public class ReportController extends AbstractController {
      * @throws ActException 
      */
     public static Result index() throws ActException {
-        List<Target> resList = processFilterReports(null, null, Const.CrawlPermissionStatus.PENDING.name(),"","","","","");
-        List<Target> resListGranted = processFilterReports(null, null, Const.CrawlPermissionStatus.GRANTED.name(),"","","","","");
-        List<Target> resListRefused = processFilterReports(null, null, Const.CrawlPermissionStatus.REFUSED.name(),"","","","","");
-        User user = User.findByEmail(request().username());
-        List<User> users = User.findAll();
-        List<Organisation> organisations = Organisation.findAllSorted();
-        RequestType[] requestTypes = Const.RequestType.values();
-        
-        return ok(
-                reports.render(
-                    "Reports", user, resList, resListGranted, resListRefused, null, null, "", "", "", "", "", users, organisations, requestTypes
-                )
-            );
-    }
+		return redirect(routes.ReportController.processFilterReports(
+				0,-1L, -1L,
+				CrawlPermissionStatus.PENDING.name(), //default filter
+				"",
+				"","","",""));
+	};
 
     /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
+	 * Helper for Targets -> Reports search/filter form
      * @return
      * @throws ActException 
      */
     public static Result search() throws ActException {
-    	DynamicForm requestData = form().bindFromRequest();
+		Logger.debug("search() ---- STEP NO 1 ");
+
+		DynamicForm requestData = form().bindFromRequest();
+		String crawlPermissionsStatus22 = form().bindFromRequest().get("crawlPermissionsStatus22");
+		Logger.debug("search() ---- requestData22,  crawlPermissionsStatus22 = " + crawlPermissionsStatus22);
+
     	String action = requestData.get("action");
 
     	Logger.debug("action: " + action);
-    	String curator = requestData.get("curator");
+
+		String curator = requestData.get("curator");
+
     	String organisation = requestData.get("organisation");
     	Long curatorId = null;
     	if (StringUtils.isNotBlank(curator)) {
@@ -86,8 +80,13 @@ public class ReportController extends AbstractController {
     	if (StringUtils.isNotBlank(organisation)) {
     		organisationId = Long.parseLong(organisation);
     	}
-    	
+
     	String request = requestData.get("request");
+		String requestType = requestData.get("requestType");
+
+		Logger.debug("request ---- = " + request);
+		Logger.debug("requestType ---- = " + requestType);
+
 //    	if (request_name != null && !request_name.toLowerCase().equals(Const.NONE) 
 //    			&& !request_name.toLowerCase().equals(Const.ALL)) {
 //   			request = request_name;
@@ -96,76 +95,89 @@ public class ReportController extends AbstractController {
         String requestedToDate = requestData.get("endDate");
         String grantedFromDate = requestData.get("grantedFromDate");
         String grantedToDate = requestData.get("grantedToDate");
-    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + requestedFromDate + ", " + requestedToDate + ", " + grantedFromDate + ", " + grantedToDate);
+    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + crawlPermissionsStatus22 + ", " + requestedFromDate + ", " + requestedToDate + ", " + grantedFromDate + ", " + grantedToDate);
 
-        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, requestedFromDate, requestedToDate, grantedFromDate, grantedToDate);
-        List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, requestedFromDate, requestedToDate, grantedFromDate, grantedToDate);
-        List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, requestedFromDate, requestedToDate, grantedFromDate, grantedToDate);
-
-        Logger.debug("resListRequest: " + resListRequest);
-        Logger.debug("resListRequest");
-//        Logger.debug("resListGranted: " + resListGranted);
-//        Logger.debug("resListGranted");
-//        Logger.debug("resListRefused: " + resListRefused);
-//        Logger.debug("resListRefused");
-        
         List<User> users = User.findAll();
-//        Logger.debug("users: " + users);
         List<Organisation> organisations = Organisation.findAllSorted();
-//        Logger.debug("organisations: " + organisations);
         RequestType[] requestTypes = Const.RequestType.values();
 
         User user = User.findByEmail(request().username());
-    	if (StringUtils.isEmpty(action)) {
+
+		//Form data
+		int pageNo = Integer.parseInt(requestData.get("p"));
+		String sort = requestData.get("s");
+		String order = requestData.get("o");
+		//Long curatorId = Long.parseLong(requestData.get("curator"));
+		//Long organisationId = Long.parseLong(requestData.get("organisation"));
+
+		String startDate = requestData.get("startDate");
+		Logger.debug("startDate: " + startDate);
+
+//		String endDate = requestData.get("endDate");
+
+		// default
+		String searchByCrawlPermissionsStatus = (crawlPermissionsStatus22 != null && !crawlPermissionsStatus22.trim().isEmpty())?crawlPermissionsStatus22:CrawlPermissionStatus.PENDING.name();
+		if (action.equals("searchRequested")){
+			searchByCrawlPermissionsStatus = CrawlPermissionStatus.PENDING.name();
+		} else if (action.equals("searchGranted")){
+			searchByCrawlPermissionsStatus = CrawlPermissionStatus.GRANTED.name();
+		} else if (action.equals("searchRefused")){
+			searchByCrawlPermissionsStatus = CrawlPermissionStatus.REFUSED.name();
+		}
+		else {
+			searchByCrawlPermissionsStatus = crawlPermissionsStatus22;
+		}
+		Logger.debug("crawlPermissionsStatus, aka searchType ---- = " + searchByCrawlPermissionsStatus);
+
+
+		Page<Target> pages = Target.pageReports(pageNo, curatorId, organisationId,
+				searchByCrawlPermissionsStatus, "",
+				"", "", "", "");
+
+		Logger.debug("crawlPermissionsStatus after ---- = " + searchByCrawlPermissionsStatus);
+		Logger.debug("search() --- crawlPermissionsStatus, requestData22,  crawlPermissionsStatus22 = " + crawlPermissionsStatus22);
+
+		if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
-    	} else {
-    		if (action.equals("search")) {
-    			return ok(
-                		reports.render(
-                            "Reports", user, resListRequest, resListGranted,
-                            resListRefused, curatorId, organisationId, requestedFromDate, requestedToDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
-                        )
-                    );
-		    } else if (action.equals("export")) {
-    	    	String status = requestData.get("status");
+    	}
+		else {
+    		if (action.equals("search")||action.equals("searchRequested")||action.equals("searchGranted")||action.equals("searchRefused")) {
+				Logger.debug("action : search+");
+				Logger.debug("returning 1, searchByCrawlPermissionsStatus = " + searchByCrawlPermissionsStatus);
+				return ok(
+						reports.render(
+								"Reports", user,
+								pages,
+								sort, order,
+								searchByCrawlPermissionsStatus,
+								curatorId, organisationId,
+								"", "", "", "", "",
+								users, organisations, requestTypes
+						)
+				);
+		    }
+			else if (action.equals("export")) {
+				String status = searchByCrawlPermissionsStatus;//requestData.get("status");
     			Logger.debug("in export: " + status);
 
+				if (StringUtils.isNotEmpty(status)) {
+					Logger.debug("export requested size: " + pages.getList().size());//  resListRequest.size());
 
-        		if (StringUtils.isNotEmpty(status)) {
-    				Logger.debug("status: " + status);
-    				if (status.equals("tabRequested")) {
-	    				Logger.debug("export requested size: " + resListRequest.size());
-	    				String file = export(resListRequest);
-	        			response().setContentType("text/csv; charset=utf-8");
-	        			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_REQUESTED_LICENCE_FILE + "\"");
-	        			return ok(file);
-    				} else if (status.equals("tabGranted")) {
-	    				Logger.debug("export refused size: " + resListGranted.size());
-	        			String file = export(resListGranted);
-	        			response().setContentType("text/csv; charset=utf-8");
-	        			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_GRANTED_LICENCE_FILE + "\"");
-	        	        return ok(file);
+					List<Target> pagesFull = Target.pageReportsFull(pageNo, curatorId, organisationId,
+							searchByCrawlPermissionsStatus, "",
+							"", "", "", "");
 
-        			} else if (status.equals("tabRefused")) {
-	    				Logger.debug("export refused size: " + resListRefused.size());
-	    				String file = export(resListRefused);
-	        			response().setContentType("text/csv; charset=utf-8");
-	        			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_REFUSED_LICENCE_FILE + "\"");
-	        	        return ok(file);
-        			}
-        			return ok(
-                    		reports.render(
-                                "Reports", user, resListRequest, resListGranted,
-                                resListRefused, curatorId, organisationId, requestedFromDate, requestedToDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
-                            )
-                        );
-        		}
-    			Logger.debug("returning in export");
-        		
+					String file = export(pagesFull);
+					response().setContentType("text/csv; charset=utf-8");
+					response().setHeader("Content-disposition", "attachment; filename=\"" + Const.EXPORT_REQUESTED_LICENCE_FILE + "\"");
+					return ok(file);
+				}
+				Logger.debug("returning in export");
+
 		    }
 	    	return badRequest("This action is not allowed");
     	}
-    }	   
+    }
     
 //    public static void exportLicenses(String name) {
 //		return ok(
@@ -183,11 +195,8 @@ public class ReportController extends AbstractController {
      * @return
      */
     public static String export(List<Target> permissionList) {
-//        public static void export(List<CrawlPermission> permissionList, String fileName) {
     	Logger.debug("export() permissionList size: " + permissionList.size());
-
-//        StringWriter sw = new StringWriter();
-        StringBuilder sw = new StringBuilder();
+		StringBuilder sw = new StringBuilder();
 	    sw.append("Target title");
 		sw.append(Const.CSV_SEPARATOR);
 	    sw.append("Target URL");
@@ -222,13 +231,32 @@ public class ReportController extends AbstractController {
      * @return
      * @throws ActException 
      */
-    public static List<Target> processFilterReports(Long curatorId, Long organisationId, 
+
+	//List<Target> resListRequest = processFilterReports(null, null, Const.CrawlPermissionStatus.PENDING.name(),"","","","","");
+
+	/**
+	 * Process and Filter Reports
+	 * @param pageNo
+	 * @param curatorId
+	 * @param organisationId
+	 * @param crawlPermissionsStatus
+	 * @param request
+	 * @param requestedFromDate
+	 * @param requestedToDate
+	 * @param grantedFromDate
+	 * @param grantedToDate
+	 * @return
+	 * @throws ActException
+	 */
+	public static Result processFilterReports(int pageNo, Long curatorId, Long organisationId,
     		String crawlPermissionsStatus, String request, String requestedFromDate, String requestedToDate, String grantedFromDate, String grantedToDate) throws ActException {
-//    	boolean isProcessed = false;
-		ExpressionList<Target> exp = Target.find.where();
-		exp = exp.eq("active", true);
-		
-		
+		User user = User.findByEmail(request().username());
+		List<User> users = User.findAll();
+		List<Organisation> organisations = Organisation.findAllSorted();
+		RequestType[] requestTypes = Const.RequestType.values();
+
+		Logger.debug("pageNo: " + pageNo);
+
 		Logger.debug("curatorId: " + curatorId);
 		Logger.debug("organisationId: " + organisationId);
 		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
@@ -237,89 +265,20 @@ public class ReportController extends AbstractController {
 		Logger.debug("requestedToDate: " + requestedToDate);
 		Logger.debug("grantedFromDate: " + grantedFromDate);
 		Logger.debug("grantedToDate: " + grantedToDate);
-		
-		if (curatorId != null) {
-			exp = exp.eq("authorUser.id", curatorId);
-		}
-		if (organisationId != null) {
-			exp = exp.eq("organisation.id", organisationId);
-		}
-		if (StringUtils.isNotEmpty(crawlPermissionsStatus)) {
-			exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);
-		}
 
-    	if (StringUtils.isNotEmpty(requestedFromDate)) {
-    		try {
-	    		Date date = Utils.INSTANCE.convertDate(requestedFromDate);
-	    		exp = exp.ge("crawlPermissions.requestedAt", date);
-			} catch (ParseException e) {
-				throw new ActException(e);
-			}
-    	}
+		Page<Target> pages = Target.pageReports(pageNo, curatorId, organisationId,
+				crawlPermissionsStatus, "",
+				"", "", "", "");
 
-    	if (StringUtils.isNotEmpty(requestedToDate)) {
-			try {
-				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(requestedToDate);		        
-	    		Date date = Utils.INSTANCE.convertDate(modRequestedToDate);
-	    		exp = exp.le("crawlPermissions.requestedAt", date);
-			} catch (ParseException e) {
-				throw new ActException(e);
-			}
-    	}
-    	
-    	if (StringUtils.isNotEmpty(grantedFromDate)) {
-			try {
-	    		Date date = Utils.INSTANCE.convertDate(grantedFromDate);
-	    		exp = exp.ge("crawlPermissions.grantedAt", date);
-			} catch (ParseException e) {
-				throw new ActException(e);
-			}
-    	}
-    	
-    	if (StringUtils.isNotEmpty(grantedToDate)) {
-			try {
-				String modGrantedToDate = Utils.INSTANCE.getaddDayToDate(grantedToDate);
-	    		Date date = Utils.INSTANCE.convertDate(modGrantedToDate);
-	    		exp = exp.le("crawlPermissions.grantedAt", date);
-			} catch (ParseException e) {
-				throw new ActException(e);
-			}
-    	}
-
-    	Logger.debug("exp: " + exp.toString());
-    	
-    	List<Target> res = exp.query().findList();
-    	
-    	Logger.debug("res size: " + res.size());
-//    	Logger.debug("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
-//    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
-//    		Logger.debug("request: " + request);
-//	        List<Target> resByRequest = new ArrayList<Target>();
-//	        Iterator<Target> resIter = res.iterator();
-//	        while (resIter.hasNext()) {
-//	        	Target target = resIter.next();
-//	        	if (target.fieldUrl() != null && target.fieldUrl().length() > 0) {
-//	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.fieldUrl());
-//	            	if (permissionList != null && permissionList.size() > 0) {
-//	            		CrawlPermission permission = permissionList.get(0);
-//	            		Logger.debug("permission: " + permission);
-//	            		Logger.debug("permission requestFollowup: " + permission.requestFollowup + ", request: " + request);
-//	            		try {
-//		            		if (permission.requestFollowup && request.equals(Const.RequestTypes.FOLLOW_UP.name())
-//		            				|| !permission.requestFollowup && request.equals(Const.RequestTypes.FIRST_REQUEST.name())) {
-//		            			resByRequest.add(target);
-//		            		}
-//	            		} catch (Exception e) {
-//		            		if (request.equals(Const.RequestTypes.FIRST_REQUEST.name())) {
-//		            			resByRequest.add(target);
-//		            		}
-//	            		}
-//	            	}
-//	        	}
-//	        }
-//	        return resByRequest;
-//    	} 
-        return res;
+        return ok(reports.render(
+				"Reports", user,
+				pages,
+				"", "",
+				crawlPermissionsStatus,
+				curatorId, organisationId,
+				"", "", "", "", "",
+				users, organisations, requestTypes
+		));
     }
               
     /**
@@ -334,7 +293,7 @@ public class ReportController extends AbstractController {
     public static Result openLicences() {
     	return redirect(
                 routes.ReportController.index()
-    	        );
+		);
     }
 
     public static Result recordCreation() {
@@ -368,7 +327,8 @@ public class ReportController extends AbstractController {
     	Logger.debug("ReportsCreation.targets()");
     	
     	User user = User.findByEmail(request().username());
-    	Page<Target> pages = Target.pageReportsCreation(pageNo, 10, sortBy, order, curatorId, organisationId, 
+
+    	Page<Target> pages = Target.pageReportsCreation(pageNo, Const.PAGINATION_OFFSET, sortBy, order, curatorId, organisationId,
 				startDate, endDate, npld, crawlFrequency, tld);
     	
 
@@ -397,17 +357,18 @@ public class ReportController extends AbstractController {
                 	nplds)
         	);
     }
-    
-    /**
+
+
+
+
+	/**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
      * @return
      */
     public static Result searchCreation() throws ActException {
-    	DynamicForm requestData = form().bindFromRequest();
-
+		DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
-    	
     	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");
@@ -441,7 +402,7 @@ public class ReportController extends AbstractController {
     	} else {
     		if (action.equals("export")) {
     			List<Target> exportTargets = new ArrayList<Target>();
-    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
+    	    	Page<Target> page = Target.pageReportsCreation(pageNo, Const.PAGINATION_OFFSET, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
     	    	
     			int rowCount = page.getTotalRowCount();
     			
@@ -453,7 +414,7 @@ public class ReportController extends AbstractController {
     			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_TARGETS_REPORT_CREATION + "\"");
     	        return ok(file);
     		} else if (action.equals("search")) {
-    	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
+    	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId,
     	    			startDate, endDate, npld, crawlFrequencyName, tld));
 		    } else {
 		    	return badRequest("This action is not allowed");
@@ -465,7 +426,7 @@ public class ReportController extends AbstractController {
      * Display the report.
      */
     public static Result indexCreation() {
-    	return redirect(routes.ReportController.targets(0, "createdAt", "desc", -1l, -1l, 
+    	return redirect(routes.ReportController.targets(0, "createdAt", "desc", -1l, -1l,
     			"", "", "", "", "either"));
     }
 
