@@ -159,7 +159,9 @@ public class Target extends Model {
 	
 	//@JsonProperty("crawl_permissions")
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
+	//TODO: orderBy?
 //    @OrderBy("createdAt DESC")
+	@OrderBy("requestedAt ASC")
 	public List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
@@ -1125,18 +1127,24 @@ public class Target extends Model {
 
 
 	public static Page<Target> pageReports(int pageNo, Long curatorId, Long organisationId,
-										   String crawlPermissionsStatus, String request,
-										   String requestedFromDate, String requestedToDate, String grantedFromDate, String grantedToDate) throws ActException {
+										   String crawlPermissionsStatus,
+										   //String request,
+										   String generalFromDate, String generalToDate,
+										   //String requestedFromDate, String requestedToDate,
+										   String grantedFromDate, String grantedToDate) throws ActException {
 
-		ExpressionList<Target> exp = Target.find.where();
+		ExpressionList<Target> exp = Target.find
+				.fetch("crawlPermissions").where();
+
 		exp = exp.eq("active", true);
 
 		Logger.debug("curatorId: " + curatorId);
 		Logger.debug("organisationId: " + organisationId);
 		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
-		Logger.debug("request: " + request);
-		Logger.debug("requestedFromDate: " + requestedFromDate);
-		Logger.debug("requestedToDate: " + requestedToDate);
+		Logger.debug("generalFromDate: " + generalFromDate);
+		Logger.debug("generalToDate: " + generalToDate);
+//		Logger.debug("requestedFromDate: " + requestedFromDate);
+//		Logger.debug("requestedToDate: " + requestedToDate);
 		Logger.debug("grantedFromDate: " + grantedFromDate);
 		Logger.debug("grantedToDate: " + grantedToDate);
 
@@ -1147,41 +1155,42 @@ public class Target extends Model {
 			exp = exp.eq("organisation.id", organisationId);
 		}
 
-//		if (curatorId != null) {
-//			exp = exp.eq("authorUser.id", curatorId);
-//		}
-//		if (organisationId != null) {
-//			exp = exp.eq("organisation.id", organisationId);
-//		}
-//		if (StringUtils.isNotEmpty(crawlPermissionsStatus)) {
-//			//exp = exp.eq("crawlPermissions.status", "PENDING");//crawlPermissionsStatus);
-//		    exp = exp.eq("crawlPermissions.status", "GRANTED");//crawlPermissionsStatus);
-//		    //exp = exp.eq("crawlPermissions.status", "REFUSED");//crawlPermissionsStatus);
-//		}
-		exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);
+		if (StringUtils.isNotEmpty(crawlPermissionsStatus))
+		    exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);
 
-		if (StringUtils.isNotEmpty(requestedFromDate)) {
+		//TODO: IF REJECTED
+		if (StringUtils.isNotEmpty(generalFromDate)) {
 			try {
-				Date date = Utils.INSTANCE.convertDate(requestedFromDate);
-				exp = exp.ge("crawlPermissions.requestedAt", date);
+				Date date = Utils.INSTANCE.convertDate(generalFromDate);
+				//ge - greater or equal
+				exp = crawlPermissionsStatus.equals("PENDING")?
+						exp.ge("crawlPermissions.requestedAt", date):
+						exp.ge("crawlPermissions.grantedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
 		}
 
-		if (StringUtils.isNotEmpty(requestedToDate)) {
+		if (StringUtils.isNotEmpty(generalToDate)) {
 			try {
-				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(requestedToDate);
+				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(generalToDate);
 				Date date = Utils.INSTANCE.convertDate(modRequestedToDate);
-				exp = exp.le("crawlPermissions.requestedAt", date);
+				//le - less or equal
+				exp = crawlPermissionsStatus.equals("PENDING")?
+						exp.le("crawlPermissions.requestedAt", date):
+						exp.le("crawlPermissions.grantedAt", date);
+
+
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
 		}
 
+		/*
 		if (StringUtils.isNotEmpty(grantedFromDate)) {
 			try {
 				Date date = Utils.INSTANCE.convertDate(grantedFromDate);
+				//GE - GREATER OT EQUAL TO VALUE
 				exp = exp.ge("crawlPermissions.grantedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
@@ -1192,19 +1201,32 @@ public class Target extends Model {
 			try {
 				String modGrantedToDate = Utils.INSTANCE.getaddDayToDate(grantedToDate);
 				Date date = Utils.INSTANCE.convertDate(modGrantedToDate);
+				//LE - LESS OT EQUAL TO VALUE
 				exp = exp.le("crawlPermissions.grantedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
 		}
+		*/
 
-		Logger.debug("exp: " + exp.toString());
+		//TODO: why hardcoding?!
 
-		Page<Target> res;// = null;
+		String sortBy = crawlPermissionsStatus.equals("PENDING")?
+				"crawlPermissions.requestedAt":
+				"crawlPermissions.grantedAt";
+		//= "crawlPermissions.requestedAt";
+		//String sortBy = "crawlPermissions.grantedAt";//"u1.granted_at";//" MIN(u1.granted_at) ";
+		String order = " asc ";
+		//.orderBy(sortBy)
+		//exp = exp.orderBy("crawlPermissions.grantedAt ");
 
-		Query<Target> query = exp.query();
-		//TODO: sort and order
-		res = query//.orderBy(sortBy + " " + order)
+		Logger.debug("sortBy : " + sortBy);
+
+		Page<Target> res;
+
+		Query<Target> query = exp.query().orderBy(sortBy + " " + order);
+
+		res = query//.orderBy(sortBy )
 				.findPagingList(Const.PAGINATION_OFFSET)
 				.setFetchAhead(false)
 				.getPage(pageNo);
@@ -1216,20 +1238,18 @@ public class Target extends Model {
 
 
 	public static List<Target> pageReportsFull(int pageNo, Long curatorId, Long organisationId,
-										   String crawlPermissionsStatus, String request,
-										   String requestedFromDate, String requestedToDate, String grantedFromDate, String grantedToDate) throws ActException {
-
-		Logger.debug("pageReports ---- ");
-
-		ExpressionList<Target> exp = Target.find.where();
+										   String crawlPermissionsStatus,
+											   //String request,
+										   String generalFromDate, String generalToDate,
+											   String grantedFromDate, String grantedToDate) throws ActException {
+		ExpressionList<Target> exp = Target.find.fetch("crawlPermissions").where();
 		exp = exp.eq("active", true);
 
 		Logger.debug("curatorId: " + curatorId);
 		Logger.debug("organisationId: " + organisationId);
 		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
-		Logger.debug("request: " + request);
-		Logger.debug("requestedFromDate: " + requestedFromDate);
-		Logger.debug("requestedToDate: " + requestedToDate);
+		Logger.debug("generalFromDate: " + generalFromDate);
+		Logger.debug("generalToDate: " + generalToDate);
 		Logger.debug("grantedFromDate: " + grantedFromDate);
 		Logger.debug("grantedToDate: " + grantedToDate);
 
@@ -1240,40 +1260,33 @@ public class Target extends Model {
 			exp = exp.eq("organisation.id", organisationId);
 		}
 
-//		if (curatorId != null) {
-//			exp = exp.eq("authorUser.id", curatorId);
-//		}
-//		if (organisationId != null) {
-//			exp = exp.eq("organisation.id", organisationId);
-//		}
-//		if (StringUtils.isNotEmpty(crawlPermissionsStatus)) {
-//			//exp = exp.eq("crawlPermissions.status", "PENDING");//crawlPermissionsStatus);
-//		    exp = exp.eq("crawlPermissions.status", "GRANTED");//crawlPermissionsStatus);
-//		    //exp = exp.eq("crawlPermissions.status", "REFUSED");//crawlPermissionsStatus);
-//		}
-		exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);//crawlPermissionsStatus);
+		if (StringUtils.isNotEmpty(crawlPermissionsStatus))
+		    exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);
 
-
-
-		if (StringUtils.isNotEmpty(requestedFromDate)) {
+		if (StringUtils.isNotEmpty(generalFromDate)) {
 			try {
-				Date date = Utils.INSTANCE.convertDate(requestedFromDate);
-				exp = exp.ge("crawlPermissions.requestedAt", date);
+				Date date = Utils.INSTANCE.convertDate(generalFromDate);
+				exp = crawlPermissionsStatus.equals("PENDING")?
+						exp.ge("crawlPermissions.requestedAt", date):
+						exp.ge("crawlPermissions.grantedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
 		}
 
-		if (StringUtils.isNotEmpty(requestedToDate)) {
+		if (StringUtils.isNotEmpty(generalToDate)) {
 			try {
-				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(requestedToDate);
+				String modRequestedToDate = Utils.INSTANCE.getaddDayToDate(generalToDate);
 				Date date = Utils.INSTANCE.convertDate(modRequestedToDate);
-				exp = exp.le("crawlPermissions.requestedAt", date);
+				exp = crawlPermissionsStatus.equals("PENDING")?
+						exp.le("crawlPermissions.requestedAt", date):
+						exp.le("crawlPermissions.grantedAt", date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
 		}
 
+		/*
 		if (StringUtils.isNotEmpty(grantedFromDate)) {
 			try {
 				Date date = Utils.INSTANCE.convertDate(grantedFromDate);
@@ -1292,14 +1305,26 @@ public class Target extends Model {
 				throw new ActException(e);
 			}
 		}
+		*/
 
-		Logger.debug("exp: " + exp.toString());
+		//Logger.debug("exp: " + exp.toString());
 
 		//TODO: in Target class - need method returns Page<Target>
 		List<Target> res;// = null;
 
+		String sortBy = crawlPermissionsStatus.equals("PENDING")?
+				"crawlPermissions.requestedAt":
+				"crawlPermissions.grantedAt";
+//		String sortBy = " crawlPermissions.grantedAt ";
+		String order = "asc";
 		Query<Target> query = exp.query();
-		res = query.findList();
+		//Logger.info("query.toString = " + query.toString());
+		//.orderBy(sortBy + " " + order);
+		//TODO: why hardcoding?!
+		//find.where().orderBy("fieldname desc").findList()
+
+		res = query.orderBy(sortBy + " " + order).findList();
+		//res = query.findList();
 		Logger.debug("pageReports - Expression list for targets created size: "
 				+ res.size());
 
@@ -1396,7 +1421,12 @@ public class Target extends Model {
 			String sortBy, String order, Long curatorId,
 			Long organisationId, String startDate, String endDate, String npld, String crawlFrequencyName, String tld) throws ActException {
 
-		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").fetch("flags").fetch("licenses").fetch("subjects").fetch("collections").where();
+		ExpressionList<Target> exp = Target.find
+				.fetch("fieldUrls")
+				.fetch("flags")
+				.fetch("licenses")
+				.fetch("subjects")
+				.fetch("collections").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
 		
@@ -1481,7 +1511,6 @@ public class Target extends Model {
 		}
 
 		// TODO: NONE SELECTED???
-
 		Logger.debug("pageReportsCreation() NPLD: " + npld);
 
 		/**
@@ -1528,16 +1557,16 @@ public class Target extends Model {
 
 		Query<Target> query = exp.query();
 
-		res = query.orderBy(sortBy + " " + order).findPagingList(pageSize)
-				.setFetchAhead(false).getPage(page);
+		res = query.orderBy(sortBy + " " + order)
+				.findPagingList(pageSize)
+				.setFetchAhead(false)
+				.getPage(page);
 
 		Logger.debug("Expression list for targets created size: "
 				+ res.getTotalRowCount());
 
 		return res;
-
 	}
-
 
 	/**
 	 * Target List Count after filtering

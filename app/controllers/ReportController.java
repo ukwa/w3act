@@ -47,7 +47,7 @@ public class ReportController extends AbstractController {
 		return redirect(routes.ReportController.processFilterReports(
 				0,-1L, -1L,
 				CrawlPermissionStatus.PENDING.name(), //default filter
-				"",
+				//"",
 				"","","",""));
 	};
 
@@ -59,18 +59,11 @@ public class ReportController extends AbstractController {
      * @throws ActException 
      */
     public static Result search() throws ActException {
-		Logger.debug("search() ---- STEP NO 1 ");
-
 		DynamicForm requestData = form().bindFromRequest();
 		String crawlPermissionsStatus22 = form().bindFromRequest().get("crawlPermissionsStatus22");
-		Logger.debug("search() ---- requestData22,  crawlPermissionsStatus22 = " + crawlPermissionsStatus22);
-
     	String action = requestData.get("action");
-
     	Logger.debug("action: " + action);
-
 		String curator = requestData.get("curator");
-
     	String organisation = requestData.get("organisation");
     	Long curatorId = null;
     	if (StringUtils.isNotBlank(curator)) {
@@ -80,40 +73,27 @@ public class ReportController extends AbstractController {
     	if (StringUtils.isNotBlank(organisation)) {
     		organisationId = Long.parseLong(organisation);
     	}
+		String generalFromDate = requestData.get("startDate");
+		String generalToDate = requestData.get("endDate");
 
-    	String request = requestData.get("request");
-		String requestType = requestData.get("requestType");
-
-		Logger.debug("request ---- = " + request);
-		Logger.debug("requestType ---- = " + requestType);
-
-//    	if (request_name != null && !request_name.toLowerCase().equals(Const.NONE) 
-//    			&& !request_name.toLowerCase().equals(Const.ALL)) {
-//   			request = request_name;
-//    	} 
-        String requestedFromDate = requestData.get("startDate");
-        String requestedToDate = requestData.get("endDate");
+		//String requestedFromDate = requestData.get("startDate");
+        //String requestedToDate = requestData.get("endDate");
         String grantedFromDate = requestData.get("grantedFromDate");
         String grantedToDate = requestData.get("grantedToDate");
-    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + crawlPermissionsStatus22 + ", " + requestedFromDate + ", " + requestedToDate + ", " + grantedFromDate + ", " + grantedToDate);
+    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + crawlPermissionsStatus22 + ", " + generalFromDate + ", " + generalToDate + ", " + grantedFromDate + ", " + grantedToDate);
 
         List<User> users = User.findAll();
         List<Organisation> organisations = Organisation.findAllSorted();
-        RequestType[] requestTypes = Const.RequestType.values();
+        //RequestType[] requestTypes = Const.RequestType.values();
 
         User user = User.findByEmail(request().username());
 
 		//Form data
-		int pageNo = Integer.parseInt(requestData.get("p"));
+		//int pageNo = Integer.parseInt(requestData.get("p"));
 		String sort = requestData.get("s");
 		String order = requestData.get("o");
 		//Long curatorId = Long.parseLong(requestData.get("curator"));
 		//Long organisationId = Long.parseLong(requestData.get("organisation"));
-
-		String startDate = requestData.get("startDate");
-		Logger.debug("startDate: " + startDate);
-
-//		String endDate = requestData.get("endDate");
 
 		// default
 		String searchByCrawlPermissionsStatus = (crawlPermissionsStatus22 != null && !crawlPermissionsStatus22.trim().isEmpty())?crawlPermissionsStatus22:CrawlPermissionStatus.PENDING.name();
@@ -130,12 +110,11 @@ public class ReportController extends AbstractController {
 		Logger.debug("crawlPermissionsStatus, aka searchType ---- = " + searchByCrawlPermissionsStatus);
 
 
-		Page<Target> pages = Target.pageReports(pageNo, curatorId, organisationId,
-				searchByCrawlPermissionsStatus, "",
-				"", "", "", "");
-
-		Logger.debug("crawlPermissionsStatus after ---- = " + searchByCrawlPermissionsStatus);
-		Logger.debug("search() --- crawlPermissionsStatus, requestData22,  crawlPermissionsStatus22 = " + crawlPermissionsStatus22);
+		Page<Target> pages = Target.pageReports(0, curatorId, organisationId,
+				searchByCrawlPermissionsStatus,
+				generalFromDate, generalToDate,
+				//requestedFromDate, requestedToDate,
+				grantedFromDate, grantedToDate);
 
 		if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -151,29 +130,31 @@ public class ReportController extends AbstractController {
 								sort, order,
 								searchByCrawlPermissionsStatus,
 								curatorId, organisationId,
-								"", "", "", "", "",
-								users, organisations, requestTypes
+								generalFromDate, generalToDate,
+								//requestedFromDate, requestedToDate,
+								grantedFromDate, grantedToDate,
+								users, organisations//, requestTypes
 						)
 				);
 		    }
 			else if (action.equals("export")) {
-				String status = searchByCrawlPermissionsStatus;//requestData.get("status");
+				String status = searchByCrawlPermissionsStatus;
     			Logger.debug("in export: " + status);
 
 				if (StringUtils.isNotEmpty(status)) {
-					Logger.debug("export requested size: " + pages.getList().size());//  resListRequest.size());
+					Logger.debug("export requested size: " + pages.getList().size());
+					List<Target> pagesFull = Target.pageReportsFull(0, curatorId, organisationId,
+							searchByCrawlPermissionsStatus,
+							generalFromDate, generalToDate,
+							//requestedFromDate, requestedToDate,
+							grantedFromDate, grantedToDate);
 
-					List<Target> pagesFull = Target.pageReportsFull(pageNo, curatorId, organisationId,
-							searchByCrawlPermissionsStatus, "",
-							"", "", "", "");
-
-					String file = export(pagesFull);
+					String file = exportCrawlPermissions(pagesFull, searchByCrawlPermissionsStatus);
 					response().setContentType("text/csv; charset=utf-8");
-					response().setHeader("Content-disposition", "attachment; filename=\"" + Const.EXPORT_REQUESTED_LICENCE_FILE + "\"");
+					response().setHeader("Content-disposition", "attachment; filename=\"" + searchByCrawlPermissionsStatus + "_" + (generalFromDate.equals("")?"":generalFromDate) + "-" + (generalToDate.equals("")?"":generalToDate) + "_" + Const.EXPORT_REQUESTED_LICENCE_FILE + "\"");
 					return ok(file);
 				}
 				Logger.debug("returning in export");
-
 		    }
 	    	return badRequest("This action is not allowed");
     	}
@@ -194,35 +175,83 @@ public class ReportController extends AbstractController {
      * @param file name
      * @return
      */
-    public static String export(List<Target> permissionList) {
-    	Logger.debug("export() permissionList size: " + permissionList.size());
+	public static String export(List<Target> permissionList) {
+		Logger.debug("export() permissionList size: " + permissionList.size());
 		StringBuilder sw = new StringBuilder();
-	    sw.append("Target title");
+		sw.append("Target title");
 		sw.append(Const.CSV_SEPARATOR);
-	    sw.append("Target URL");
+		sw.append("Target URL");
 		sw.append(Const.CSV_SEPARATOR);
-	    sw.append("Date requested");
+		sw.append("Date requested");
 		sw.append(Const.CSV_SEPARATOR);
-        sw.append(Const.CSV_LINE_END);
- 	    
- 	    if (permissionList != null && permissionList.size() > 0) {
- 	    	Iterator<Target> itr = permissionList.iterator();
- 	    	while (itr.hasNext()) {
- 	    		Target target = itr.next();
-	    		sw.append(StringEscapeUtils.escapeCsv(target.title));
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(StringEscapeUtils.escapeCsv(target.fieldUrl()));
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(StringEscapeUtils.escapeCsv(target.createdAt.toString()));
-		 	    sw.append(Const.CSV_SEPARATOR);
-	 	 	    sw.append(Const.CSV_LINE_END);
- 	    	}
- 	    }
+		sw.append(Const.CSV_LINE_END);
+
+		if (permissionList != null && permissionList.size() > 0) {
+			Iterator<Target> itr = permissionList.iterator();
+			while (itr.hasNext()) {
+				Target target = itr.next();
+				sw.append(StringEscapeUtils.escapeCsv(target.title));
+				sw.append(Const.CSV_SEPARATOR);
+				sw.append(StringEscapeUtils.escapeCsv(target.fieldUrl()));
+				sw.append(Const.CSV_SEPARATOR);
+				sw.append(StringEscapeUtils.escapeCsv(target.createdAt.toString()));
+				sw.append(Const.CSV_SEPARATOR);
+				sw.append(Const.CSV_LINE_END);
+			}
+		}
 //    	File file = Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
-    	return sw.toString();
-    }
-            	
-    /**
+		return sw.toString();
+	}
+	public static String exportCrawlPermissions(List<Target> permissionList, String crawlPermissionStatus) {
+		Logger.debug("export() permissionList size: " + permissionList.size());
+		StringBuilder sw = new StringBuilder();
+		sw.append("Target title");
+		sw.append(Const.CSV_SEPARATOR);
+		sw.append("Target URL");
+		sw.append(Const.CSV_SEPARATOR);
+		sw.append("Date requested");
+		sw.append(Const.CSV_SEPARATOR);
+
+		if (crawlPermissionStatus.equals("GRANTED")) {
+			sw.append("Date granted");
+			sw.append(Const.CSV_SEPARATOR);
+		}
+		else if (crawlPermissionStatus.equals("REFUSED")) {
+			sw.append("Date refused");
+			sw.append(Const.CSV_SEPARATOR);
+		}
+
+		sw.append(Const.CSV_LINE_END);
+
+		if (permissionList != null && permissionList.size() > 0) {
+			Iterator<Target> itr = permissionList.iterator();
+			while (itr.hasNext()) {
+				Target target = itr.next();
+				sw.append(StringEscapeUtils.escapeCsv(target.title));
+				sw.append(Const.CSV_SEPARATOR);
+				sw.append(StringEscapeUtils.escapeCsv(target.fieldUrl()));
+				sw.append(Const.CSV_SEPARATOR);
+				sw.append(StringEscapeUtils.escapeCsv(target.crawlPermissions.get(0).requestedAt!=null?(target.crawlPermissions.get(0).requestedAt.toString()):""));
+				sw.append(Const.CSV_SEPARATOR);
+
+				if (crawlPermissionStatus.equals("GRANTED")) {
+					sw.append(StringEscapeUtils.escapeCsv(target.crawlPermissions.get(0).grantedAt!=null?(target.crawlPermissions.get(0).grantedAt.toString()):""));
+					sw.append(Const.CSV_SEPARATOR);
+				}
+				else if (crawlPermissionStatus.equals("REFUSED")) {
+					sw.append(StringEscapeUtils.escapeCsv(target.isRefused()==true?"":""));
+					sw.append(Const.CSV_SEPARATOR);
+				}
+
+
+				sw.append(Const.CSV_LINE_END);
+			}
+		}
+//    	File file = Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
+		return sw.toString();
+	}
+
+	/**
      * This method applies filters to the list of crawl reports.
      * @param curator The curator URL
      * @param organisation The organisation URL
@@ -249,26 +278,28 @@ public class ReportController extends AbstractController {
 	 * @throws ActException
 	 */
 	public static Result processFilterReports(int pageNo, Long curatorId, Long organisationId,
-    		String crawlPermissionsStatus, String request, String requestedFromDate, String requestedToDate, String grantedFromDate, String grantedToDate) throws ActException {
+    		String crawlPermissionsStatus, //String request,
+											  String requestedFromDate,
+											  String requestedToDate,
+											  String grantedFromDate,
+											  String grantedToDate) throws ActException {
 		User user = User.findByEmail(request().username());
 		List<User> users = User.findAll();
 		List<Organisation> organisations = Organisation.findAllSorted();
-		RequestType[] requestTypes = Const.RequestType.values();
-
+		//RequestType[] requestTypes = Const.RequestType.values();
 		Logger.debug("pageNo: " + pageNo);
-
 		Logger.debug("curatorId: " + curatorId);
 		Logger.debug("organisationId: " + organisationId);
 		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
-		Logger.debug("request: " + request);
+		//Logger.debug("request: " + request);
 		Logger.debug("requestedFromDate: " + requestedFromDate);
 		Logger.debug("requestedToDate: " + requestedToDate);
 		Logger.debug("grantedFromDate: " + grantedFromDate);
 		Logger.debug("grantedToDate: " + grantedToDate);
 
 		Page<Target> pages = Target.pageReports(pageNo, curatorId, organisationId,
-				crawlPermissionsStatus, "",
-				"", "", "", "");
+				crawlPermissionsStatus,
+				requestedFromDate, requestedToDate, grantedFromDate, grantedToDate);
 
         return ok(reports.render(
 				"Reports", user,
@@ -276,8 +307,9 @@ public class ReportController extends AbstractController {
 				"", "",
 				crawlPermissionsStatus,
 				curatorId, organisationId,
-				"", "", "", "", "",
-				users, organisations, requestTypes
+				requestedFromDate, requestedToDate, grantedFromDate, grantedToDate,
+				users, organisations
+				//, requestTypes
 		));
     }
               
@@ -330,7 +362,6 @@ public class ReportController extends AbstractController {
 
     	Page<Target> pages = Target.pageReportsCreation(pageNo, Const.PAGINATION_OFFSET, sortBy, order, curatorId, organisationId,
 				startDate, endDate, npld, crawlFrequency, tld);
-    	
 
 		List<User> users = User.findAll();
 		List<Organisation> organisations = Organisation.findAll();
@@ -357,9 +388,6 @@ public class ReportController extends AbstractController {
                 	nplds)
         	);
     }
-
-
-
 
 	/**
      * This method enables searching for given URL and redirection in order to add new entry
