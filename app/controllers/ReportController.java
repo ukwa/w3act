@@ -397,7 +397,6 @@ public class ReportController extends AbstractController {
     public static Result searchCreation() throws ActException {
 		DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
-    	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");
     	Long curatorId = Long.parseLong(requestData.get("curator"));
@@ -430,11 +429,11 @@ public class ReportController extends AbstractController {
     	} else {
     		if (action.equals("export")) {
     			List<Target> exportTargets = new ArrayList<Target>();
-    	    	Page<Target> page = Target.pageReportsCreation(pageNo, Const.PAGINATION_OFFSET, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
+    	    	Page<Target> page = Target.pageReportsCreation(0, Const.PAGINATION_OFFSET, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
     	    	
     			int rowCount = page.getTotalRowCount();
     			
-    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
+    	    	Page<Target> pageAll = Target.pageReportsCreation(0, rowCount, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
     			exportTargets.addAll(pageAll.getList());
 				Logger.debug("export report creation size: " + exportTargets.size());
     			String file = export(exportTargets);
@@ -442,7 +441,7 @@ public class ReportController extends AbstractController {
     			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_TARGETS_REPORT_CREATION + "\"");
     	        return ok(file);
     		} else if (action.equals("search")) {
-    	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId,
+    	    	return redirect(routes.ReportController.targets(0, sort, order, curatorId, organisationId,
     	    			startDate, endDate, npld, crawlFrequencyName, tld));
 		    } else {
 		    	return badRequest("This action is not allowed");
