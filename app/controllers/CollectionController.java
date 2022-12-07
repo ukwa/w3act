@@ -131,6 +131,12 @@ public class CollectionController extends AbstractController {
 
 	@Security.Authenticated(SecuredController.class)
 	@BodyParser.Of(BodyParser.Json.class)
+	public static Result json() {
+		return ok(Json.toJson(Collection.findAllCollections()));
+	}
+
+	@Security.Authenticated(SecuredController.class)
+	@BodyParser.Of(BodyParser.Json.class)
     public static Result getByJson() {
     	JsonNode jsonData = getCollectionsData();
         return ok(jsonData);
