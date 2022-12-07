@@ -176,12 +176,12 @@ public class ApplicationController extends Controller {
     
 	@Security.Authenticated(SecuredController.class)
     public static Result home() {
-		String email = session().get("email");
-		User user = User.findByEmail(email);
-		if (user.ddhaptUser && getDDHAPTStatus())
-			return redirect(routes.WatchedTargets.overview(0, "target.title", "asc"));
-		else
-			return redirect(routes.ApplicationController.index());
+		//String email = session().get("email");
+		//User user = User.findByEmail(email);
+		//if (user.ddhaptUser && getDDHAPTStatus())
+		//	return redirect(routes.WatchedTargets.overview(0, "target.title", "asc"));
+		//else
+		return redirect(routes.ApplicationController.index());
 	}
 	
 	public static boolean getDDHAPTStatus(){
