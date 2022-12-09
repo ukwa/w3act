@@ -156,11 +156,23 @@
 
 
 				<div class="row padding-20">
-					<div class="col-sm-3 col-xs-3 col-md-3">
+					<div class="col-sm-4 col-xs-4 col-md-3">
 						<label>Crawl permissions status: </label>
 					</div>
+					<div class="col-sm-2 col-xs-2 col-md-2">
+						<div class="label label-pill label-primary" >
+							Current selection
+						</div>
+					</div>
 					<div class="col-">
-						<label class="label-info left">@crawlPermissionsStatus2</label>
+						<div class="badge progress-bar-success progress-bar-animated">
+							@if(crawlPermissionsStatus2.equals(Const.CrawlPermissionStatus.PENDING.toString())){
+								REQUESTED
+							} else {
+								@crawlPermissionsStatus2
+							}
+
+						</div>
 					</div>
 				</div>
 
@@ -211,7 +223,7 @@
 								<div class="row">
 									<div class="col-md-6">
 											<div class="form-group">
-												<label class="col-sm-6 control-label">Filter by <b class="bg-info">@crawlPermissionsStatus2</b> date from </label>
+												<label class="col-sm-6 control-label">Filter by date from </label>
 											    <div class="col-sm-6">
 											    	<div class="input-group">
 							 							<input type="text" name="startDate" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
