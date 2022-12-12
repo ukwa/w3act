@@ -251,7 +251,10 @@
 					<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="btn-group">
 							<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
-							<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
+							<button type="submit" class="btn shadow-none disabled" id="dummy" name="action" value="dummy" title="label for export">Export as:</button>
+							<button type="submit" class="btn btn-primary" id="exportcsv" name="action" value="exportcsv" title="Export results of filtered searches and reports to CSV file in the root folder">CSV</button>
+							<button type="submit" class="btn btn-primary" id="exporttsv" name="action" value="exporttsv" title="Export results of filtered searches and reports to TSV file in the root folder">TSV</button>
+							<button type="submit" class="btn btn-primary" id="exportjson" name="action" value="exportjson" title="Export results of filtered searches and reports to JSON file in the root folder">JSON</button>
 						</div>
 					</div>
 				</div>

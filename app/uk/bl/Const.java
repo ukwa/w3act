@@ -349,6 +349,9 @@ public final class Const {
 	public static final String EXPORT_FILE        = "export.csv";
 	public static final String EXPORT_INSTANCE_FILE = "exportinstances.csv";
 	public static final String EXPORT_REQUESTED_LICENCE_FILE = "export_requested_licences.csv";
+	public static final String EXPORT_LICENCE_FILE_CSV = "export_licences.csv";
+	public static final String EXPORT_LICENCE_FILE_TSV = "export_licences.tsv";
+	public static final String EXPORT_LICENCE_FILE_JSON = "export_licences.json";
 	public static final String EXPORT_GRANTED_LICENCE_FILE = "export_granted_licences.csv";
 	public static final String EXPORT_REFUSED_LICENCE_FILE = "export_refused_licences.csv";
 	public static final String CSV_SEPARATOR      = ",";
