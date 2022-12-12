@@ -428,10 +428,9 @@ public class TargetController extends AbstractController {
                         Logger.debug("export size (for JSON): " + rowCount);
                         Page<Target> pageAll = Target.pageTargets(pageNo, rowCount, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
                         exportTargets.addAll(pageAll.getList());
-                        List <Map> jsonData = Utils.INSTANCE.exportJson(exportTargets);
                         response().setContentType("application/json; charset=utf-8");
                         response().setHeader("Content-disposition", "attachment; filename=\"target-export.json");
-                        return ok(Json.toJson(jsonData));
+                        return ok(Json.toJson(Utils.INSTANCE.exportJson(exportTargets)));
                     } else {
                         if(action.equals("search") || action.equals("apply")) {
                             return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
@@ -452,25 +451,19 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static Result search() {
-
         DynamicForm form = DynamicForm.form().bindFromRequest();
-
         String action = form.get("action");
         String query = form.get("filter");
         int pageNo = Integer.parseInt(form.get("p"));
         String sort = form.get("s");
         String order = form.get("o");
-
         if(StringUtils.isEmpty(action)) {
             return badRequest("You must provide a valid action");
         }
         else {
-
             // check url
-
             Logger.debug("Query: " + query);
             boolean isValidUrl = Utils.INSTANCE.validUrl(query);
-
             Logger.debug("valid? " + isValidUrl);
             if(!isValidUrl) {
                 ValidationError ve = new ValidationError("formUrl", "Invalid URL");
