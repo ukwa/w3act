@@ -24,9 +24,7 @@ import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.Const.NpldType;
-import uk.bl.Const.RequestType;
 import uk.bl.Const.ScopeType;
-import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import views.html.reports.*;
 
@@ -46,7 +44,6 @@ public class ReportController extends AbstractController {
 		return redirect(routes.ReportController.processFilterReports(
 				0,-1L, -1L,
 				CrawlPermissionStatus.PENDING.name(), //default filter
-				//"",
 				"","","",""));
 	};
 
@@ -83,12 +80,9 @@ public class ReportController extends AbstractController {
 
 		List<User> users = User.findAll();
 		List<Organisation> organisations = Organisation.findAllSorted();
-		//RequestType[] requestTypes = Const.RequestType.values();
 
 		User user = User.findByEmail(request().username());
 
-		//Form data
-		//int pageNo = Integer.parseInt(requestData.get("p"));
 		String sort = requestData.get("s");
 		String order = requestData.get("o");
 		//Long curatorId = Long.parseLong(requestData.get("curator"));
@@ -105,7 +99,6 @@ public class ReportController extends AbstractController {
 		} else {
 			searchByCrawlPermissionsStatus = crawlPermissionsStatus22;
 		}
-		Logger.debug("crawlPermissionsStatus, aka searchType ---- = " + searchByCrawlPermissionsStatus);
 
 		Page<Target> pages = Target.pageReports(0, curatorId, organisationId,
 				searchByCrawlPermissionsStatus,
@@ -118,7 +111,6 @@ public class ReportController extends AbstractController {
 		else {
 			if (action.equals("search") || action.equals("searchRequested") || action.equals("searchGranted") || action.equals("searchRefused")) {
 				Logger.debug("action : search+");
-				Logger.debug("returning 1, searchByCrawlPermissionsStatus = " + searchByCrawlPermissionsStatus);
 				return ok(
 						reports.render(
 								"Reports", user,
@@ -172,7 +164,7 @@ public class ReportController extends AbstractController {
 							grantedFromDate, grantedToDate);
 					response().setContentType("application/json; charset=utf-8");
 					response().setHeader("Content-disposition", "attachment; filename=\"" + searchByCrawlPermissionsStatus + "_" + (generalFromDate.equals("") ? "ALL" : generalFromDate) + "-" + (generalToDate.equals("") ? "ALL" : generalToDate) + "_" + Const.EXPORT_LICENCE_FILE_JSON + "\"");
-					return ok(Json.toJson(Utils.INSTANCE.exportJson(pagesFull)));
+					return ok(Json.toJson(exportCrawlPermissionsJson(pagesFull, searchByCrawlPermissionsStatus)));
 				}
 				Logger.debug("returning in export JSON");
 			}
@@ -305,6 +297,33 @@ public class ReportController extends AbstractController {
 			}
 			return sw.toString();
 		}
+
+	/**
+	 * export Crawl Permissions in List<Map<String,String>> for export in Json
+	 * @param permissionList
+	 * @param crawlPermissionStatus
+	 * @return
+	 */
+	public static List<Map<String,String>>  exportCrawlPermissionsJson(List<Target> permissionList, String crawlPermissionStatus) {
+		Map<String,String> reportMap;
+		List<Map<String,String>> reportListOfMaps = new ArrayList<>();
+		if (permissionList != null && permissionList.size() > 0) {
+			Iterator<Target> itr = permissionList.iterator();
+			while (itr.hasNext()) {
+				Target target = itr.next();
+				reportMap = new HashMap<String, String>();
+				reportMap.put("TargetTitle", StringEscapeUtils.escapeCsv(target.title));
+				reportMap.put("TargetURL", StringEscapeUtils.escapeCsv(target.fieldUrl()));
+				reportMap.put("DateRequested", target.crawlPermissions.get(0).requestedAt!=null?(target.crawlPermissions.get(0).requestedAt.toString()):"");
+				if (crawlPermissionStatus.equals("GRANTED"))
+					reportMap.put("DateGranted", target.crawlPermissions.get(0).grantedAt!=null?(target.crawlPermissions.get(0).grantedAt.toString()):"");
+				else if (crawlPermissionStatus.equals("REFUSED"))
+					reportMap.put("DateRefused", target.isRefused()==true?"":"");
+				reportListOfMaps.add(reportMap);
+			}
+		}
+		return reportListOfMaps;
+	}
 
 	/**
      * This method applies filters to the list of crawl reports.
