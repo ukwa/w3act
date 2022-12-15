@@ -425,6 +425,8 @@ public class CollectionController extends AbstractController {
         	} else if (action.equals("delete")) {
         		Collection collection = Collection.findById(id);
 		        flash("message", "Collection " + filledForm.get().name + " has been deleted");
+				Ebean.createSqlUpdate("DELETE FROM taxonomy_parents_all where parent_id=:id")
+						.setParameter("id", id).execute();
             	collection.delete();
                 Logger.debug("invalidate cache on Collection Delete, key CollectionsData: ");
                 getCache().remove("CollectionsData");
