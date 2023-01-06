@@ -1,11 +1,7 @@
 package uk.bl;
 
-import play.Logger;
-
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class Const {
   
@@ -64,7 +60,7 @@ public final class Const {
 	public static final int STRING_LIMIT          = 50;
 
 	// Help constants
-	public static final int PAGINATION_OFFSET     = 10; // offset is a page step from current page for pagination
+	public static final int PAGINATION_OFFSET     = 15; // offset is a page step from current page for pagination
 	public static final int ROWS_PER_PAGE         = 50;
 	public static final int MAX_USER_COUNT        = 100;
 	public static final int BUFFER_SIZE           = 1024; // 1KB 
@@ -353,9 +349,13 @@ public final class Const {
 	public static final String EXPORT_FILE        = "export.csv";
 	public static final String EXPORT_INSTANCE_FILE = "exportinstances.csv";
 	public static final String EXPORT_REQUESTED_LICENCE_FILE = "export_requested_licences.csv";
+	public static final String EXPORT_LICENCE_FILE_CSV = "export_licences.csv";
+	public static final String EXPORT_LICENCE_FILE_TSV = "export_licences.tsv";
+	public static final String EXPORT_LICENCE_FILE_JSON = "export_licences.json";
 	public static final String EXPORT_GRANTED_LICENCE_FILE = "export_granted_licences.csv";
 	public static final String EXPORT_REFUSED_LICENCE_FILE = "export_refused_licences.csv";
 	public static final String CSV_SEPARATOR      = ",";
+	public static final String TSV_SEPARATOR      = "\t"; //tab - for TAB separated values
 	public static final String CSV_LINE_END       = "\n";
 	public static final String TWO_POINTS         = ": ";
 	public static final String SEARCH             = "search";
@@ -383,7 +383,7 @@ public final class Const {
 	public static final String QUERY             	= "q";
 	public static final String QUERY_COLLECTION    	= "query_collection";
 	public static final String QUERY_QA_STATUS     	= "query_qa_status";
-	
+
 	/**
 	 * Export settings
 	 */
@@ -1052,7 +1052,7 @@ public final class Const {
 		targetMap.put("field_notes", 7);
 		targetMap.put("field_instances", 8);
 	}
-	
+
     public static final Map<String, Integer> targetExportMap = new HashMap<String, Integer>();
 		static {
 		targetExportMap.put("nid", 0);
@@ -1062,8 +1062,18 @@ public final class Const {
 		targetExportMap.put("field_crawl_frequency", 4);
 		targetExportMap.put("created", 5);
 	}
-		
-    public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
+
+	public static final List<String> targetExportList = new ArrayList<>();
+	static {
+		targetExportList.add("nid");
+		targetExportList.add("title");
+		targetExportList.add("field_url");
+		targetExportList.add("author");
+		targetExportList.add("field_crawl_frequency");
+		targetExportList.add("created");
+	}
+
+	public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
 		static {
 		permissionExportMap.put("target", 0);
 		permissionExportMap.put("licenseDate", 1);

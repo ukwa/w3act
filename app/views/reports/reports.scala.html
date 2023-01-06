@@ -1,4 +1,6 @@
-@(title: String, user: User, permissions: List[Target], permissionsGranted: List[Target], permissionsRefused: List[Target], curatorId: Long, organisationId: Long, startDate: String, endDate: String, requestType: String, grantedFromDate: String, grantedToDate: String, users: List[User], organisations: List[Organisation], requestTypes: Array[uk.bl.Const.RequestType])
+@import uk.bl.Const
+@import uk.bl.Const
+@(title: String, user: User, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, crawlPermissionsStatus2: String,curatorId: Long, organisationId: Long, startDate: String, endDate: String, grantedFromDate: String, grantedToDate: String, users: List[User], organisations: List[Organisation])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -6,19 +8,19 @@
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>	
-	
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+
     <script>
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
-			applySearch(context, 'permissions'); 
-			
+			applySearch(context, 'permissions');
+
 			$(document).on( 'shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
 				var id = $(this).attr('id');
 				//console.log(id); // activated tab
  				$('#tabStatus').val(id);
 			})
-			
+
 			var status = getURLParameter('status');
 			if (status !== undefined) {
 				var li = $('#' + status).parent('li');
@@ -31,25 +33,97 @@
 				panel.toggleClass("active in");
 				//console.log(status + " - " + panelId);
 			}
-			
-		
-   	 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-        $("#tabRequested").click(function(){
-   	        $("#data").hide();
- 		   });
- 		$("#tabRefused").click(function(){
-   	        $("#data").hide();
- 		   });
-	    $("#tabGranted").click(function(){
-     	    $("#data").show();
-	 	   });
-			
-		});	
-	
+
+			// add an `onclick` handler to the second button
+			$('#searchRequested').click(function() {
+				// set hidden input to '2'
+				$('#crawlPermissionsStatus22').val("@crawlPermissionsStatus2");
+				//$('#crawlPermissionsStatus').val("REQUESTED");
+				// submit the form
+				$('#forms').submit();
+			});
+// add an `onclick` handler to the second button
+			$('#searchGranted').click(function() {
+				// set hidden input to '2'
+				$('#crawlPermissionsStatus22').val("@crawlPermissionsStatus2");
+				// submit the form
+				$('#forms').submit();
+			});
+// add an `onclick` handler to the second button
+			$('#searchRefused').click(function() {
+				// set hidden input to '2'
+				$('#crawlPermissionsStatus22').val("@crawlPermissionsStatus2");
+				//$('#crawlPermissionsStatus').val("REFUSED");
+				// submit the form
+				$('#forms').submit();
+			});
+
+		});
+
 	</script>
 
 }
+	@****************************************
+	* Helper generating navigation links    *
+	****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+
+//	var sortBy = currentSortBy
+//	var order = currentOrder
+//
+//	if(newSortBy != null) {
+//		sortBy = newSortBy
+//		if(currentSortBy == newSortBy) {
+//			if(currentOrder == "asc") {
+//				order = "desc"
+//			} else {
+//				order = "asc"
+//			}
+//		} else {
+//			order = "asc"
+//		}
+//	}
+
+	// Generate the link
+
+	routes.ReportController.processFilterReports(newPage, curatorId, organisationId,
+		crawlPermissionsStatus2,
+		startDate, endDate, grantedFromDate, grantedToDate)
+}
+
+	@**********************************
+	* Helper generating table headers *
+	***********************************@
+
+@pagination = {
+	<div class="text-center">
+		<ul class="pagination">
+			@if(currentPage.hasPrev) {
+				<li class="prev">
+					<a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
+				</li>
+			} else {
+				<li class="prev disabled">
+					<a>&larr; Previous</a>
+				</li>
+			}
+			<li class="current">
+				<a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+			</li>
+			@if(currentPage.hasNext) {
+				<li class="next">
+					<a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
+				</li>
+			} else {
+				<li class="next disabled">
+					<a>Next &rarr;</a>
+				</li>
+			}
+		</ul>
+	</div>
+}
+
+
 @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 
 @main(title, user, scripts, styles) {
@@ -57,32 +131,55 @@
 	<div class="page-header">
 	    <h1><a href="@routes.ReportController.index()">Targets > </a>Reports</h1>
 	</div>
-	
+
     <ul class="nav nav-tabs">
 	   <!-- li><a href="@routes.ReportController.summary()">Summary</a></li-->
-	   <li class="active"><a href="@routes.ReportController.openLicences()">Open UKWA licences</a></li> 
-	   <li><a href="@routes.ReportController.recordCreation()">Target creation</a></li> 
-	   <li><a href="@routes.ReportController.consistencyChecks()">Consistency Checks</a></li> 
-	   <!-- <li><a href="@routes.ReportController.qa()">QA</a></li> --> 
+	   <li class="active"><a href="@routes.ReportController.openLicences()">Open UKWA licences</a></li>
+	   <li><a href="@routes.ReportController.recordCreation()">Target creation</a></li>
+	   <li><a href="@routes.ReportController.consistencyChecks()">Consistency Checks</a></li>
+	   <!-- <li><a href="@routes.ReportController.qa()">QA</a></li> -->
 	</ul>
-		
-	<div class="tab-content padding-20">          
-		<ul class="nav nav-pills" id="crawlTabs">
-	        <li class="active"><a href="#requested" data-toggle="tab" id="tabRequested">Requested</a></li>
-	        <li><a href="#granted" data-toggle="tab" id="tabGranted">Granted</a></li>
-		    <li><a href="#refused" data-toggle="tab" id="tabRefused">Refused</a></li>
-	  	</ul>
-	</div>
-	
+
     <article class="reports">
 
-		@helper.form(action=routes.ReportController.search) {
+		@helper.form(action=routes.ReportController.search()) {
+			<input type="hidden" name="crawlPermissionsStatus22" value="@crawlPermissionsStatus2" />
 			<div id="forms">
-				<input type="hidden" name="status" value="tabRequested" id="tabStatus">
+				<div class="input-group padding-20">
+@*					<input type="hidden" name="requestType" value="@requestType" />*@
+					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+					<input type="hidden" name="exportType" value="" id="exportType">
+					<button class="btn btn-primary" id="searchRequested" name="action" value="searchRequested" title="requested">Requested</button>
+					<button class="btn btn-primary" id="searchGranted" name="action" value="searchGranted" title="requested">Granted</button>
+					<button class="btn btn-primary" id="searchRefused" name="action" value="searchRefused" title="requested">Refused</button>
+				</div>
+
+
+				<div class="row padding-20">
+					<div class="col-sm-4 col-xs-4 col-md-3">
+						<label>Crawl permissions status: </label>
+					</div>
+					<div class="col-sm-2 col-xs-2 col-md-2">
+						<div class="label label-pill label-primary" >
+							Current selection
+						</div>
+					</div>
+					<div class="col-">
+						<div class="badge progress-bar-success progress-bar-animated">
+							@if(crawlPermissionsStatus2.equals(Const.CrawlPermissionStatus.PENDING.toString())){
+								REQUESTED
+							} else {
+								@crawlPermissionsStatus2
+							}
+
+						</div>
+					</div>
+				</div>
+
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
-						
+
 				<div id="accordion">
 						<div id="filter-panel" class="panel-collapse collapse in">
 							<div class="panel-body">
@@ -92,7 +189,7 @@
 											<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
 										    <div class="col-sm-6">
 												<select name="curator" class="form-control target-form-control" id="curator">
-													<option value="">None</option>
+													<option value="-1">None</option>
 													@for(curator <- users) {
 														@if(curator.id == curatorId) {
 															<option value="@curator.id" selected>@curator.name</option>
@@ -105,35 +202,35 @@
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="form-group">					
+										<div class="form-group">
 							            	<label for="organisation" class="col-sm-6 control-label">Filter by nominating organisation</label>
 							            	<div class="col-sm-6">
 												<select name="organisation" class="form-control target-form-control" id="organisation">
-										        	<option value="">All Agencies</option>
+										        	<option value="-1">All Agencies</option>
 									            	@for(organisation <- organisations) {
 							                 		  		@if(organisation.id == organisationId) {
 								                			<option value="@organisation.id" selected>@organisation.title</option>
 								                		} else {
 								                			<option value="@organisation.id">@organisation.title</option>
 								                		}
-									                }											
+									                }
 									 			</select>
 											</div>
 							         	</div>
 									</div>
 								</div>
+
 								<div class="row">
 									<div class="col-md-6">
 											<div class="form-group">
-												<label class="col-sm-6 control-label">Filter by requested date from </label>
+												<label class="col-sm-6 control-label">Filter by date from </label>
 											    <div class="col-sm-6">
 											    	<div class="input-group">
 							 							<input type="text" name="startDate" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
 							 						</div>
 						                		</div>
 											</div>
-							     	</div>	
-					
+							     	</div>
 									<div class="col-md-6">
 											<div class="form-group">
 												<label class="col-sm-6 control-label">to </label>
@@ -143,76 +240,28 @@
 							 						</div>
 						                		</div>
 											</div>
-							     	</div>	
+							     	</div>
 								</div>
-								<div class="row">
-									<div class="row padding-10">
-							     		<div class="col-md-12 col-xs-12 col-sm-12">
-											<div class="form-group">
-								              	<label for="request" class="col-sm-6 control-label">Request type </label>
-											    <div class="col-sm-6">
-													<select name="request" id="request" class="form-control">
-														<option value="">None</option>
-										                @for(requestType <- requestTypes) {
-							                 		  		@if(requestType.name.equals(requestType)) {
-										                		<option value="@requestType.name" selected>@requestType.getValue</option>
-									                		} else {
-										                		<option value="@requestType.name">@requestType.getValue</option>
-									                		}
-										                }												
-													</select>
-												</div>
-											</div>
-										</div>
-							     	</div>	     
-										
-								</div>
-							
-								<div class="row" id="data">
-									<div class="col-md-6">
-											<div class="form-group">
-												<label class="col-sm-6 control-label">Filter by granted date from </label>
-											    <div class="col-sm-6">
-											    	<div class="input-group">
-							 							<input type="text" name="grantedFromDate" value="@grantedFromDate" size="30" maxlength="2048" class="form-control  target-form-control" id="granted-from-date"/>
-							 						</div>
-						                		</div>
-											</div>
-							     	</div>	
-					
-									<div class="col-md-6">
-											<div class="form-group">
-												<label class="col-sm-6 control-label">to </label>
-											    <div class="col-sm-6">
-											    	<div class="input-group">
-							 							<input type="text" name="grantedToDate" value="@grantedToDate" size="30" maxlength="2048" class="form-control target-form-control" id="granted-to-date"/>
-							 						</div>
-						                		</div>
-											</div>
-							     	</div>	
-								</div>
-						
 							</div>
 						</div>
-					</div>				
-			</div>	        
-		
+					</div>
+
 			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 				<div class="row padding-20 pull-right">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="btn-group">		
+					<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="btn-group">
 							<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
-							@if(permissions.size() > 0 || permissionsGranted.size() > 0 || permissionsRefused.size() > 0) {
-								<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
-							} else {
-								<button disabled type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
-							}
-				       </div>
+							<button type="submit" class="btn shadow-none disabled" id="dummy" name="action" value="dummy" title="label for export">Export as:</button>
+							<button type="submit" class="btn btn-primary" id="exportcsv" name="action" value="exportcsv" title="Export results of filtered searches and reports to CSV file in the root folder">CSV</button>
+							<button type="submit" class="btn btn-primary" id="exporttsv" name="action" value="exporttsv" title="Export results of filtered searches and reports to TSV file in the root folder">TSV</button>
+							<button type="submit" class="btn btn-primary" id="exportjson" name="action" value="exportjson" title="Export results of filtered searches and reports to JSON file in the root folder">JSON</button>
+						</div>
 					</div>
 				</div>
-			}				
+			}
+			</div>
+			@pagination
 			<div id="myTabContent" class="tab-content">
-			
 				<div class="tab-pane padding-20 fade active in" id="requested">
 				   	<div class="row padding-20">
 						<table class="table table-hover">
@@ -221,13 +270,19 @@
 									<th>Target Title</th>
 									<th>Target URL</th>
 									<th>Date requested</th>
+									@if(crawlPermissionsStatus2.equals(Const.CrawlPermissionStatus.GRANTED.toString())){
+										<th>Date granted</th>
+									}
+									@if(crawlPermissionsStatus2.equals(Const.CrawlPermissionStatus.REFUSED.toString())){
+										<th>Date refused</th>
+									}
 								</tr>
 							</thead>
 							<tbody>
-							@permissions.map { target =>		              
+							@for(target <- currentPage.getList) {
 								<tr>
 									<td>
-									    @if(target.title != null || target.title.length() > 0) {					                	
+									    @if(target.title != null || target.title.length() > 0) {
 						                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
 						                } else {
 						                    none
@@ -236,104 +291,27 @@
 									<td>
 										@for(fieldUrl <- target.fieldUrls) {
 					                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
-					                	}					                
+					                	}
 									</td>
 									@if(target.url != null && target.getLatestCrawlPermission.requestedAt != null) {
 										<td>@target.getLatestCrawlPermission.requestedAt</td>
 									} else {
 										<td></td>
-									}	
-									                  
-								</tr>
-							}
-							</tbody>
-						</table>
-					</div>	
-				</div>
-				
-				<div class="tab-pane padding-20 fade" id="granted">
-				   	<div class="row padding-20">
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th>Target Title</th>
-									<th>Target URL</th>
-									<th>Date requested</th>
-									<th>Date granted</th>
-								</tr>
-							</thead>
-							<tbody>
-							@permissionsGranted.map { target =>		              
-								<tr>
-									<td>
-									    @if(!target.title.equals("none")) {					                	
-						                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
-						                } else {
-						                    none
-						                }
-									</td>
-									<td>
-										@for(fieldUrl <- target.fieldUrls) {
-					                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
-					                	}									
-									</td>
-									@if(target.url != null && target.getLatestCrawlPermission.requestedAt != null) {
-										<td>@target.getLatestCrawlPermission.requestedAt</td>
-									} else {
-										<td></td>
-									}		
+									}
 									@if(target.url != null && target.getLatestCrawlPermission.grantedAt != null) {
 										<td>@target.getLatestCrawlPermission.grantedAt</td>
 									} else {
 										<td></td>
-									}		                  
-								</tr>
-							}
-							</tbody>
-						</table>
-					</div>	
-				</div>  
-	
-				<div class="tab-pane padding-20 fade" id="refused">
-				   	<div class="row padding-20">
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th>Target Title</th>
-									<th>Target URL</th>
-									<th>Date requested</th>
-								</tr>
-							</thead>
-							<tbody>
-							@permissionsRefused.map { target =>		              
-								<tr>
-									<td>
-									    @if(!target.title.equals("none")) {					                	
-						                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
-						                } else {
-						                    none
-						                }
-									</td>
-									<td>
-										@for(fieldUrl <- target.fieldUrls) {
-					                		<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
-					                	}					                
-									</td>
-									@if(target.url != null && target.getLatestCrawlPermission.requestedAt != null) {
-										<td>@target.getLatestCrawlPermission.requestedAt</td>
-									} else {
-										<td></td>
-									}	
-										                  
-								</tr>
-							}
-							</tbody>
-						</table>
-					</div>	
-				</div>
-				
-			</div>	  
+									}
 
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			@pagination
 		}
 	</article>
 }

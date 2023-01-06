@@ -402,26 +402,36 @@ public class TargetController extends AbstractController {
                     return GO_HOME;
                 }
                 else {
-                    if(action.equals("export")) {
+                    if(action.equals("exportcsv")) {
                         List<Target> exportTargets = new ArrayList<Target>();
-//    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, subject, crawlFrequency, depth, collection, license, flag);
-                        // TODO: no time to do it now but this needs redoing with straight SQL/JPA to get the count
-                        Page<Target> page = Target.pageTargets(pageNo, pageSize, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
-                        int rowCount = page.getTotalRowCount();
-//    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, subject, crawlFrequency, depth, collection, license, flag);
+                        int rowCount = Target.filteredTargetListCount(filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
                         Page<Target> pageAll = Target.pageTargets(pageNo, rowCount, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
                         exportTargets.addAll(pageAll.getList());
-                        Logger.debug("export size: " + exportTargets.size());
-                        String csvData = Utils.INSTANCE.export(exportTargets);
-//    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation,
-//    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
-
+                        Logger.debug("export size for CSV: " + exportTargets.size());
+                        String csvData = Utils.INSTANCE.exportCsv(exportTargets);
                         response().setContentType("text/csv; charset=utf-8");
                         response().setHeader("Content-disposition", "attachment; filename=\"target-export.csv");
                         return ok(csvData);
-//    	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
-                    }
-                    else {
+                    } else if (action.equals("exporttsv")) {
+                        List<Target> exportTargets = new ArrayList<Target>();
+                        int rowCount = Target.filteredTargetListCount(filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+                        Page<Target> pageAll = Target.pageTargets(pageNo, rowCount, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+                        exportTargets.addAll(pageAll.getList());
+                        Logger.debug("export size for TSV: " + exportTargets.size());
+                        String tsvData = Utils.INSTANCE.exportTsv(exportTargets);
+                        response().setContentType("text/tsv; charset=utf-8");
+                        response().setHeader("Content-disposition", "attachment; filename=\"target-export.tsv");
+                        return ok(tsvData);
+                    } else if (action.equals("exportjson")) {
+                        List<Target> exportTargets = new ArrayList<Target>();
+                        int rowCount = Target.filteredTargetListCount(filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+                        Logger.debug("export size (for JSON): " + rowCount);
+                        Page<Target> pageAll = Target.pageTargets(pageNo, rowCount, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+                        exportTargets.addAll(pageAll.getList());
+                        response().setContentType("application/json; charset=utf-8");
+                        response().setHeader("Content-disposition", "attachment; filename=\"target-export.json");
+                        return ok(Json.toJson(Utils.INSTANCE.exportJson(exportTargets)));
+                    } else {
                         if(action.equals("search") || action.equals("apply")) {
                             return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
                         }
@@ -441,25 +451,19 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static Result search() {
-
         DynamicForm form = DynamicForm.form().bindFromRequest();
-
         String action = form.get("action");
         String query = form.get("filter");
         int pageNo = Integer.parseInt(form.get("p"));
         String sort = form.get("s");
         String order = form.get("o");
-
         if(StringUtils.isEmpty(action)) {
             return badRequest("You must provide a valid action");
         }
         else {
-
             // check url
-
             Logger.debug("Query: " + query);
             boolean isValidUrl = Utils.INSTANCE.validUrl(query);
-
             Logger.debug("valid? " + isValidUrl);
             if(!isValidUrl) {
                 ValidationError ve = new ValidationError("formUrl", "Invalid URL");

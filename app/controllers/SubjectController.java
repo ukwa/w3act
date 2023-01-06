@@ -101,18 +101,26 @@ public class SubjectController extends AbstractController {
     	}
 	}
 
+	@Security.Authenticated(SecuredController.class)
 	@BodyParser.Of(BodyParser.Json.class)
-    public static Result filterByJson(String name) {
-    	JsonNode jsonData = null;
-        if (name != null) {
-	        List<Taxonomy> subjects = Taxonomy.filterSubjectsByName(name);
-	        jsonData = Json.toJson(subjects);
-        }
-        return ok(jsonData);
-    }
-	    
-	  
-    public static Result view(Long id) {
+	public static Result filterByJson(String name) {
+		JsonNode jsonData = null;
+		if (name != null) {
+			List<Taxonomy> subjects = Taxonomy.filterSubjectsByName(name);
+			jsonData = Json.toJson(subjects);
+		}
+		return ok(jsonData);
+	}
+
+	@Security.Authenticated(SecuredController.class)
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result json() {
+		return ok(Json.toJson(Subject.findAllSubjects()));
+	}
+
+
+
+	public static Result view(Long id) {
 		Subject subject = Subject.findById(id);
 		if (subject == null) return notFound("There is no Subject with ID " + id);
 		

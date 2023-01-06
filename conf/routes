@@ -49,6 +49,7 @@ GET     /collections                        controllers.CollectionController.ind
 GET     /collections/list                   controllers.CollectionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET     /collections/search                 controllers.CollectionController.search()
 GET     /collections/filterbyjson/:name     controllers.CollectionController.filterByJson(name)
+GET     /collections/json                   controllers.CollectionController.json()
 GET     /collections/new                    controllers.CollectionController.newForm()
 GET     /collections/:id                    controllers.CollectionController.view(id:Long)
 #GET     /collections/:id/json                  controllers.CollectionController.viewAsJson(id:Long)
@@ -63,6 +64,7 @@ GET     /subjects                           controllers.SubjectController.index(
 GET     /subjects/list                      controllers.SubjectController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET     /subjects/search                    controllers.SubjectController.search()
 GET     /subjects/filterbyjson/:name        controllers.SubjectController.filterByJson(name)
+GET     /subjects/json                      controllers.SubjectController.json()
 GET     /subjects/new                       controllers.SubjectController.newForm()
 GET     /subjects/:id                       controllers.SubjectController.view(id:Long)
 GET     /subjects/:id/edit                  controllers.SubjectController.edit(id:Long)
@@ -210,6 +212,7 @@ POST    /crawlpermissions/save                  controllers.CrawlPermissionContr
 POST    /crawlpermissions/update/:id            controllers.CrawlPermissionController.update(id:Long)
 
 GET     /reports                                controllers.ReportController.index()
+GET     /reports/crawlstatus                    controllers.ReportController.processFilterReports(p:Int ?= 0, curator:Long ?= -1L, organisation:Long ?= -1L, crawlPermissionsStatus ?= "", requestedFromDate ?= "", requestedToDate ?= "", grantedFromDate ?= "", grantedToDate ?= "")
 GET     /reports/search                         controllers.ReportController.search()
 GET     /reports/summary                        controllers.ReportController.summary()
 GET     /reports/openLicences                   controllers.ReportController.openLicences()

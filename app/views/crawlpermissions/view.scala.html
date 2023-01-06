@@ -220,7 +220,7 @@
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="btn-group">		
 				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-					<a href="@routes.CrawlPermissionController.index()" class="btn btn-primary" title="Go to the email queue">Send </a>					
+					<a href="@routes.CrawlPermissionController.index()" class="btn btn-primary" title="Go to the email queue">Back to Crawl Permissions </a>
 				}
 				@if(permission.target.title != null && permission.target.title.length() > 0) {
 				<a href="@routes.TargetController.viewAct(permission.target.url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>

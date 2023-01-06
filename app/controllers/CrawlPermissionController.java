@@ -53,8 +53,10 @@ import java.util.regex.Pattern;
 public class CrawlPermissionController extends AbstractController {
     //final static Form<CrawlPermission> crawlPermissionForm = new Form<CrawlPermission>(CrawlPermission.class);
 
-    public static String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    /**
+     * RFC5322
+     */
+    public static String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 
     /**
      * Display the crawl permissions.
@@ -917,6 +919,12 @@ public class CrawlPermissionController extends AbstractController {
             int pageNo = Integer.parseInt(requestData.get("pageNo"));
             Logger.debug("pageNo: " + pageNo);
 
+            String sortBy = requestData.get("sortByValue");
+            Logger.debug("sortByValue: " + sortBy);
+
+            String orderBy = requestData.get("orderByValue");
+            Logger.debug("orderByValue: " + orderBy);
+
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             String[] permissionValues = formParams.get("permissionsList");
 
@@ -1000,12 +1008,12 @@ public class CrawlPermissionController extends AbstractController {
             if (action.equals("selectall")) {
                 Logger.debug("select all listed in page crawl permissions");
                 res = redirect(routes.CrawlPermissionController.list(
-                        pageNo, Const.NAME, Const.ASC, "", status, organisation, Const.SELECT_ALL));
+                        pageNo, sortBy, orderBy, "", status, organisation, Const.SELECT_ALL));
             }
             if (action.equals("deselectall")) {
                 Logger.debug("deselect all listed in page crawl permissions");
                 res = redirect(routes.CrawlPermissionController.list(
-                        pageNo, Const.NAME, Const.ASC, "", status, organisation, Const.DESELECT_ALL));
+                        pageNo, sortBy, orderBy, "", status, organisation, Const.DESELECT_ALL));
             }
         }
         return res;
