@@ -468,7 +468,7 @@ public class TargetController extends AbstractController {
             if(!isValidUrl) {
                 ValidationError ve = new ValidationError("formUrl", "Invalid URL");
                 form.reject(ve);
-                flash("message", "The URL entered is not valid. Please check and correct it, and click Search again");
+                flash("message", "The URL entered is not valid (C1). Please check and correct it, and click Search again");
                 return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
             }
 
@@ -1803,14 +1803,14 @@ public class TargetController extends AbstractController {
                     uri = new URI(s_url).normalize().toURL();
                 }
                 catch(MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid (C2). Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     return info(filledForm, id);
                 }
 
                 UrlValidator urlValidator = new UrlValidator();
                 if(!urlValidator.isValid(s_url)) {
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid (C3). Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     return info(filledForm, id);
                 }
@@ -1825,7 +1825,7 @@ public class TargetController extends AbstractController {
                 boolean isValidUrl = Utils.INSTANCE.validUrl(s_url);
                 Logger.debug("valid? " + isValidUrl);
                 if(!isValidUrl) {
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again 5");
+                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid (C1). Please check and correct it, and click Save again");
                     filledForm.reject(ve);
                     flash("message", "Invalid URL.");
                     return redirect(routes.TargetController.edit(id));
