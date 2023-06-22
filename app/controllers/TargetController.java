@@ -1798,30 +1798,8 @@ public class TargetController extends AbstractController {
                 setOfUrls.add(url.trim());
 
             for(String s_url : setOfUrls){
-                URL uri;
-                try {
-                    uri = new URI(s_url).normalize().toURL();
-                }
-                catch(MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid (C2). Please check and correct it, and click Save again");
-                    filledForm.reject(ve);
-                    return info(filledForm, id);
-                }
-
-                UrlValidator urlValidator = new UrlValidator();
-                if(!urlValidator.isValid(s_url)) {
-                    ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid (C3). Please check and correct it, and click Save again");
-                    filledForm.reject(ve);
-                    return info(filledForm, id);
-                }
-
-                String extFormUrl = uri.toExternalForm();
-                FieldUrl fu = null;
-                try {
-                    fu = new FieldUrl(extFormUrl.trim());
-                } catch (ActException e) {
-                    e.printStackTrace();
-                }
+                
+                // Validate URL:
                 boolean isValidUrl = Utils.INSTANCE.validUrl(s_url);
                 Logger.debug("valid? " + isValidUrl);
                 if(!isValidUrl) {
@@ -1829,6 +1807,14 @@ public class TargetController extends AbstractController {
                     filledForm.reject(ve);
                     flash("message", "Invalid URL.");
                     return redirect(routes.TargetController.edit(id));
+                }
+
+                // Store it as the FieldUrl type, in position order:
+                FieldUrl fu = null;
+                try {
+                    fu = new FieldUrl(s_url);
+                } catch (ActException e) {
+                    e.printStackTrace();
                 }
                 Logger.debug("Adding url: " + s_url + " at position " + position);
                 fu.position = position;
