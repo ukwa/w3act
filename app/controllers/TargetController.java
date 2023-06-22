@@ -1820,10 +1820,10 @@ public class TargetController extends AbstractController {
                     flash("message", "Invalid URL.");
                     return redirect(routes.TargetController.edit(id));
                 }
-                Logger.debug("Adding url: " + s_url + " at position " + position);
+                Logger.debug("Adding url: " + s_url + " as FieldUrl: " + fu + " at position " + position);
                 fu.position = position;
                 position++;
-                Logger.debug("extFormUrl: " + extFormUrl);
+                // And add:
                 fieldUrls.add(fu);
             };
 
