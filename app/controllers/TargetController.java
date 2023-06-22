@@ -1815,6 +1815,10 @@ public class TargetController extends AbstractController {
                     fu = new FieldUrl(s_url);
                 } catch (ActException e) {
                     e.printStackTrace();
+                    ValidationError ve = new ValidationError("formUrl", "The URL entered could not be parsed correctly (C2). Please check and correct it, and click Save again");
+                    filledForm.reject(ve);
+                    flash("message", "Invalid URL.");
+                    return redirect(routes.TargetController.edit(id));
                 }
                 Logger.debug("Adding url: " + s_url + " at position " + position);
                 fu.position = position;
