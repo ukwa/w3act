@@ -6,24 +6,30 @@ on:
       - '*'
     branches:
       - '*'
-      
+
 jobs:
-  push_to_docker_hub:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set_version.outputs.version }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Necessary for 'git describe' to work correctly
+          fetch-depth: 0
 
       - name: Set up version variable
-        run: echo "VERSION=$(git describe --tags --always)" >> $GITHUB_ENV
+        id: set_version
+        run: |
+          echo "version=$(git describe --tags --always)" >> $GITHUB_ENV
+          echo "::set-output name=version::$(git describe --tags --always)"
 
-      - name: Call shared workflow to build and push Docker image
-        uses: ukwa/ukwa-services/.github/workflows/push-to-docker-hub.yml@master
-        with:
-          image_name: ${{ github.repository }}
-          version: ${{ env.VERSION }}
-        secrets:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  push_to_docker_hub:
+    needs: setup
+    uses: ukwa/ukwa-services/.github/workflows/push-to-docker-hub.yml@master
+    with:
+      image_name: ${{ github.repository }}
+      version: ${{ needs.setup.outputs.version }}
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
