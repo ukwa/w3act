@@ -16,15 +16,15 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetch tags etc. so git describe will work
 
       - name: Set up version variable
         id: set_version
-        run: |
-          echo "version=$(git describe --tags --always)" >> $GITHUB_ENV
-          echo "::set-output name=version::$(git describe --tags --always)"
+        run: echo "::set-output name=version::$(git describe --tags --always)"
 
+        
   push_to_docker_hub:
+    # Pushes to master (default version) should build `ukwa/w3act:master`, version tags should build `ukwa/w3act:TAG` and update `ukwa/w3act:latest` to refer to TAG.
     needs: setup
     uses: ukwa/ukwa-services/.github/workflows/push-to-docker-hub.yml@master
     with:
