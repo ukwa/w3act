@@ -1,41 +1,35 @@
-name: Run CI then push to Docker Hub
+name: Build, scan and push to Docker Hub
 
 on:
   push:
     tags:
       - '*'
     branches:
-      - master
-      - BR234
+      - '*'
 
 jobs:
-  push_to_docker_hub:
-    name: Push Docker image to Docker Hub
-    # This uses the default metadata-action configuration, see https://github.com/docker/metadata-action
-    # Pushes to master should build `ukwa/w3act:master`, tags should build `ukwa/w3act:TAG` and update `ukwa/w3act:latest` to refer to TAG.
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set_version.outputs.version }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 0 # Fetch tags etc. so git describe will work
-      - name: Set up Docker metadata
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ github.repository }}
-      - name: Set up version variable to embed in container
-        run: echo "VERSION=`git describe --tags --always`" >> $GITHUB_ENV
-      - name: Log in to Docker Hub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Build and push to Docker Hub
-        uses: docker/build-push-action@v2
-        with:
-          build-args: VERSION=${{ env.VERSION }}
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Set up version variable
+        id: set_version
+        run: echo "::set-output name=version::$(git describe --tags --always)"
+
+        
+  push_to_docker_hub:
+    # Pushes to master (default version) should build `ukwa/w3act:master`, version tags should build `ukwa/w3act:TAG` and update `ukwa/w3act:latest` to refer to TAG.
+    needs: setup
+    uses: ukwa/ukwa-services/.github/workflows/push-to-docker-hub.yml@master
+    with:
+      image_name: ${{ github.repository }}
+      version: ${{ needs.setup.outputs.version }}
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
